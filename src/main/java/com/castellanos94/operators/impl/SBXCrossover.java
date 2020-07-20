@@ -49,11 +49,12 @@ public class SBXCrossover implements CrossoverOperator {
 
                         rand = Data.getZeroByType(lowerBound).addition(randomGenerator.nextDouble());
                         // beta = 1.0 + (2.0 * (y1 - lowerBound) / (y2 - y1));
-                        beta = Data.getOneByType(lowerBound).addition(Data.getOneByType(lowerBound).addition(2)
+                        beta = Data.getOneByType(lowerBound).addition(Data.getZeroByType(lowerBound).addition(2)
                                 .multiplication(y1.subtraction(lowerBound)).division(y2.subtraction(y1)));
                         // alpha = 2.0 - Math.pow(beta, -(distributionIndex + 1.0));
-                        alpha = Data.getOneByType(lowerBound).addition(2).subtraction(
-                                beta.pow(Data.getOneByType(lowerBound).multiplication(-(distributionIndex - 1.0))));
+                        alpha = Data.getZeroByType(lowerBound).addition(2).subtraction(
+                                beta.pow(-(distributionIndex+1.0)));
+                                //beta.pow(Data.getOneByType(lowerBound).multiplication(-(distributionIndex - 1.0))));
 
                         if (rand.compareTo(RealData.ONE.division(alpha)) <= 0) {
                             // betaq = Math.pow(rand * alpha, (1.0 / (distributionIndex + 1.0)));
@@ -62,7 +63,7 @@ public class SBXCrossover implements CrossoverOperator {
                             // betaq = Math.pow(1.0 / (2.0 - rand * alpha), 1.0 / (distributionIndex +
                             // 1.0));
                             betaq = RealData.ONE
-                                    .division(RealData.ONE.addition(2).subtraction(rand.multiplication(alpha)))
+                                    .division(RealData.ZERO.addition(2).subtraction(rand.multiplication(alpha)))
                                     .pow(1.0 / (distributionIndex + 1));
                         }
                         // c1 = 0.5 * (y1 + y2 - betaq * (y2 - y1));
@@ -70,7 +71,7 @@ public class SBXCrossover implements CrossoverOperator {
                                 .multiplication(y1.addition(y2).subtraction(betaq.multiplication(y2.subtraction(y1))));
 
                         // beta = 1.0 + (2.0 * (upperBound - y2) / (y2 - y1));
-                        beta = RealData.ONE.addition(RealData.ONE.addition(2)
+                        beta = RealData.ONE.addition(RealData.ZERO.addition(2)
                                 .multiplication(upperBound.subtraction(y2).division(y2.subtraction(y1))));
                         // alpha = 2.0 - Math.pow(beta, -(distributionIndex + 1.0));
                         alpha = RealData.ONE.addition(2).subtraction(beta.pow(-(distributionIndex + 1)));
@@ -83,7 +84,7 @@ public class SBXCrossover implements CrossoverOperator {
                             // betaq = Math.pow(1.0 / (2.0 - rand * alpha), 1.0 / (distributionIndex +
                             // 1.0));
                             betaq = RealData.ONE
-                                    .division(RealData.ONE.addition(2).subtraction(rand.multiplication(alpha)))
+                                    .division(RealData.ZERO.addition(2).subtraction(rand.multiplication(alpha)))
                                     .pow(1.0 / (distributionIndex + 1));
                         }
                         // c2 = 0.5 * (y1 + y2 + betaq * (y2 - y1));

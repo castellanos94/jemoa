@@ -252,4 +252,8 @@ public class Solution implements Cloneable, Comparable<Solution> {
         return problem.getUpperBound()[i];
     }
 
+    public void setVariable(int i, Data y) {
+        this.decision_vars.set(i, y);
+    }
+
 }
