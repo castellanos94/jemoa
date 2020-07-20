@@ -9,7 +9,6 @@ import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.plotly.Plot;
 import tech.tablesaw.plotly.api.Scatter3DPlot;
-import tech.tablesaw.plotly.api.ScatterPlot;
 
 public class Scatter3D implements Plotter {
 

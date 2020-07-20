@@ -37,7 +37,6 @@ public class ZDT1 extends Problem {
             e.printStackTrace();
         }
         RealData g = new RealData(0);
-        RealData h = new RealData(0);
         RealData f2 = new RealData(0);
         RealData sum = new RealData(0);
 

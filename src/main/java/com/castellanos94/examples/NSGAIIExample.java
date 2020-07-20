@@ -9,11 +9,8 @@ import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.operators.impl.PolyMutation;
-import com.castellanos94.operators.impl.RandomSelection;
 import com.castellanos94.operators.impl.SBXCrossover;
-import com.castellanos94.operators.impl.SimpleDecimalMutation;
 import com.castellanos94.operators.impl.TournamentSelection;
-import com.castellanos94.operators.impl.UniformCrossover;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.problems.ZDT1;
 import com.castellanos94.solutions.Solution;
@@ -40,9 +37,6 @@ public class NSGAIIExample {
         algorithm.execute();
         System.out.println(algorithm.getSolutions().size());
         ArrayList<Solution> solutions = algorithm.getSolutions();
-        for (int i = 0; i < popSize; i++) {
-            System.out.println(i + ") " + solutions.get(i).getObjectives());
-        }
         System.out.println("Time: " + algorithm.getComputeTime() + " ms.");
         Plotter plotter = new Scatter2D(solutions, "dtlz1-nsgaii");
         plotter.plot();
