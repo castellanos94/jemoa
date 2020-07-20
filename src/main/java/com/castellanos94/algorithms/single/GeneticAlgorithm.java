@@ -4,15 +4,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
+import com.castellanos94.operators.CrossoverOperator;
+import com.castellanos94.operators.MutationOperator;
+import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
 public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
 
-    public GeneticAlgorithm(Problem problem) {
+    public GeneticAlgorithm(Problem problem, int maxIteration, int popSize, SelectionOperator selectionOperator,
+            CrossoverOperator crossoverOperator, MutationOperator mutationOperator) {
         super(problem);
+        this.maxIteration = maxIteration;
+        this.populationSize = popSize;
+        this.selectionOperator = selectionOperator;
+        this.crossoverOperator = crossoverOperator;
+        this.mutationOperator = mutationOperator;
     }
-
     @Override
     protected ArrayList<Solution> reproduction(ArrayList<Solution> parents) {
         ArrayList<Solution> offspring = new ArrayList<>();
@@ -25,6 +33,8 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
         }
         for (Solution solution : offspring) {
             mutationOperator.execute(solution);
+            problem.evaluate(solution);
+            problem.evaluateConstraints(solution);
         }
         return offspring;
     }
@@ -61,5 +71,11 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
         }
         return newPop;
     }
+
+    @Override
+    public String toString() {
+        return "GeneticAlgorithm ["+super.toString()+"]";
+    }
+
 
 }

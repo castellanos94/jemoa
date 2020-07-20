@@ -28,4 +28,7 @@ public abstract class AbstractAlgorithm {
     public long getInit_time() {
         return init_time;
     }
+    public Problem getProblem() {
+        return problem;
+    }
 }
