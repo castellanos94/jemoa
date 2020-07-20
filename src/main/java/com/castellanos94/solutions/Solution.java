@@ -240,4 +240,16 @@ public class Solution implements Cloneable, Comparable<Solution> {
         return objectives.toString();
     }
 
+    public Data getVariable(int index) {
+        return decision_vars.get(index);
+    }
+
+    public Data getLowerBound(int i) {
+        return problem.getLowerBound()[i];
+    }
+
+    public Data getUpperBound(int i) {
+        return problem.getUpperBound()[i];
+    }
+
 }
