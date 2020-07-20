@@ -10,6 +10,8 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
 public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
+    protected int maxIteration;
+    protected int currentIteration;
 
     public GeneticAlgorithm(Problem problem, int maxIteration, int popSize, SelectionOperator selectionOperator,
             CrossoverOperator crossoverOperator, MutationOperator mutationOperator) {
@@ -19,6 +21,7 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
         this.selectionOperator = selectionOperator;
         this.crossoverOperator = crossoverOperator;
         this.mutationOperator = mutationOperator;
+        this.currentIteration = 0;
     }
 
     @Override
@@ -65,6 +68,22 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
     @Override
     public String toString() {
         return "GeneticAlgorithm [" + super.toString() + "]";
+    }
+
+    @Override
+    protected void updateProgress() {
+        currentIteration++;
+    }
+
+    @Override
+    protected boolean isStoppingCriteriaReached() {
+        return currentIteration < maxIteration;
+    }
+    public int getMaxIteration() {
+        return maxIteration;
+    }
+    public void setMaxIteration(int maxIteration) {
+        this.maxIteration = maxIteration;
     }
 
 }

@@ -14,9 +14,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
         super(problem);
     }
 
-    protected int maxIteration;
     protected int populationSize;
-    protected int currentIteration;
     protected SelectionOperator selectionOperator;
     protected CrossoverOperator crossoverOperator;
     protected MutationOperator mutationOperator;
@@ -27,6 +25,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
         solutions = initPopulation();
         ArrayList<Solution> offspring;
         ArrayList<Solution> parents;
+        updateProgress();
         while (isStoppingCriteriaReached()) {
             selectionOperator.execute(solutions);
             parents = selectionOperator.getParents();
@@ -36,6 +35,8 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
         }
         computeTime = System.currentTimeMillis() - init_time;
     }
+
+    protected abstract void updateProgress();
 
     protected ArrayList<Solution> initPopulation() {
         ArrayList<Solution> solutions = new ArrayList<>();
@@ -52,21 +53,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
 
     protected abstract ArrayList<Solution> replacement(ArrayList<Solution> population, ArrayList<Solution> offspring);
 
-    protected boolean isStoppingCriteriaReached() {
-        return currentIteration < maxIteration;
-    }
-
-    protected void updateProgress() {
-        currentIteration++;
-    }
-
-    public int getMaxIteration() {
-        return maxIteration;
-    }
-
-    public void setMaxIteration(int maxIteration) {
-        this.maxIteration = maxIteration;
-    }
+    protected abstract boolean isStoppingCriteriaReached();
 
     public int getPopulationSize() {
         return populationSize;
@@ -75,24 +62,28 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     public void setPopulationSize(int populationSize) {
         this.populationSize = populationSize;
     }
+
     public CrossoverOperator getCrossoverOperator() {
         return crossoverOperator;
     }
+
     public void setCrossoverOperator(CrossoverOperator crossoverOperator) {
         this.crossoverOperator = crossoverOperator;
     }
+
     public MutationOperator getMutationOperator() {
         return mutationOperator;
     }
+
     public void setMutationOperator(MutationOperator mutationOperator) {
         this.mutationOperator = mutationOperator;
     }
 
     @Override
     public String toString() {
-        return "AbstractEvolutionaryAlgorithm [crossoverOperator=" + crossoverOperator + ", currentIteration="
-                + currentIteration + ", maxIteration=" + maxIteration + ", mutationOperator=" + mutationOperator
-                + ", populationSize=" + populationSize + ", selectionOperator=" + selectionOperator + "]";
+        return "AbstractEvolutionaryAlgorithm [crossoverOperator=" + crossoverOperator + ", mutationOperator="
+                + mutationOperator + ", populationSize=" + populationSize + ", selectionOperator=" + selectionOperator
+                + "]";
     }
 
 }
