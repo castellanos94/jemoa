@@ -26,7 +26,6 @@ public class PSP extends Problem {
         this.numberOfObjectives = instance.getData("nObj").intValue();
         this.numberOfDecisionVars = instance.getData("nProjects").intValue();
         this.objectives_type = new int[numberOfObjectives];
-        this.problem_type = instance.getData("problem_type").intValue();        
         for (int i = 0; i < objectives_type.length; i++) {
             objectives_type[i] = Problem.MAXIMIZATION;
         }

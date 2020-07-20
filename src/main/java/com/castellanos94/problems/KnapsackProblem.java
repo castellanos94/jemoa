@@ -23,7 +23,6 @@ public class KnapsackProblem extends Problem {
         
         this.objectives_type = new int[1];
         this.objectives_type[0] = Problem.MAXIMIZATION;
-        this.problem_type = Problem.MAXIMIZATION;
         
         this.w = (IntegerData[]) instance.getDataVector("weights");
         this.b = (IntegerData[]) instance.getDataVector("benefits");
