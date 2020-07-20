@@ -10,6 +10,10 @@ import com.castellanos94.solutions.Solution;
 
 public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
 
+    public AbstractEvolutionaryAlgorithm(Problem problem) {
+        super(problem);
+    }
+
     protected int maxIteration;
     protected int populationSize;
     protected int currentIteration;
@@ -17,18 +21,6 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     protected CrossoverOperator crossoverOperator;
     protected MutationOperator mutationOperator;
     
-
-    public AbstractEvolutionaryAlgorithm(Problem problem, int maxIteration, int populatioSize,
-            SelectionOperator selectionOperator, CrossoverOperator crossoverOperator,
-            MutationOperator mutationOperator) {
-        super(problem);
-        this.maxIteration = maxIteration;
-        this.populationSize = populatioSize;
-        this.selectionOperator = selectionOperator;
-        this.crossoverOperator = crossoverOperator;
-        this.mutationOperator = mutationOperator;
-        this.currentIteration = 0;
-    }
 
     @Override
     public void execute() {
