@@ -1,8 +1,9 @@
-package com.castellanos94.problems;
+package com.castellanos94.problems.benchmarks;
 
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.datatype.RealData;
+import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
