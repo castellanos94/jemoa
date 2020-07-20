@@ -19,7 +19,7 @@ public class TournamentSelection implements SelectionOperator {
 
     @Override
     public void execute(final ArrayList<Solution> solutions) {
-        parents = new ArrayList<>();
+        this.parents = new ArrayList<>();
         for (int i = 0; i < n_offsrping; i++) {
             int pos_a = Tools.getRandom().nextInt(solutions.size());
             int pos_b;
@@ -41,8 +41,7 @@ public class TournamentSelection implements SelectionOperator {
 
     @Override
     public ArrayList<Solution> getParents() {
-        // TODO Auto-generated method stub
-        return null;
+        return parents;
     }
 
 }

@@ -96,12 +96,12 @@ public class DominanceCompartor implements Comparator<Solution>, Ranking {
             population.get(i).setRank(dominate_me.get(i).size());
         }
         Collections.sort(population);
-        front = population;
+        this.front = population;
     }
 
     @Override
     public ArrayList<Solution> getSubFront(int index) {
-        return front;
+        return this.front;
     }
 
     @Override

@@ -40,7 +40,7 @@ public class MuGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
         for (int i = 0; i < parents.size(); i++) {
             ArrayList<Solution> p = new ArrayList<>();
             p.add(parents.get(i++));
-            p.add(parents.get(i));
+            p.add(parents.get((i < parents.size()) ? i : 0));
             offspring.addAll(crossoverOperator.execute(p));
 
         }
@@ -54,8 +54,8 @@ public class MuGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
 
     @Override
     protected ArrayList<Solution> replacement(ArrayList<Solution> population, ArrayList<Solution> offspring) {
-        population.addAll(offspring);
-        ranking.computeRanking(population);
+        population.addAll(offspring);        
+        ranking.computeRanking(population);        
         return new ArrayList<>(ranking.getSubFront(0).subList(0, populationSize));
     }
 
