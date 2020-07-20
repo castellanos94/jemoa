@@ -3,6 +3,8 @@ package com.castellanos94.algorithms.multi;
 import java.util.ArrayList;
 
 import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
+import com.castellanos94.components.Ranking;
+import com.castellanos94.components.impl.DominanceCompartor;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
@@ -12,6 +14,7 @@ import com.castellanos94.solutions.Solution;
 public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
     protected int maxEvaluation;
     protected int currentEvaluation;
+    protected Ranking ranking;
 
     public GeneticAlgorithm(Problem problem, int maxEvaluation, SelectionOperator selectionOperator,
             CrossoverOperator crossoverOperator, MutationOperator mutationOperator) {
@@ -21,6 +24,7 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
         this.crossoverOperator = crossoverOperator;
         this.mutationOperator = mutationOperator;
         this.currentEvaluation = 0;
+        this.ranking = new DominanceCompartor();
     }
 
     @Override
@@ -48,8 +52,9 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
 
     @Override
     protected ArrayList<Solution> replacement(ArrayList<Solution> population, ArrayList<Solution> offspring) {
-        // TODO Auto-generated method stub
-        return null;
+        population.addAll(offspring);
+        ranking.computeRanking(population);
+        return new ArrayList<>(ranking.getSubFront(0).subList(0, populationSize));
     }
 
     @Override
