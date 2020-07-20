@@ -203,33 +203,6 @@ public class Solution implements Cloneable, Comparable<Solution> {
                 return false;
         } else if (!decision_vars.equals(other.decision_vars))
             return false;
-        if (n_penalties == null) {
-            if (other.n_penalties != null)
-                return false;
-        } else if (!n_penalties.equals(other.n_penalties))
-            return false;
-        if (objectives == null) {
-            if (other.objectives != null)
-                return false;
-        } else if (!objectives.equals(other.objectives))
-            return false;
-        if (penalties == null) {
-            if (other.penalties != null)
-                return false;
-        } else if (!penalties.equals(other.penalties))
-            return false;
-        if (problem == null) {
-            if (other.problem != null)
-                return false;
-        } else if (!problem.equals(other.problem))
-            return false;
-        if (rank != other.rank)
-            return false;
-        if (resources == null) {
-            if (other.resources != null)
-                return false;
-        } else if (!resources.equals(other.resources))
-            return false;
         return true;
     }
 
