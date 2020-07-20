@@ -1,7 +1,6 @@
 package com.castellanos94.algorithms.single;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.operators.CrossoverOperator;
@@ -41,17 +40,17 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
 
     @Override
     protected ArrayList<Solution> replacement(ArrayList<Solution> population, ArrayList<Solution> offspring) {
-        ArrayList<Solution> newPop = new ArrayList<>();
-        newPop.addAll((Collection<? extends Solution>) population.clone());
+     //   ArrayList<Solution> newPop = new ArrayList<>();
+       // newPop.addAll((Collection<? extends Solution>) population.clone());
         for (int i = 0; i < offspring.size(); i++) {
             Solution a = offspring.get(i);
-            for (int j = 0; j < newPop.size(); j++) {
-                int value = a.getObjectives().get(0).compareTo(newPop.get(j).getObjectives().get(0));
-                int penal = a.getN_penalties().compareTo(newPop.get(j).getN_penalties());
+            for (int j = 0; j < population.size(); j++) {
+                int value = a.getObjectives().get(0).compareTo(population.get(j).getObjectives().get(0));
+                int penal = a.getN_penalties().compareTo(population.get(j).getN_penalties());
                 if (Problem.MAXIMIZATION == problem.getObjectives_type()[0]) {
                     if (value == 1 && penal < 0) {
                         try {
-                            newPop.set(j, (Solution) a.clone());
+                            population.set(j, (Solution) a.clone());
                         } catch (CloneNotSupportedException e) {
                             e.printStackTrace();
                         }
@@ -60,7 +59,7 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
                 } else {
                     if (value == -1 && penal < 0) {
                         try {
-                            newPop.set(j, (Solution) a.clone());
+                            population.set(j, (Solution) a.clone());
                         } catch (CloneNotSupportedException e) {
                             e.printStackTrace();
                         }
@@ -69,7 +68,7 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
                 }
             }
         }
-        return newPop;
+        return population;
     }
 
     @Override

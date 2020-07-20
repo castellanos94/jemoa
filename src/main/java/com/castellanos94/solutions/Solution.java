@@ -1,8 +1,6 @@
 package com.castellanos94.solutions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.regex.Pattern;
 
 import com.castellanos94.datatype.Data;
 import com.castellanos94.problems.Problem;

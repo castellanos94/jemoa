@@ -2,7 +2,6 @@ package com.castellanos94.examples;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -17,9 +16,7 @@ import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.operators.UniformCrossover;
 import com.castellanos94.problems.KnapsackProblem;
 import com.castellanos94.problems.Problem;
-import com.castellanos94.problems.ProblemType;
 import com.castellanos94.solutions.Solution;
-import com.castellanos94.utils.Tools;
 
 public class KnapsackExample {
     public static void main(String[] args) throws IOException, CloneNotSupportedException {
@@ -41,7 +38,7 @@ public class KnapsackExample {
         ArrayList<Solution> solutions = algorithm.getSolutions();
         Collections.sort(solutions, Comparator.comparing(Solution::getObjectives,(a,b)->{
             return a.get(0).compareTo(b.get(0));
-        }));
+        }).reversed());
         for (int i = 0; i < popSize; i++) {
             System.out.println(i + ") " + algorithm.getSolutions().get(i));
         }
