@@ -1,8 +1,9 @@
-package com.castellanos94.operators;
+package com.castellanos94.operators.impl;
 
 import java.util.ArrayList;
 
 import com.castellanos94.datatype.Data;
+import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
@@ -21,9 +22,9 @@ public class UniformCrossover implements CrossoverOperator {
             for (int j = 0; j < a.getDecision_vars().size(); j++) {
                 if (Tools.getRandom().nextDouble() < 0.5) {
                     c.setDecisionVar(i, (Data) b.getDecision_vars().get(i).clone());
-                }                
+                }
             }
-            child.add((Solution) c.clone());
+            child.add(c);
         }
         return child;
     }

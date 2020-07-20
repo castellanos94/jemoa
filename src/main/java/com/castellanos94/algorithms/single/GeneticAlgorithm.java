@@ -20,6 +20,7 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
         this.crossoverOperator = crossoverOperator;
         this.mutationOperator = mutationOperator;
     }
+
     @Override
     protected ArrayList<Solution> reproduction(ArrayList<Solution> parents) throws CloneNotSupportedException {
         ArrayList<Solution> offspring = new ArrayList<>();
@@ -40,8 +41,8 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
 
     @Override
     protected ArrayList<Solution> replacement(ArrayList<Solution> population, ArrayList<Solution> offspring) {
-     //   ArrayList<Solution> newPop = new ArrayList<>();
-       // newPop.addAll((Collection<? extends Solution>) population.clone());
+        // ArrayList<Solution> newPop = new ArrayList<>();
+        // newPop.addAll((Collection<? extends Solution>) population.clone());
         for (int i = 0; i < offspring.size(); i++) {
             Solution a = offspring.get(i);
             for (int j = 0; j < population.size(); j++) {
@@ -49,21 +50,11 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
                 int penal = a.getN_penalties().compareTo(population.get(j).getN_penalties());
                 if (Problem.MAXIMIZATION == problem.getObjectives_type()[0]) {
                     if (value == 1 && penal < 0) {
-                        try {
-                            population.set(j, (Solution) a.clone());
-                        } catch (CloneNotSupportedException e) {
-                            e.printStackTrace();
-                        }
-                        break;
+                        population.set(j, a);
                     }
                 } else {
                     if (value == -1 && penal < 0) {
-                        try {
-                            population.set(j, (Solution) a.clone());
-                        } catch (CloneNotSupportedException e) {
-                            e.printStackTrace();
-                        }
-                        break;
+                        population.set(j, a);
                     }
                 }
             }
@@ -73,8 +64,7 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
 
     @Override
     public String toString() {
-        return "GeneticAlgorithm ["+super.toString()+"]";
+        return "GeneticAlgorithm [" + super.toString() + "]";
     }
-
 
 }

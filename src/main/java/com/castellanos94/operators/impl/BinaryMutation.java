@@ -1,6 +1,7 @@
-package com.castellanos94.operators;
+package com.castellanos94.operators.impl;
 
 import com.castellanos94.datatype.Data;
+import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 

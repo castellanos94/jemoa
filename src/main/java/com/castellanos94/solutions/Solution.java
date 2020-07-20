@@ -1,6 +1,7 @@
 package com.castellanos94.solutions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.castellanos94.datatype.Data;
 import com.castellanos94.problems.Problem;
@@ -17,6 +18,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
 
     protected Problem problem;
     protected Integer n_penalties = 0;
+    protected HashMap<String, Object> properties;
 
     protected int rank;
 
@@ -28,12 +30,13 @@ public class Solution implements Cloneable, Comparable<Solution> {
         for (int i = 0; i < problem.getNumberOfDecisionVars(); i++) {
             decision_vars.add(null);
         }
-        for (int i = 0; i < problem.getNumberOfObjectives();i++) {
+        for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
             objectives.add(null);
         }
         for (int i = 0; i < problem.getNumberOfConstrains(); i++) {
             resources.add(null);
         }
+        properties = new HashMap<>();
     }
 
     public Solution(int n_objectives, int n_decision_vars) {
@@ -45,10 +48,12 @@ public class Solution implements Cloneable, Comparable<Solution> {
         for (int i = 0; i < n_objectives; i++) {
             objectives.add(null);
         }
+        properties = new HashMap<>();
 
     }
 
     public Solution() {
+        properties = new HashMap<>();
     }
 
     public void setDecisionVar(int index, Data element) {
@@ -136,6 +141,12 @@ public class Solution implements Cloneable, Comparable<Solution> {
     public void setPenalties(Data penalties) {
         this.penalties = penalties;
     }
+    public HashMap<String, Object> getProperties() {
+        return properties;
+    }
+    public void setProperties(HashMap<String, Object> properties) {
+        this.properties = properties;
+    }
 
     @Override
     public Object clone() throws CloneNotSupportedException {
@@ -148,6 +159,8 @@ public class Solution implements Cloneable, Comparable<Solution> {
             clone.setPenalties((Data) this.getPenalties().clone());
         }
         clone.setN_penalties(this.getN_penalties());
+        if(this.properties!=null)
+            clone.setProperties((HashMap<String, Object>) this.getProperties().clone());
         return clone;
     }
 

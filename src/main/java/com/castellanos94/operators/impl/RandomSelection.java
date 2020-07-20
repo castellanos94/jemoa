@@ -1,8 +1,9 @@
-package com.castellanos94.operators;
+package com.castellanos94.operators.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.solutions.Solution;
 
 public class RandomSelection extends SelectionOperator {
