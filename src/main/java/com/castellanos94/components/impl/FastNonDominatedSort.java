@@ -12,13 +12,12 @@ public class FastNonDominatedSort implements Ranking {
 
     public FastNonDominatedSort() {
         this.paretoDominance = new DominanceCompartor();
+        this.fronts = new ArrayList<>();
     }
 
     @Override
     public void computeRanking(ArrayList<Solution> population) {
-        if (fronts != null) {
-            fronts = new ArrayList<>();
-        }
+        this.fronts = new ArrayList<>();
 
         ArrayList<ArrayList<Integer>> dominate_me = new ArrayList<>();
         for (int i = 0; i < population.size(); i++) {

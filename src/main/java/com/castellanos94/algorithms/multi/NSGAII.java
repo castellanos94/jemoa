@@ -1,7 +1,6 @@
 package com.castellanos94.algorithms.multi;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.components.DensityEstimator;
@@ -39,7 +38,7 @@ public class NSGAII extends AbstractEvolutionaryAlgorithm {
         this.selectionOperator = selectionOperator;
         this.crossoverOperator = crossoverOperator;
         this.mutationOperator = mutationOperator;
-        this.currentEvaluation = 1;
+        this.currentEvaluation = 0;
         this.populationSize = populationSize;
         this.densityEstimator = densityEstimator;
         this.fastNonDominatedSort = new FastNonDominatedSort();
@@ -47,7 +46,7 @@ public class NSGAII extends AbstractEvolutionaryAlgorithm {
 
     @Override
     protected void updateProgress() {
-        currentEvaluation *= populationSize;
+        currentEvaluation += populationSize;
     }
 
     @Override
@@ -77,8 +76,15 @@ public class NSGAII extends AbstractEvolutionaryAlgorithm {
         while (index < populationSize && frontIndex < fastNonDominatedSort.getNumberOfSubFronts()) {
             ArrayList<Solution> front = fastNonDominatedSort.getSubFront(frontIndex++);
             if (front.size() + index < populationSize) {
-                Pt.addAll((Collection<? extends Solution>) front.clone());
-                index += front.size();
+                for (int i = 0; i < front.size(); i++) {
+                    try {
+                        Pt.add((Solution) front.get(i).clone());
+                        index++;
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
             } else {
                 densityEstimator.compute(front);
                 front = densityEstimator.sort(front);

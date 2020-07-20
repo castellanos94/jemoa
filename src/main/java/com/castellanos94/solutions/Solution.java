@@ -141,9 +141,11 @@ public class Solution implements Cloneable, Comparable<Solution> {
     public void setPenalties(Data penalties) {
         this.penalties = penalties;
     }
+
     public HashMap<String, Object> getProperties() {
         return properties;
     }
+
     public void setProperties(HashMap<String, Object> properties) {
         this.properties = properties;
     }
@@ -159,7 +161,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
             clone.setPenalties((Data) this.getPenalties().clone());
         }
         clone.setN_penalties(this.getN_penalties());
-        if(this.properties!=null)
+        if (this.properties != null)
             clone.setProperties((HashMap<String, Object>) this.getProperties().clone());
         return clone;
     }
@@ -233,7 +235,9 @@ public class Solution implements Cloneable, Comparable<Solution> {
 
     @Override
     public String toString() {
-        return String.format("%s * %s * %s * %s * %3d", decision_vars, objectives, resources, penalties, n_penalties);
+        // return String.format("%s * %s * %s * %s * %3d", decision_vars, objectives,
+        // resources, penalties, n_penalties);
+        return objectives.toString();
     }
 
 }

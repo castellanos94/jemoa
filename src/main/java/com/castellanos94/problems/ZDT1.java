@@ -39,15 +39,19 @@ public class ZDT1 extends Problem {
         RealData g = new RealData(0);
         RealData h = new RealData(0);
         RealData f2 = new RealData(0);
+        RealData sum = new RealData(0);
+
         for (int i = 1; i < numberOfDecisionVars; i++) {
-            g = (RealData) g.addition(solution.getDecision_vars().get(i)
-                    .division(new RealData(numberOfDecisionVars).subtraction(RealData.ONE)));
+            sum = (RealData) sum.addition(solution.getDecision_vars().get(i));
         }
-        g = (RealData) RealData.ONE.addition(new RealData(9).multiplication(g));
-        h = (RealData) RealData.ONE.subtraction(solution.getObjectives().get(0).division(g).sqr());
-        f2 = (RealData) g.multiplication(h);
+        //g = (RealData) RealData.ONE.addition(new RealData(9).multiplication(g));
+        Data tmp = new RealData(9).division(solution.getDecision_vars().size() - 1);
+        g = (RealData) RealData.ONE.addition(tmp.multiplication(sum));
+        //h = (RealData) RealData.ONE.subtraction(solution.getObjectives().get(0).division(g).sqr());
+        tmp =  solution.getObjectives().get(0).division(g);
+        f2 = (RealData) g.multiplication(RealData.ONE.subtraction(tmp.sqr()));
         solution.setObjective(1, f2);
-        
+
         evaluateConstraints(solution);
     }
 

@@ -38,7 +38,7 @@ public class CrowdingDistance implements DensityEstimator {
                     distance = solutions.get(j + 1).getObjectives().get(i)
                             .subtraction(solutions.get(j - 1).getObjectives().get(i));
                     distance = distance.division(max.subtraction(min));
-                    distance = distance.addition((Data) solutions.get(j).getProperties().get(getKey()));
+                    distance = distance.addition((Data) solutions.get(j).getProperties().getOrDefault(getKey(), Data.getZeroByType(min)));
                     solutions.get(j).getProperties().put(getKey(), distance);
                 }
             } catch (CloneNotSupportedException e) {
