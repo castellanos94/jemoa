@@ -20,9 +20,14 @@ public class PSPInstance extends Instance {
 
     public Instance loadInstance(String path) throws FileNotFoundException {
         File f = new File(path);
-        PSPInstance instance = new PSPInstance();
-        instance.setId(f.getName());
         Scanner sc = new Scanner(f);
+        Instance i =read(sc);
+        i.setId(f.getName());
+        return i;
+    }
+
+    private Instance read(Scanner sc) {
+        PSPInstance instance = new PSPInstance();       
         IntegerData budget = new IntegerData(Integer.parseInt(sc.nextLine().trim()));
         IntegerData nObj = new IntegerData(Integer.parseInt(sc.nextLine().trim()));
         IntegerData objectives[] = new IntegerData[nObj.intValue()];

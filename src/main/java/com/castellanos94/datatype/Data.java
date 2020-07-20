@@ -48,6 +48,22 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
         return null;
     }
 
+    public static Data getOneByType(Number d) {
+        if (d == null) {
+            return null;
+        }
+        if (d instanceof Integer || d instanceof IntegerData) {
+            return new IntegerData(1);
+        }
+        if (d instanceof Float || d instanceof Double || d instanceof RealData) {
+            return new RealData(1);
+        }
+        if (d instanceof IntervalData) {
+            return new IntegerData(1);
+        }
+        return null;
+    }
+
     public Data abs() {
 
         if (this instanceof IntegerData) {

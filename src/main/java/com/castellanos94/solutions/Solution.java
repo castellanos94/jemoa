@@ -27,11 +27,26 @@ public class Solution implements Cloneable, Comparable<Solution> {
         this.decision_vars = new ArrayList<>(problem.getNumberOfDecisionVars());
         this.objectives = new ArrayList<>(problem.getNumberOfObjectives());
         this.resources = new ArrayList<>(problem.getNumberOfConstrains());
+        for (int i = 0; i < problem.getNumberOfDecisionVars(); i++) {
+            decision_vars.add(null);
+        }
+        for (int i = 0; i < problem.getNumberOfObjectives();i++) {
+            objectives.add(null);
+        }
+        for (int i = 0; i < problem.getNumberOfConstrains(); i++) {
+            resources.add(null);
+        }
     }
 
     public Solution(int n_objectives, int n_decision_vars) {
         this.decision_vars = new ArrayList<>(n_decision_vars);
         this.objectives = new ArrayList<>(n_objectives);
+        for (int i = 0; i < n_decision_vars; i++) {
+            decision_vars.add(null);
+        }
+        for (int i = 0; i < n_objectives; i++) {
+            objectives.add(null);
+        }
 
     }
 
@@ -128,10 +143,10 @@ public class Solution implements Cloneable, Comparable<Solution> {
     public Object clone() throws CloneNotSupportedException {
         Solution clone = new Solution(this.getProblem());
         clone.setDecision_vars((ArrayList<Data>) this.getDecision_vars().clone());
-        clone.setObjectives((ArrayList<Data>) ( this.getObjectives().clone()));
+        clone.setObjectives((ArrayList<Data>) (this.getObjectives().clone()));
         clone.setResources((ArrayList<Data>) this.getResources().clone());
         clone.setRank(this.getRank());
-        if(this.getPenalties()!=null){
+        if (this.getPenalties() != null) {
             clone.setPenalties((Data) this.getPenalties().clone());
         }
         clone.setN_penalties(this.getN_penalties());

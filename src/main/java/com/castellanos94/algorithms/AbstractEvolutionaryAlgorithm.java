@@ -22,7 +22,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
     protected MutationOperator mutationOperator;
 
     @Override
-    public void execute() {
+    public void execute() throws CloneNotSupportedException {
         init_time = System.currentTimeMillis();
         solutions = initPopulation();
         ArrayList<Solution> offspring;
@@ -48,7 +48,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
         return solutions;
     }
 
-    protected abstract ArrayList<Solution> reproduction(ArrayList<Solution> parents);
+    protected abstract ArrayList<Solution> reproduction(ArrayList<Solution> parents) throws CloneNotSupportedException;
 
     protected abstract ArrayList<Solution> replacement(ArrayList<Solution> population, ArrayList<Solution> offspring);
 

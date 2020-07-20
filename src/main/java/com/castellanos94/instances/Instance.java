@@ -1,6 +1,8 @@
 package com.castellanos94.instances;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 
 import java.lang.reflect.Array;
@@ -21,6 +23,10 @@ public abstract class Instance {
     }
 
     public abstract Instance loadInstance(String path) throws FileNotFoundException;
+    public  Instance loadInstance(InputStream is) throws IOException {
+        throw new UnsupportedOperationException("Instance undefined method");
+    }
+
     public void addParam(String key, Object value){
         this.params.put(key, value);
     }

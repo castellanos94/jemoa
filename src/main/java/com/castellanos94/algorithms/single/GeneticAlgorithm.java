@@ -22,7 +22,7 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
         this.mutationOperator = mutationOperator;
     }
     @Override
-    protected ArrayList<Solution> reproduction(ArrayList<Solution> parents) {
+    protected ArrayList<Solution> reproduction(ArrayList<Solution> parents) throws CloneNotSupportedException {
         ArrayList<Solution> offspring = new ArrayList<>();
         for (int i = 0; i < parents.size(); i++) {
             ArrayList<Solution> p = new ArrayList<>();
