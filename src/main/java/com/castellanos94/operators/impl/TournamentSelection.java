@@ -44,4 +44,10 @@ public class TournamentSelection implements SelectionOperator {
         return parents;
     }
 
+    @Override
+    public String toString() {
+        return "TournamentSelection [comparator=" + comparator + ", n_offsrping=" + n_offsrping + ", parents=" + parents
+                + "]";
+    }
+
 }

@@ -2,6 +2,6 @@ package com.castellanos94.utils;
 
 
 
-public interface Plot {
+public interface Plotter {
     void plot();
 }

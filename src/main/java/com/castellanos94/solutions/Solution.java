@@ -235,9 +235,8 @@ public class Solution implements Cloneable, Comparable<Solution> {
 
     @Override
     public String toString() {
-        // return String.format("%s * %s * %s * %s * %3d", decision_vars, objectives,
-        // resources, penalties, n_penalties);
-        return objectives.toString();
+        return String.format("%s * %s * %s * %s * %3d", decision_vars, objectives, resources, penalties, n_penalties);
+        // return objectives.toString();
     }
 
     public Data getVariable(int index) {

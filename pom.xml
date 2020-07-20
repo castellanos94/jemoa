@@ -16,6 +16,17 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>tech.tablesaw</groupId>
+            <artifactId>tablesaw-core</artifactId>
+            <version>LATEST</version>
+        </dependency>
+
+        <dependency>
+            <groupId>tech.tablesaw</groupId>
+            <artifactId>tablesaw-jsplot</artifactId>
+            <version>LATEST</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
