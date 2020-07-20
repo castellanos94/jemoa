@@ -11,25 +11,27 @@ import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
-public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
-    protected int maxEvaluation;
-    protected int currentEvaluation;
+public class MuGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
+    protected int maxIteration;
+    protected int currentIteration;
     protected Ranking ranking;
 
-    public GeneticAlgorithm(Problem problem, int maxEvaluation, SelectionOperator selectionOperator,
-            CrossoverOperator crossoverOperator, MutationOperator mutationOperator) {
+    public MuGeneticAlgorithm(Problem problem, int maxIteration, int populationSize,
+            SelectionOperator selectionOperator, CrossoverOperator crossoverOperator,
+            MutationOperator mutationOperator) {
         super(problem);
-        this.maxEvaluation = maxEvaluation;
+        this.maxIteration = maxIteration;
         this.selectionOperator = selectionOperator;
         this.crossoverOperator = crossoverOperator;
         this.mutationOperator = mutationOperator;
-        this.currentEvaluation = 0;
+        this.currentIteration = 0;
+        this.populationSize = populationSize;
         this.ranking = new DominanceCompartor();
     }
 
     @Override
     protected void updateProgress() {
-        currentEvaluation *= populationSize;
+        currentIteration++;
     }
 
     @Override
@@ -59,12 +61,12 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
 
     @Override
     protected boolean isStoppingCriteriaReached() {
-        return currentEvaluation < maxEvaluation;
+        return currentIteration < maxIteration;
     }
 
     @Override
     public String toString() {
-        return "GeneticAlgorithm [maxEvaluation=" + maxEvaluation + "]";
+        return "GeneticAlgorithm [maxIteration=" + maxIteration + "]";
     }
 
 }
