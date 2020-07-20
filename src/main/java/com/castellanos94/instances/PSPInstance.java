@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import com.castellanos94.datatype.IntegerData;
+import com.castellanos94.problems.Problem;
 
 
 /*
