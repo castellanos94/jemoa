@@ -9,8 +9,15 @@ public class IntervalData extends Data {
     private RealData upper;
 
     public IntervalData(Number n) {
-        this.lower = new RealData(n);
-        this.upper = new RealData(n);
+        if (n instanceof IntervalData) {
+            IntervalData t = (IntervalData) n;
+            this.lower = new RealData(t.getLower());
+            this.upper = new RealData(t.getUpper());
+        } else {
+            this.lower = new RealData(n);
+            this.upper = new RealData(n);
+
+        }
     }
 
     public IntervalData(Number lower, Number upper) {

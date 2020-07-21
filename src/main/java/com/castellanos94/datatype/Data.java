@@ -43,7 +43,7 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
             return new RealData(0);
         }
         if (d instanceof IntervalData) {
-            return new IntegerData(0);
+            return new IntervalData(0);
         }
         return null;
     }
@@ -59,7 +59,7 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
             return new RealData(1);
         }
         if (d instanceof IntervalData) {
-            return new IntegerData(1);
+            return new IntervalData(1);
         }
         return null;
     }
@@ -106,6 +106,22 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
             double l = ((IntervalData) this).getLower().doubleValue();
             double u = ((IntervalData) this).getUpper().doubleValue();
             return new IntervalData(Math.sqrt(l), Math.sqrt(u));
+        }
+        return null;
+    }
+
+    public static Data initByRefType(Number var, Number value) {
+        if (var == null) {
+            return null;
+        }
+        if (var instanceof Integer || var instanceof IntegerData) {
+            return new IntegerData(value);
+        }
+        if (var instanceof Float || var instanceof Double || var instanceof RealData) {
+            return new RealData(value);
+        }
+        if (var instanceof IntervalData) {
+            return new IntervalData(value);
         }
         return null;
     }
