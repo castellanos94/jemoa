@@ -9,9 +9,12 @@ import com.castellanos94.utils.Tools;
 
 public class ZDT1 extends Problem {
     // private List<Integer> index;
-
     public ZDT1() {
-        this.numberOfDecisionVars = 30;
+        this(30);
+    }
+
+    public ZDT1(int numberOfDecisionVars) {
+        this.numberOfDecisionVars = numberOfDecisionVars;
         this.numberOfObjectives = 2;
         this.numberOfConstrains = 0;
         // this.index = IntStream.range(0,
@@ -44,11 +47,12 @@ public class ZDT1 extends Problem {
         for (int i = 1; i < numberOfDecisionVars; i++) {
             sum = (RealData) sum.addition(solution.getDecision_vars().get(i));
         }
-        //g = (RealData) RealData.ONE.addition(new RealData(9).multiplication(g));
+        // g = (RealData) RealData.ONE.addition(new RealData(9).multiplication(g));
         Data tmp = new RealData(9).division(solution.getDecision_vars().size() - 1);
         g = (RealData) RealData.ONE.addition(tmp.multiplication(sum));
-        //h = (RealData) RealData.ONE.subtraction(solution.getObjectives().get(0).division(g).sqr());
-        tmp =  solution.getObjectives().get(0).division(g);
+        // h = (RealData)
+        // RealData.ONE.subtraction(solution.getObjectives().get(0).division(g).sqr());
+        tmp = solution.getObjectives().get(0).division(g);
         f2 = (RealData) g.multiplication(RealData.ONE.subtraction(tmp.sqr()));
         solution.setObjective(1, f2);
 
