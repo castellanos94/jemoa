@@ -33,7 +33,7 @@ local.properties
 .loadpath
 .classpath
 .project
-.vscode
+.vscode/
 
 # External tool builders
 .externalToolBuilders/
