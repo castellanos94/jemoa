@@ -1,4 +1,4 @@
-# jemoa
+# JEMOA
 Java Evolutionary Multi-Objective Algorithm
 # Data type
 * Integer
@@ -7,6 +7,8 @@ Java Evolutionary Multi-Objective Algorithm
 # Problems
 *  PSP
 *  Knapsack
+*  DTLZ
+*  ZDT
 # Algorithms
 *  For single-objective:
    * GA: a genetic algorithm. 
