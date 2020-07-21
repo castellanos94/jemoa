@@ -16,13 +16,15 @@ public class CrowdingDistance implements DensityEstimator {
         if (solutions.size() == 0) {
             return;
         } else if (solutions.size() == 1) {
-
             solutions.get(0).getProperties().put(getKey(), maxValue(solutions.get(0)));
             return;
         } else if (solutions.size() == 2) {
             solutions.get(0).getProperties().put(getKey(), maxValue(solutions.get(0)));
             solutions.get(1).getProperties().put(getKey(), maxValue(solutions.get(0)));
             return;
+        }
+        for (Solution solution : solutions) {
+            solution.getProperties().put(getKey(), Data.getZeroByType(solution.getObjectives().get(0)));
         }
         int numOfObj = solutions.get(0).getObjectives().size();
         Data MaxValue = maxValue(solutions.get(0));

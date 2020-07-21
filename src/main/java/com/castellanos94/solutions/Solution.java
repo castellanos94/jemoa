@@ -19,6 +19,8 @@ public class Solution implements Cloneable, Comparable<Solution> {
     protected Problem problem;
     protected Integer n_penalties = 0;
     protected HashMap<String, Object> properties;
+    protected Data[] lowerBound;
+    protected Data[] upperBound;
 
     protected int rank;
 
@@ -37,9 +39,11 @@ public class Solution implements Cloneable, Comparable<Solution> {
             resources.add(null);
         }
         properties = new HashMap<>();
+        this.upperBound = problem.getUpperBound();
+        this.lowerBound = problem.getLowerBound();
     }
 
-    public Solution(int n_objectives, int n_decision_vars) {
+    public Solution(int n_objectives, int n_decision_vars, Data[] lowerBound, Data[] upperBound) {
         this.decision_vars = new ArrayList<>(n_decision_vars);
         this.objectives = new ArrayList<>(n_objectives);
         for (int i = 0; i < n_decision_vars; i++) {
@@ -49,6 +53,8 @@ public class Solution implements Cloneable, Comparable<Solution> {
             objectives.add(null);
         }
         properties = new HashMap<>();
+        this.lowerBound = lowerBound;
+        this.upperBound = upperBound;
 
     }
 
@@ -176,16 +182,51 @@ public class Solution implements Cloneable, Comparable<Solution> {
     }
 
     @Override
+    public String toString() {
+        return String.format("%s * %s * %s * %s * %3d", decision_vars, objectives, resources, penalties, n_penalties);
+        // return objectives.toString();
+    }
+
+    public Data getVariable(int index) {
+        return decision_vars.get(index);
+    }
+
+    public Data getLowerBound(int i) {
+        return lowerBound[i];
+    }
+
+    public Data getUpperBound(int i) {
+        return upperBound[i];
+    }
+    public void setLowerBound(Data[] lowerBound) {
+        this.lowerBound = lowerBound;
+    }
+    public void setUpperBound(Data[] upperBound) {
+        this.upperBound = upperBound;
+    }
+    
+
+    public void setVariable(int i, Data y) {
+        this.decision_vars.set(i, y);
+    }
+
+    public Data getObjective(int index) {
+        return objectives.get(index);
+    }
+
+    public Data[] getLowerBound() {
+        return lowerBound;
+    }
+
+    public Data[] getUpperBound() {
+        return upperBound;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((decision_vars == null) ? 0 : decision_vars.hashCode());
-        result = prime * result + ((n_penalties == null) ? 0 : n_penalties.hashCode());
-        result = prime * result + ((objectives == null) ? 0 : objectives.hashCode());
-        result = prime * result + ((penalties == null) ? 0 : penalties.hashCode());
-        result = prime * result + ((problem == null) ? 0 : problem.hashCode());
-        result = prime * result + rank;
-        result = prime * result + ((resources == null) ? 0 : resources.hashCode());
         return result;
     }
 
@@ -204,28 +245,6 @@ public class Solution implements Cloneable, Comparable<Solution> {
         } else if (!decision_vars.equals(other.decision_vars))
             return false;
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s * %s * %s * %s * %3d", decision_vars, objectives, resources, penalties, n_penalties);
-        // return objectives.toString();
-    }
-
-    public Data getVariable(int index) {
-        return decision_vars.get(index);
-    }
-
-    public Data getLowerBound(int i) {
-        return problem.getLowerBound()[i];
-    }
-
-    public Data getUpperBound(int i) {
-        return problem.getUpperBound()[i];
-    }
-
-    public void setVariable(int i, Data y) {
-        this.decision_vars.set(i, y);
     }
 
 }
