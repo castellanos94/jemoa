@@ -12,6 +12,7 @@ import com.castellanos94.operators.impl.PolyMutation;
 import com.castellanos94.operators.impl.SBXCrossover;
 import com.castellanos94.operators.impl.TournamentSelection;
 import com.castellanos94.problems.Problem;
+import com.castellanos94.problems.benchmarks.DTLZ1;
 import com.castellanos94.problems.benchmarks.ZDT1;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
@@ -19,7 +20,7 @@ import com.castellanos94.utils.Scatter2D;
 
 public class NSGAIIExample {
     public static void main(String[] args) throws CloneNotSupportedException {
-        Problem problem = new ZDT1();
+        Problem problem = new DTLZ1();
         int maxIteration = 50000, popSize = 100;
         System.out.println(problem);
         SelectionOperator selectionOperator = new TournamentSelection(popSize, new DominanceCompartor());
