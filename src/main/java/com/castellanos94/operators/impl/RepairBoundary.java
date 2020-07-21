@@ -10,12 +10,12 @@ public class RepairBoundary implements RepairOperator {
     public void repair(Solution solution) {
         for (int i = 0; i < solution.getDecision_vars().size(); i++) {
             Data var = solution.getVariable(i);
-            if(var.compareTo(solution.getLowerBound(i)) < 0){
-                solution.setDecisionVar(i, Data.initByRefType(var, 3));
-            }else if(var.compareTo(solution.getUpperBound(i))> 0){
-
+            if (var.compareTo(solution.getLowerBound(i)) < 0) {
+                solution.setDecisionVar(i, Data.initByRefType(var, solution.getLowerBound(i)));
+            } else if (var.compareTo(solution.getUpperBound(i)) > 0) {
+                solution.setDecisionVar(i, Data.initByRefType(var, solution.getUpperBound(i)));
             }
         }
     }
-    
+
 }
