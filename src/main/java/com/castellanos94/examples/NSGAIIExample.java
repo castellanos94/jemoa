@@ -36,7 +36,7 @@ public class NSGAIIExample {
         CrossoverOperator crossoverOperator = new SBXCrossover(crossoverDistributionIndex, crossoverProbability);
         MutationOperator mutationOperator = new PolynomialMutation(mutationDistributionIndex, mutationProbability);
         AbstractAlgorithm algorithm = new NSGAII(problem, maxIteration, popSize, selectionOperator, crossoverOperator,
-                mutationOperator);
+                mutationOperator,new RepairRandomBoundary());
         System.out.println(algorithm);
         algorithm.execute();
         System.out.println(algorithm.getSolutions().size());

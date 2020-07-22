@@ -18,8 +18,8 @@ public class FastNonDominatedSort implements Ranking {
     @Override
     public void computeRanking(ArrayList<Solution> population) {
         this.fronts = new ArrayList<>();
-
         ArrayList<ArrayList<Integer>> dominate_me = new ArrayList<>();
+
         for (int i = 0; i < population.size(); i++) {
             dominate_me.add(new ArrayList<>());
             fronts.add(new ArrayList<>());
@@ -36,14 +36,15 @@ public class FastNonDominatedSort implements Ranking {
                 }
             }
         }
-        // find front 0
         int i = 0;
         Iterator<ArrayList<Integer>> iter = dominate_me.iterator();
 
         ArrayList<Integer> toRemove = new ArrayList<>();
+        int min = getMinDom(dominate_me);
+        i = 0;
         while (iter.hasNext()) {
             ArrayList<Integer> dom = iter.next();
-            if (dom.size() == 0) {
+            if (dom.size() == min) {
                 fronts.get(0).add(population.get(i));
                 toRemove.add(i);
             }
@@ -52,12 +53,12 @@ public class FastNonDominatedSort implements Ranking {
         for (Integer integer : toRemove) {
             solutionRemove(integer, dominate_me);
         }
-
         for (int j = 1; j < fronts.size(); j++) {
             ArrayList<Solution> currentFront = fronts.get(j);
             i = 0;
+            min = getMinDom(dominate_me);
             for (ArrayList<Integer> dom_me : dominate_me) {
-                if (!toRemove.contains(i) && dom_me.size() == 0) {
+                if (!toRemove.contains(i) && dom_me.size() == min) {
                     currentFront.add(population.get(i));
                     toRemove.add(i);
                 }
@@ -66,49 +67,11 @@ public class FastNonDominatedSort implements Ranking {
             for (Integer integer : toRemove) {
                 solutionRemove(integer, dominate_me);
             }
-
         }
         setRanking();
-        if (fronts.size() == 0) {
-            for (int j = 0; j < population.size(); j++) {
-                fronts.add(new ArrayList<>());
-            }
-            iter = dominate_me.iterator();
-            int min = getMinDom(dominate_me);
-            i = 0;
-            while (iter.hasNext()) {
-                ArrayList<Integer> dom = iter.next();
-                if (dom.size() == min) {
-                    fronts.get(0).add(population.get(i));
-                    toRemove.add(i);
-                }
-                i++;
-            }
-            for (Integer integer : toRemove) {
-                solutionRemove(integer, dominate_me);
-            }
-            for (int j = 1; j < fronts.size(); j++) {
-                ArrayList<Solution> currentFront = fronts.get(j);
-                i = 0;
-                min = getMinDom(dominate_me);
-                for (ArrayList<Integer> dom_me : dominate_me) {
-                    if (!toRemove.contains(i) && dom_me.size() == min) {
-                        currentFront.add(population.get(i));
-                        toRemove.add(i);
-                    }
-                    i++;
-                }
-                for (Integer integer : toRemove) {
-                    solutionRemove(integer, dominate_me);
-                }
-
-            }
-            setRanking();
-        }
     }
 
     private void setRanking() {
-
         fronts.removeIf(front -> front.size() == 0);
 
         for (int j = 0; j < fronts.size(); j++) {
