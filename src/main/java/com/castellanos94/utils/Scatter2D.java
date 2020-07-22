@@ -14,6 +14,7 @@ public class Scatter2D implements Plotter {
 
     private double[][] matrix;
     private String plotTitle;
+    protected Table table;
 
     public Scatter2D(ArrayList<Solution> front, String title) {
         this.matrix = new double[front.size()][front.get(0).getObjectives().size()];
@@ -45,9 +46,15 @@ public class Scatter2D implements Plotter {
             f2[i] = matrix[i][1];
         }
 
-        Table table = Table.create("table").addColumns(DoubleColumn.create("f1", f1), DoubleColumn.create("f2", f2));
+        table = Table.create("table").addColumns(DoubleColumn.create("f1", f1), DoubleColumn.create("f2", f2));
         System.out.println(table.summary());
 
         Plot.show(ScatterPlot.create(plotTitle, table, "f1", "f2"), new File(plotTitle+".html"));
     }
+
+    @Override
+    public Table getTable() {
+        return table;
+    }
+    
 }

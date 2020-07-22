@@ -14,7 +14,7 @@ public class Scatter3D implements Plotter {
 
     private double[][] matrix;
     private String plotTitle;
-
+    private Table table;
     public Scatter3D(ArrayList<Solution> front, String title) {
         this.matrix = new double[front.size()][front.get(0).getObjectives().size()];
         for (int i = 0; i < matrix.length; i++) {
@@ -48,11 +48,16 @@ public class Scatter3D implements Plotter {
             f3[i] = matrix[i][2];
         }
 
-        Table table = Table.create("table").addColumns(DoubleColumn.create("f1", f1), DoubleColumn.create("f2", f2),
+         table = Table.create("table").addColumns(DoubleColumn.create("f1", f1), DoubleColumn.create("f2", f2),
                 DoubleColumn.create("f3", f3));
 
         System.out.println(table.summary());
         Plot.show(Scatter3DPlot.create(plotTitle, table, "f1", "f2", "f3"), new File(plotTitle+".html"));
+    }
+
+    @Override
+    public Table getTable() {
+        return table;
     }
 
 }
