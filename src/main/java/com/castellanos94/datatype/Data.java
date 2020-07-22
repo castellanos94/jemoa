@@ -125,4 +125,21 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
         }
         return null;
     }
+
+    public static boolean checkNaN(Number var) {
+        if (var == null) {
+            return false;
+        }
+        if (var instanceof Integer || var instanceof IntegerData) {
+            return Double.isNaN(var.doubleValue());
+        }
+        if (var instanceof Float || var instanceof Double || var instanceof RealData) {
+            return Double.isNaN(var.doubleValue());
+        }
+        if (var instanceof IntervalData) {
+            IntervalData data = new IntervalData(var);
+            return Double.isNaN(data.getLower().doubleValue()) || Double.isNaN(data.getUpper().doubleValue());
+        }
+        throw new IllegalArgumentException("is not number");
+    }
 }

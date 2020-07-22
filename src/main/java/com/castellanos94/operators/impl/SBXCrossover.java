@@ -112,6 +112,7 @@ public class SBXCrossover implements CrossoverOperator {
             for (Solution solution : offspring)
                 repairOperator.repair(solution);
         }
+        
         return offspring;
 
     }

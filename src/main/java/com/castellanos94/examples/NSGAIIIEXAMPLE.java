@@ -21,18 +21,18 @@ public class NSGAIIIEXAMPLE {
     public static void main(String[] args) throws CloneNotSupportedException {
         Problem problem = new DTLZ1();
         int populationSize = 100;
-        int maxIterations = 300;
+        int maxIterations = 50000;
         int numberOfDivisions = 12;
         SelectionOperator selection;
         CrossoverOperator crossover;
         MutationOperator mutation;
         double crossoverProbability = 0.9;
         double crossoverDistributionIndex = 30.0;
-        crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex);
+        crossover = new SBXCrossover(crossoverDistributionIndex, crossoverProbability);
 
         double mutationProbability = 1.0 / problem.getNumberOfDecisionVars();
         double mutationDistributionIndex = 20.0;
-        mutation = new PolyMutation(mutationProbability, mutationDistributionIndex);
+        mutation = new PolyMutation(mutationDistributionIndex, mutationProbability);
         selection = new TournamentSelection(populationSize, new DominanceCompartor());
 
         AbstractEvolutionaryAlgorithm algorithm = new NSGAIII(problem, populationSize, maxIterations, numberOfDivisions,
@@ -41,6 +41,9 @@ public class NSGAIIIEXAMPLE {
         algorithm.execute();
         System.out.println(algorithm.getSolutions().size());
         ArrayList<Solution> solutions = algorithm.getSolutions();
+        for (Solution solution : solutions) {
+            System.out.println(solution);
+        }
         System.out.println("Time: " + algorithm.getComputeTime() + " ms.");
         Plotter plotter = new Scatter3D(solutions, "dtlz1-nsgaiii");
         plotter.plot();

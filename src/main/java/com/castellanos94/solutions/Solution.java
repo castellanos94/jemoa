@@ -99,7 +99,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
      * @return the decision_vars
      */
     public ArrayList<Data> getDecision_vars() {
-        return decision_vars;
+        return this.decision_vars;
     }
 
     /**
@@ -113,11 +113,11 @@ public class Solution implements Cloneable, Comparable<Solution> {
      * @return the rank
      */
     public Integer getRank() {
-        return rank;
+        return this.rank;
     }
 
     public ArrayList<Data> getResources() {
-        return resources;
+        return this.resources;
     }
 
     public void setResources(ArrayList<Data> resources) {
@@ -125,7 +125,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
     }
 
     public Problem getProblem() {
-        return problem;
+        return this.problem;
     }
 
     public void setProblem(Problem problem) {
@@ -133,11 +133,11 @@ public class Solution implements Cloneable, Comparable<Solution> {
     }
 
     public Integer getN_penalties() {
-        return n_penalties;
+        return this.n_penalties;
     }
 
     public Data getPenalties() {
-        return penalties;
+        return this.penalties;
     }
 
     public void setN_penalties(Integer n_penalties) {
@@ -149,7 +149,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
     }
 
     public HashMap<String, Object> getProperties() {
-        return properties;
+        return this.properties;
     }
 
     public void setProperties(HashMap<String, Object> properties) {
@@ -188,15 +188,15 @@ public class Solution implements Cloneable, Comparable<Solution> {
     }
 
     public Data getVariable(int index) {
-        return decision_vars.get(index);
+        return this.decision_vars.get(index);
     }
 
     public Data getLowerBound(int i) {
-        return lowerBound[i];
+        return this.lowerBound[i];
     }
 
     public Data getUpperBound(int i) {
-        return upperBound[i];
+        return this.upperBound[i];
     }
     public void setLowerBound(Data[] lowerBound) {
         this.lowerBound = lowerBound;
@@ -211,15 +211,15 @@ public class Solution implements Cloneable, Comparable<Solution> {
     }
 
     public Data getObjective(int index) {
-        return objectives.get(index);
+        return this.objectives.get(index);
     }
 
     public Data[] getLowerBound() {
-        return lowerBound;
+        return this.lowerBound;
     }
 
     public Data[] getUpperBound() {
-        return upperBound;
+        return this.upperBound;
     }
 
     @Override

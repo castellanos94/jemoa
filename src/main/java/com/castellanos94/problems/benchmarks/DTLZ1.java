@@ -1,6 +1,7 @@
 package com.castellanos94.problems.benchmarks;
 
 import com.castellanos94.datatype.Data;
+import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
@@ -125,7 +126,11 @@ public class DTLZ1 extends Problem {
 
     @Override
     public int evaluateConstraints(Solution solution) {
-        solution.setPenalties(RealData.ZERO);
+        /*
+         * int n = 0; for (Data data : solution.getObjectives()){
+         * if(data.compareTo(0)<0){ n++; } } solution.setPenalties(new IntegerData(n));
+         */
+        solution.setPenalties(new IntegerData(0));
         return 0;
     }
 }

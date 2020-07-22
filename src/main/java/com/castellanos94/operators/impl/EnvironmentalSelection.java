@@ -301,6 +301,7 @@ public class EnvironmentalSelection implements SelectionOperator {
                 source.add(chosen);
             }
         }
+        parents = source;
 
     }
 

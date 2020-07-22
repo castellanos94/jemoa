@@ -11,13 +11,13 @@ public class RepairRandomBoundary implements RepairOperator {
     public void repair(Solution solution) {
         for (int i = 0; i < solution.getDecision_vars().size(); i++) {
             Data var = solution.getVariable(i);
-            if (var.compareTo(solution.getLowerBound(i)) < 0) {
+            if (Data.checkNaN(var)) {
                 solution.setDecisionVar(i, Data.initByRefType(var, Data.initByRefType(var,
-                        Tools.getRandomNumberInRange(solution.getLowerBound(i), solution.getLowerBound(i)))));
-            } else if (var.compareTo(solution.getUpperBound(i)) > 0) {
+                        Tools.getRandomNumberInRange(solution.getLowerBound(i), solution.getUpperBound(i)))));
+            } else if (var.compareTo(solution.getLowerBound(i)) < 0 || var.compareTo(solution.getUpperBound(i)) > 0) {
                 solution.setDecisionVar(i, Data.initByRefType(var, Data.initByRefType(var,
-                        Tools.getRandomNumberInRange(solution.getUpperBound(i), solution.getUpperBound(i)))));
-            }
+                        Tools.getRandomNumberInRange(solution.getLowerBound(i), solution.getUpperBound(i)))));
+            } 
         }
     }
 
