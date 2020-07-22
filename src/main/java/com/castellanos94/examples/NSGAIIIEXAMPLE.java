@@ -16,12 +16,14 @@ import com.castellanos94.problems.benchmarks.DTLZ1;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
 import com.castellanos94.utils.Scatter3D;
+import com.castellanos94.utils.Tools;
 
 public class NSGAIIIEXAMPLE {
     public static void main(String[] args) throws CloneNotSupportedException {
+        Tools.setSeed(77003L);
         Problem problem = new DTLZ1();
         int populationSize = 100;
-        int maxIterations = 50000;
+        int maxIterations = 300;
         int numberOfDivisions = 12;
         SelectionOperator selection;
         CrossoverOperator crossover;
