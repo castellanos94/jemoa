@@ -8,7 +8,7 @@ import com.castellanos94.components.impl.DominanceCompartor;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
-import com.castellanos94.operators.impl.PolyMutation;
+import com.castellanos94.operators.impl.PolynomialMutation;
 import com.castellanos94.operators.impl.SBXCrossover;
 import com.castellanos94.operators.impl.TournamentSelection;
 import com.castellanos94.problems.Problem;
@@ -34,7 +34,7 @@ public class NSGAIIIEXAMPLE {
 
         double mutationProbability = 1.0 / problem.getNumberOfDecisionVars();
         double mutationDistributionIndex = 20.0;
-        mutation = new PolyMutation(mutationDistributionIndex, mutationProbability);
+        mutation = new PolynomialMutation(mutationDistributionIndex, mutationProbability);
         selection = new TournamentSelection(populationSize, new DominanceCompartor());
 
         AbstractEvolutionaryAlgorithm algorithm = new NSGAIII(problem, populationSize, maxIterations, numberOfDivisions,

@@ -8,6 +8,7 @@ import com.castellanos94.components.impl.CrowdingDistance;
 import com.castellanos94.components.impl.FastNonDominatedSort;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
+import com.castellanos94.operators.RepairOperator;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
@@ -17,6 +18,7 @@ public class NSGAII extends AbstractEvolutionaryAlgorithm {
     protected int currentEvaluation;
     protected DensityEstimator densityEstimator;
     protected FastNonDominatedSort fastNonDominatedSort;
+    protected RepairOperator repairOperator;
 
     public NSGAII(Problem problem, int maxEvaluation, int populationSize, SelectionOperator selectionOperator,
             CrossoverOperator crossoverOperator, MutationOperator mutationOperator) {
@@ -29,10 +31,33 @@ public class NSGAII extends AbstractEvolutionaryAlgorithm {
         this.populationSize = populationSize;
         this.densityEstimator = new CrowdingDistance();
         this.fastNonDominatedSort = new FastNonDominatedSort();
+        this.repairOperator = new RepairOperator() {
+
+            @Override
+            public void repair(Solution solution) {
+                // Nothing improvement
+            }
+
+        };
     }
 
     public NSGAII(Problem problem, int maxEvaluation, int populationSize, SelectionOperator selectionOperator,
-            CrossoverOperator crossoverOperator, MutationOperator mutationOperator, DensityEstimator densityEstimator) {
+            CrossoverOperator crossoverOperator, MutationOperator mutationOperator, RepairOperator repairOperator) {
+        super(problem);
+        this.maxEvaluation = maxEvaluation;
+        this.selectionOperator = selectionOperator;
+        this.crossoverOperator = crossoverOperator;
+        this.mutationOperator = mutationOperator;
+        this.currentEvaluation = 0;
+        this.populationSize = populationSize;
+        this.densityEstimator = new CrowdingDistance();
+        this.fastNonDominatedSort = new FastNonDominatedSort();
+        this.repairOperator = repairOperator;
+    }
+
+    public NSGAII(Problem problem, int maxEvaluation, int populationSize, SelectionOperator selectionOperator,
+            CrossoverOperator crossoverOperator, MutationOperator mutationOperator, DensityEstimator densityEstimator,
+            RepairOperator repairOperator) {
         super(problem);
         this.maxEvaluation = maxEvaluation;
         this.selectionOperator = selectionOperator;
@@ -42,6 +67,7 @@ public class NSGAII extends AbstractEvolutionaryAlgorithm {
         this.populationSize = populationSize;
         this.densityEstimator = densityEstimator;
         this.fastNonDominatedSort = new FastNonDominatedSort();
+        this.repairOperator = repairOperator;
     }
 
     @Override
@@ -61,6 +87,7 @@ public class NSGAII extends AbstractEvolutionaryAlgorithm {
         }
         for (Solution solution : offspring) {
             mutationOperator.execute(solution);
+            repairOperator.repair(solution);
             problem.evaluate(solution);
             problem.evaluateConstraints(solution);
         }

@@ -8,19 +8,19 @@ import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
-public class PolyMutation implements MutationOperator {
+public class PolynomialMutation implements MutationOperator {
     private static final double DEFAULT_PROBABILITY = 0.01;
     private static final double DEFAULT_DISTRIBUTION_INDEX = 20.0;
     private Random randomGenerator = Tools.getRandom();
     private double distributionIndex;
     private double mutationProbability;
 
-    public PolyMutation() {
+    public PolynomialMutation() {
         this.distributionIndex = DEFAULT_DISTRIBUTION_INDEX;
         this.mutationProbability = DEFAULT_PROBABILITY;
     }
 
-    public PolyMutation(double distributionIndex, double mutationProbability) {
+    public PolynomialMutation(double distributionIndex, double mutationProbability) {
         this.distributionIndex = distributionIndex;
         this.mutationProbability = mutationProbability;
     }
