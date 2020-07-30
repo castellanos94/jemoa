@@ -16,7 +16,7 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.ReferencePoint;
 
-public class NSGAIII extends AbstractEvolutionaryAlgorithm {
+public class NSGA_III extends AbstractEvolutionaryAlgorithm {
     protected int maxIterations;
     protected int currenIteration;
     protected int numberOfDivisions;
@@ -85,7 +85,7 @@ public class NSGAIII extends AbstractEvolutionaryAlgorithm {
         return currenIteration < maxIterations;
     }
 
-    public NSGAIII(Problem problem, int populationSize, int maxIterations, int numberOfDivisions,
+    public NSGA_III(Problem problem, int populationSize, int maxIterations, int numberOfDivisions,
             SelectionOperator selectionOperator, CrossoverOperator crossoverOperator,
             MutationOperator mutationOperator) {
         super(problem);
@@ -109,7 +109,7 @@ public class NSGAIII extends AbstractEvolutionaryAlgorithm {
         setPopulationSize(populationRSize);
     }
 
-    public NSGAIII(Problem problem, int populationSize, int maxIterations, int numberOfDivisions,
+    public NSGA_III(Problem problem, int populationSize, int maxIterations, int numberOfDivisions,
             SelectionOperator selectionOperator, CrossoverOperator crossoverOperator, MutationOperator mutationOperator,
             Ranking ranking, RepairOperator repairOperator) {
         super(problem);

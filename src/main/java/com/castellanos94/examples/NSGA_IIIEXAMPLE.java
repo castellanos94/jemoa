@@ -3,7 +3,7 @@ package com.castellanos94.examples;
 import java.util.ArrayList;
 
 import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
-import com.castellanos94.algorithms.multi.NSGAIII;
+import com.castellanos94.algorithms.multi.NSGA_III;
 import com.castellanos94.components.impl.DominanceCompartor;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
@@ -18,7 +18,7 @@ import com.castellanos94.utils.Plotter;
 import com.castellanos94.utils.Scatter3D;
 import com.castellanos94.utils.Tools;
 
-public class NSGAIIIEXAMPLE {
+public class NSGA_IIIEXAMPLE {
     public static void main(String[] args) throws CloneNotSupportedException {
         Tools.setSeed(77003L);
         Problem problem = new DTLZ1();
@@ -37,7 +37,7 @@ public class NSGAIIIEXAMPLE {
         mutation = new PolynomialMutation(mutationDistributionIndex, mutationProbability);
         selection = new TournamentSelection(populationSize, new DominanceCompartor());
 
-        AbstractEvolutionaryAlgorithm algorithm = new NSGAIII(problem, populationSize, maxIterations, numberOfDivisions,
+        AbstractEvolutionaryAlgorithm algorithm = new NSGA_III(problem, populationSize, maxIterations, numberOfDivisions,
                 selection, crossover, mutation);
         System.out.println(algorithm);
         algorithm.execute();

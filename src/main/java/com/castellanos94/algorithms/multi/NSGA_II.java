@@ -13,14 +13,14 @@ import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
-public class NSGAII extends AbstractEvolutionaryAlgorithm {
+public class NSGA_II extends AbstractEvolutionaryAlgorithm {
     protected int maxEvaluation;
     protected int currentEvaluation;
     protected DensityEstimator densityEstimator;
     protected FastNonDominatedSort fastNonDominatedSort;
     protected RepairOperator repairOperator;
 
-    public NSGAII(Problem problem, int maxEvaluation, int populationSize, SelectionOperator selectionOperator,
+    public NSGA_II(Problem problem, int maxEvaluation, int populationSize, SelectionOperator selectionOperator,
             CrossoverOperator crossoverOperator, MutationOperator mutationOperator) {
         super(problem);
         this.maxEvaluation = maxEvaluation;
@@ -41,7 +41,7 @@ public class NSGAII extends AbstractEvolutionaryAlgorithm {
         };
     }
 
-    public NSGAII(Problem problem, int maxEvaluation, int populationSize, SelectionOperator selectionOperator,
+    public NSGA_II(Problem problem, int maxEvaluation, int populationSize, SelectionOperator selectionOperator,
             CrossoverOperator crossoverOperator, MutationOperator mutationOperator, RepairOperator repairOperator) {
         super(problem);
         this.maxEvaluation = maxEvaluation;
@@ -55,7 +55,7 @@ public class NSGAII extends AbstractEvolutionaryAlgorithm {
         this.repairOperator = repairOperator;
     }
 
-    public NSGAII(Problem problem, int maxEvaluation, int populationSize, SelectionOperator selectionOperator,
+    public NSGA_II(Problem problem, int maxEvaluation, int populationSize, SelectionOperator selectionOperator,
             CrossoverOperator crossoverOperator, MutationOperator mutationOperator, DensityEstimator densityEstimator,
             RepairOperator repairOperator) {
         super(problem);

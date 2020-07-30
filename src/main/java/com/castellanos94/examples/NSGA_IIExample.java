@@ -3,7 +3,7 @@ package com.castellanos94.examples;
 import java.util.ArrayList;
 
 import com.castellanos94.algorithms.AbstractAlgorithm;
-import com.castellanos94.algorithms.multi.NSGAII;
+import com.castellanos94.algorithms.multi.NSGA_II;
 import com.castellanos94.components.impl.DominanceCompartor;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
@@ -19,7 +19,7 @@ import com.castellanos94.utils.Plotter;
 import com.castellanos94.utils.Scatter2D;
 import com.castellanos94.utils.Tools;
 
-public class NSGAIIExample {
+public class NSGA_IIExample {
     public static void main(String[] args) throws CloneNotSupportedException {
         Tools.setSeed(77003L);
 
@@ -35,7 +35,7 @@ public class NSGAIIExample {
         double mutationDistributionIndex = 20.0;
         CrossoverOperator crossoverOperator = new SBXCrossover(crossoverDistributionIndex, crossoverProbability);
         MutationOperator mutationOperator = new PolynomialMutation(mutationDistributionIndex, mutationProbability);
-        AbstractAlgorithm algorithm = new NSGAII(problem, maxIteration, popSize, selectionOperator, crossoverOperator,
+        AbstractAlgorithm algorithm = new NSGA_II(problem, maxIteration, popSize, selectionOperator, crossoverOperator,
                 mutationOperator,new RepairRandomBoundary());
         System.out.println(algorithm);
         algorithm.execute();
