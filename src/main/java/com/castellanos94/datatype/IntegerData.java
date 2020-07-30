@@ -58,16 +58,9 @@ public class IntegerData extends Data {
     }
 
     @Override
-    public int compareTo(Number d) {
-        if (d == null)
-            return -1;
-
-        if (this.data.doubleValue() > d.doubleValue())
-            return 1;
-        else if (this.data.doubleValue() == d.doubleValue())
-            return 0;
-
-        return -1;
+    public int compareTo(Number value) {
+        double a = this.doubleValue(), b = value.doubleValue();
+        return (a == b) ? 0 : (a > b) ? 1 : -1;
     }
 
     @Override
@@ -85,7 +78,6 @@ public class IntegerData extends Data {
         return (IntegerData) super.clone();
     }
 
-   
     @Override
     public int hashCode() {
         final int prime = 31;

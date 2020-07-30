@@ -27,9 +27,9 @@ public class TournamentSelection implements SelectionOperator {
                 pos_b = Tools.getRandom().nextInt(solutions.size());
             } while (pos_b == pos_a);
             int val = comparator.compare(solutions.get(pos_a), solutions.get(pos_b));
-            if (val == 1) {
+            if (val == -1) {
                 parents.add(solutions.get(pos_a));
-            } else if (val == -1) {
+            } else if (val == 1) {
                 parents.add(solutions.get(pos_b));
             } else {
                 parents.add(solutions.get(pos_a));

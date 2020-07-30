@@ -20,58 +20,40 @@ public class DominanceCompartor implements Comparator<Solution>, Ranking {
      * 
      * @param a represent the first solution
      * @param b represent the second solution
-     * @return 1, 0 or -1 if a dominates b, if a and b are non-dominated or a is
-     *         dominated by b, respectively.
+     * @return -1 if a dominates b, 0 if a and b are non-dominated or 1 b is
+     *         dominated by a.
      */
     @Override
     public int compare(Solution a, Solution b) {
         if (a.getObjectives().size() != b.getObjectives().size()) {
             throw new IllegalArgumentException("Solution must be same objective size");
         }
-        int a_dom = 0, b_dom = 0;
-        int flag = 0;
         Problem problem = a.getProblem();
 
         if (a.getN_penalties() != b.getN_penalties() || a.getPenalties().compareTo(0) < 0
                 || b.getPenalties().compareTo(0) < 0) {
-
             if (a.getN_penalties() < b.getN_penalties())
-                return 1;
-            if (b.getN_penalties() < a.getN_penalties())
                 return -1;
+            if (b.getN_penalties() < a.getN_penalties())
+                return 1;
+            int value = a.getPenalties().compareTo(b.getPenalties());
+            if (value != 0)
+                return (-1) * value;
         }
 
+        int a_dom = 0, b_dom = 0;
         for (int i = 0; i < a.getObjectives().size() && (a_dom != 1 || b_dom != 1); i++) {
             int value = a.getObjectives().get(i).compareTo(b.getObjectives().get(i));
-            int objective_type = problem.getObjectives_type()[i];
-            if (objective_type == Problem.MAXIMIZATION) {
-                if (value > 0) {
-                    flag = 1;
-                } else if (value == 0) {
-                    flag = 0;
-                } else {
-                    flag = -1;
-                }
-            } else {
-                if (value < 0) {
-                    flag = 1;
-                } else if (value == 0) {
-                    flag = 0;
-                } else {
-                    flag = -1;
-                }
+            if (problem.getObjectives_type()[i] == Problem.MAXIMIZATION) {
+                value *= -1;
             }
-            if (flag == 1) {
+            if (value == -1) {
                 a_dom = 1;
-            } else if (flag == -1) {
+            } else if (value == 1) {
                 b_dom = 1;
             }
         }
-        if (a_dom == b_dom)
-            return 0;
-        if (a_dom == 1)
-            return 1;
-        return -1;
+        return (a_dom == b_dom) ? 0 : (a_dom == 1) ? -1 : 1;
     }
 
     @Override
@@ -84,9 +66,9 @@ public class DominanceCompartor implements Comparator<Solution>, Ranking {
             for (int j = 0; j < population.size(); j++) {
                 if (i != j && !population.get(i).equals(population.get(j))) {
                     int value = compare(population.get(i), population.get(j));
-                    if (value == 1 && !dominate_me.get(j).contains(i)) {
+                    if (value == -1 && !dominate_me.get(j).contains(i)) {
                         dominate_me.get(j).add(i);
-                    } else if (value == -1 && !dominate_me.get(i).contains(j)) {
+                    } else if (value == 1 && !dominate_me.get(i).contains(j)) {
                         dominate_me.get(i).add(j);
                     }
                 }
@@ -95,12 +77,11 @@ public class DominanceCompartor implements Comparator<Solution>, Ranking {
         this.front = new ArrayList<>();
         for (int i = 0; i < population.size(); i++) {
             population.get(i).setRank(dominate_me.get(i).size());
-            if(population.get(i).getRank()==0)
-            front.add(population.get(i));
+            if (population.get(i).getRank() == 0)
+                front.add(population.get(i));
         }
-        Collections.sort(population);        
-        
-        
+        Collections.sort(population);
+
     }
 
     @Override

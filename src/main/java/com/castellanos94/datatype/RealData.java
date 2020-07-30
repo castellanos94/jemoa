@@ -17,17 +17,6 @@ public class RealData extends Data {
     }
 
     @Override
-    public int compareTo(Number o) {
-        if (o == null)
-            return -1;
-        if (this.data > o.doubleValue())
-            return 1;
-        else if (this.data == o.doubleValue())
-            return 0;
-        return -1;
-    }
-
-    @Override
     public Data multiplication(Number value) {
         // this.data *= value.doubleValue();
         return new RealData(data * value.doubleValue());
@@ -77,6 +66,12 @@ public class RealData extends Data {
     }
 
     @Override
+    public int compareTo(Number value) {
+        double a = this.data, b = value.doubleValue();
+        return (a == b) ? 0 : (a > b) ? 1 : -1;
+    }
+
+    @Override
     public RealData clone() throws CloneNotSupportedException {
         return (RealData) super.clone();
     }
@@ -86,7 +81,6 @@ public class RealData extends Data {
         return String.format("%3.5f", data);
     }
 
-    
     @Override
     public int hashCode() {
         final int prime = 31;

@@ -25,27 +25,6 @@ public class IntervalData extends Data {
         this.upper = new RealData(upper);
     }
 
-    @Override
-    public int compareTo(Number value) {
-        IntervalData data;
-        if (value instanceof IntervalData) {
-            data = (IntervalData) value;
-
-        } else {
-            data = new IntervalData(value);
-        }
-        if (lower.compareTo(data.getLower()) == 0 && upper.compareTo(data.getUpper()) == 0)
-            return 0;
-        if (data.getLower().compareTo(upper) > 0)
-            return 1;
-        if (data.getLower().compareTo(lower) < 0)
-            return -1;
-        RealData v = (RealData) upper.subtraction(lower).addition(data.getUpper().subtraction(data.getLower()));
-        RealData ped = (RealData) upper.subtraction(data.getLower()).division(v);
-
-        return (ped.compareTo(0.5) > 0) ? 1 : (ped.compareTo(0.5) < 0) ? -1 : 0;
-    }
-
     public RealData posibilityFunction(Number value) {
         IntervalData data;
         if (value instanceof IntervalData) {
@@ -169,6 +148,27 @@ public class IntervalData extends Data {
     @Override
     public String toString() {
         return String.format("[%s,%s]", lower, upper);
+    }
+
+    @Override
+    public int compareTo(Number b) {
+        IntervalData c;
+        if (b instanceof IntervalData) {
+            c = (IntervalData) b;
+
+        } else {
+            c = new IntervalData(b);
+        }
+        double lower = this.lower.doubleValue();
+        double upper = this.upper.doubleValue();
+        double lowerB = c.getLower().doubleValue();
+        double upperB = c.getUpper().doubleValue();
+
+        if (Double.compare(lower, lowerB) == 0 && Double.compare(upper, upperB) == 0)
+            return 0;
+
+        int ped = this.posibilityFunction(c).compareTo(0.5);
+        return (ped == 0) ? 0 : (ped < 0.5) ? -1 : 1;
     }
 
     /*

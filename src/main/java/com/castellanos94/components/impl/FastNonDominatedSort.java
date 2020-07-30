@@ -28,9 +28,9 @@ public class FastNonDominatedSort implements Ranking {
             for (int j = 0; j < population.size(); j++) {
                 if (i != j && !population.get(i).equals(population.get(j))) {
                     int value = paretoDominance.compare(population.get(i), population.get(j));
-                    if (value == 1 && !dominate_me.get(j).contains(i)) {
+                    if (value == -1 && !dominate_me.get(j).contains(i)) {
                         dominate_me.get(j).add(i);
-                    } else if (value == -1 && !dominate_me.get(i).contains(j)) {
+                    } else if (value == 1 && !dominate_me.get(i).contains(j)) {
                         dominate_me.get(i).add(j);
                     }
                 }

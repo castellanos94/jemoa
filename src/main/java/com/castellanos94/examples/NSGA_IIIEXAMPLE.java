@@ -17,7 +17,7 @@ import com.castellanos94.operators.impl.PolynomialMutation;
 import com.castellanos94.operators.impl.SBXCrossover;
 import com.castellanos94.operators.impl.TournamentSelection;
 import com.castellanos94.problems.Problem;
-import com.castellanos94.problems.benchmarks.DTLZ1;
+import com.castellanos94.problems.benchmarks.dtlz.DTLZ1;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
 import com.castellanos94.utils.Scatter3D;

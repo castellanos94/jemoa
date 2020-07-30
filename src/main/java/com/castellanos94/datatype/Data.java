@@ -18,6 +18,11 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
 
     abstract public Number getData();
 
+    /**
+     * @return -1 if this < b, 0 if this == b and 1 if this > 1
+     */
+    abstract public int compareTo(Number b);
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();

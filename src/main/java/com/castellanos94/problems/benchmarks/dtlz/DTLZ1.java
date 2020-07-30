@@ -1,4 +1,4 @@
-package com.castellanos94.problems.benchmarks;
+package com.castellanos94.problems.benchmarks.dtlz;
 
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.IntegerData;
