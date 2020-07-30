@@ -6,6 +6,7 @@ import java.util.Random;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.operators.CrossoverOperator;
+import com.castellanos94.operators.RepairOperator;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
@@ -14,6 +15,7 @@ public class SBXCrossover implements CrossoverOperator {
     private Random randomGenerator = Tools.getRandom();
     private double distributionIndex;
     private double crossoverProbability;
+    private RepairOperator repair;
 
     @Override
     public ArrayList<Solution> execute(ArrayList<Solution> parents) throws CloneNotSupportedException {
@@ -107,7 +109,8 @@ public class SBXCrossover implements CrossoverOperator {
                     offspring.get(1).setDecisionVar(i, valueX1);
                 }
             }
-
+            repair.repair(offspring.get(0));
+            repair.repair(offspring.get(0));
         }
 
         return offspring;
@@ -117,6 +120,7 @@ public class SBXCrossover implements CrossoverOperator {
     public SBXCrossover(double distributionIndex, double crossoverProbability) {
         this.distributionIndex = distributionIndex;
         this.crossoverProbability = crossoverProbability;
+        this.repair = new RepairRandomBoundary();
     }
 
     public SBXCrossover(double distributionIndex) {
@@ -130,6 +134,14 @@ public class SBXCrossover implements CrossoverOperator {
 
     public double getDistributionIndex() {
         return distributionIndex;
+    }
+
+    public RepairOperator getRepair() {
+        return repair;
+    }
+
+    public void setRepair(RepairOperator repair) {
+        this.repair = repair;
     }
 
     public void setCrossoverProbability(double crossoverProbability) {

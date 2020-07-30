@@ -1,10 +1,16 @@
 package com.castellanos94.examples;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.algorithms.multi.NSGA_III;
+import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceCompartor;
+import com.castellanos94.components.impl.FastNonDominatedSort;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
@@ -19,9 +25,12 @@ import com.castellanos94.utils.Scatter3D;
 import com.castellanos94.utils.Tools;
 
 public class NSGA_IIIEXAMPLE {
-    public static void main(String[] args) throws CloneNotSupportedException {
-        Tools.setSeed(77003L);
+    static final String directory = "experiments";
+
+    public static void main(String[] args) throws CloneNotSupportedException, IOException {
+        Tools.setSeed(141414L);
         Problem problem = new DTLZ1();
+        int EXPERIMENT = 31;
         int populationSize = 100;
         int maxIterations = 300;
         int numberOfDivisions = 12;
@@ -37,17 +46,37 @@ public class NSGA_IIIEXAMPLE {
         mutation = new PolynomialMutation(mutationDistributionIndex, mutationProbability);
         selection = new TournamentSelection(populationSize, new DominanceCompartor());
 
-        AbstractEvolutionaryAlgorithm algorithm = new NSGA_III(problem, populationSize, maxIterations, numberOfDivisions,
-                selection, crossover, mutation);
-        System.out.println(algorithm);
-        algorithm.execute();
-        System.out.println(algorithm.getSolutions().size());
-        ArrayList<Solution> solutions = algorithm.getSolutions();
-        for (Solution solution : solutions) {
-            System.out.println(solution);
+        ArrayList<Solution> bag = new ArrayList<>();
+        long averageTime = 0;
+        for (int i = 0; i < EXPERIMENT; i++) {
+            AbstractEvolutionaryAlgorithm algorithm = new NSGA_III(problem, populationSize, maxIterations,
+                    numberOfDivisions, selection, crossover, mutation);
+            algorithm.execute();
+            averageTime += algorithm.getComputeTime();
+            System.out.println(i+" time: " + algorithm.getComputeTime() + " ms.");
+            bag.addAll(algorithm.getSolutions());
         }
-        System.out.println("Time: " + algorithm.getComputeTime() + " ms.");
-        Plotter plotter = new Scatter3D(solutions, "dtlz1-nsgaiii");
+        System.out.println("Total time: "+averageTime);
+        System.out.println("Average time : " + (double) averageTime / EXPERIMENT+" ms.");
+        System.out.println("Solutions in the bag: " + bag.size());
+        Ranking compartor = new FastNonDominatedSort();
+        compartor.computeRanking(bag);
+        System.out.println("Fronts : " + compartor.getNumberOfSubFronts());
+        System.out.println("Front 0: " + compartor.getSubFront(0).size());
+        File f = new File(directory);
+        if(!f.exists())
+            f.mkdirs();
+        f = new File(directory +File.separator+"nsga_iii_bag_f0.txt");
+
+        ArrayList<String> strings = new  ArrayList<>();
+        for(Solution solution: compartor.getSubFront(0))
+            strings.add(solution.toString());
+
+        Files.write(f.toPath(),strings, Charset.defaultCharset());
+        /*
+         * for (Solution solution : solutions) { System.out.println(solution); }
+         */
+        Plotter plotter = new Scatter3D(compartor.getSubFront(0), "dtlz1-nsgaiii");
         plotter.plot();
 
     }

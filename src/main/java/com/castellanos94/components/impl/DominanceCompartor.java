@@ -92,11 +92,15 @@ public class DominanceCompartor implements Comparator<Solution>, Ranking {
                 }
             }
         }
+        this.front = new ArrayList<>();
         for (int i = 0; i < population.size(); i++) {
             population.get(i).setRank(dominate_me.get(i).size());
+            if(population.get(i).getRank()==0)
+            front.add(population.get(i));
         }
-        Collections.sort(population);
-        this.front = population;
+        Collections.sort(population);        
+        
+        
     }
 
     @Override
