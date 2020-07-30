@@ -10,7 +10,6 @@ import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.algorithms.multi.NSGA_III;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceCompartor;
-import com.castellanos94.components.impl.FastNonDominatedSort;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
@@ -30,7 +29,7 @@ public class NSGA_IIIEXAMPLE {
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         Tools.setSeed(141414L);
         Problem problem = new DTLZ1();
-        int EXPERIMENT = 31;
+        int EXPERIMENT = 50;
         int populationSize = 100;
         int maxIterations = 300;
         int numberOfDivisions = 12;
@@ -59,7 +58,7 @@ public class NSGA_IIIEXAMPLE {
         System.out.println("Total time: "+averageTime);
         System.out.println("Average time : " + (double) averageTime / EXPERIMENT+" ms.");
         System.out.println("Solutions in the bag: " + bag.size());
-        Ranking compartor = new FastNonDominatedSort();
+        Ranking compartor = new DominanceCompartor();
         compartor.computeRanking(bag);
         System.out.println("Fronts : " + compartor.getNumberOfSubFronts());
         System.out.println("Front 0: " + compartor.getSubFront(0).size());

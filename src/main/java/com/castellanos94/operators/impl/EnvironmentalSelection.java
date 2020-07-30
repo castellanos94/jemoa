@@ -313,9 +313,9 @@ public class EnvironmentalSelection implements SelectionOperator {
     public void setAttribute(Solution solution, List<Data> value) {
         solution.getProperties().put(getAttributeIdentifier(), value);
     }
-
+    @SuppressWarnings("unchecked")
     public List<Data> getAttribute(Solution solution) {
-        return (List<Data>) solution.getProperties().getOrDefault(getAttributeIdentifier(), new ArrayList());
+        return (List<Data>) solution.getProperties().getOrDefault(getAttributeIdentifier(), new ArrayList<>());
     }
 
     public String getAttributeIdentifier() {

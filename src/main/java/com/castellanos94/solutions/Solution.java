@@ -155,7 +155,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
     public void setProperties(HashMap<String, Object> properties) {
         this.properties = properties;
     }
-
+    @SuppressWarnings("unchecked")
     @Override
     public Object clone() throws CloneNotSupportedException {
         Solution clone = new Solution(this.getProblem());

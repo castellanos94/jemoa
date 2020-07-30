@@ -5,7 +5,6 @@ import java.util.Random;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.operators.MutationOperator;
-import com.castellanos94.operators.RepairOperator;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 

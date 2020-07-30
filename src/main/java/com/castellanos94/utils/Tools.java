@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
 
-import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.IntervalData;
 import com.castellanos94.instances.Instance;
 import com.castellanos94.instances.KnapsackIntance;
