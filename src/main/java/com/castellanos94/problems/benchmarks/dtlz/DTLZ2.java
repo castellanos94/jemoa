@@ -1,5 +1,11 @@
 package com.castellanos94.problems.benchmarks.dtlz;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Scanner;
+
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.datatype.RealData;
@@ -7,18 +13,12 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Scanner;
-
-public class DTLZ1 extends Problem {
-    public DTLZ1() {
-        this(3, 7);
+public class DTLZ2 extends Problem {
+    public DTLZ2() {
+        this(3,12);
     }
 
-    public DTLZ1(int numberOfObjectives, int numberOfVariables) {
+    public DTLZ2(int numberOfObjectives, int numberOfVariables) {
         this.numberOfObjectives = numberOfObjectives;
         this.numberOfDecisionVars = numberOfVariables;
         numberOfConstrains = 0;
@@ -89,7 +89,7 @@ public class DTLZ1 extends Problem {
     public static double[][] getParetoOptimal3Obj() throws FileNotFoundException {
 
         InputStream resourceAsStream = ClassLoader.getSystemClassLoader()
-                .getResourceAsStream("resources" + File.separator + "DTLZ" + File.separator + "DTLZ1.3D.pf");
+                .getResourceAsStream("resources" + File.separator + "DTLZ" + File.separator + "DTLZ2.3D.pf");
         Scanner sc = new Scanner(resourceAsStream);
         ArrayList<Double[]> list = new ArrayList<>();
         while (sc.hasNext()) {
@@ -100,7 +100,7 @@ public class DTLZ1 extends Problem {
             list.add(row);
         }
         int max = list.size();
-        double matrix[][] = new double[max][list.get(0).length];
+        double matrix[][] = new double[max][list.get(0).length];        
         for (int i = 0; i < max; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
                 matrix[i][j] = list.get(i)[j];

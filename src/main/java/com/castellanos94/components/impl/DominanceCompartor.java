@@ -62,16 +62,16 @@ public class DominanceCompartor implements Comparator<Solution>, Ranking {
         for (int i = 0; i < population.size(); i++) {
             dominate_me.add(new ArrayList<>());
         }
-        for (int i = 0; i < population.size(); i++) {
-            for (int j = 0; j < population.size(); j++) {
-                if (i != j && !population.get(i).equals(population.get(j))) {
+        for (int i = 0; i < population.size()-1; i++) {
+            for (int j = 1; j < population.size(); j++) {
+               // if (i != j && !population.get(i).equals(population.get(j))) {
                     int value = compare(population.get(i), population.get(j));
                     if (value == -1 && !dominate_me.get(j).contains(i)) {
                         dominate_me.get(j).add(i);
                     } else if (value == 1 && !dominate_me.get(i).contains(j)) {
                         dominate_me.get(i).add(j);
                     }
-                }
+               // }
             }
         }
         this.front = new ArrayList<>();
@@ -80,7 +80,7 @@ public class DominanceCompartor implements Comparator<Solution>, Ranking {
             if (population.get(i).getRank() == 0)
                 front.add(population.get(i));
         }
-        Collections.sort(population);
+       // Collections.sort(population);
 
     }
 

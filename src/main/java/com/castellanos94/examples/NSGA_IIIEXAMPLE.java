@@ -29,7 +29,7 @@ public class NSGA_IIIEXAMPLE {
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         Tools.setSeed(141414L);
         Problem problem = new DTLZ1();
-        int EXPERIMENT = 50;
+        int EXPERIMENT = 1;
         int populationSize = 100;
         int maxIterations = 300;
         int numberOfDivisions = 12;

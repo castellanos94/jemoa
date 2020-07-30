@@ -24,16 +24,16 @@ public class FastNonDominatedSort implements Ranking {
             dominate_me.add(new ArrayList<>());
             fronts.add(new ArrayList<>());
         }
-        for (int i = 0; i < population.size(); i++) {
-            for (int j = 0; j < population.size(); j++) {
-                if (i != j && !population.get(i).equals(population.get(j))) {
+        for (int i = 0; i < population.size() - 1; i++) {
+            for (int j = 1; j < population.size(); j++) {
+               // if (i != j && !population.get(i).equals(population.get(j))) {
                     int value = paretoDominance.compare(population.get(i), population.get(j));
                     if (value == -1 && !dominate_me.get(j).contains(i)) {
                         dominate_me.get(j).add(i);
                     } else if (value == 1 && !dominate_me.get(i).contains(j)) {
                         dominate_me.get(i).add(j);
                     }
-                }
+               // }
             }
         }
         int i = 0;

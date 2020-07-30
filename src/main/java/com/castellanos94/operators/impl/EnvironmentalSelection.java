@@ -239,7 +239,7 @@ public class EnvironmentalSelection implements SelectionOperator {
             }
         }
         // return a random reference point (j-bar)
-        return min_rps.get(min_rps.size() > 1 ? Tools.getRandom().nextInt(min_rps.size() - 1) : 0);
+        return min_rps.get((min_rps.size() > 1) ? Tools.getRandom().nextInt(min_rps.size() - 1) : 0);
     }
 
     // ----------------------------------------------------------------------
