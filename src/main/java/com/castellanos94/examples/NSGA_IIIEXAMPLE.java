@@ -18,6 +18,8 @@ import com.castellanos94.operators.impl.SBXCrossover;
 import com.castellanos94.operators.impl.TournamentSelection;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.problems.benchmarks.dtlz.DTLZ1;
+import com.castellanos94.problems.benchmarks.dtlz.DTLZ2;
+import com.castellanos94.problems.benchmarks.dtlz.DTLZ3;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
 import com.castellanos94.utils.Scatter3D;
@@ -28,8 +30,8 @@ public class NSGA_IIIEXAMPLE {
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         Tools.setSeed(141414L);
-        Problem problem = new DTLZ1();
-        int EXPERIMENT = 1;
+        Problem problem = new DTLZ3();
+        int EXPERIMENT = 30;
         int populationSize = 100;
         int maxIterations = 300;
         int numberOfDivisions = 12;
@@ -75,8 +77,10 @@ public class NSGA_IIIEXAMPLE {
         /*
          * for (Solution solution : solutions) { System.out.println(solution); }
          */
-        Plotter plotter = new Scatter3D(compartor.getSubFront(0), "dtlz1-nsgaiii");
+        Plotter plotter = new Scatter3D(compartor.getSubFront(0), "dtlz3-nsgaiii");
         plotter.plot();
+       // new Scatter3D(DTLZ3.getParetoOptimal3Obj(),"dtlz3").plot();
+        
 
     }
 }

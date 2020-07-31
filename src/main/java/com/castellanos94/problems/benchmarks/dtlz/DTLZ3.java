@@ -12,12 +12,12 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
-public class DTLZ2 extends Problem {
-    public DTLZ2() {
+public class DTLZ3 extends Problem {
+    public DTLZ3() {
         this(3, 12);
     }
 
-    public DTLZ2(int numberOfObjectives, int numberOfVariables) {
+    public DTLZ3(int numberOfObjectives, int numberOfVariables) {
         this.numberOfObjectives = numberOfObjectives;
         this.numberOfDecisionVars = numberOfVariables;
         numberOfConstrains = 0;
@@ -48,20 +48,21 @@ public class DTLZ2 extends Problem {
 
         double g = 0.0;
         for (int i = numberOfVariables - k; i < numberOfVariables; i++) {
-            g += (x[i] - 0.5) * (x[i] - 0.5);
+            g += (x[i] - 0.5) * (x[i] - 0.5) - Math.cos(20.0 * Math.PI * (x[i] - 0.5));
         }
 
+        g = 100.0 * (k + g);
         for (int i = 0; i < numberOfObjectives; i++) {
             f[i] = 1.0 + g;
         }
 
         for (int i = 0; i < numberOfObjectives; i++) {
             for (int j = 0; j < numberOfObjectives - (i + 1); j++) {
-                f[i] *= Math.cos(x[j] * 0.5 * Math.PI);
+                f[i] *= java.lang.Math.cos(x[j] * 0.5 * java.lang.Math.PI);
             }
             if (i != 0) {
                 int aux = numberOfObjectives - (i + 1);
-                f[i] *= Math.sin(x[aux] * 0.5 * Math.PI);
+                f[i] *= java.lang.Math.sin(x[aux] * 0.5 * java.lang.Math.PI);
             }
         }
 
@@ -82,14 +83,13 @@ public class DTLZ2 extends Problem {
 
     @Override
     public String toString() {
-        return String.format("DTLZ2 [ numberOfObjectives = %d, numberOfVariables = %d]", numberOfObjectives,
+        return String.format("DTLZ3 [ numberOfObjectives = %d, numberOfVariables = %d]", numberOfObjectives,
                 numberOfDecisionVars);
     }
 
     public static double[][] getParetoOptimal3Obj() throws FileNotFoundException {
-        //"src/main/resources/pointsOfReference/DTLZ/DTLZ.3D/DTLZ2.3D.pf";
-       
-        Scanner sc = new Scanner(new File("src/main/resources/pointsOfReference/DTLZ/DTLZ.3D/DTLZ2.3D.pf"));
+
+        Scanner sc = new Scanner(new File("src/main/resources/pointsOfReference/DTLZ/DTLZ.3D/DTLZ3.3D.pf"));
         ArrayList<Double[]> list = new ArrayList<>();
         while (sc.hasNext()) {
             Double row[] = new Double[3];
