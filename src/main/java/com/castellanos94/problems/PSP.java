@@ -45,13 +45,13 @@ public class PSP extends Problem {
             if (solution.getDecision_vars().get(i).compareTo(1) == 0) {
                 // current_budget = (IntegerData) current_budget.addition(projects[i][0]);
                 for (int j = 0; j < numberOfObjectives; j++) {
-                    objs[j] = objs[j].addition(projects[i][3 + j]);
+                    objs[j] = objs[j].plus(projects[i][3 + j]);
                 }
             }
         }
         Data current_budget = objs[0];
         for (int i = 1; i < objs.length; i++) {
-            current_budget = current_budget.addition(objs[i]);
+            current_budget = current_budget.plus(objs[i]);
         }
         solution.setResource(0,current_budget);
         solution.setObjectives(new ArrayList<>(Arrays.asList(objs)));
@@ -77,11 +77,11 @@ public class PSP extends Problem {
 
         for (int i = 0; i < numberOfDecisionVars; i++) {
             if (sol.getDecision_vars().get(i).compareTo(one) == 0) {
-                current_budget = (IntegerData) current_budget.addition(projects[i][0]);
+                current_budget = (IntegerData) current_budget.plus(projects[i][0]);
                 int area = projects[i][1].intValue() - 1;
                 int region = projects[i][2].intValue() - 1;
-                areaSum[area] = areaSum[area].addition(projects[i][0]);
-                regionSum[region] = regionSum[region].addition(projects[i][0]);
+                areaSum[area] = areaSum[area].plus(projects[i][0]);
+                regionSum[region] = regionSum[region].plus(projects[i][0]);
             }
         }
         Data penaltie = new IntegerData(0);
@@ -90,26 +90,26 @@ public class PSP extends Problem {
 
         if (current_budget.compareTo(budget) > 0) {
             penalties++;
-            penaltie = budget.subtraction(current_budget);
+            penaltie = budget.minus(current_budget);
             violate_budget = 1;
         }
         for (int i = 0; i < regionSum.length; i++) {
             if (regionSum[i].compareTo(regions[i][0]) < 0) {// limite inferior
-                penaltie = penaltie.addition(regionSum[i].subtraction(regions[i][0]));
+                penaltie = penaltie.plus(regionSum[i].minus(regions[i][0]));
                 penalties++;
             }
             if (regionSum[i].compareTo(regions[i][1]) > 0) { // limite superior
-                penaltie = penaltie.addition(regions[i][1].subtraction(regionSum[i]));
+                penaltie = penaltie.plus(regions[i][1].minus(regionSum[i]));
                 penalties++;
             }
         }
         for (int i = 0; i < areaSum.length; i++) {
             if (areaSum[i].compareTo(areas[i][0]) < 0) {
-                penaltie = penaltie.addition(areaSum[i].subtraction(areas[i][0]));
+                penaltie = penaltie.plus(areaSum[i].minus(areas[i][0]));
                 penalties++;
             }
             if (areaSum[i].compareTo(areas[i][1]) > 0) {
-                penaltie = penaltie.addition(areas[i][1].subtraction(areaSum[i]));
+                penaltie = penaltie.plus(areas[i][1].minus(areaSum[i]));
                 penalties++;
             }
         }
@@ -129,9 +129,9 @@ public class PSP extends Problem {
         IntegerData current_budget = new IntegerData(0);
         for (int i = 0; i < positions.size(); i++) {
             if (Tools.getRandom().nextDouble() < 0.5
-                    && projects[positions.get(i)][0].addition(current_budget).compareTo(budget) <= 0) {
+                    && projects[positions.get(i)][0].plus(current_budget).compareTo(budget) <= 0) {
                 sol.setDecisionVar(positions.get(i), new IntegerData(1));
-                current_budget = (IntegerData) current_budget.addition(projects[positions.get(i)][0]);
+                current_budget = (IntegerData) current_budget.plus(projects[positions.get(i)][0]);
                 /*
                  * for (int j = 0; j < nObjectives ;j++) { objs[j] = (RealData)
                  * objs[j].addition(projects[positions.get(i)][3 + j]); }

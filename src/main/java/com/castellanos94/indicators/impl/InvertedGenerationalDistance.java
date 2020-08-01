@@ -17,13 +17,13 @@ public class InvertedGenerationalDistance implements Indicator<Solution> {
     public Data evaluate(ArrayList<Solution> solutions) {
         Data sum = Data.getZeroByType(solutions.get(0).getObjective(0));
         for (int i = 0; i < reference.length; i++) {
-            sum = sum.addition(distanceToClosestPoint(reference[i], solutions).pow(2));
+            sum = sum.plus(distanceToClosestPoint(reference[i], solutions).pow(2));
             // sum += Math.pow(distanceToClosestPoint(reference[i], solutions), 2);
         }
 
         sum = sum.pow(1.0 / 2);// Math.pow(sum, 1.0 / 2);
 
-        return sum.division(reference.length);
+        return sum.div(reference.length);
     }
 
     private Data distanceToClosestPoint(Data[] point, ArrayList<Solution> front) {
@@ -52,8 +52,8 @@ public class InvertedGenerationalDistance implements Indicator<Solution> {
 
         Data diff;
         for (int i = 0; i < vector1.length; i++) {
-            diff = vector1[i].subtraction(vector2[i]);
-            distance = distance.addition(diff.multiplication(diff));
+            diff = vector1[i].minus(vector2[i]);
+            distance = distance.plus(diff.times(diff));
         }
 
         return distance.sqr();

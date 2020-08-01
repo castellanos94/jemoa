@@ -43,7 +43,7 @@ public class EnvironmentalSelection implements SelectionOperator {
                 for (Solution s : list) {
                     if (f == 0) // in the first objective we create the vector of conv_objs
                         setAttribute(s, new ArrayList<Data>());
-                    getAttribute(s).add(s.getObjective(f).subtraction(minf));
+                    getAttribute(s).add(s.getObjective(f).minus(minf));
                 }
             }
         }
@@ -61,7 +61,7 @@ public class EnvironmentalSelection implements SelectionOperator {
         Data max_ratio = Data.initByRefType(s.getObjective(0), Double.NEGATIVE_INFINITY);
         for (int i = 0; i < s.getObjectives().size(); i++) {
             double weight = (index == i) ? 1.0 : 0.000001;
-            Data tmp = s.getObjective(i).division(weight);
+            Data tmp = s.getObjective(i).div(weight);
             if (tmp.compareTo(max_ratio) > 0) {
                 max_ratio = tmp;
             }
@@ -75,7 +75,7 @@ public class EnvironmentalSelection implements SelectionOperator {
         List<Solution> extremePoints = new ArrayList<>();
         Solution min_indv = null;
         for (int f = 0; f < numberOfObjectives; f += 1) {
-            Data min_ASF = RealData.ZERO.addition(Double.MAX_VALUE);
+            Data min_ASF = RealData.ZERO.plus(Double.MAX_VALUE);
             for (Solution s : fronts.get(0)) { // only consider the individuals in the first front
                 Data asf = ASF(s, f);
                 if (asf.compareTo(min_ASF) < 0) {
@@ -99,10 +99,10 @@ public class EnvironmentalSelection implements SelectionOperator {
 
         for (int base = 0; base < N - 1; base += 1) {
             for (int target = base + 1; target < N; target += 1) {
-                Data ratio = A.get(target).get(base).division(A.get(base).get(base));
+                Data ratio = A.get(target).get(base).div(A.get(base).get(base));
                 for (int term = 0; term < A.get(base).size(); term += 1) {
                     A.get(target).set(term,
-                            A.get(target).get(term).subtraction(A.get(base).get(term).multiplication(ratio)));
+                            A.get(target).get(term).minus(A.get(base).get(term).times(ratio)));
                 }
             }
         }
@@ -112,9 +112,9 @@ public class EnvironmentalSelection implements SelectionOperator {
 
         for (int i = N - 1; i >= 0; i -= 1) {
             for (int known = i + 1; known < N; known += 1) {
-                A.get(i).set(N, A.get(i).get(N).subtraction(A.get(i).get(known).multiplication(x.get(known))));
+                A.get(i).set(N, A.get(i).get(N).minus(A.get(i).get(known).times(x.get(known))));
             }
-            x.set(i, A.get(i).get(N).division(A.get(i).get(i)));
+            x.set(i, A.get(i).get(N).div(A.get(i).get(i)));
         }
         return x;
     }
@@ -157,7 +157,7 @@ public class EnvironmentalSelection implements SelectionOperator {
 
             // Find intercepts
             for (int f = 0; f < numberOfObjectives; f += 1) {
-                intercepts.add(RealData.ONE.division(x.get(f)));
+                intercepts.add(RealData.ONE.div(x.get(f)));
 
             }
         }
@@ -170,11 +170,11 @@ public class EnvironmentalSelection implements SelectionOperator {
 
                 for (int f = 0; f < numberOfObjectives; f++) {
                     List<Data> conv_obj = (List<Data>) getAttribute(s);
-                    if (intercepts.get(f).subtraction(ideal_point.get(f)).abs().compareTo(10e10) > 0) {
+                    if (intercepts.get(f).minus(ideal_point.get(f)).abs().compareTo(10e10) > 0) {
                         // if (Math.abs(intercepts.get(f) - ideal_point.get(f)) > 10e-10) {
-                        conv_obj.set(f, conv_obj.get(f).division(intercepts.get(f).subtraction(ideal_point.get(f))));
+                        conv_obj.set(f, conv_obj.get(f).div(intercepts.get(f).minus(ideal_point.get(f))));
                     } else {
-                        conv_obj.set(f, conv_obj.get(f).division(10e-10));
+                        conv_obj.set(f, conv_obj.get(f).div(10e-10));
                     }
 
                 }
@@ -186,17 +186,17 @@ public class EnvironmentalSelection implements SelectionOperator {
     public Data perpendicularDistance(List<Data> direction, List<Data> point) {
         Data numerator = Data.getZeroByType(direction.get(0)), denominator = Data.getZeroByType(direction.get(0));
         for (int i = 0; i < direction.size(); i += 1) {
-            numerator = numerator.addition(direction.get(i).multiplication(point.get(i)));
+            numerator = numerator.plus(direction.get(i).times(point.get(i)));
             // numerator += direction.get(i) * point.get(i);
-            denominator = denominator.addition(direction.get(i).pow(2));
+            denominator = denominator.plus(direction.get(i).pow(2));
             // denominator += Math.pow(direction.get(i), 2.0);
         }
-        Data k = numerator.division(denominator);
+        Data k = numerator.div(denominator);
 
         Data d = Data.getZeroByType(k);
         for (int i = 0; i < direction.size(); i += 1) {
             // d += Math.pow(k * direction.get(i) - point.get(i), 2.0);
-            d = d.addition(k.multiplication(direction.get(i).subtraction(point.get(i)).pow(2)));
+            d = d.plus(k.times(direction.get(i).minus(point.get(i)).pow(2)));
         }
         return d.sqr();
     }

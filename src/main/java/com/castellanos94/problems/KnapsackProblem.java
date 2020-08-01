@@ -37,8 +37,8 @@ public class KnapsackProblem extends Problem {
         IntegerData current_b = new IntegerData(0);
         for (int i = 0; i < numberOfDecisionVars; i++) {
             if (solution.getDecision_vars().get(i).compareTo(1) == 0) {
-                current_w = (IntegerData) current_w.addition(w[i]);
-                current_b = (IntegerData) current_b.addition(b[i]);
+                current_w = (IntegerData) current_w.plus(w[i]);
+                current_b = (IntegerData) current_b.plus(b[i]);
             }
         }
         solution.setResource(0,current_w);
@@ -51,7 +51,7 @@ public class KnapsackProblem extends Problem {
         IntegerData cw = (IntegerData) sol.getResources().get(0);
         if (cw.compareTo(capacity) > 0) {
             sol.setN_penalties(1);
-            sol.setPenalties(capacity.subtraction(cw));
+            sol.setPenalties(capacity.minus(cw));
             return -1;
         }else{
             sol.setPenalties(new IntegerData(0));
@@ -67,11 +67,11 @@ public class KnapsackProblem extends Problem {
         IntegerData current_b = new IntegerData(0);
 
         for (int i = 0; i < numberOfDecisionVars; i++) {
-            IntegerData tmp = (IntegerData) current_w.addition(w[index.get(i)]);
+            IntegerData tmp = (IntegerData) current_w.plus(w[index.get(i)]);
             if (tmp.compareTo(capacity) <= 0) {
                 solution.setDecisionVar(index.get(i), new IntegerData(1));
                 current_w = tmp;
-                current_b = (IntegerData) current_b.addition(b[i]);
+                current_b = (IntegerData) current_b.plus(b[i]);
             }else{
                 solution.setDecisionVar(index.get(i), new IntegerData(0));
             }

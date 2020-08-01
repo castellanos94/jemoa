@@ -15,6 +15,7 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
     abstract public Data minus(Number b);
 
     abstract public Data div(Number b);
+
     abstract public Data unaryMinsu();
 
     abstract public Number getData();
