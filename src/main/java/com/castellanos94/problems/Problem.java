@@ -20,6 +20,7 @@ public abstract class Problem {
     protected Instance instance;
     protected Data[] lowerBound;
     protected Data[] upperBound;
+    protected String name;
 
     public abstract void evaluate(Solution object);
 
@@ -102,4 +103,11 @@ public abstract class Problem {
                 + Arrays.toString(objectives_type) + "\n]";
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

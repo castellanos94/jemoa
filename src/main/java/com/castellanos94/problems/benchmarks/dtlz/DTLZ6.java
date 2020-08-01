@@ -32,6 +32,7 @@ public class DTLZ6 extends Problem {
             lowerBound[i] = new RealData(0);
             upperBound[i] = new RealData(1);
         }
+        setName("DTLZ6");
     }
 
     @Override
