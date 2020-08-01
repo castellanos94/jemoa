@@ -12,7 +12,13 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
+
+/**
+ * The search space is continous, unimodal and the problem is not deceptive.
+ * JMetal-based implementation.
+ */
 public class DTLZ2 extends Problem {
+
     public DTLZ2() {
         this(3, 12);
     }
@@ -88,8 +94,8 @@ public class DTLZ2 extends Problem {
     }
 
     public static double[][] getParetoOptimal3Obj() throws FileNotFoundException {
-        //"src/main/resources/pointsOfReference/DTLZ/DTLZ.3D/DTLZ2.3D.pf";
-       
+        // "src/main/resources/pointsOfReference/DTLZ/DTLZ.3D/DTLZ2.3D.pf";
+
         Scanner sc = new Scanner(new File("src/main/resources/pointsOfReference/DTLZ/DTLZ.3D/DTLZ2.3D.pf"));
         ArrayList<Double[]> list = new ArrayList<>();
         while (sc.hasNext()) {

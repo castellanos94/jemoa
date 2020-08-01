@@ -12,6 +12,11 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
+/**
+ * A more difficult version of the DTLZ5 problem: the non-linear distance
+ * function g makes it harder to convergence against the pareto optimal curve.
+ * JMetal-based implementation.
+ */
 public class DTLZ6 extends Problem {
 
     public DTLZ6() {

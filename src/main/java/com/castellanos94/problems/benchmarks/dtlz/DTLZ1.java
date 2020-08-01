@@ -9,10 +9,13 @@ import com.castellanos94.utils.Tools;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * The optimal pareto front lies on a linear hyperplane 0.5.
+ * JMetal-based implementation.
+ */
 public class DTLZ1 extends Problem {
     public DTLZ1() {
         this(3, 7);
@@ -89,9 +92,8 @@ public class DTLZ1 extends Problem {
 
     public static double[][] getParetoOptimal3Obj() throws FileNotFoundException {
 
-        InputStream resourceAsStream = ClassLoader.getSystemClassLoader()
-                .getResourceAsStream("resources" + File.separator + "DTLZ" + File.separator + "DTLZ1.3D.pf");
-        Scanner sc = new Scanner(resourceAsStream);
+        Scanner sc = new Scanner(new File("src/main/resources/pointsOfReference/DTLZ/DTLZ.3D/DTLZ1.3D.pf"));
+
         ArrayList<Double[]> list = new ArrayList<>();
         while (sc.hasNext()) {
             Double row[] = new Double[3];

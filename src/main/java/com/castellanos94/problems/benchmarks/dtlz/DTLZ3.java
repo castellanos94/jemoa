@@ -12,7 +12,13 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
+/**
+ * The search space is continous, unimodal and the problem is not deceptive. 
+ * It is supposed to be harder to converge towards the optimal pareto front than DTLZ2
+ * JMetal-based implementation.
+ */
 public class DTLZ3 extends Problem {
+
     public DTLZ3() {
         this(3, 12);
     }

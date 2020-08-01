@@ -12,6 +12,10 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
+/**
+ * The search space contains a dense area of solutions next to the fM/f1 plane
+ * JMetal-based implementation.
+ */
 public class DTLZ4 extends Problem {
     public DTLZ4() {
         this(3, 12);

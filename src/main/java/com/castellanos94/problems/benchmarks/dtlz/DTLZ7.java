@@ -12,6 +12,10 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
+/**
+ * This problem has disconnected Pareto-optimal regions in the search space.
+ * JMetal-based implementation.
+ */
 public class DTLZ7 extends Problem {
 
     public DTLZ7() {
