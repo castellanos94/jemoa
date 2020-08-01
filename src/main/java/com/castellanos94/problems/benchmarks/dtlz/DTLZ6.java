@@ -5,39 +5,22 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import com.castellanos94.datatype.Data;
-import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.datatype.RealData;
-import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
-import com.castellanos94.utils.Tools;
 
 /**
  * A more difficult version of the DTLZ5 problem: the non-linear distance
  * function g makes it harder to convergence against the pareto optimal curve.
  * JMetal-based implementation.
  */
-public class DTLZ6 extends Problem {
+public class DTLZ6 extends DTLZ {
 
     public DTLZ6() {
         this(3, 12);
     }
 
     public DTLZ6(int numberOfObjectives, int numberOfVariables) {
-        this.numberOfObjectives = numberOfObjectives;
-        this.numberOfDecisionVars = numberOfVariables;
-        numberOfConstrains = 0;
-        lowerBound = new Data[numberOfDecisionVars];
-        upperBound = new Data[numberOfDecisionVars];
-        objectives_type = new int[numberOfObjectives];
-        for (int i = 0; i < numberOfObjectives; i++) {
-            objectives_type[i] = Problem.MINIMIZATION;
-        }
-        for (int i = 0; i < lowerBound.length; i++) {
-            lowerBound[i] = new RealData(0);
-            upperBound[i] = new RealData(1);
-        }
-        setName("DTLZ6");
+        super(numberOfObjectives, numberOfVariables);
     }
 
     @Override
@@ -48,8 +31,6 @@ public class DTLZ6 extends Problem {
 
         double[] f = new double[numberOfObjectives];
         double[] x = new double[numberOfVariables];
-
-        int k = getNumberOfDecisionVars() - getNumberOfObjectives() + 1;
 
         for (int i = 0; i < numberOfVariables; i++) {
             x[i] = solution.getVariable(i).doubleValue();
@@ -86,22 +67,7 @@ public class DTLZ6 extends Problem {
 
     }
 
-    @Override
-    public Solution randomSolution() {
-        Solution solution = new Solution(this);
-        for (int i = 0; i < this.numberOfDecisionVars; i++) {
-            solution.setVariable(i, new RealData(Tools.getRandom().nextDouble()));
-        }
-        return solution;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("DTLZ6 [ numberOfObjectives = %d, numberOfVariables = %d]", numberOfObjectives,
-                numberOfDecisionVars);
-    }
-
-    public static double[][] getParetoOptimal3Obj() throws FileNotFoundException {
+    public double[][] getParetoOptimal3Obj() throws FileNotFoundException {
 
         Scanner sc = new Scanner(new File("src/main/resources/pointsOfReference/DTLZ/DTLZ.3D/DTLZ6.3D.pf"));
         ArrayList<Double[]> list = new ArrayList<>();
@@ -123,13 +89,4 @@ public class DTLZ6 extends Problem {
         return matrix;
     }
 
-    @Override
-    public int evaluateConstraints(Solution solution) {
-        /*
-         * int n = 0; for (Data data : solution.getObjectives()){
-         * if(data.compareTo(0)<0){ n++; } } solution.setPenalties(new IntegerData(n));
-         */
-        solution.setPenalties(new IntegerData(0));
-        return 0;
-    }
 }

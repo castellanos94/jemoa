@@ -17,7 +17,6 @@ import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.operators.impl.PolynomialMutation;
 import com.castellanos94.operators.impl.SBXCrossover;
 import com.castellanos94.operators.impl.TournamentSelection;
-import com.castellanos94.problems.Problem;
 import com.castellanos94.problems.benchmarks.dtlz.*;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
@@ -29,11 +28,11 @@ public class NSGA_III_DTLZ {
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         Tools.setSeed(141414L);
-        Problem problem = new DTLZ1();
+        DTLZ problem = new DTLZ3();
         PrintStream console = System.out;
         PrintStream ps = new PrintStream(directory + File.separator + "resume_" + problem.getName());
 
-        int EXPERIMENT = 30;
+        int EXPERIMENT = 1;
         int populationSize = 100;
         int maxIterations = 300;
         int numberOfDivisions = 12;
@@ -109,7 +108,7 @@ public class NSGA_III_DTLZ {
         Plotter plotter = new Scatter3D(compartor.getSubFront(0),
                 directory + File.separator + "nsga3_" + problem.getName());
         plotter.plot();
-        new Scatter3D(DTLZ1.getParetoOptimal3Obj(), directory + File.separator + problem.getName()).plot();
+        new Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator + problem.getName()).plot();
 
     }
 }

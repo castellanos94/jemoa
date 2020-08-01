@@ -22,9 +22,9 @@ public abstract class Problem {
     protected Data[] upperBound;
     protected String name;
 
-    public abstract void evaluate(Solution object);
+    public abstract void evaluate(Solution solution);
 
-    public abstract int evaluateConstraints(Solution object);
+    public abstract int evaluateConstraints(Solution solution);
 
     public abstract Solution randomSolution();
 

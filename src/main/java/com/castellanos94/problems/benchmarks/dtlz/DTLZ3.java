@@ -5,39 +5,26 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import com.castellanos94.datatype.Data;
-import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.datatype.RealData;
-import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
-import com.castellanos94.utils.Tools;
 
 /**
- * The search space is continous, unimodal and the problem is not deceptive. 
- * It is supposed to be harder to converge towards the optimal pareto front than DTLZ2
- * JMetal-based implementation.
+ * In order to investigate an MOEA’s ability to converge to the global
+ * Pareto-optimal front, we suggest using the above problem with the g function
+ * equal to Rastrigin. The g function introduces (3k−1) local Pareto-optimal
+ * fronts and one global Pareto-optimal front. All local Pareto-optimal fronts
+ * are parallel to the global Pareto-optimal front and an MOEA can get stuck at
+ * any of these local Pareto-optimal fronts, before converging to the global
+ * Pareto-optimal front (at g∗=0). JMetal-based implementation.
  */
-public class DTLZ3 extends Problem {
+public class DTLZ3 extends DTLZ {
 
     public DTLZ3() {
         this(3, 12);
     }
 
     public DTLZ3(int numberOfObjectives, int numberOfVariables) {
-        this.numberOfObjectives = numberOfObjectives;
-        this.numberOfDecisionVars = numberOfVariables;
-        numberOfConstrains = 0;
-        lowerBound = new Data[numberOfDecisionVars];
-        upperBound = new Data[numberOfDecisionVars];
-        objectives_type = new int[numberOfObjectives];
-        for (int i = 0; i < numberOfObjectives; i++) {
-            objectives_type[i] = Problem.MINIMIZATION;
-        }
-        for (int i = 0; i < lowerBound.length; i++) {
-            lowerBound[i] = new RealData(0);
-            upperBound[i] = new RealData(1);
-        }
-        setName("DTLZ3");
+        super(numberOfObjectives, numberOfVariables);
     }
 
     @Override
@@ -51,14 +38,7 @@ public class DTLZ3 extends Problem {
             x[i] = solution.getVariable(i).doubleValue();
         }
 
-        int k = getNumberOfDecisionVars() - getNumberOfObjectives() + 1;
-
-        double g = 0.0;
-        for (int i = numberOfVariables - k; i < numberOfVariables; i++) {
-            g += (x[i] - 0.5) * (x[i] - 0.5) - Math.cos(20.0 * Math.PI * (x[i] - 0.5));
-        }
-
-        g = 100.0 * (k + g);
+        double g = g(x);
         for (int i = 0; i < numberOfObjectives; i++) {
             f[i] = 1.0 + g;
         }
@@ -79,22 +59,7 @@ public class DTLZ3 extends Problem {
 
     }
 
-    @Override
-    public Solution randomSolution() {
-        Solution solution = new Solution(this);
-        for (int i = 0; i < this.numberOfDecisionVars; i++) {
-            solution.setVariable(i, new RealData(Tools.getRandom().nextDouble()));
-        }
-        return solution;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("DTLZ3 [ numberOfObjectives = %d, numberOfVariables = %d]", numberOfObjectives,
-                numberOfDecisionVars);
-    }
-
-    public static double[][] getParetoOptimal3Obj() throws FileNotFoundException {
+    public double[][] getParetoOptimal3Obj() throws FileNotFoundException {
 
         Scanner sc = new Scanner(new File("src/main/resources/pointsOfReference/DTLZ/DTLZ.3D/DTLZ3.3D.pf"));
         ArrayList<Double[]> list = new ArrayList<>();
@@ -116,13 +81,4 @@ public class DTLZ3 extends Problem {
         return matrix;
     }
 
-    @Override
-    public int evaluateConstraints(Solution solution) {
-        /*
-         * int n = 0; for (Data data : solution.getObjectives()){
-         * if(data.compareTo(0)<0){ n++; } } solution.setPenalties(new IntegerData(n));
-         */
-        solution.setPenalties(new IntegerData(0));
-        return 0;
-    }
 }
