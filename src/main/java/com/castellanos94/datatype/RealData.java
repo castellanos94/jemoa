@@ -17,26 +17,22 @@ public class RealData extends Data {
     }
 
     @Override
-    public Data multiplication(Number value) {
-        // this.data *= value.doubleValue();
+    public Data times(Number value) {
         return new RealData(data * value.doubleValue());
     }
 
     @Override
-    public Data addition(Number value) {
-        // this.data += value.doubleValue();
+    public Data plus(Number value) {
         return new RealData(data + value.doubleValue());
     }
 
     @Override
-    public Data subtraction(Number value) {
-        // this.data -= value.doubleValue();
+    public Data minus(Number value) {
         return new RealData(data - value.doubleValue());
     }
 
     @Override
-    public Data division(Number value) {
-        // this.data /= value.doubleValue();
+    public Data div(Number value) {
         return new RealData(data / value.doubleValue());
     }
 
@@ -104,6 +100,11 @@ public class RealData extends Data {
         } else if (!data.equals(other.data))
             return false;
         return true;
+    }
+
+    @Override
+    public Data unaryMinsu() {
+        return new RealData(-1 * data);
     }
 
 }

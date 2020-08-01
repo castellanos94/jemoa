@@ -8,13 +8,14 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
 
     private static final long serialVersionUID = -7730849596544487990L;
 
-    abstract public Data multiplication(Number value);
+    abstract public Data times(Number b);
 
-    abstract public Data addition(Number value);
+    abstract public Data plus(Number b);
 
-    abstract public Data subtraction(Number value);
+    abstract public Data minus(Number b);
 
-    abstract public Data division(Number value);
+    abstract public Data div(Number b);
+    abstract public Data unaryMinsu();
 
     abstract public Number getData();
 

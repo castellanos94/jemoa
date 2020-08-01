@@ -1,4 +1,4 @@
-approvedpackage com.castellanos94.examples;
+package com.castellanos94.examples;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class NSGA_III_DTLZ {
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         Tools.setSeed(141414L);
-        Problem problem = new DTLZ7();
+        Problem problem = new DTLZ1();
         PrintStream console = System.out;
         PrintStream ps = new PrintStream(directory + File.separator + "resume_" + problem.getName());
 
@@ -109,7 +109,7 @@ public class NSGA_III_DTLZ {
         Plotter plotter = new Scatter3D(compartor.getSubFront(0),
                 directory + File.separator + "nsga3_" + problem.getName());
         plotter.plot();
-        new Scatter3D(DTLZ7.getParetoOptimal3Obj(), directory + File.separator + problem.getName()).plot();
+        new Scatter3D(DTLZ1.getParetoOptimal3Obj(), directory + File.separator + problem.getName()).plot();
 
     }
 }

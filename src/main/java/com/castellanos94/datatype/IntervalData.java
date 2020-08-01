@@ -38,15 +38,15 @@ public class IntervalData extends Data {
         if (data.getLower().compareTo(upper) > 0)
             return RealData.ONE;
         if (data.getLower().compareTo(lower) < 0)
-            return (RealData) RealData.ONE.multiplication(-1);
-        RealData v = (RealData) upper.subtraction(lower).addition(data.getUpper().subtraction(data.getLower()));
-        RealData ped = (RealData) upper.subtraction(data.getLower()).division(v);
+            return (RealData) RealData.ONE.times(-1);
+        RealData v = (RealData) upper.minus(lower).plus(data.getUpper().minus(data.getLower()));
+        RealData ped = (RealData) upper.minus(data.getLower()).div(v);
 
         return (ped.compareTo(1) > 0) ? RealData.ONE : (ped.compareTo(0) <= 0) ? RealData.ZERO : ped;
     }
 
     @Override
-    public Data multiplication(Number value) {
+    public Data times(Number value) {
         IntervalData data;
         if (value instanceof IntervalData) {
             data = (IntervalData) value;
@@ -54,10 +54,10 @@ public class IntervalData extends Data {
         } else {
             data = new IntervalData(value);
         }
-        RealData a1 = (RealData) lower.multiplication(data.getLower());
-        RealData a2 = (RealData) lower.multiplication(data.getUpper());
-        RealData a3 = (RealData) upper.multiplication(data.getLower());
-        RealData a4 = (RealData) upper.multiplication(data.getUpper());
+        RealData a1 = (RealData) lower.times(data.getLower());
+        RealData a2 = (RealData) lower.times(data.getUpper());
+        RealData a3 = (RealData) upper.times(data.getLower());
+        RealData a4 = (RealData) upper.times(data.getUpper());
         double b1 = Math.min(a1.doubleValue(), a2.doubleValue());
         double b2 = Math.min(a3.doubleValue(), a4.doubleValue());
         double low = Math.min(b1, b2);
@@ -70,7 +70,7 @@ public class IntervalData extends Data {
     }
 
     @Override
-    public Data addition(Number value) {
+    public Data plus(Number value) {
         IntervalData data;
         if (value instanceof IntervalData) {
             data = (IntervalData) value;
@@ -78,11 +78,11 @@ public class IntervalData extends Data {
         } else {
             data = new IntervalData(value);
         }
-        return new IntervalData(lower.addition(data.getLower()), upper.addition(data.getUpper()));
+        return new IntervalData(lower.plus(data.getLower()), upper.plus(data.getUpper()));
     }
 
     @Override
-    public Data subtraction(Number value) {
+    public Data minus(Number value) {
         IntervalData data;
         if (value instanceof IntervalData) {
             data = (IntervalData) value;
@@ -90,11 +90,11 @@ public class IntervalData extends Data {
         } else {
             data = new IntervalData(value);
         }
-        return new IntervalData(lower.subtraction(data.getUpper()), upper.subtraction(data.getLower()));
+        return new IntervalData(lower.minus(data.getUpper()), upper.minus(data.getLower()));
     }
 
     @Override
-    public Data division(Number value) {
+    public Data div(Number value) {
         IntervalData vid;
         if (value instanceof IntervalData) {
             vid = (IntervalData) value;
@@ -102,8 +102,7 @@ public class IntervalData extends Data {
         } else {
             vid = new IntervalData(value);
         }
-        return this
-                .multiplication(new IntervalData(1 / vid.getLower().doubleValue(), 1 / vid.getUpper().doubleValue()));
+        return this.times(new IntervalData(1 / vid.getLower().doubleValue(), 1 / vid.getUpper().doubleValue()));
     }
 
     @Override
@@ -169,6 +168,11 @@ public class IntervalData extends Data {
 
         int ped = this.posibilityFunction(c).compareTo(0.5);
         return (ped == 0) ? 0 : (ped < 0.5) ? -1 : 1;
+    }
+
+    @Override
+    public Data unaryMinsu() {
+        return new IntervalData(-1).times(this);
     }
 
     /*

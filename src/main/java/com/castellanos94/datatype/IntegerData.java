@@ -14,25 +14,25 @@ public class IntegerData extends Data {
     }
 
     @Override
-    public Data multiplication(Number value) {
+    public Data times(Number value) {
         // this.data *= value.intValue();
         return new IntegerData(data * value.intValue());
     }
 
     @Override
-    public Data addition(Number value) {
+    public Data plus(Number value) {
         // this.data += value.intValue();
         return new IntegerData(data + value.intValue());
     }
 
     @Override
-    public Data subtraction(Number value) {
+    public Data minus(Number value) {
         // this.data -= value.intValue();
         return new IntegerData(data - value.intValue());
     }
 
     @Override
-    public Data division(Number value) {
+    public Data div(Number value) {
         // this.data /= value.intValue();
         return new RealData(data.doubleValue() / value.doubleValue());
     }
@@ -101,5 +101,10 @@ public class IntegerData extends Data {
         } else if (!data.equals(other.data))
             return false;
         return true;
+    }
+
+    @Override
+    public Data unaryMinsu() {
+        return new IntegerData(-data);
     }
 }
