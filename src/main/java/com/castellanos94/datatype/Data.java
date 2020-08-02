@@ -70,7 +70,10 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
         }
         return null;
     }
-
+    /**
+     * For interval used the definition of ISSN1360-1725
+     * @return absolute value 
+     */
     public Data abs() {
 
         if (this instanceof IntegerData) {
@@ -78,11 +81,6 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
         }
         if (this instanceof RealData) {
             return new RealData(Math.abs(this.doubleValue()));
-        }
-        if (this instanceof IntervalData) {
-            double l = ((IntervalData) this).getLower().doubleValue();
-            double u = ((IntervalData) this).getUpper().doubleValue();
-            return new IntervalData(Math.abs(l), Math.abs(u));
         }
         return null;
     }
@@ -93,11 +91,6 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
         }
         if (this instanceof RealData) {
             return new RealData(Math.pow(this.doubleValue(), exp.doubleValue()));
-        }
-        if (this instanceof IntervalData) {
-            double l = ((IntervalData) this).getLower().doubleValue();
-            double u = ((IntervalData) this).getUpper().doubleValue();
-            return new IntervalData(Math.pow(l, exp.doubleValue()), Math.pow(u, exp.doubleValue()));
         }
         return null;
     }

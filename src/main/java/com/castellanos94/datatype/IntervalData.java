@@ -102,7 +102,14 @@ public class IntervalData extends Data {
         } else {
             vid = new IntervalData(value);
         }
-        return this.times(new IntervalData(1 / vid.getLower().doubleValue(), 1 / vid.getUpper().doubleValue()));
+        double c = vid.getLower().doubleValue();
+        double d = vid.getUpper().doubleValue();
+        if (c == 0 && d > 0)
+            return new IntervalData(1 / d, Double.POSITIVE_INFINITY);
+        if (c < d && d == 0)
+            return new IntervalData(Double.NEGATIVE_INFINITY, 1 / c);
+
+        return this.times(new IntervalData(1 / c, 1 / d));
     }
 
     @Override
@@ -175,34 +182,96 @@ public class IntervalData extends Data {
         return new IntervalData(-1).times(this);
     }
 
-    /*
-     * public static void main(String args[]) { IntervalData carteras[][] = new
-     * IntervalData[][] { { new IntervalData(100, 135), new IntervalData(15, 29),
-     * new IntervalData(55, 65) }, { new IntervalData(190, 240), new
-     * IntervalData(27, 48), new IntervalData(100, 120) }, { new IntervalData(100,
-     * 140), new IntervalData(17, 33), new IntervalData(80, 100) } }; IntervalData
-     * q[] = new IntervalData[] { new IntervalData(10, 20), new IntervalData(2, 4),
-     * new IntervalData(7, 11) }; IntervalData w[] = new IntervalData[] { new
-     * IntervalData(.2, .4), new IntervalData(.2, .4), new IntervalData(.3, .5) };
-     * IntervalData v[] = new IntervalData[] { new IntervalData(100, 110), new
-     * IntervalData(4, 6), new IntervalData(55, 65) };
+    public Data exp() {
+        return new IntervalData(Math.exp(lower.doubleValue()), Math.exp(upper.doubleValue()));
+    }
+
+    public Data log() {
+        return new IntervalData(Math.log(lower.doubleValue()), Math.log(upper.doubleValue()));
+    }
+
+    @Override
+    public Data pow(Number exp) {
+
+        double l = ((IntervalData) this).getLower().doubleValue();
+        double u = ((IntervalData) this).getUpper().doubleValue();
+        double n = exp.doubleValue();
+        if (l > 0 || n % 2 == 0)
+            return new IntervalData(Math.pow(l, n), Math.pow(u, n));
+        if (u < 0 && n % 2 != 0)
+            return new IntervalData(Math.pow(u, n), Math.pow(l, n));
+        l = Math.pow(l, n);
+        u = Math.pow(u, n);
+        return new IntervalData(Math.min(l, u), Math.max(l, u));
+    }
+
+    public Data sin() {
+        double l = lower.doubleValue();
+        double u = upper.doubleValue();
+        return new IntervalData(Math.min(Math.sin(l), Math.sin(u)), Math.max(Math.sin(l), Math.sin(u)));
+    }
+
+    /**
+     * x ∪ y = [min(lx,ly),max(ux,uy)]
      * 
-     * for (IntervalData[] cartera : carteras) {
-     * System.out.println(Arrays.toString(cartera)); }
-     * System.out.println(Arrays.toString(q));
-     * System.out.println(Arrays.toString(w));
-     * System.out.println(Arrays.toString(v)); IntervalData c1 = (IntervalData)
-     * carteras[0][0].subtraction(carteras[1][0]); IntervalData mq = (IntervalData)
-     * q[0].multiplication(-1); System.out.println(c1); System.out.println(mq);
-     * System.out.println(c1.compareTo(mq)); for (int i = 0; i < carteras.length;
-     * i++) { IntervalData cj; IntervalData nq; for (int j = 0; j < carteras.length;
-     * j++) { if (i != j){ RealData cjv[] = new RealData[v.length]; for (int k = 0;
-     * k < v.length; k++) { cj = (IntervalData)
-     * carteras[i][k].subtraction(carteras[j][k]); nq = (IntervalData)
-     * q[k].multiplication(-1); cjv[k] = cj.posibilityFunction(nq);
-     * //System.out.printf("C[%3d](%3d,%3d) = %s\n", k + 1, i + 1, j + 1,
-     * cj.posibilityFunction(nq)); // System.out.printf("C[%3d](%3d,%3d) = %d\n", k
-     * + 1, i + 1, j + 1, cj.compareTo(nq)); }
-     * System.out.println("Cj("+i+", "+j+"): "+Arrays.toString(cjv)); } } } }
+     * @param y other interval
+     * @return interval result
      */
+    public Data union(IntervalData y) {
+        double lx = lower.doubleValue();
+        double rx = upper.doubleValue();
+        double ly = y.getLower().doubleValue();
+        double ry = y.getUpper().doubleValue();
+        return new IntervalData(Math.min(lx, ly), Math.max(rx, ry));
+    }
+
+    /**
+     * x ∩ y = [max(lx,ly), min(ux,y)]
+     * 
+     * @param y other interval
+     * @return interval result
+     */
+    public Data intersection(IntervalData y) {
+        double lx = lower.doubleValue();
+        double ux = upper.doubleValue();
+        double ly = y.getLower().doubleValue();
+        double uy = y.getUpper().doubleValue();
+        if (uy < lx || ux < ly)
+            return new IntervalData(0);
+        return new IntervalData(Math.max(lx, ly), Math.min(ux, uy));
+    }
+
+    /**
+     * m(x) = 0.5*(l + u)
+     * 
+     * @return a real data
+     */
+    public Data mindPoint() {
+        double l = ((IntervalData) this).getLower().doubleValue();
+        double u = ((IntervalData) this).getUpper().doubleValue();
+        return new RealData(0.5 * (l + u));
+    }
+
+    /**
+     * |x| = max(|l|,|u|)
+     * 
+     * @return a real data
+     */
+    @Override
+    public Data abs() {
+        double l = ((IntervalData) this).getLower().doubleValue();
+        double u = ((IntervalData) this).getUpper().doubleValue();
+        return new RealData(Math.max(Math.abs(l), Math.abs(u)));
+    }
+
+    /**
+     * w(x) = u - l
+     * 
+     * @return a real data
+     */
+    public Data width() {
+        double l = ((IntervalData) this).getLower().doubleValue();
+        double u = ((IntervalData) this).getUpper().doubleValue();
+        return new RealData(u - l);
+    }
 }
