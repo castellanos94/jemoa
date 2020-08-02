@@ -96,8 +96,8 @@ public abstract class DTLZ extends Problem {
 
     @Override
     public String toString() {
-        return String.format("%s, number_of_variables = %d, number_of_objectives = %d", name, numberOfDecisionVars,
-                numberOfObjectives);
+        return String.format("%s, number_of_variables = %d, number_of_objectives = %d, k = %d", name,
+                numberOfDecisionVars, numberOfObjectives, k);
     }
 
 }

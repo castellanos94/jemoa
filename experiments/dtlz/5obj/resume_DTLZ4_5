@@ -1,0 +1,7 @@
+DTLZ4, number_of_variables = 14, number_of_objectives = 5, k = 10
+NSGAIII [currenIteration=0, maxIterations=1000, numberOfDivisions=6, ranking=com.castellanos94.components.impl.FastNonDominatedSort@5305068a, referencePoints=210]
+0 time: 512039 ms.
+1 time: 486115 ms.
+2 time: 399603 ms.
+3 time: 375510 ms.
+4 time: 389568 ms.
