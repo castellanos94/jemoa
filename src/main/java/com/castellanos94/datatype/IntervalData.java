@@ -1,5 +1,7 @@
 package com.castellanos94.datatype;
-
+/**
+ * Interval arithmetic (Moore, 1979) and Introduction to interval analysis
+ */
 public class IntervalData extends Data {
     /**
      *
@@ -196,13 +198,26 @@ public class IntervalData extends Data {
         double l = ((IntervalData) this).getLower().doubleValue();
         double u = ((IntervalData) this).getUpper().doubleValue();
         double n = exp.doubleValue();
-        if (l > 0 || n % 2 == 0)
+        if (l > 0 || n % 2 != 0)
             return new IntervalData(Math.pow(l, n), Math.pow(u, n));
-        if (u < 0 && n % 2 != 0)
+        if (u < 0 && n % 2 == 0)
             return new IntervalData(Math.pow(u, n), Math.pow(l, n));
+        if (u == 0 || l == 0 && n % 2 == 0) {
+            l = Math.pow(l, n);
+            u = Math.pow(u, n);
+            return new IntervalData(0, Math.max(l, u));
+        }
+        if (n == 0.5 && l < 0) {
+            return new IntervalData(Math.pow(l, n), Math.pow(u, -n));
+        }
         l = Math.pow(l, n);
         u = Math.pow(u, n);
         return new IntervalData(Math.min(l, u), Math.max(l, u));
+    }
+
+    @Override
+    public Data sqr() {
+        return this.plus(0.5);
     }
 
     public Data sin() {
@@ -257,11 +272,24 @@ public class IntervalData extends Data {
      * 
      * @return a real data
      */
-    @Override
-    public Data abs() {
+    public Data mag() {
         double l = ((IntervalData) this).getLower().doubleValue();
         double u = ((IntervalData) this).getUpper().doubleValue();
         return new RealData(Math.max(Math.abs(l), Math.abs(u)));
+    }
+
+    @Override
+    public Data abs() {
+
+        double l = ((IntervalData) this).getLower().doubleValue();
+        double u = ((IntervalData) this).getUpper().doubleValue();
+        if (l >= 0)
+            return new IntervalData(l, u);
+        if (u <= 0)
+            return new IntervalData(Math.min(Math.abs(l), Math.abs(u)), Math.max(Math.abs(l), Math.abs(u)));
+        if (Math.abs(l) > u)
+            return new IntervalData(0, Math.abs(l));
+        return new IntervalData(0, Math.abs(u));
     }
 
     /**
@@ -274,4 +302,5 @@ public class IntervalData extends Data {
         double u = ((IntervalData) this).getUpper().doubleValue();
         return new RealData(u - l);
     }
+
 }

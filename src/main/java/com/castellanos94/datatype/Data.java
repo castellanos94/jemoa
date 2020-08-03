@@ -101,12 +101,7 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
         }
         if (this instanceof RealData) {
             return new RealData(Math.sqrt(this.doubleValue()));
-        }
-        if (this instanceof IntervalData) {
-            double l = ((IntervalData) this).getLower().doubleValue();
-            double u = ((IntervalData) this).getUpper().doubleValue();
-            return new IntervalData(Math.sqrt(l), Math.sqrt(u));
-        }
+        }        
         return null;
     }
 
