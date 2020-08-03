@@ -49,8 +49,8 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
         if (d instanceof Float || d instanceof Double || d instanceof RealData) {
             return new RealData(0);
         }
-        if (d instanceof IntervalData) {
-            return new IntervalData(0);
+        if (d instanceof Interval) {
+            return new Interval(0);
         }
         return null;
     }
@@ -65,8 +65,8 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
         if (d instanceof Float || d instanceof Double || d instanceof RealData) {
             return new RealData(1);
         }
-        if (d instanceof IntervalData) {
-            return new IntervalData(1);
+        if (d instanceof Interval) {
+            return new Interval(1);
         }
         return null;
     }
@@ -115,8 +115,8 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
         if (var instanceof Float || var instanceof Double || var instanceof RealData) {
             return new RealData(value);
         }
-        if (var instanceof IntervalData) {
-            return new IntervalData(value);
+        if (var instanceof Interval) {
+            return new Interval(value);
         }
         return null;
     }
@@ -131,8 +131,8 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
         if (var instanceof Float || var instanceof Double || var instanceof RealData) {
             return Double.isNaN(var.doubleValue());
         }
-        if (var instanceof IntervalData) {
-            IntervalData data = new IntervalData(var);
+        if (var instanceof Interval) {
+            Interval data = new Interval(var);
             return Double.isNaN(data.getLower().doubleValue()) || Double.isNaN(data.getUpper().doubleValue());
         }
         throw new IllegalArgumentException("is not number");

@@ -2,7 +2,7 @@ package com.castellanos94.datatype;
 /**
  * Interval arithmetic (Moore, 1979) and Introduction to interval analysis
  */
-public class IntervalData extends Data {
+public class Interval extends Data {
     /**
      *
      */
@@ -10,9 +10,9 @@ public class IntervalData extends Data {
     private RealData lower;
     private RealData upper;
 
-    public IntervalData(Number n) {
-        if (n instanceof IntervalData) {
-            IntervalData t = (IntervalData) n;
+    public Interval(Number n) {
+        if (n instanceof Interval) {
+            Interval t = (Interval) n;
             this.lower = new RealData(t.getLower());
             this.upper = new RealData(t.getUpper());
         } else {
@@ -22,18 +22,18 @@ public class IntervalData extends Data {
         }
     }
 
-    public IntervalData(Number lower, Number upper) {
+    public Interval(Number lower, Number upper) {
         this.lower = new RealData(lower);
         this.upper = new RealData(upper);
     }
 
     public RealData posibilityFunction(Number value) {
-        IntervalData data;
-        if (value instanceof IntervalData) {
-            data = (IntervalData) value;
+        Interval data;
+        if (value instanceof Interval) {
+            data = (Interval) value;
 
         } else {
-            data = new IntervalData(value);
+            data = new Interval(value);
         }
         if (lower.compareTo(data.getLower()) == 0 && upper.compareTo(data.getUpper()) == 0)
             return RealData.ZERO;
@@ -49,12 +49,12 @@ public class IntervalData extends Data {
 
     @Override
     public Data times(Number value) {
-        IntervalData data;
-        if (value instanceof IntervalData) {
-            data = (IntervalData) value;
+        Interval data;
+        if (value instanceof Interval) {
+            data = (Interval) value;
 
         } else {
-            data = new IntervalData(value);
+            data = new Interval(value);
         }
         RealData a1 = (RealData) lower.times(data.getLower());
         RealData a2 = (RealData) lower.times(data.getUpper());
@@ -68,55 +68,55 @@ public class IntervalData extends Data {
         double b4 = Math.max(a3.doubleValue(), a4.doubleValue());
         double up = Math.max(b3, b4);
 
-        return new IntervalData(low, up);
+        return new Interval(low, up);
     }
 
     @Override
     public Data plus(Number value) {
-        IntervalData data;
-        if (value instanceof IntervalData) {
-            data = (IntervalData) value;
+        Interval data;
+        if (value instanceof Interval) {
+            data = (Interval) value;
 
         } else {
-            data = new IntervalData(value);
+            data = new Interval(value);
         }
-        return new IntervalData(lower.plus(data.getLower()), upper.plus(data.getUpper()));
+        return new Interval(lower.plus(data.getLower()), upper.plus(data.getUpper()));
     }
 
     @Override
     public Data minus(Number value) {
-        IntervalData data;
-        if (value instanceof IntervalData) {
-            data = (IntervalData) value;
+        Interval data;
+        if (value instanceof Interval) {
+            data = (Interval) value;
 
         } else {
-            data = new IntervalData(value);
+            data = new Interval(value);
         }
-        return new IntervalData(lower.minus(data.getUpper()), upper.minus(data.getLower()));
+        return new Interval(lower.minus(data.getUpper()), upper.minus(data.getLower()));
     }
 
     @Override
     public Data div(Number value) {
-        IntervalData vid;
-        if (value instanceof IntervalData) {
-            vid = (IntervalData) value;
+        Interval vid;
+        if (value instanceof Interval) {
+            vid = (Interval) value;
 
         } else {
-            vid = new IntervalData(value);
+            vid = new Interval(value);
         }
         double c = vid.getLower().doubleValue();
         double d = vid.getUpper().doubleValue();
         if (c == 0 && d > 0)
-            return new IntervalData(1 / d, Double.POSITIVE_INFINITY);
+            return new Interval(1 / d, Double.POSITIVE_INFINITY);
         if (c < d && d == 0)
-            return new IntervalData(Double.NEGATIVE_INFINITY, 1 / c);
+            return new Interval(Double.NEGATIVE_INFINITY, 1 / c);
 
-        return this.times(new IntervalData(1 / c, 1 / d));
+        return this.times(new Interval(1 / c, 1 / d));
     }
 
     @Override
     public Number getData() {
-        return new IntervalData(lower, upper);
+        return new Interval(lower, upper);
     }
 
     /**
@@ -160,12 +160,12 @@ public class IntervalData extends Data {
 
     @Override
     public int compareTo(Number b) {
-        IntervalData c;
-        if (b instanceof IntervalData) {
-            c = (IntervalData) b;
+        Interval c;
+        if (b instanceof Interval) {
+            c = (Interval) b;
 
         } else {
-            c = new IntervalData(b);
+            c = new Interval(b);
         }
         double lower = this.lower.doubleValue();
         double upper = this.upper.doubleValue();
@@ -181,38 +181,38 @@ public class IntervalData extends Data {
 
     @Override
     public Data unaryMinsu() {
-        return new IntervalData(-1).times(this);
+        return new Interval(-1).times(this);
     }
 
     public Data exp() {
-        return new IntervalData(Math.exp(lower.doubleValue()), Math.exp(upper.doubleValue()));
+        return new Interval(Math.exp(lower.doubleValue()), Math.exp(upper.doubleValue()));
     }
 
     public Data log() {
-        return new IntervalData(Math.log(lower.doubleValue()), Math.log(upper.doubleValue()));
+        return new Interval(Math.log(lower.doubleValue()), Math.log(upper.doubleValue()));
     }
 
     @Override
     public Data pow(Number exp) {
 
-        double l = ((IntervalData) this).getLower().doubleValue();
-        double u = ((IntervalData) this).getUpper().doubleValue();
+        double l = ((Interval) this).getLower().doubleValue();
+        double u = ((Interval) this).getUpper().doubleValue();
         double n = exp.doubleValue();
         if (l > 0 || n % 2 != 0)
-            return new IntervalData(Math.pow(l, n), Math.pow(u, n));
+            return new Interval(Math.pow(l, n), Math.pow(u, n));
         if (u < 0 && n % 2 == 0)
-            return new IntervalData(Math.pow(u, n), Math.pow(l, n));
+            return new Interval(Math.pow(u, n), Math.pow(l, n));
         if (u == 0 || l == 0 && n % 2 == 0) {
             l = Math.pow(l, n);
             u = Math.pow(u, n);
-            return new IntervalData(0, Math.max(l, u));
+            return new Interval(0, Math.max(l, u));
         }
         if (n == 0.5 && l < 0) {
-            return new IntervalData(Math.pow(l, n), Math.pow(u, -n));
+            return new Interval(Math.pow(l, n), Math.pow(u, -n));
         }
         l = Math.pow(l, n);
         u = Math.pow(u, n);
-        return new IntervalData(Math.min(l, u), Math.max(l, u));
+        return new Interval(Math.min(l, u), Math.max(l, u));
     }
 
     @Override
@@ -223,7 +223,7 @@ public class IntervalData extends Data {
     public Data sin() {
         double l = lower.doubleValue();
         double u = upper.doubleValue();
-        return new IntervalData(Math.min(Math.sin(l), Math.sin(u)), Math.max(Math.sin(l), Math.sin(u)));
+        return new Interval(Math.min(Math.sin(l), Math.sin(u)), Math.max(Math.sin(l), Math.sin(u)));
     }
 
     /**
@@ -232,12 +232,12 @@ public class IntervalData extends Data {
      * @param y other interval
      * @return interval result
      */
-    public Data union(IntervalData y) {
+    public Data union(Interval y) {
         double lx = lower.doubleValue();
         double rx = upper.doubleValue();
         double ly = y.getLower().doubleValue();
         double ry = y.getUpper().doubleValue();
-        return new IntervalData(Math.min(lx, ly), Math.max(rx, ry));
+        return new Interval(Math.min(lx, ly), Math.max(rx, ry));
     }
 
     /**
@@ -246,14 +246,14 @@ public class IntervalData extends Data {
      * @param y other interval
      * @return interval result
      */
-    public Data intersection(IntervalData y) {
+    public Data intersection(Interval y) {
         double lx = lower.doubleValue();
         double ux = upper.doubleValue();
         double ly = y.getLower().doubleValue();
         double uy = y.getUpper().doubleValue();
         if (uy < lx || ux < ly)
-            return new IntervalData(0);
-        return new IntervalData(Math.max(lx, ly), Math.min(ux, uy));
+            return new Interval(0);
+        return new Interval(Math.max(lx, ly), Math.min(ux, uy));
     }
 
     /**
@@ -262,8 +262,8 @@ public class IntervalData extends Data {
      * @return a real data
      */
     public Data mindPoint() {
-        double l = ((IntervalData) this).getLower().doubleValue();
-        double u = ((IntervalData) this).getUpper().doubleValue();
+        double l = ((Interval) this).getLower().doubleValue();
+        double u = ((Interval) this).getUpper().doubleValue();
         return new RealData(0.5 * (l + u));
     }
 
@@ -273,23 +273,23 @@ public class IntervalData extends Data {
      * @return a real data
      */
     public Data mag() {
-        double l = ((IntervalData) this).getLower().doubleValue();
-        double u = ((IntervalData) this).getUpper().doubleValue();
+        double l = ((Interval) this).getLower().doubleValue();
+        double u = ((Interval) this).getUpper().doubleValue();
         return new RealData(Math.max(Math.abs(l), Math.abs(u)));
     }
 
     @Override
     public Data abs() {
 
-        double l = ((IntervalData) this).getLower().doubleValue();
-        double u = ((IntervalData) this).getUpper().doubleValue();
+        double l = ((Interval) this).getLower().doubleValue();
+        double u = ((Interval) this).getUpper().doubleValue();
         if (l >= 0)
-            return new IntervalData(l, u);
+            return new Interval(l, u);
         if (u <= 0)
-            return new IntervalData(Math.min(Math.abs(l), Math.abs(u)), Math.max(Math.abs(l), Math.abs(u)));
+            return new Interval(Math.min(Math.abs(l), Math.abs(u)), Math.max(Math.abs(l), Math.abs(u)));
         if (Math.abs(l) > u)
-            return new IntervalData(0, Math.abs(l));
-        return new IntervalData(0, Math.abs(u));
+            return new Interval(0, Math.abs(l));
+        return new Interval(0, Math.abs(u));
     }
 
     /**
@@ -298,8 +298,8 @@ public class IntervalData extends Data {
      * @return a real data
      */
     public Data width() {
-        double l = ((IntervalData) this).getLower().doubleValue();
-        double u = ((IntervalData) this).getUpper().doubleValue();
+        double l = ((Interval) this).getLower().doubleValue();
+        double u = ((Interval) this).getUpper().doubleValue();
         return new RealData(u - l);
     }
 

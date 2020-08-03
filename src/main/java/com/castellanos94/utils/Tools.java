@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
 
-import com.castellanos94.datatype.IntervalData;
+import com.castellanos94.datatype.Interval;
 import com.castellanos94.instances.Instance;
 import com.castellanos94.instances.KnapsackIntance;
 import com.castellanos94.instances.PSPInstance;
@@ -41,14 +41,14 @@ public class Tools {
     }
 
     public static Number getRandomNumberInRange(Number lowerBound, Number upperBound) {
-        if (lowerBound instanceof IntervalData) {
-            IntervalData l = (IntervalData) lowerBound;
-            IntervalData r = (IntervalData) upperBound;
+        if (lowerBound instanceof Interval) {
+            Interval l = (Interval) lowerBound;
+            Interval r = (Interval) upperBound;
             if (l.getLower().compareTo(l.getUpper()) != 0 && r.getLower().compareTo(r.getLower()) != 0) {
-                return new IntervalData(getRandomNumberInRange(l.getLower().doubleValue(), l.getLower().doubleValue()),
+                return new Interval(getRandomNumberInRange(l.getLower().doubleValue(), l.getLower().doubleValue()),
                         getRandomNumberInRange(r.getLower().doubleValue(), r.getUpper().doubleValue()));
             }
-            return new IntervalData(getRandomNumberInRange(l.getLower(), r.getUpper()));
+            return new Interval(getRandomNumberInRange(l.getLower(), r.getUpper()));
         }
         if (lowerBound.doubleValue() > upperBound.doubleValue()) {
             throw new IllegalArgumentException("max must be greater than min");

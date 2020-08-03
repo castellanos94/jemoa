@@ -1,7 +1,6 @@
 package com.castellanos94.components.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 import com.castellanos94.components.Ranking;
