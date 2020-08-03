@@ -27,7 +27,7 @@ public class Interval extends Data {
         this.upper = new RealData(upper);
     }
 
-    public RealData posibilityFunction(Number value) {
+    public RealData possibility(Number value) {
         Interval data;
         if (value instanceof Interval) {
             data = (Interval) value;
@@ -175,7 +175,7 @@ public class Interval extends Data {
         if (Double.compare(lower, lowerB) == 0 && Double.compare(upper, upperB) == 0)
             return 0;
 
-        int ped = this.posibilityFunction(c).compareTo(0.5);
+        int ped = this.possibility(c).compareTo(0.5);
         return (ped == 0) ? 0 : (ped < 0.5) ? -1 : 1;
     }
 
