@@ -78,5 +78,10 @@ public class UF_ITHDM_Dominance<S extends Solution> extends IntervalDominance<S>
         return 0;
 
     }
-
+    public RealData getAlpha() {
+        return alpha;
+    }
+    public void setAlpha(RealData alpha) {
+        this.alpha = alpha;
+    }
 }

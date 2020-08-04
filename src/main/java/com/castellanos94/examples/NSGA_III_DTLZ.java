@@ -22,6 +22,7 @@ import com.castellanos94.problems.benchmarks.dtlz.*;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
 import com.castellanos94.utils.Scatter3D;
+import com.castellanos94.utils.Tools;
 
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.Table;
@@ -31,10 +32,10 @@ public class NSGA_III_DTLZ {
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         // Tools.setSeed(141414L);
-        // Tools.setSeed(8435L);
+        Tools.setSeed(8435L);
 
         int EXPERIMENT = 50;
-        int n_problem = 1;
+        int n_problem = 7;
         int number_of_objectives = 3;
 
         ArrayList<Solution> bag = new ArrayList<>();
@@ -192,6 +193,9 @@ public class NSGA_III_DTLZ {
                     maxIterations = 3000;
                 }
                 break;
+            case 7:
+                problem =new DTLZ7();
+                maxIterations = 500;
         }
 
         SelectionOperator selectionOperator = new TournamentSelection((int) options.get("pop_size"),

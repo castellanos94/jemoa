@@ -74,5 +74,10 @@ public class ITHDM_Dominance extends IntervalDominance<Solution> {
             return 1;
         return 0;
     }
-
+    public RealData getAlpha() {
+        return alpha;
+    }
+    public void setAlpha(RealData alpha) {
+        this.alpha = alpha;
+    }
 }

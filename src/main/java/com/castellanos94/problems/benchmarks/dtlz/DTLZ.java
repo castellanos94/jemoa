@@ -16,17 +16,22 @@ public abstract class DTLZ extends Problem {
         this.numberOfDecisionVars = numberOfVariables;
         numberOfConstrains = 0;
         k = this.numberOfDecisionVars - this.numberOfObjectives + 1;
-        lowerBound = new Data[numberOfDecisionVars];
-        upperBound = new Data[numberOfDecisionVars];
+        
         objectives_type = new int[numberOfObjectives];
         for (int i = 0; i < numberOfObjectives; i++) {
             objectives_type[i] = Problem.MINIMIZATION;
         }
+        loadBoundarys();
+        setName(this.getClass().getSimpleName());
+    }
+
+    private void loadBoundarys() {
+        lowerBound = new Data[numberOfDecisionVars];
+        upperBound = new Data[numberOfDecisionVars];
         for (int i = 0; i < lowerBound.length; i++) {
             lowerBound[i] = new RealData(0);
             upperBound[i] = new RealData(1);
         }
-        setName(this.getClass().getSimpleName());
     }
 
     /**
@@ -82,6 +87,7 @@ public abstract class DTLZ extends Problem {
     public DTLZ setK(int k) {
         this.k = k;
         this.numberOfDecisionVars = this.k + this.numberOfObjectives - 1;
+        loadBoundarys();
         return this;
     }
 

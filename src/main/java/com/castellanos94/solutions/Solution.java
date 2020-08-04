@@ -151,6 +151,9 @@ public class Solution implements Cloneable, Comparable<Solution> {
     public HashMap<String, Object> getProperties() {
         return this.properties;
     }
+    public Object getAttribute(String key){
+        return this.properties.get(key);
+    }
 
     public void setProperties(HashMap<String, Object> properties) {
         this.properties = properties;
