@@ -95,7 +95,7 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
         return null;
     }
 
-    public Data sqr() {
+    public Data sqrt() {
         if (this instanceof IntegerData) {
             return new RealData(Math.sqrt(this.intValue()));
         }

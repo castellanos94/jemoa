@@ -250,7 +250,7 @@ public class NSGA3Selection implements SelectionOperator {
             d = d.plus(res.times(res));
         }
 
-        return d.sqr();
+        return d.sqrt();
     }
 
     private void associate() {

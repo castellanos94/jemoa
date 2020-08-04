@@ -1,30 +1,35 @@
 package com.castellanos94.datatype;
+
 /**
- * Interval arithmetic (Moore, 1979) and Introduction to interval analysis
+ * Interval arithmetic (Moore, 1979) and Introduction to interval analysis Ramon
+ * E. Moore, R. Baker Kearfott, and Michael J. Cloud. 2009. Introduction to
+ * Interval Analysis. Society for Industrial and Applied Mathematics, USA.
+ * 
+ * 
  */
 public class Interval extends Data {
     /**
      *
      */
     private static final long serialVersionUID = -4032868859966244473L;
-    private RealData lower;
-    private RealData upper;
+    private Double lower;
+    private Double upper;
 
     public Interval(Number n) {
         if (n instanceof Interval) {
             Interval t = (Interval) n;
-            this.lower = new RealData(t.getLower());
-            this.upper = new RealData(t.getUpper());
+            this.lower = t.getLower();
+            this.upper = t.getUpper();
         } else {
-            this.lower = new RealData(n);
-            this.upper = new RealData(n);
+            this.lower = n.doubleValue();
+            this.upper = n.doubleValue();
 
         }
     }
 
     public Interval(Number lower, Number upper) {
-        this.lower = new RealData(lower);
-        this.upper = new RealData(upper);
+        this.lower = lower.doubleValue();
+        this.upper = upper.doubleValue();
     }
 
     public RealData possibility(Number value) {
@@ -41,10 +46,10 @@ public class Interval extends Data {
             return RealData.ONE;
         if (data.getLower().compareTo(lower) < 0)
             return (RealData) RealData.ONE.times(-1);
-        RealData v = (RealData) upper.minus(lower).plus(data.getUpper().minus(data.getLower()));
-        RealData ped = (RealData) upper.minus(data.getLower()).div(v);
+        double v = (upper - lower) + (data.getUpper() - data.getLower());
+        RealData ped = new RealData((upper - data.getLower()) / (v));
 
-        return (ped.compareTo(1) > 0) ? RealData.ONE : (ped.compareTo(0) <= 0) ? RealData.ZERO : ped;
+        return (ped.compareTo(1.0) > 0) ? RealData.ONE : (ped.compareTo(0.0) <= 0) ? RealData.ZERO : ped;
     }
 
     @Override
@@ -56,17 +61,15 @@ public class Interval extends Data {
         } else {
             data = new Interval(value);
         }
-        RealData a1 = (RealData) lower.times(data.getLower());
-        RealData a2 = (RealData) lower.times(data.getUpper());
-        RealData a3 = (RealData) upper.times(data.getLower());
-        RealData a4 = (RealData) upper.times(data.getUpper());
-        double b1 = Math.min(a1.doubleValue(), a2.doubleValue());
-        double b2 = Math.min(a3.doubleValue(), a4.doubleValue());
-        double low = Math.min(b1, b2);
+        double a, b, c, d;
+        a = lower * data.getLower();
+        b = lower * data.getUpper();
+        c = upper * data.getLower();
+        d = upper * data.getUpper();
 
-        double b3 = Math.max(a1.doubleValue(), a2.doubleValue());
-        double b4 = Math.max(a3.doubleValue(), a4.doubleValue());
-        double up = Math.max(b3, b4);
+        double low = Math.min(Math.min(a, b), Math.min(c, d));
+
+        double up = Math.max(Math.max(a, b), Math.max(c, d));
 
         return new Interval(low, up);
     }
@@ -80,7 +83,7 @@ public class Interval extends Data {
         } else {
             data = new Interval(value);
         }
-        return new Interval(lower.plus(data.getLower()), upper.plus(data.getUpper()));
+        return new Interval(lower + data.getLower(), upper + data.getUpper());
     }
 
     @Override
@@ -92,7 +95,7 @@ public class Interval extends Data {
         } else {
             data = new Interval(value);
         }
-        return new Interval(lower.minus(data.getUpper()), upper.minus(data.getLower()));
+        return new Interval(lower - data.getUpper(), upper - data.getUpper());
     }
 
     @Override
@@ -122,14 +125,14 @@ public class Interval extends Data {
     /**
      * @return the lower
      */
-    public RealData getLower() {
+    public Double getLower() {
         return lower;
     }
 
     /**
      * @return the upper
      */
-    public RealData getUpper() {
+    public Double getUpper() {
         return upper;
     }
 
@@ -216,7 +219,7 @@ public class Interval extends Data {
     }
 
     @Override
-    public Data sqr() {
+    public Data sqrt() {
         return this.plus(0.5);
     }
 

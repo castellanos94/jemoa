@@ -48,7 +48,7 @@ public class InvertedGenerationalDistance implements Indicator<Solution> {
             diff = vector1[i].minus(vector2[i]);
             distance = distance.plus(diff.times(diff));
         }
-        return distance.sqr();
+        return distance.sqrt();
     }
 
 }

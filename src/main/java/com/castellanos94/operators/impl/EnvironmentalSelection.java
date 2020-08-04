@@ -198,7 +198,7 @@ public class EnvironmentalSelection implements SelectionOperator {
             // d += Math.pow(k * direction.get(i) - point.get(i), 2.0);
             d = d.plus(k.times(direction.get(i).minus(point.get(i)).pow(2)));
         }
-        return d.sqr();
+        return d.sqrt();
     }
 
     public void associate(List<Solution> population) {

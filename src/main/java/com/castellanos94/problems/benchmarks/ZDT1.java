@@ -53,7 +53,7 @@ public class ZDT1 extends Problem {
         // h = (RealData)
         // RealData.ONE.subtraction(solution.getObjectives().get(0).division(g).sqr());
         tmp = solution.getObjectives().get(0).div(g);
-        f2 = (RealData) g.times(RealData.ONE.minus(tmp.sqr()));
+        f2 = (RealData) g.times(RealData.ONE.minus(tmp.sqrt()));
         solution.setObjective(1, f2);
 
         evaluateConstraints(solution);
