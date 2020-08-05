@@ -24,6 +24,11 @@ public class RandomSelection implements SelectionOperator {
     }
 
     @Override
+    public void setPopulaitonSize(int size) {
+        this.size = size;
+    }
+
+    @Override
     public String toString() {
         return "RandomSelection [size=" + size + "]";
     }

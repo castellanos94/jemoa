@@ -21,6 +21,7 @@ import com.castellanos94.operators.impl.TournamentSelection;
 import com.castellanos94.problems.benchmarks.dtlz.*;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
+import com.castellanos94.utils.ReferenceHyperplane;
 import com.castellanos94.utils.Scatter3D;
 import com.castellanos94.utils.Tools;
 
@@ -34,13 +35,18 @@ public class NSGA_III_DTLZ {
         // Tools.setSeed(141414L);
         Tools.setSeed(8435L);
 
-        int EXPERIMENT = 1;
-        int n_problem = 1;
+        int EXPERIMENT = 30;
+        int n_problem = 4;
         int number_of_objectives = 3;
 
         ArrayList<Solution> bag = new ArrayList<>();
         long averageTime = 0;
-        AbstractEvolutionaryAlgorithm algorithm = DTLZ_TestSuite(n_problem, number_of_objectives);
+        //1,3
+        NSGA_III algorithm = DTLZ_TestSuite(n_problem, number_of_objectives);
+        ReferenceHyperplane referenceHyperplane = new ReferenceHyperplane(number_of_objectives,
+                algorithm.getNumberOfDivisions());
+        referenceHyperplane.execute();
+        algorithm.setReferenceHyperplane(referenceHyperplane);
         DTLZ problem = (DTLZ) algorithm.getProblem();
         PrintStream console = System.out;
         PrintStream ps = new PrintStream(
@@ -56,6 +62,8 @@ public class NSGA_III_DTLZ {
 
         for (int i = 0; i < EXPERIMENT; i++) {
             algorithm = DTLZ_TestSuite(n_problem, number_of_objectives);
+            algorithm.setReferenceHyperplane(referenceHyperplane);
+            referenceHyperplane.resetCount();
 
             algorithm.execute();
             averageTime += algorithm.getComputeTime();
@@ -64,6 +72,7 @@ public class NSGA_III_DTLZ {
             System.out.println(i + " time: " + algorithm.getComputeTime() + " ms.");
             System.setOut(ps);
             System.out.println(i + " time: " + algorithm.getComputeTime() + " ms.");
+            Solution.toFile(directory+File.separator+problem.getName()+"_"+i,algorithm.getSolutions());
             bag.addAll(algorithm.getSolutions());
         }
         System.setOut(console);
@@ -90,7 +99,8 @@ public class NSGA_III_DTLZ {
         File f = new File(directory);
         if (!f.exists())
             f.mkdirs();
-        f = new File(directory + File.separator + "nsga_iii_bag_" + problem.getName() + "_f0_" + problem.getNumberOfObjectives());
+        f = new File(directory + File.separator + "nsga_iii_bag_" + problem.getName() + "_f0_"
+                + problem.getNumberOfObjectives());
 
         ArrayList<String> strings = new ArrayList<>();
         for (Solution solution : compartor.getSubFront(0))
@@ -115,7 +125,7 @@ public class NSGA_III_DTLZ {
         }
     }
 
-    private static AbstractEvolutionaryAlgorithm DTLZ_TestSuite(int p, int number_of_objectives) {
+    private static NSGA_III DTLZ_TestSuite(int p, int number_of_objectives) {
 
         HashMap<String, Object> options = setup(number_of_objectives);
         DTLZ problem = null;
@@ -194,7 +204,7 @@ public class NSGA_III_DTLZ {
                 }
                 break;
             case 7:
-                problem =new DTLZ7();
+                problem = new DTLZ7();
                 maxIterations = 500;
         }
 

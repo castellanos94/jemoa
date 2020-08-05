@@ -1,5 +1,9 @@
 package com.castellanos94.solutions;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -151,16 +155,19 @@ public class Solution implements Cloneable, Comparable<Solution> {
     public HashMap<String, Object> getProperties() {
         return this.properties;
     }
-    public Object getAttribute(String key){
+
+    public Object getAttribute(String key) {
         return this.properties.get(key);
     }
-    public void setAttribute(String key, Object value){
+
+    public void setAttribute(String key, Object value) {
         this.properties.put(key, value);
     }
 
     public void setProperties(HashMap<String, Object> properties) {
         this.properties = properties;
     }
+
     @SuppressWarnings("unchecked")
     @Override
     public Object clone() throws CloneNotSupportedException {
@@ -204,13 +211,14 @@ public class Solution implements Cloneable, Comparable<Solution> {
     public Data getUpperBound(int i) {
         return this.upperBound[i];
     }
+
     public void setLowerBound(Data[] lowerBound) {
         this.lowerBound = lowerBound;
     }
+
     public void setUpperBound(Data[] upperBound) {
         this.upperBound = upperBound;
     }
-    
 
     public void setVariable(int i, Data y) {
         this.decision_vars.set(i, y);
@@ -253,5 +261,13 @@ public class Solution implements Cloneable, Comparable<Solution> {
         return true;
     }
 
+    public static void toFile(String string, ArrayList<Solution> solutions) throws IOException {
+        ArrayList<String> strings = new ArrayList<>();
+        File f = new File(string + ".out");
+        for (Solution solution : solutions)
+            strings.add(solution.toString());
+
+        Files.write(f.toPath(), strings, Charset.defaultCharset());
+    }
 
 }

@@ -45,6 +45,11 @@ public class TournamentSelection implements SelectionOperator {
     }
 
     @Override
+    public void setPopulaitonSize(int size) {
+        this.n_offsrping = size;
+    }
+
+    @Override
     public String toString() {
         return "TournamentSelection [comparator=" + comparator + ", n_offsrping=" + n_offsrping + ", parents=" + parents
                 + "]";

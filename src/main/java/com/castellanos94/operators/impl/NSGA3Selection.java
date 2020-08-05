@@ -3,13 +3,14 @@ package com.castellanos94.operators.impl;
 import java.util.ArrayList;
 
 import com.castellanos94.datatype.Data;
-import com.castellanos94.datatype.Interval;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
+import com.castellanos94.utils.ReferenceHyperplane;
+import com.castellanos94.utils.Tools;
 
-public class NSGA3Selection implements SelectionOperator {
+public class NSGA3Selection {
     private static Solution idealPoint;
     private static Solution intercepts;
     private Solution idealSolution;
@@ -24,46 +25,47 @@ public class NSGA3Selection implements SelectionOperator {
     private static final String NORMALIZE = "normalized_objectis";
     private static final String REFERENCE_POINT_INDEX = "point_reference_index";
     private static final String REFERENCE_POINT_DISTANCE = "point_min_distance";
+    private final ReferenceHyperplane Zr;
 
+    private Data max, one, min, zero;
+    int index, population_size, K;
 
-    private Data max, one,min,zero;
-
-
-    public NSGA3Selection(ArrayList<Solution> Rt) throws CloneNotSupportedException {
+    public NSGA3Selection(ArrayList<Solution> Rt, int K, ReferenceHyperplane Zr, int population_size, int index)
+            throws CloneNotSupportedException {
         this.Rt = Rt;
         this.problem = Rt.get(0).getProblem();
-        boolean first = false;
-
-         max = Data.initByRefType(Rt.get(0).getObjective(0), Double.MAX_VALUE);
-         one = Data.initByRefType(Rt.get(0).getObjective(0), 1.0);
-         min = Data.initByRefType(Rt.get(0).getObjective(0), 0.000001);
-         zero = Data.getZeroByType(Rt.get(0).getObjective(0));
+        this.Zr = Zr;
+        this.index = index;
+        this.K = K;
+        this.population_size = population_size;
+        this.number_of_objectives = problem.getNumberOfObjectives();
+        max = Data.initByRefType(Rt.get(0).getObjective(0), Double.MAX_VALUE);
+        one = Data.initByRefType(Rt.get(0).getObjective(0), 1.0);
+        min = Data.initByRefType(Rt.get(0).getObjective(0), 0.000001);
+        zero = Data.getZeroByType(Rt.get(0).getObjective(0));
         if (idealPoint == null) {
             idealPoint = new Solution(problem);
-            first = true;
             for (int i = 0; i < idealPoint.getObjectives().size(); ++i) {
                 idealPoint.setObjective(i, (Data) max.clone());
             }
         }
 
-        if (weights == null) {
-            Solution s;
-            weights = new ArrayList<>();
-            for (int i = 0; i < Rt.size(); ++i) {
-                s = weights.get(i);
-                for (int j = 0; j < number_of_objectives; ++j) {
-                    if (i == j) {
-                        s.setObjective(j, (Data) one.clone());
-                    } else {
-                        s.setObjective(j, (Data) min.clone());
-                    }
+        weights = new ArrayList<>();
+        for (int i = 0; i < number_of_objectives; ++i) {
+            Solution s = new Solution(problem);
+            for (int j = 0; j < number_of_objectives; ++j) {
+                if (i == j) {
+                    s.setObjective(j, (Data) one.clone());
+                } else {
+                    s.setObjective(j, (Data) min.clone());
                 }
             }
-        } // if weights
+            weights.add(s);
+        }
 
         if (extremepoints == null) {
             extremepoints = new ArrayList<>();
-            for (Solution solution : Rt) {
+            for (int i = 0; i < number_of_objectives; i++) {
                 extremepoints.add(new Solution(problem));
             }
         }
@@ -89,12 +91,12 @@ public class NSGA3Selection implements SelectionOperator {
                 gauss[i] = (Data) zero.clone();
             }
         }
-
     }
 
-    @Override
-    public void execute(ArrayList<Solution> solutions) {
-        
+    public void execute(ArrayList<Solution> Pt) throws CloneNotSupportedException {
+        normalize();
+        associate();
+        niching(Pt);
     }
 
     private void updateIdealPoint() throws CloneNotSupportedException {
@@ -110,7 +112,7 @@ public class NSGA3Selection implements SelectionOperator {
     private void translateObjectives() {
         for (Solution solution : Rt) {
             ArrayList<Data> translate = new ArrayList<>();
-            for (int i = 0; i < number_of_objectives;i++) {
+            for (int i = 0; i < number_of_objectives; i++) {
                 translate.add(solution.getObjective(i).minus(idealPoint.getObjective(i)));
             }
             solution.getProperties().put(TRANSLATE, translate);
@@ -131,7 +133,7 @@ public class NSGA3Selection implements SelectionOperator {
     }
 
     private void foundExtremePoints() throws CloneNotSupportedException {
-        Data min_ASF = new Interval(Double.MIN_VALUE);
+        Data min_ASF = max;
         int point = -1;
         Data value;
         for (int i = 0; i < number_of_objectives; i++) {
@@ -150,7 +152,7 @@ public class NSGA3Selection implements SelectionOperator {
     private void calculateIntercepts() {
         boolean duplicado = false;
         for (int i = 0; !duplicado && i < extremepoints.size(); i++) {
-            boolean iguales = true;
+            boolean iguales = false;
             ArrayList<Data> extremeI = (ArrayList<Data>) extremepoints.get(i).getProperties().get(TRANSLATE);
             for (int j = i + 1; iguales && j < extremepoints.size(); j++) {
 
@@ -174,6 +176,7 @@ public class NSGA3Selection implements SelectionOperator {
                 A[i][extremepoints.size()] = Data.getOneByType(Rt.get(0).getObjective(0));
 
             }
+            this.gaussianElimination(A, gauss);
             for (int i = 0; i < extremepoints.size(); i++) {
                 RealData uno = RealData.ONE;
                 intercepts.setObjective(i, uno.div(gauss[i]));
@@ -194,7 +197,7 @@ public class NSGA3Selection implements SelectionOperator {
         }
 
         for (int i = 0; i < N; i++)
-            gauss[i] = new Interval(0.0);
+            gauss[i] = zero;
 
         for (int i = N - 1; i >= 0; i -= 1) {
             for (int known = i + 1; known < N; known += 1) {
@@ -204,12 +207,6 @@ public class NSGA3Selection implements SelectionOperator {
         }
     }
 
-    @Override
-    public ArrayList<Solution> getParents() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     private void normalize() throws CloneNotSupportedException {
         Data auxiliar;
         updateIdealPoint();
@@ -217,17 +214,19 @@ public class NSGA3Selection implements SelectionOperator {
         foundExtremePoints();
         calculateIntercepts();
         for (Solution solution : Rt) {
+            ArrayList<Data> normalizeList = new ArrayList<>();
             for (int i = 0; i < number_of_objectives; i++) {
                 Data minus = intercepts.getObjective(i).minus(idealPoint.getObjective(i));
                 Data abs_value = minus.abs();
                 if (abs_value.compareTo(0.0000000001) > 0) {
                     auxiliar = (intercepts.getObjective(i).minus(idealPoint.getObjective(i)));
                 } else {
-                    auxiliar = new Interval(0.0000000001);
+                    auxiliar =  min.minus(min).plus(0.0000000001);                                 
                 }
-                Data value = ((ArrayList<Data>) solution.getProperties().get(TRANSLATE)).get(i);
-                ((ArrayList<Data>) solution.getAttribute(NORMALIZE)).set(i, value);
+                Data value = ((ArrayList<Data>) solution.getProperties().get(TRANSLATE)).get(i).div(auxiliar);
+                normalizeList.add(value);
             }
+            solution.setAttribute(NORMALIZE, normalizeList);
         }
     }
 
@@ -259,30 +258,83 @@ public class NSGA3Selection implements SelectionOperator {
     }
 
     private void associate() {
-        /*Solution s, z;
+        Solution s, z;
         for (int i = 0; i < Rt.size(); i++) {
             s = Rt.get(i);
             int min_rp = -1;
             Data min_dist = max;
-            for (int j = 0; j < Zr.getNumberOfReferencPoints(); j++) {
-                z = Zr.getReferencePoint(j);
+            for (int j = 0; j < Zr.getNumberOfReferencePoints(); j++) {
+                z = Zr.getReferenceSolution(j);
                 Data d = perpendicularDistance(z, s);
-                if(d.compareTo(min_dist)<0){
+                if (d.compareTo(min_dist) < 0) {
                     min_dist = d;
                     min_rp = j;
                 }
             }
-            if(min_rp!= -1){
+            if (min_rp != -1) {
                 s.setAttribute(REFERENCE_POINT_INDEX, min_rp);
                 s.setAttribute(REFERENCE_POINT_DISTANCE, min_dist);
             }
-            if(s.getRank() < index){
-                Zr.increaseRPMemberSize(min_rp);
+            if (s.getRank() < index) {
+                Zr.incrementRPMemberSize(min_rp);
             }
-        }*/
+        }
     }
 
-    private void niching(ArrayList<Solution> Pt, int indexFront) {
+    private void niching(ArrayList<Solution> Pt) throws CloneNotSupportedException {
+        int k = 1;
+
+        ArrayList<Integer> J = new ArrayList<>();
+        ArrayList<Integer> I = new ArrayList<>();
+        int pj, pj_value, jsel, imin;
+        Data i_dist = max;
+        boolean Zr_disabled[] = new boolean[Zr.getNumberOfReferencePoints()];
+        boolean pt_disabled[] = new boolean[Rt.size()];
+        while (k <= K) {
+            pj = -1;
+            for (int l = 0; l < Zr.getNumberOfReferencePoints(); l++) {
+                if (!Zr_disabled[l] && pj == -1 || Zr.getRPMemberSize(l) < Zr.getRPMemberSize(pj))
+                    pj = l;
+            }
+            pj_value = Zr.getRPMemberSize(pj);
+            J.clear();
+            for (int i = 0; i < Zr.getNumberOfReferencePoints(); i++) {
+                if (!Zr_disabled[i] && Zr.getRPMemberSize(i) == pj_value)
+                    J.add(i);
+            }
+            if (J.size() > 1)
+                jsel = J.get(Tools.getRandom().nextInt(J.size() - 1));
+            else if (J.size() == 0)
+                jsel = J.get(0);
+            else
+                jsel = pj;
+            I.clear();
+            imin = -1;
+            for (int i = 0; i < Rt.size(); i++) {
+                Solution s = Rt.get(i);
+                if (!pt_disabled[i] && s.getRank() == index) {
+                    I.add(i);
+                    if (imin == -1 || ((Data) s.getAttribute(REFERENCE_POINT_DISTANCE)).compareTo(i_dist) < 0) {
+                        imin = i;
+                        i_dist = ((Data) s.getAttribute(REFERENCE_POINT_DISTANCE));
+                    }
+                }
+            }
+            if (!I.isEmpty()) {
+                if (pj_value == 0) {
+                    Pt.add( (Solution) Rt.get(imin).clone());
+
+                } else {
+                    imin = I.get(Tools.getRandom().nextInt(I.size() - 1));
+                    Pt.add( (Solution) Rt.get(imin).clone());
+                }
+                Zr.incrementRPMemberSize(pj);
+                k += 1;
+                pt_disabled[imin] = true;
+            } else {
+                Zr_disabled[jsel] = true;
+            }
+        }
 
     }
 

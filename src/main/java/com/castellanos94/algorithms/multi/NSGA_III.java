@@ -12,16 +12,19 @@ import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.RepairOperator;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.operators.impl.EnvironmentalSelection;
+import com.castellanos94.operators.impl.NSGA3Selection;
 import com.castellanos94.operators.impl.RepairRandomBoundary;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
+import com.castellanos94.utils.ReferenceHyperplane;
 import com.castellanos94.utils.ReferencePoint;
 
 public class NSGA_III extends AbstractEvolutionaryAlgorithm {
     protected int maxIterations;
     protected int currenIteration;
     protected int numberOfDivisions;
-    protected ArrayList<ReferencePoint> referencePoints = new ArrayList<>();
+    // protected ArrayList<ReferencePoint> referencePoints = new ArrayList<>();
+    protected ReferenceHyperplane referenceHyperplane;
     protected Ranking ranking;
     protected RepairOperator repair;
 
@@ -53,8 +56,8 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
     protected ArrayList<Solution> replacement(ArrayList<Solution> population, ArrayList<Solution> offspring) {
         ArrayList<Solution> Rt = new ArrayList<>(population);
         Rt.addAll(offspring);
-        Rt =new ArrayList<>(Rt.stream().distinct().collect(Collectors.toList()));
-        while(Rt.size() < populationSize){
+        Rt = new ArrayList<>(Rt.stream().distinct().collect(Collectors.toList()));
+        while (Rt.size() < populationSize) {
             Solution r = problem.randomSolution();
             problem.evaluate(r);
             problem.evaluateConstraints(r);
@@ -64,7 +67,6 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
         ArrayList<Solution> Pt = new ArrayList<>();
         int indexFront = 0;
         List<List<Solution>> fronts = new ArrayList<>();
-
         for (; indexFront < ranking.getNumberOfSubFronts(); indexFront++) {
             fronts.add(ranking.getSubFront(indexFront));
             if (Pt.size() + ranking.getSubFront(indexFront).size() <= populationSize) {
@@ -81,11 +83,17 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
         }
         if (Pt.size() == populationSize)
             return Pt;
-
-        EnvironmentalSelection selection = new EnvironmentalSelection(fronts, getPopulationSize(),
+        try {
+            NSGA3Selection nsga3Selection = new NSGA3Selection(Rt, populationSize - Pt.size(),referenceHyperplane, populationSize, indexFront);
+            nsga3Selection.execute(Pt);
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+       /* EnvironmentalSelection selection = new EnvironmentalSelection(fronts, getPopulationSize(),
                 getReferencePointsCopy(), getProblem().getNumberOfObjectives());
-        selection.execute(Pt);
-        return selection.getParents();
+        selection.execute(Pt);*/
+        //return selection.getParents();
+        return Pt;
     }
 
     @Override
@@ -106,22 +114,22 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
         this.ranking = new FastNonDominatedSort();
         this.repair = new RepairRandomBoundary();
 
-        (new ReferencePoint()).generateReferencePoints(referencePoints, getProblem().getNumberOfObjectives(),
-                numberOfDivisions);
+        /*
+         * (new ReferencePoint()).generateReferencePoints(referencePoints,
+         * getProblem().getNumberOfObjectives(), numberOfDivisions);
+         */
+        referenceHyperplane = new ReferenceHyperplane(problem.getNumberOfObjectives(), numberOfDivisions);
+        referenceHyperplane.execute();
+       // int populationRSize = referenceHyperplane.getNumberOfReferencePoints();
 
-        int populationRSize = referencePoints.size();
-       
-        System.out.println(populationRSize);
-        while (populationRSize % 4 > 0) {
-            populationRSize++;
-        }
+       // setPopulationSize(populationRSize);
+       // selectionOperator.setPopulaitonSize(populationRSize);
 
-        setPopulationSize(populationRSize);
     }
 
     public NSGA_III(Problem problem, int populationSize, int maxIterations, int numberOfDivisions,
             SelectionOperator selectionOperator, CrossoverOperator crossoverOperator, MutationOperator mutationOperator,
-            Ranking ranking, RepairOperator repairOperator) {
+            Ranking ranking, RepairOperator repairOperator, ReferenceHyperplane referenceHyperplane) {
         super(problem);
         this.maxIterations = maxIterations;
         this.numberOfDivisions = numberOfDivisions;
@@ -132,29 +140,38 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
         this.ranking = ranking;
         this.repair = repairOperator;
 
-        (new ReferencePoint()).generateReferencePoints(referencePoints, getProblem().getNumberOfObjectives(),
-                numberOfDivisions);
+        /*
+         * (new ReferencePoint()).generateReferencePoints(referencePoints,
+         * getProblem().getNumberOfObjectives(), numberOfDivisions);
+         */
+        this.referenceHyperplane = referenceHyperplane;
+    
 
-        int populationRSize = referencePoints.size();
-        while (populationRSize % 4 > 0) {
-            populationRSize++;
-        }
+       // setPopulationSize(populationRSize);
+       // selectionOperator.setPopulaitonSize(populationRSize);
 
-        setPopulationSize(populationRSize);
     }
 
+    @Deprecated
     private List<ReferencePoint> getReferencePointsCopy() {
         List<ReferencePoint> copy = new ArrayList<>();
-        for (ReferencePoint r : this.referencePoints) {
-            copy.add(new ReferencePoint(r));
-        }
+        /*
+         * for (ReferencePoint r : this.referencePoints) { copy.add(new
+         * ReferencePoint(r)); }
+         */
         return copy;
     }
-
+    public void setReferenceHyperplane(ReferenceHyperplane referenceHyperplane) {
+        this.referenceHyperplane = referenceHyperplane;
+    }
+    public int getNumberOfDivisions() {
+        return numberOfDivisions;
+    }
     @Override
     public String toString() {
         return "NSGAIII [pop_size=" + populationSize + ", maxIterations=" + maxIterations + ", numberOfDivisions="
-                + numberOfDivisions + ", ranking=" + ranking + ", referencePoints=" + referencePoints.size() + "]";
+                + numberOfDivisions + ", ranking=" + ranking + ", referencePoints="
+                + referenceHyperplane.getNumberOfReferencePoints() + "]";
     }
 
 }

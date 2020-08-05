@@ -315,7 +315,10 @@ public class EnvironmentalSelection implements SelectionOperator {
     public ArrayList<Solution> getParents() {
         return parents;
     }
-
+    @Override
+    public void setPopulaitonSize(int size) {
+        System.out.println(size);
+    }
     public void setAttribute(Solution solution, List<Data> value) {
         solution.getProperties().put(getAttributeIdentifier(), value);
     }

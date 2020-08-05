@@ -9,4 +9,5 @@ public interface SelectionOperator {
     public void execute(ArrayList<Solution> solutions);
 
     public ArrayList<Solution> getParents();
+    public void setPopulaitonSize(int size);
 }
