@@ -2,6 +2,7 @@ package com.castellanos94.algorithms.multi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.components.Ranking;
@@ -52,6 +53,13 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
     protected ArrayList<Solution> replacement(ArrayList<Solution> population, ArrayList<Solution> offspring) {
         ArrayList<Solution> Rt = new ArrayList<>(population);
         Rt.addAll(offspring);
+        Rt =new ArrayList<>(Rt.stream().distinct().collect(Collectors.toList()));
+        while(Rt.size() < populationSize){
+            Solution r = problem.randomSolution();
+            problem.evaluate(r);
+            problem.evaluateConstraints(r);
+            Rt.add(r);
+        }
         ranking.computeRanking(Rt);
         ArrayList<Solution> Pt = new ArrayList<>();
         int indexFront = 0;
@@ -102,6 +110,8 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
                 numberOfDivisions);
 
         int populationRSize = referencePoints.size();
+       
+        System.out.println(populationRSize);
         while (populationRSize % 4 > 0) {
             populationRSize++;
         }
@@ -143,9 +153,8 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
 
     @Override
     public String toString() {
-        return "NSGAIII [currenIteration=" + currenIteration + ", maxIterations=" + maxIterations
-                + ", numberOfDivisions=" + numberOfDivisions + ", ranking=" + ranking + ", referencePoints="
-                + referencePoints.size() + "]";
+        return "NSGAIII [pop_size=" + populationSize + ", maxIterations=" + maxIterations + ", numberOfDivisions="
+                + numberOfDivisions + ", ranking=" + ranking + ", referencePoints=" + referencePoints.size() + "]";
     }
 
 }

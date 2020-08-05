@@ -8,6 +8,13 @@ package com.castellanos94.datatype;
  * 
  */
 public class Interval extends Data {
+
+    public static void main(String[] args) {
+        var a = new Interval(-2, 0);
+        System.out.println("number: " + a);
+        System.out.println("pow(n,2): " + a.pow(2));
+        System.out.println("n * n: " + a.times(a));
+    }
     /**
      *
      */
@@ -107,8 +114,8 @@ public class Interval extends Data {
         } else {
             vid = new Interval(value);
         }
-        double c = vid.getLower().doubleValue();
-        double d = vid.getUpper().doubleValue();
+        double c = vid.getLower();
+        double d = vid.getUpper();
         if (c == 0 && d > 0)
             return new Interval(1 / d, Double.POSITIVE_INFINITY);
         if (c < d && d == 0)
@@ -170,10 +177,10 @@ public class Interval extends Data {
         } else {
             c = new Interval(b);
         }
-        double lower = this.lower.doubleValue();
-        double upper = this.upper.doubleValue();
-        double lowerB = c.getLower().doubleValue();
-        double upperB = c.getUpper().doubleValue();
+        double lower = this.lower;
+        double upper = this.upper;
+        double lowerB = c.getLower();
+        double upperB = c.getUpper();
 
         if (Double.compare(lower, lowerB) == 0 && Double.compare(upper, upperB) == 0)
             return 0;
@@ -188,18 +195,18 @@ public class Interval extends Data {
     }
 
     public Data exp() {
-        return new Interval(Math.exp(lower.doubleValue()), Math.exp(upper.doubleValue()));
+        return new Interval(Math.exp(lower), Math.exp(upper));
     }
 
     public Data log() {
-        return new Interval(Math.log(lower.doubleValue()), Math.log(upper.doubleValue()));
+        return new Interval(Math.log(lower), Math.log(upper));
     }
 
     @Override
     public Data pow(Number exp) {
 
-        double l = ((Interval) this).getLower().doubleValue();
-        double u = ((Interval) this).getUpper().doubleValue();
+        double l = this.lower;
+        double u = this.upper;
         double n = exp.doubleValue();
         if (l > 0 || n % 2 != 0)
             return new Interval(Math.pow(l, n), Math.pow(u, n));
@@ -224,8 +231,8 @@ public class Interval extends Data {
     }
 
     public Data sin() {
-        double l = lower.doubleValue();
-        double u = upper.doubleValue();
+        double l = lower;
+        double u = upper;
         return new Interval(Math.min(Math.sin(l), Math.sin(u)), Math.max(Math.sin(l), Math.sin(u)));
     }
 
@@ -236,10 +243,10 @@ public class Interval extends Data {
      * @return interval result
      */
     public Data union(Interval y) {
-        double lx = lower.doubleValue();
-        double rx = upper.doubleValue();
-        double ly = y.getLower().doubleValue();
-        double ry = y.getUpper().doubleValue();
+        double lx = lower;
+        double rx = upper;
+        double ly = y.getLower();
+        double ry = y.getUpper();
         return new Interval(Math.min(lx, ly), Math.max(rx, ry));
     }
 
@@ -250,10 +257,10 @@ public class Interval extends Data {
      * @return interval result
      */
     public Data intersection(Interval y) {
-        double lx = lower.doubleValue();
-        double ux = upper.doubleValue();
-        double ly = y.getLower().doubleValue();
-        double uy = y.getUpper().doubleValue();
+        double lx = lower;
+        double ux = upper;
+        double ly = y.getLower();
+        double uy = y.getUpper();
         if (uy < lx || ux < ly)
             return new Interval(0);
         return new Interval(Math.max(lx, ly), Math.min(ux, uy));
@@ -265,8 +272,8 @@ public class Interval extends Data {
      * @return a real data
      */
     public Data mindPoint() {
-        double l = ((Interval) this).getLower().doubleValue();
-        double u = ((Interval) this).getUpper().doubleValue();
+        double l = this.lower;
+        double u = this.upper;
         return new RealData(0.5 * (l + u));
     }
 
@@ -276,16 +283,16 @@ public class Interval extends Data {
      * @return a real data
      */
     public Data mag() {
-        double l = ((Interval) this).getLower().doubleValue();
-        double u = ((Interval) this).getUpper().doubleValue();
+        double l = this.lower;
+        double u = this.upper;
         return new RealData(Math.max(Math.abs(l), Math.abs(u)));
     }
 
     @Override
     public Data abs() {
 
-        double l = ((Interval) this).getLower().doubleValue();
-        double u = ((Interval) this).getUpper().doubleValue();
+        double l = this.lower;
+        double u = this.upper;
         if (l >= 0)
             return new Interval(l, u);
         if (u <= 0)
@@ -301,8 +308,8 @@ public class Interval extends Data {
      * @return a real data
      */
     public Data width() {
-        double l = ((Interval) this).getLower().doubleValue();
-        double u = ((Interval) this).getUpper().doubleValue();
+        double l = this.lower;
+        double u = this.upper;
         return new RealData(u - l);
     }
 

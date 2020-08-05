@@ -37,11 +37,8 @@ public class ReferencePoint {
     public ReferencePoint(ReferencePoint point) {
         position = new ArrayList<>(point.position.size());
         for (Data d : point.position) {
-            try {
-                position.add((Data) (d).clone());
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
+                position.add(d);
+           
         }
         memberSize = 0;
         potentialMembers = new ArrayList<>();
@@ -119,5 +116,9 @@ public class ReferencePoint {
                 break;
             }
         }
+    }
+    @Override
+    public String toString() {
+        return position.toString();
     }
 }

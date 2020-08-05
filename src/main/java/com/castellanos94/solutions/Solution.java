@@ -154,6 +154,9 @@ public class Solution implements Cloneable, Comparable<Solution> {
     public Object getAttribute(String key){
         return this.properties.get(key);
     }
+    public void setAttribute(String key, Object value){
+        this.properties.put(key, value);
+    }
 
     public void setProperties(HashMap<String, Object> properties) {
         this.properties = properties;
@@ -249,5 +252,6 @@ public class Solution implements Cloneable, Comparable<Solution> {
             return false;
         return true;
     }
+
 
 }

@@ -34,8 +34,8 @@ public class NSGA_III_DTLZ {
         // Tools.setSeed(141414L);
         Tools.setSeed(8435L);
 
-        int EXPERIMENT = 50;
-        int n_problem = 7;
+        int EXPERIMENT = 1;
+        int n_problem = 1;
         int number_of_objectives = 3;
 
         ArrayList<Solution> bag = new ArrayList<>();

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.castellanos94.datatype.Data;
-import com.castellanos94.datatype.RealData;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.ReferencePoint;
@@ -16,6 +15,7 @@ public class EnvironmentalSelection implements SelectionOperator {
     private List<ReferencePoint> referencePoints;
     private int numberOfObjectives;
     protected ArrayList<Solution> parents;
+    protected Data MaxValue, InfinityNegative, zeroValue, oneValue;
 
     public EnvironmentalSelection(List<List<Solution>> fronts, int solutionsToSelect,
             List<ReferencePoint> referencePoints, int numberOfObjectives) {
@@ -23,6 +23,12 @@ public class EnvironmentalSelection implements SelectionOperator {
         this.solutionsToSelect = solutionsToSelect;
         this.referencePoints = referencePoints;
         this.numberOfObjectives = numberOfObjectives;
+        this.MaxValue = Data.initByRefType(fronts.get(0).get(0).getObjective(0), Double.MAX_VALUE);
+        this.InfinityNegative = Data.initByRefType(fronts.get(0).get(0).getObjective(0), Double.NEGATIVE_INFINITY);
+        this.zeroValue = Data.initByRefType(fronts.get(0).get(0).getObjective(0), 0.0);
+        this.oneValue = Data.initByRefType(fronts.get(0).get(0).getObjective(0), 1.0);
+
+
     }
 
     public List<Data> translateObjectives(List<Solution> population) {
@@ -30,7 +36,7 @@ public class EnvironmentalSelection implements SelectionOperator {
         ideal_point = new ArrayList<>(numberOfObjectives);
 
         for (int f = 0; f < numberOfObjectives; f += 1) {
-            Data minf = Data.initByRefType(fronts.get(0).get(0).getObjective(0), Double.MAX_VALUE);
+            Data minf = MaxValue;
             for (int i = 0; i < fronts.get(0).size(); i += 1) // min values must appear in the first front
             {
                 if (minf.compareTo(fronts.get(0).get(i).getObjective(f)) < 0)
@@ -58,7 +64,7 @@ public class EnvironmentalSelection implements SelectionOperator {
     // different to the one impelemented in C++
     // ----------------------------------------------------------------------
     private Data ASF(Solution s, int index) {
-        Data max_ratio = Data.initByRefType(s.getObjective(0), Double.NEGATIVE_INFINITY);
+        Data max_ratio = InfinityNegative;
         for (int i = 0; i < s.getObjectives().size(); i++) {
             double weight = (index == i) ? 1.0 : 0.000001;
             Data tmp = s.getObjective(i).div(weight);
@@ -75,7 +81,7 @@ public class EnvironmentalSelection implements SelectionOperator {
         List<Solution> extremePoints = new ArrayList<>();
         Solution min_indv = null;
         for (int f = 0; f < numberOfObjectives; f += 1) {
-            Data min_ASF = RealData.ZERO.plus(Double.MAX_VALUE);
+            Data min_ASF = MaxValue;
             for (Solution s : fronts.get(0)) { // only consider the individuals in the first front
                 Data asf = ASF(s, f);
                 if (asf.compareTo(min_ASF) < 0) {
@@ -108,7 +114,7 @@ public class EnvironmentalSelection implements SelectionOperator {
         }
 
         for (int i = 0; i < N; i++)
-            x.add(RealData.ZERO);
+            x.add(zeroValue);
 
         for (int i = N - 1; i >= 0; i -= 1) {
             for (int known = i + 1; known < N; known += 1) {
@@ -144,7 +150,7 @@ public class EnvironmentalSelection implements SelectionOperator {
             // Find the equation of the hyperplane
             List<Data> b = new ArrayList<>(); // (pop[0].objs().size(), 1.0);
             for (int i = 0; i < numberOfObjectives; i++)
-                b.add(RealData.ONE);
+                b.add(oneValue);
 
             List<List<Data>> A = new ArrayList<>();
             for (Solution s : extreme_points) {
@@ -157,7 +163,7 @@ public class EnvironmentalSelection implements SelectionOperator {
 
             // Find intercepts
             for (int f = 0; f < numberOfObjectives; f += 1) {
-                intercepts.add(RealData.ONE.div(x.get(f)));
+                intercepts.add(oneValue.div(x.get(f)));
 
             }
         }
@@ -184,7 +190,7 @@ public class EnvironmentalSelection implements SelectionOperator {
     }
 
     public Data perpendicularDistance(List<Data> direction, List<Data> point) {
-        Data numerator = Data.getZeroByType(direction.get(0)), denominator = Data.getZeroByType(direction.get(0));
+        Data numerator = zeroValue, denominator = zeroValue;
         for (int i = 0; i < direction.size(); i += 1) {
             numerator = numerator.plus(direction.get(i).times(point.get(i)));
             // numerator += direction.get(i) * point.get(i);
@@ -193,7 +199,7 @@ public class EnvironmentalSelection implements SelectionOperator {
         }
         Data k = numerator.div(denominator);
 
-        Data d = Data.getZeroByType(k);
+        Data d = zeroValue;
         for (int i = 0; i < direction.size(); i += 1) {
             // d += Math.pow(k * direction.get(i) - point.get(i), 2.0);
             d = d.plus(k.times(direction.get(i).minus(point.get(i)).pow(2)));
@@ -206,7 +212,7 @@ public class EnvironmentalSelection implements SelectionOperator {
         for (int t = 0; t < fronts.size(); t++) {
             for (Solution s : fronts.get(t)) {
                 int min_rp = -1;
-                Data min_dist = Data.initByRefType(s.getObjective(0), Double.MAX_VALUE);
+                Data min_dist = MaxValue;
                 for (int r = 0; r < this.referencePoints.size(); r++) {
                     Data d = perpendicularDistance(this.referencePoints.get(r).position, (List<Data>) getAttribute(s));
                     if (d.compareTo(min_dist) < 0) {

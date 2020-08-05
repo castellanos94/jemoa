@@ -22,16 +22,22 @@ public class NSGA3Selection implements SelectionOperator {
     private Problem problem;
     private static final String TRANSLATE = "translate_objectives";
     private static final String NORMALIZE = "normalized_objectis";
+    private static final String REFERENCE_POINT_INDEX = "point_reference_index";
+    private static final String REFERENCE_POINT_DISTANCE = "point_min_distance";
+
+
+    private Data max, one,min,zero;
+
 
     public NSGA3Selection(ArrayList<Solution> Rt) throws CloneNotSupportedException {
         this.Rt = Rt;
         this.problem = Rt.get(0).getProblem();
         boolean first = false;
 
-        Data max = Data.initByRefType(Rt.get(0).getObjective(0), Double.MAX_VALUE);
-        Data one = Data.initByRefType(Rt.get(0).getObjective(0), 1.0);
-        Data min = Data.initByRefType(Rt.get(0).getObjective(0), 0.000001);
-        Data zero = Data.getZeroByType(Rt.get(0).getObjective(0));
+         max = Data.initByRefType(Rt.get(0).getObjective(0), Double.MAX_VALUE);
+         one = Data.initByRefType(Rt.get(0).getObjective(0), 1.0);
+         min = Data.initByRefType(Rt.get(0).getObjective(0), 0.000001);
+         zero = Data.getZeroByType(Rt.get(0).getObjective(0));
         if (idealPoint == null) {
             idealPoint = new Solution(problem);
             first = true;
@@ -88,8 +94,7 @@ public class NSGA3Selection implements SelectionOperator {
 
     @Override
     public void execute(ArrayList<Solution> solutions) {
-        // TODO Auto-generated method stub
-
+        
     }
 
     private void updateIdealPoint() throws CloneNotSupportedException {
@@ -254,7 +259,27 @@ public class NSGA3Selection implements SelectionOperator {
     }
 
     private void associate() {
-
+        /*Solution s, z;
+        for (int i = 0; i < Rt.size(); i++) {
+            s = Rt.get(i);
+            int min_rp = -1;
+            Data min_dist = max;
+            for (int j = 0; j < Zr.getNumberOfReferencPoints(); j++) {
+                z = Zr.getReferencePoint(j);
+                Data d = perpendicularDistance(z, s);
+                if(d.compareTo(min_dist)<0){
+                    min_dist = d;
+                    min_rp = j;
+                }
+            }
+            if(min_rp!= -1){
+                s.setAttribute(REFERENCE_POINT_INDEX, min_rp);
+                s.setAttribute(REFERENCE_POINT_DISTANCE, min_dist);
+            }
+            if(s.getRank() < index){
+                Zr.increaseRPMemberSize(min_rp);
+            }
+        }*/
     }
 
     private void niching(ArrayList<Solution> Pt, int indexFront) {
