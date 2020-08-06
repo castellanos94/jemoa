@@ -1,6 +1,7 @@
 package com.castellanos94.utils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.castellanos94.datatype.Data;
@@ -10,12 +11,15 @@ import com.google.common.math.BigIntegerMath;
 
 import org.paukov.combinatorics3.Generator;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 public class ReferenceHyperplane {
     protected long H;
     protected int number_of_objectives;
     protected int segmentations;
-    protected Solution[] referenceSolutions;
-    protected int[] pr_member_size;
+    protected ArrayList<List<Data>> references;
+    protected ArrayList<ArrayList<Pair<Solution, Data>>> potentialMembers;
 
     public ReferenceHyperplane(int number_of_objectives, int segmentations) {
         this.segmentations = segmentations;
@@ -29,19 +33,13 @@ public class ReferenceHyperplane {
         ArrayList<List<Data>> list = new ArrayList<>();
         Generator.combination(elements).simple(number_of_objectives - 1).forEach(list::add);
 
-        ArrayList<List<Data>> references = dasAndDennis(list);
+        references = dasAndDennis(list);
         debAndJains(references);
-        referenceSolutions = new Solution[references.size()];
-        pr_member_size = new int[references.size()];
-        for (int i = 0; i < referenceSolutions.length; i++) {
-            referenceSolutions[i] = new Solution(number_of_objectives, 0, null, null);
-            for (int j = 0; j < number_of_objectives; j++) {
-                referenceSolutions[i].setObjective(j, references.get(i).get(j));
-            }
-            pr_member_size[i] = 0;
+
+        potentialMembers = new ArrayList<>();
+        for (int i = 0; i < references.size(); i++) {
+            potentialMembers.add(new ArrayList<>());
         }
-        list.clear();
-        references.clear();
 
     }
 
@@ -94,11 +92,6 @@ public class ReferenceHyperplane {
                 .longValue();
 
     }
-    public void resetCount(){
-        for (int i = 0; i < pr_member_size.length; i++) {
-            pr_member_size[i] = 0;
-        }
-    }
 
     protected ArrayList<Data> generateX() {
         ArrayList<Data> list = new ArrayList<>();
@@ -111,30 +104,106 @@ public class ReferenceHyperplane {
         return list;
     }
 
-    public Solution getReferenceSolution(int index) {
-        return this.referenceSolutions[index];
+    public int getNumberOfPoints() {
+        return references.size();
     }
 
-    public Solution[] getReferenceSolutions() {
-        return referenceSolutions;
+    public boolean HasPotentialMember(int index) {
+        return potentialMembers.get(index).size() > 0;
     }
 
-    public int getRPMemberSize(int p) {
-        return this.pr_member_size[p];
+    public void clear() {
+        this.potentialMembers = new ArrayList<>();
+        for (int i = 0; i < references.size(); i++) {
+            potentialMembers.add(new ArrayList<>());
+        }
     }
 
-    public void incrementRPMemberSize(int p) {
-        this.pr_member_size[p]++;
+    public void AddPotentialMember(int index, Solution member_ind, Data distance) {
+        this.potentialMembers.get(index).add(new ImmutablePair<Solution, Data>(member_ind, distance));
     }
 
-    public int getNumberOfReferencePoints() {
-        return referenceSolutions.length;
+    public int getPotentialMemberSize(int index) {
+        return potentialMembers.get(index).size();
+    }
+
+    public ArrayList<ArrayList<Pair<Solution, Data>>> getPotentialMembers() {
+        return potentialMembers;
+    }
+
+    public Solution FindClosestMember(int index) {
+        Data minDistance = new RealData(Double.MAX_VALUE);
+        Solution closetMember = null;
+        for (Pair<Solution, Data> p : this.potentialMembers.get(index)) {
+            if (p.getRight().compareTo(minDistance) < 0) {
+                minDistance = p.getRight();
+                closetMember = p.getLeft();
+            }
+        }
+
+        return closetMember;
+    }
+
+    public Solution RandomMember(int index) {
+        int i = this.potentialMembers.get(index).size() > 1
+                ? Tools.getRandom().nextInt(this.potentialMembers.get(index).size() - 1)
+                : 0;
+        Pair<Solution, Data> p = this.getPotentialMembers().get(index).get(i);
+        if (p == null)
+            return null;
+        return this.potentialMembers.get(index).get(i).getLeft();
+    }
+
+    public void RemovePotentialMember(int index, Solution solution) {
+        Iterator<Pair<Solution, Data>> it = this.potentialMembers.get(index).iterator();
+        while (it.hasNext()) {
+            Pair<Solution, Data> next = it.next();
+            if (next != null && next.getLeft().equals(solution)) {                
+                it.remove();
+                break;
+            }
+        }
     }
 
     @Override
     public String toString() {
         return "ReferenceHyperplane [H=" + H + ", number_of_objectives=" + number_of_objectives + ", segmentations="
                 + segmentations + "]";
+    }
+
+    public List<Data> getPoint(int r) {
+        return references.get(r);
+    }
+
+    public void addMember(int min_rp) {
+        //this.potentialMembers.get(min_rp).add(null);
+    }
+
+   public void remove(int min_rp) {
+        this.references.remove(min_rp);
+        this.potentialMembers.remove(min_rp);
+    }
+
+    public ArrayList<List<Data>> getReferences() {
+        return references;
+    }
+
+    public void setPotentialMembers(ArrayList<ArrayList<Pair<Solution, Data>>> potentialMembers) {
+        this.potentialMembers = potentialMembers;
+    }
+
+    public void setReferences(ArrayList<List<Data>> references) {
+        this.references = references;
+    }
+
+    public ReferenceHyperplane copy() {
+        this.clear();
+        ReferenceHyperplane referenceHyperplane = new ReferenceHyperplane(this.number_of_objectives,
+                this.segmentations);
+        referenceHyperplane
+                .setPotentialMembers((ArrayList<ArrayList<Pair<Solution, Data>>>) this.potentialMembers.clone());
+        referenceHyperplane.setReferences((ArrayList<List<Data>>) this.references.clone());
+        return referenceHyperplane;
     }
 
 }

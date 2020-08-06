@@ -102,6 +102,7 @@ public class ReferencePoint {
 
         return closetMember;
     }
+    
 
     public Solution RandomMember() {
         int index = this.potentialMembers.size() > 1 ? Tools.getRandom().nextInt(this.potentialMembers.size() - 1) : 0;

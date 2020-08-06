@@ -16,6 +16,7 @@ import com.castellanos94.operators.impl.NSGA3Selection;
 import com.castellanos94.operators.impl.RepairRandomBoundary;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
+import com.castellanos94.utils.NSGA3Replacement;
 import com.castellanos94.utils.ReferenceHyperplane;
 import com.castellanos94.utils.ReferencePoint;
 
@@ -66,7 +67,7 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
         ranking.computeRanking(Rt);
         ArrayList<Solution> Pt = new ArrayList<>();
         int indexFront = 0;
-        List<List<Solution>> fronts = new ArrayList<>();
+        ArrayList<ArrayList<Solution>> fronts = new ArrayList<>();
         for (; indexFront < ranking.getNumberOfSubFronts(); indexFront++) {
             fronts.add(ranking.getSubFront(indexFront));
             if (Pt.size() + ranking.getSubFront(indexFront).size() <= populationSize) {
@@ -83,17 +84,12 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
         }
         if (Pt.size() == populationSize)
             return Pt;
-        try {
-            NSGA3Selection nsga3Selection = new NSGA3Selection(Rt, populationSize - Pt.size(),referenceHyperplane, populationSize, indexFront);
-            nsga3Selection.execute(Pt);
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-       /* EnvironmentalSelection selection = new EnvironmentalSelection(fronts, getPopulationSize(),
-                getReferencePointsCopy(), getProblem().getNumberOfObjectives());
-        selection.execute(Pt);*/
-        //return selection.getParents();
-        return Pt;
+
+        NSGA3Replacement selection = new NSGA3Replacement(fronts, referenceHyperplane.copy(), problem.getNumberOfObjectives(),
+                populationSize);
+        selection.execute(Pt);
+        return selection.getParents();
+        // return Pt;
     }
 
     @Override
@@ -120,10 +116,11 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
          */
         referenceHyperplane = new ReferenceHyperplane(problem.getNumberOfObjectives(), numberOfDivisions);
         referenceHyperplane.execute();
-       // int populationRSize = referenceHyperplane.getNumberOfReferencePoints();
+       // System.out.println(referenceHyperplane.getNumberOfPoints());
+       // int populationRSize = referenceHyperplane.getNumberOfPoints();
 
-       // setPopulationSize(populationRSize);
-       // selectionOperator.setPopulaitonSize(populationRSize);
+        // setPopulationSize(populationRSize);
+        // selectionOperator.setPopulaitonSize(populationRSize);
 
     }
 
@@ -145,10 +142,9 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
          * getProblem().getNumberOfObjectives(), numberOfDivisions);
          */
         this.referenceHyperplane = referenceHyperplane;
-    
 
-       // setPopulationSize(populationRSize);
-       // selectionOperator.setPopulaitonSize(populationRSize);
+        // setPopulationSize(populationRSize);
+        // selectionOperator.setPopulaitonSize(populationRSize);
 
     }
 
@@ -161,17 +157,20 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
          */
         return copy;
     }
+
     public void setReferenceHyperplane(ReferenceHyperplane referenceHyperplane) {
         this.referenceHyperplane = referenceHyperplane;
     }
+
     public int getNumberOfDivisions() {
         return numberOfDivisions;
     }
+
     @Override
     public String toString() {
         return "NSGAIII [pop_size=" + populationSize + ", maxIterations=" + maxIterations + ", numberOfDivisions="
                 + numberOfDivisions + ", ranking=" + ranking + ", referencePoints="
-                + referenceHyperplane.getNumberOfReferencePoints() + "]";
+                + referenceHyperplane.getNumberOfPoints() + "]";
     }
 
 }

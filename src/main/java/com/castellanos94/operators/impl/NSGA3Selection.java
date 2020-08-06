@@ -11,7 +11,7 @@ import com.castellanos94.utils.ReferenceHyperplane;
 import com.castellanos94.utils.Tools;
 
 public class NSGA3Selection {
-    private static Solution idealPoint;
+ /*   private static Solution idealPoint;
     private static Solution intercepts;
     private Solution idealSolution;
     private ArrayList<Solution> Rt;
@@ -229,13 +229,13 @@ public class NSGA3Selection {
             solution.setAttribute(NORMALIZE, normalizeList);
         }
     }
-
+*/
     /**
      * 
      * @param r reference point
      * @param p an individual from Pt
      * @return
-     */
+     *//*
     public Data perpendicularDistance(Solution r, Solution p) {
         Data numerator = Data.getZeroByType(r.getObjective(0));
         Data denominator = Data.getZeroByType(r.getObjective(0));
@@ -337,5 +337,5 @@ public class NSGA3Selection {
         }
 
     }
-
+*/
 }

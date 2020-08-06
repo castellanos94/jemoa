@@ -28,13 +28,13 @@ import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.Table;
 
 public class NSGA_III_DTLZ {
-    static final String directory = "experiments" + File.separator + "dtlz" + File.separator + "rf_reset";
+    static final String directory = "experiments" + File.separator + "dtlz" + File.separator + "threshold";
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
-        // Tools.setSeed(141414L);
-        Tools.setSeed(8435L);
+         //Tools.setSeed(141414L);
+        //Tools.setSeed(8435L);
 
-        int EXPERIMENT = 30;
+        int EXPERIMENT = 50;
         int n_problem = 1;
         int number_of_objectives = 3;
 
