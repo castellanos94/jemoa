@@ -29,19 +29,19 @@ import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.Table;
 
 public class NSGA_III_DTLZ {
-    static final String directory = "experiments" + File.separator + "dtlz";
+    static final String directory = "experiments" + File.separator + "dtlz" + File.separator + "rf_reset";
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         // Tools.setSeed(141414L);
         Tools.setSeed(8435L);
 
         int EXPERIMENT = 30;
-        int n_problem = 4;
+        int n_problem = 5;
         int number_of_objectives = 3;
 
         ArrayList<Solution> bag = new ArrayList<>();
         long averageTime = 0;
-        //1,3
+        // 1,3
         NSGA_III algorithm = DTLZ_TestSuite(n_problem, number_of_objectives);
         ReferenceHyperplane referenceHyperplane = new ReferenceHyperplane(number_of_objectives,
                 algorithm.getNumberOfDivisions());
@@ -72,7 +72,7 @@ public class NSGA_III_DTLZ {
             System.out.println(i + " time: " + algorithm.getComputeTime() + " ms.");
             System.setOut(ps);
             System.out.println(i + " time: " + algorithm.getComputeTime() + " ms.");
-            Solution.toFile(directory+File.separator+problem.getName()+"_"+i,algorithm.getSolutions());
+            Solution.toFile(directory + File.separator + problem.getName() + "_" + i, algorithm.getSolutions());
             bag.addAll(algorithm.getSolutions());
         }
         System.setOut(console);
@@ -202,6 +202,14 @@ public class NSGA_III_DTLZ {
                     problem = new DTLZ4(number_of_objectives, number_of_objectives + 10).setK(10);
                     maxIterations = 3000;
                 }
+                break;
+            case 5:
+                problem = new DTLZ5();
+                maxIterations = 500;
+                break;
+            case 6:
+                problem = new DTLZ6();
+                maxIterations = 500;
                 break;
             case 7:
                 problem = new DTLZ7();

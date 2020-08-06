@@ -27,7 +27,7 @@ public class NSGA3Selection {
     private static final String REFERENCE_POINT_DISTANCE = "point_min_distance";
     private final ReferenceHyperplane Zr;
 
-    private Data max, one, min, zero;
+    private final Data MAX_VALUE, ONE_VALUE, MIN_VALUE, ZER0_VALUE;
     int index, population_size, K;
 
     public NSGA3Selection(ArrayList<Solution> Rt, int K, ReferenceHyperplane Zr, int population_size, int index)
@@ -39,14 +39,14 @@ public class NSGA3Selection {
         this.K = K;
         this.population_size = population_size;
         this.number_of_objectives = problem.getNumberOfObjectives();
-        max = Data.initByRefType(Rt.get(0).getObjective(0), Double.MAX_VALUE);
-        one = Data.initByRefType(Rt.get(0).getObjective(0), 1.0);
-        min = Data.initByRefType(Rt.get(0).getObjective(0), 0.000001);
-        zero = Data.getZeroByType(Rt.get(0).getObjective(0));
+        MAX_VALUE = Data.initByRefType(Rt.get(0).getObjective(0), Double.MAX_VALUE);
+        ONE_VALUE = Data.initByRefType(Rt.get(0).getObjective(0), 1.0);
+        MIN_VALUE = Data.initByRefType(Rt.get(0).getObjective(0), 0.000001);
+        ZER0_VALUE = Data.getZeroByType(Rt.get(0).getObjective(0));
         if (idealPoint == null) {
             idealPoint = new Solution(problem);
             for (int i = 0; i < idealPoint.getObjectives().size(); ++i) {
-                idealPoint.setObjective(i, (Data) max.clone());
+                idealPoint.setObjective(i, (Data) MAX_VALUE.clone());
             }
         }
 
@@ -55,9 +55,9 @@ public class NSGA3Selection {
             Solution s = new Solution(problem);
             for (int j = 0; j < number_of_objectives; ++j) {
                 if (i == j) {
-                    s.setObjective(j, (Data) one.clone());
+                    s.setObjective(j, (Data) ONE_VALUE.clone());
                 } else {
-                    s.setObjective(j, (Data) min.clone());
+                    s.setObjective(j, (Data) MIN_VALUE.clone());
                 }
             }
             weights.add(s);
@@ -79,7 +79,7 @@ public class NSGA3Selection {
 
             for (int i = 0; i < A.length; ++i) {
                 for (int j = 0; j < A[i].length; ++j) {
-                    A[i][j] = (Data) zero.clone();
+                    A[i][j] = (Data) ZER0_VALUE.clone();
                 }
             }
         }
@@ -88,7 +88,7 @@ public class NSGA3Selection {
             gauss = new Data[problem.getNumberOfObjectives()];
 
             for (int i = 0; i < gauss.length; ++i) {
-                gauss[i] = (Data) zero.clone();
+                gauss[i] = (Data) ZER0_VALUE.clone();
             }
         }
     }
@@ -120,7 +120,7 @@ public class NSGA3Selection {
     }
 
     private Data ASF(Solution x, Solution w) {
-        Data max = Data.initByRefType(x.getObjective(0), Double.MIN_VALUE);
+        Data max = MIN_VALUE;
         Data p, div;
         ArrayList<Data> translate = (ArrayList<Data>) x.getProperties().get(TRANSLATE);
         for (int i = 0; i < number_of_objectives; i++) {
@@ -133,7 +133,7 @@ public class NSGA3Selection {
     }
 
     private void foundExtremePoints() throws CloneNotSupportedException {
-        Data min_ASF = max;
+        Data min_ASF = MAX_VALUE;
         int point = -1;
         Data value;
         for (int i = 0; i < number_of_objectives; i++) {
@@ -197,7 +197,7 @@ public class NSGA3Selection {
         }
 
         for (int i = 0; i < N; i++)
-            gauss[i] = zero;
+            gauss[i] = ZER0_VALUE;
 
         for (int i = N - 1; i >= 0; i -= 1) {
             for (int known = i + 1; known < N; known += 1) {
@@ -221,7 +221,7 @@ public class NSGA3Selection {
                 if (abs_value.compareTo(0.0000000001) > 0) {
                     auxiliar = (intercepts.getObjective(i).minus(idealPoint.getObjective(i)));
                 } else {
-                    auxiliar =  min.minus(min).plus(0.0000000001);                                 
+                    auxiliar =  ZER0_VALUE.plus(0.0000000001);                                 
                 }
                 Data value = ((ArrayList<Data>) solution.getProperties().get(TRANSLATE)).get(i).div(auxiliar);
                 normalizeList.add(value);
@@ -262,7 +262,7 @@ public class NSGA3Selection {
         for (int i = 0; i < Rt.size(); i++) {
             s = Rt.get(i);
             int min_rp = -1;
-            Data min_dist = max;
+            Data min_dist = MAX_VALUE;
             for (int j = 0; j < Zr.getNumberOfReferencePoints(); j++) {
                 z = Zr.getReferenceSolution(j);
                 Data d = perpendicularDistance(z, s);
@@ -287,7 +287,7 @@ public class NSGA3Selection {
         ArrayList<Integer> J = new ArrayList<>();
         ArrayList<Integer> I = new ArrayList<>();
         int pj, pj_value, jsel, imin;
-        Data i_dist = max;
+        Data i_dist = MAX_VALUE;
         boolean Zr_disabled[] = new boolean[Zr.getNumberOfReferencePoints()];
         boolean pt_disabled[] = new boolean[Rt.size()];
         while (k <= K) {

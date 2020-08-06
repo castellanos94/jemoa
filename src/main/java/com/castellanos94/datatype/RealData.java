@@ -7,6 +7,7 @@ package com.castellanos94.datatype;
 public class RealData extends Data {
 
     private static final long serialVersionUID = 6987648766512291057L;
+    public final double THRESHOLD = .0001;
     public static RealData ONE = new RealData(1.0);
     public static RealData ZERO = new RealData(0.0);
 
@@ -64,7 +65,10 @@ public class RealData extends Data {
     @Override
     public int compareTo(Number value) {
         double a = this.data, b = value.doubleValue();
-        return (a == b) ? 0 : (a > b) ? 1 : -1;
+        double v = Math.abs(a - b);
+        // return (a == b) ? 0 : (a > b) ? 1 : -1;
+        return (v < THRESHOLD) ? 0 : (a > b) ? 1 : -1;
+
     }
 
     @Override
