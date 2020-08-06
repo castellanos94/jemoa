@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.algorithms.multi.NSGA_III;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceCompartor;
@@ -36,17 +35,17 @@ public class NSGA_III_DTLZ {
         Tools.setSeed(8435L);
 
         int EXPERIMENT = 30;
-        int n_problem = 5;
+        int n_problem = 1;
         int number_of_objectives = 3;
 
         ArrayList<Solution> bag = new ArrayList<>();
         long averageTime = 0;
         // 1,3
         NSGA_III algorithm = DTLZ_TestSuite(n_problem, number_of_objectives);
-        ReferenceHyperplane referenceHyperplane = new ReferenceHyperplane(number_of_objectives,
+        /*ReferenceHyperplane referenceHyperplane = new ReferenceHyperplane(number_of_objectives,
                 algorithm.getNumberOfDivisions());
         referenceHyperplane.execute();
-        algorithm.setReferenceHyperplane(referenceHyperplane);
+        algorithm.setReferenceHyperplane(referenceHyperplane);*/
         DTLZ problem = (DTLZ) algorithm.getProblem();
         PrintStream console = System.out;
         PrintStream ps = new PrintStream(
@@ -62,8 +61,8 @@ public class NSGA_III_DTLZ {
 
         for (int i = 0; i < EXPERIMENT; i++) {
             algorithm = DTLZ_TestSuite(n_problem, number_of_objectives);
-            algorithm.setReferenceHyperplane(referenceHyperplane);
-            referenceHyperplane.resetCount();
+            //algorithm.setReferenceHyperplane(referenceHyperplane);
+            //referenceHyperplane.resetCount();
 
             algorithm.execute();
             averageTime += algorithm.getComputeTime();
@@ -111,7 +110,7 @@ public class NSGA_III_DTLZ {
             Plotter plotter = new Scatter3D(compartor.getSubFront(0),
                     directory + File.separator + problem.getName() + "_nsga3");
             plotter.plot();
-            new Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator + problem.getName()).plot();
+            //new Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator + problem.getName()).plot();
         } else {
             Table table = Table.create(problem.getName() + "_f0_" + problem.getNumberOfObjectives());
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
