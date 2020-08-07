@@ -261,7 +261,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
         return true;
     }
 
-    public static void toFile(String string, ArrayList<Solution> solutions) throws IOException {
+    public static void writSolutionsToFile(String string, ArrayList<Solution> solutions) throws IOException {
         ArrayList<String> strings = new ArrayList<>();
         File f = new File(string + ".out");
         for (Solution solution : solutions)

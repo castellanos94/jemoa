@@ -6,6 +6,7 @@ import java.util.List;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.solutions.Solution;
+import com.castellanos94.utils.ReferenceHyperplane.ReferencePointC;
 
 import org.apache.commons.math3.util.Precision;
 
@@ -14,7 +15,7 @@ public class NSGA3Replacement implements SelectionOperator {
     private int number_of_objectives;
     private int pop_size;
     private ArrayList<ArrayList<Solution>> fronts;
-    private final double epsilon = Precision.EPSILON;
+    private final double epsilon = 1e-6;
     private Data MAX_VALUE, MIN_VALUE, ZERO_VALUE, ONE_VALUE;
     private static final String OBJECTIVES_TRANSLATED = "objectivos_transladados_nsga3";
     private ArrayList<Solution> parents;
@@ -39,9 +40,8 @@ public class NSGA3Replacement implements SelectionOperator {
             Data minf = MAX_VALUE;
             for (int i = 0; i < fronts.get(0).size(); i += 1) // min values must appear in the first front
             {
-                if (minf.compareTo(fronts.get(0).get(i).getObjective(f)) < 0)
+                if (minf.compareTo(fronts.get(0).get(i).getObjective(f)) >0)
                     minf = fronts.get(0).get(i).getObjective(f);
-                // minf = Math.min(minf, fronts.get(0).get(i).getObjective(f));
             }
             ideal_point.add(minf);
 
@@ -49,7 +49,15 @@ public class NSGA3Replacement implements SelectionOperator {
                 for (Solution s : list) {
                     if (f == 0) // in the first objective we create the vector of conv_objs
                         setAttribute(s, new ArrayList<Data>());
-                    getAttribute(s).add(s.getObjective(f).minus(minf));
+                    Data tmp = s.getObjective(f).minus(minf);
+                    if (tmp.compareTo(1e-3) < 0)
+                        try {
+                            tmp = (Data) ZERO_VALUE.clone();
+                        } catch (CloneNotSupportedException e) {
+                            e.printStackTrace();
+                        }
+
+                    getAttribute(s).add(tmp);
                 }
             }
         }
@@ -179,7 +187,6 @@ public class NSGA3Replacement implements SelectionOperator {
             ArrayList<Data> ideal_point) {
         for (int t = 0; t < fronts.size(); t += 1) {
             for (Solution s : fronts.get(t)) {
-
                 for (int f = 0; f < number_of_objectives; f++) {
                     ArrayList<Data> conv_obj = getAttribute(s);
                     if (intercepts.get(f).minus(ideal_point.get(f)).abs().compareTo(epsilon) > 0) {
@@ -219,19 +226,22 @@ public class NSGA3Replacement implements SelectionOperator {
             for (Solution s : fronts.get(t)) {
                 int min_rp = -1;
                 Data min_dist = MAX_VALUE;
+                Data d =ZERO_VALUE;
                 for (int r = 0; r < this.referencePoints.getNumberOfPoints(); r++) {
-                    Data d = perpendicularDistance(this.referencePoints.getPoint(r), (ArrayList<Data>) getAttribute(s));
+                     d = perpendicularDistance(this.referencePoints.get(r).getPoint(),
+                            (ArrayList<Data>) getAttribute(s));
                     if (d.compareTo(min_dist) < 0) {
                         min_dist = d;
                         min_rp = r;
                     }
                 }
                 if (t + 1 != fronts.size()) {
-                    // this.referencePoints.get(min_rp).AddMember();
-                    this.referencePoints.addMember(min_rp);
+                    if (min_rp != -1)
+                        this.referencePoints.get(min_rp).incrementPotentialMembers();
                 } else {
                     // this.referencePoints.get(min_rp).AddPotentialMember(s, min_dist);
-                    this.referencePoints.AddPotentialMember(min_rp, (Solution) s.clone(), min_dist);
+                    if(min_rp!=-1)
+                    this.referencePoints.get(min_rp).addMember((Solution) s.clone(), min_dist);
                 }
             }
         }
@@ -242,14 +252,14 @@ public class NSGA3Replacement implements SelectionOperator {
         // find the minimal cluster size
         int min_size = Integer.MAX_VALUE;
         for (int i = 0; i < this.referencePoints.getNumberOfPoints(); i++)
-            if (referencePoints.getPotentialMemberSize(i) > 0)
-                min_size = Math.min(min_size, referencePoints.getPotentialMemberSize(i));
+            // if (referencePoints.get(i).getPotentialMembers()> 0)
+            min_size = Math.min(min_size, referencePoints.get(i).getPotentialMembers());
 
         // find the reference points with the minimal cluster size Jmin
         ArrayList<Integer> min_rps = new ArrayList<>();
 
         for (int r = 0; r < this.referencePoints.getNumberOfPoints(); r += 1) {
-            if (this.referencePoints.getPotentialMemberSize(r) == min_size) {
+            if (this.referencePoints.get(r).getPotentialMembers() == min_size) {
                 min_rps.add(r);
             }
         }
@@ -269,11 +279,11 @@ public class NSGA3Replacement implements SelectionOperator {
     // ----------------------------------------------------------------------
     Solution SelectClusterMember(int index) {
         Solution chosen = null;
-        if (this.referencePoints.HasPotentialMember(index)) {
-            if (this.referencePoints.getPotentialMemberSize(index) == 0) {
-                chosen = this.referencePoints.FindClosestMember(index);
+        if (this.referencePoints.get(index).HasPotentialMember()) {
+            if (this.referencePoints.get(index).getPotentialMembers() == 0) {
+                chosen = this.referencePoints.get(index).FindClosestMember();
             } else {
-                chosen = this.referencePoints.RandomMember(index);
+                chosen = this.referencePoints.get(index).RandomMember();
             }
         }
         /*
@@ -322,10 +332,10 @@ public class NSGA3Replacement implements SelectionOperator {
                 {
                     this.referencePoints.remove(min_rp);
                 } else {
-                    // this.referencePoints.get(min_rp).AddMember();
-                    // this.referencePoints.get(min_rp).RemovePotentialMember(chosen);
-                    this.referencePoints.addMember(min_rp);
-                    this.referencePoints.RemovePotentialMember(min_rp, chosen);
+                    this.referencePoints.get(min_rp).incrementPotentialMembers();
+                    this.referencePoints.get(min_rp).RemovePotentialMember(chosen);
+                    // this.referencePoints.addMember(min_rp);
+                    // this.referencePoints.RemovePotentialMember(min_rp, chosen);
                     source.add(chosen);
                 }
             }

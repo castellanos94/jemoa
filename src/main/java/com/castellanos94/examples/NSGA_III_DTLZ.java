@@ -28,12 +28,12 @@ import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.Table;
 
 public class NSGA_III_DTLZ {
-    static final String directory = "experiments" + File.separator + "dtlz" + File.separator + "threshold";
+    static final String directory = "experiments" + File.separator + "dtlz" ;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
          //Tools.setSeed(141414L);
-        //Tools.setSeed(8435L);
-
+        Tools.setSeed(8435L);
+        
         int EXPERIMENT = 50;
         int n_problem = 1;
         int number_of_objectives = 3;
@@ -71,7 +71,7 @@ public class NSGA_III_DTLZ {
             System.out.println(i + " time: " + algorithm.getComputeTime() + " ms.");
             System.setOut(ps);
             System.out.println(i + " time: " + algorithm.getComputeTime() + " ms.");
-            Solution.toFile(directory + File.separator + problem.getName() + "_" + i, algorithm.getSolutions());
+           // Solution.writSolutionsToFile(directory + File.separator + problem.getName() + "_" + i, algorithm.getSolutions());
             bag.addAll(algorithm.getSolutions());
         }
         System.setOut(console);

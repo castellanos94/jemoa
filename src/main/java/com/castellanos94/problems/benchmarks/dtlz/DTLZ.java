@@ -10,7 +10,7 @@ import com.castellanos94.utils.Tools;
 
 public abstract class DTLZ extends Problem {
     protected int k;
-
+    protected final double THRESHOLD = 10e-3;
     public DTLZ(int numberOfObjectives, int numberOfVariables) {
         this.numberOfObjectives = numberOfObjectives;
         this.numberOfDecisionVars = numberOfVariables;
