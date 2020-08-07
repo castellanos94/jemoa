@@ -5,10 +5,9 @@ import java.util.List;
 
 import com.castellanos94.datatype.Data;
 import com.castellanos94.operators.SelectionOperator;
+import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
-import com.castellanos94.utils.ReferenceHyperplane.ReferencePointC;
 
-import org.apache.commons.math3.util.Precision;
 
 public class NSGA3Replacement implements SelectionOperator {
     private ReferenceHyperplane referencePoints;
@@ -40,7 +39,7 @@ public class NSGA3Replacement implements SelectionOperator {
             Data minf = MAX_VALUE;
             for (int i = 0; i < fronts.get(0).size(); i += 1) // min values must appear in the first front
             {
-                if (minf.compareTo(fronts.get(0).get(i).getObjective(f)) >0)
+                if (minf.compareTo(fronts.get(0).get(i).getObjective(f)) > 0)
                     minf = fronts.get(0).get(i).getObjective(f);
             }
             ideal_point.add(minf);
@@ -226,9 +225,9 @@ public class NSGA3Replacement implements SelectionOperator {
             for (Solution s : fronts.get(t)) {
                 int min_rp = -1;
                 Data min_dist = MAX_VALUE;
-                Data d =ZERO_VALUE;
+                Data d = ZERO_VALUE;
                 for (int r = 0; r < this.referencePoints.getNumberOfPoints(); r++) {
-                     d = perpendicularDistance(this.referencePoints.get(r).getPoint(),
+                    d = perpendicularDistance(this.referencePoints.get(r).getPoint(),
                             (ArrayList<Data>) getAttribute(s));
                     if (d.compareTo(min_dist) < 0) {
                         min_dist = d;
@@ -240,8 +239,8 @@ public class NSGA3Replacement implements SelectionOperator {
                         this.referencePoints.get(min_rp).incrementPotentialMembers();
                 } else {
                     // this.referencePoints.get(min_rp).AddPotentialMember(s, min_dist);
-                    if(min_rp!=-1)
-                    this.referencePoints.get(min_rp).addMember((Solution) s.clone(), min_dist);
+                    if (min_rp != -1)
+                        this.referencePoints.get(min_rp).addMember((Solution) s.clone(), min_dist);
                 }
             }
         }
@@ -324,7 +323,7 @@ public class NSGA3Replacement implements SelectionOperator {
         }
 
         // ---------- Step 17 / Algorithm 4 ----------
-        while (source.size() < this.pop_size) {
+        while (source.size() < this.pop_size && referencePoints.getNumberOfPoints() > 0) {
             int min_rp = FindNicheReferencePoint();
             if (min_rp != -1) {
                 Solution chosen = SelectClusterMember(min_rp);
@@ -339,6 +338,25 @@ public class NSGA3Replacement implements SelectionOperator {
                     source.add(chosen);
                 }
             }
+        }
+        if (source.size() < this.pop_size) {
+           /* int lastIndex = source.get(source.size() - 1).getRank();
+            for (int i = lastIndex; i < this.fronts.size() && source.size() < this.pop_size; i++) {
+                for (int j = 0; j < this.fronts.get(i).size(); j++) {
+                    if (source.size() < this.pop_size - 1) {
+                        source.add(this.fronts.get(i).get(j));
+                    } else {
+                        break;
+                    }
+                }
+            }*/
+           /* Problem p = source.get(0).getProblem();
+            while(source.size() < this.pop_size){
+                Solution s = p.randomSolution();
+                p.evaluate(s);
+                p.evaluateConstraints(s);
+                source.add(s);
+            }*/
         }
         parents = source;
 
