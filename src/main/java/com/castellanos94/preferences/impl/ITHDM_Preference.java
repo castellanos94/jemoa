@@ -10,12 +10,11 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
 /**
- * Pendiente de revisar paper, implementacion base rara
  * Fernández,J.R.FigueiraandJ.Navarro,Interval-based extensions of two
  * outranking methods for multi-criteria ordinal classification, Omega,
  * https://doi.org/10.1016/j.omega.2019.05.001
  */
-public class ITHDM_Preference extends Preference<Solution> {
+public class ITHDM_Preference extends Preference {
     protected ITHDM_Dominance dominance;
     protected OutrankModel model;
     protected Problem p;
@@ -29,7 +28,7 @@ public class ITHDM_Preference extends Preference<Solution> {
     }
 
     /**
-     * xS(δ,λ) in [-2,2], xP(δ,λ) in [-1,1], xI(δ,λ) in [0], xR(δ,λ) in [3]
+     * xS(δ,λ)y in [-2], xP(δ,λ)y in [-1], xI(δ,λ)y in [0], xR(δ,λ)y in [1]
      * Definition 3
      * 
      * return (S, λ-relation)
@@ -37,9 +36,8 @@ public class ITHDM_Preference extends Preference<Solution> {
     @Override
     public int compare(Solution x, Solution y) {
         if (dominance.compare(x, y) == -1)// x outranks y
-            return -1;
-        if (dominance.compare(y, x) == -1) // y outranks x
-            return 1;
+            return -2;
+
         RealData cxy, cyx;
         try {
             cxy = credibility_index(x, y);
@@ -47,38 +45,36 @@ public class ITHDM_Preference extends Preference<Solution> {
             int xy = cxy.compareTo(model.getBeta());
             int yx = cyx.compareTo(model.getBeta());
             if (xy >= 0 && yx < 0)
-                return -2;
-            if (xy < 0 && yx >= 0)
-                return 2;
+                return -1;
             if (xy >= 0 && yx >= 0)
                 return 0;
             if (xy < 0 && yx < 0)
-                return 3;
+                return 1;
 
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
-        return 3;
+        return 1;
     }
 
     private RealData credibility_index(Solution x, Solution y) throws CloneNotSupportedException {
         ArrayList<RealData> omegas = new ArrayList<>();
-        RealData[] eta_gamma = new RealData[x.getObjectives().size()];
+        RealData[] eta_gamma = new RealData[p.getNumberOfObjectives()];
         RealData max_discordance;
         RealData non_discordance;
         RealData max_eta_gamma = new RealData(Double.MIN_VALUE);
         Interval ci;
         RealData[] dj = new RealData[eta_gamma.length];
-        for (int i = 0; i < dj.length; i++) {
+        for (int i = 0; i < p.getNumberOfObjectives(); i++) {
             omegas.add(compute_alpha_ij(x, y, i));
             dj[i] = compute_discordance_ij(x, y, i);
         }
-        for (int i = 0; i < dj.length; i++) {
+        for (int i = 0; i < p.getNumberOfObjectives(); i++) {
             RealData gamma = omegas.get(i);
             ci = this.concordance_index(gamma, omegas);
             RealData poss = ci.possGreaterThanOrEq((Interval) model.getLambda());
             max_discordance = new RealData(Double.MIN_VALUE);
-            for (int j = 0; j < dj.length; j++) {
+            for (int j = 0; j < p.getNumberOfObjectives(); j++) {
                 if (this.coalition[j] == 0 && dj[j].compareTo(max_discordance) > 0) {
                     max_discordance = dj[j];
                 }
@@ -102,7 +98,7 @@ public class ITHDM_Preference extends Preference<Solution> {
         double cl = 0, cu = 0, dl = 0, du = 0;
         double lower = 0, upper = 0;
         Interval[] weights = (Interval[]) p.getInstance().getDataVector("weights");
-        for (int i = 0; i < weights.length; i++) {
+        for (int i = 0; i <p.getNumberOfObjectives(); i++) {
             if (omegas.get(i).compareTo(gamma) >= 0) {
                 coalition[i] = 1;
                 cl += weights[i].getLower();
@@ -150,7 +146,7 @@ public class ITHDM_Preference extends Preference<Solution> {
         } else {
             res = value_x.possSmallerThanOrEq(value_y);
         }
-
         return res;
     }
+
 }

@@ -1,12 +1,10 @@
 package com.castellanos94.preferences;
 
-import com.castellanos94.datatype.Data;
+import java.util.Comparator;
+
 import com.castellanos94.solutions.Solution;
 
-public abstract class Preference<S extends Solution> {
-    public abstract int compare(S x, S y);
+public abstract class Preference implements Comparator<Solution> {
 
-    public int compare(Data[] a, Data[] b) {
-        throw new UnsupportedOperationException(getClass().getSimpleName() + " not implemented yey.");
-    }
+    
 }
