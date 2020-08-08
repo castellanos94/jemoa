@@ -340,7 +340,7 @@ public class NSGA3Replacement implements SelectionOperator {
             }
         }
         if (source.size() < this.pop_size) {
-           /* int lastIndex = source.get(source.size() - 1).getRank();
+            int lastIndex = source.get(source.size() - 1).getRank();
             for (int i = lastIndex; i < this.fronts.size() && source.size() < this.pop_size; i++) {
                 for (int j = 0; j < this.fronts.get(i).size(); j++) {
                     if (source.size() < this.pop_size - 1) {
@@ -349,7 +349,7 @@ public class NSGA3Replacement implements SelectionOperator {
                         break;
                     }
                 }
-            }*/
+            }
            /* Problem p = source.get(0).getProblem();
             while(source.size() < this.pop_size){
                 Solution s = p.randomSolution();

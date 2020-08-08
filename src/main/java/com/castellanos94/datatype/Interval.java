@@ -38,6 +38,17 @@ public class Interval extends Data {
         this.lower = lower.doubleValue();
         this.upper = upper.doubleValue();
     }
+    public RealData possGreaterThanOrEq(Interval e){
+        RealData r = this.possibility(e);
+        if(r.compareTo(0)<= 0)
+            return RealData.ZERO;
+        if(r.compareTo(1)>= 0)
+            return RealData.ONE;
+        return r;
+    }
+    public RealData possSmallerThanOrEq(Interval e){
+        return (RealData) RealData.ONE.minus(this.possGreaterThanOrEq(e));
+    }
 
     public RealData possibility(Number value) {
         Interval data;
