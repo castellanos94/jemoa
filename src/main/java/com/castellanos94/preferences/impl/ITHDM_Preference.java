@@ -8,8 +8,12 @@ import com.castellanos94.datatype.RealData;
 import com.castellanos94.preferences.Preference;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
+
 /**
  * Pendiente de revisar paper, implementacion base rara
+ * Fernández,J.R.FigueiraandJ.Navarro,Interval-based extensions of two
+ * outranking methods for multi-criteria ordinal classification, Omega,
+ * https://doi.org/10.1016/j.omega.2019.05.001
  */
 public class ITHDM_Preference extends Preference<Solution> {
     protected ITHDM_Dominance dominance;
@@ -24,6 +28,12 @@ public class ITHDM_Preference extends Preference<Solution> {
         coalition = new int[p.getNumberOfObjectives()];
     }
 
+    /**
+     * xS(δ,λ) in [-2,2], xP(δ,λ) in [-1,1], xI(δ,λ) in [0], xR(δ,λ) in [3]
+     * Definition 3
+     * 
+     * return (S, λ-relation)
+     */
     @Override
     public int compare(Solution x, Solution y) {
         if (dominance.compare(x, y) == -1)// x outranks y
@@ -34,18 +44,21 @@ public class ITHDM_Preference extends Preference<Solution> {
         try {
             cxy = credibility_index(x, y);
             cyx = credibility_index(y, x);
-            boolean outxy = cxy.compareTo(model.getBeta()) >= 0;
-            boolean outyx = cyx.compareTo(model.getBeta()) >= 0;
-            if (outxy && !outyx)// xPry
+            int xy = cxy.compareTo(model.getBeta());
+            int yx = cyx.compareTo(model.getBeta());
+            if (xy >= 0 && yx < 0)
                 return -2;
-            if (!outxy && outyx)//yPrx
+            if (xy < 0 && yx >= 0)
                 return 2;
-            if()
+            if (xy >= 0 && yx >= 0)
+                return 0;
+            if (xy < 0 && yx < 0)
+                return 3;
 
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
-        return 0;
+        return 3;
     }
 
     private RealData credibility_index(Solution x, Solution y) throws CloneNotSupportedException {
