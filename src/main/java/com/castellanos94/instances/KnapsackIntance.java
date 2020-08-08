@@ -10,9 +10,12 @@ import com.castellanos94.datatype.IntegerData;
 
 public class KnapsackIntance extends Instance {
 
+    public KnapsackIntance(String path) {
+        super(path);
+    }
+
     @Override
-    public Instance loadInstance(String path) throws FileNotFoundException {
-        KnapsackIntance instance = new KnapsackIntance();
+    public Instance loadInstance() throws FileNotFoundException {
         Scanner sc = new Scanner(new File(path));
 
         int num_elements = Integer.parseInt(sc.nextLine().trim());
@@ -25,17 +28,15 @@ public class KnapsackIntance extends Instance {
             b[i] = new IntegerData(Integer.parseInt(line[1].trim()));
         }
         sc.close();
-        instance.addParam("capacity", new IntegerData(capacity));
-        instance.addParam("num_elements", new IntegerData(num_elements));
-        instance.addParam("weights", w);
-        instance.addParam("benefits", b);
-
-        return instance;
+        this.addParam("capacity", new IntegerData(capacity));
+        this.addParam("num_elements", new IntegerData(num_elements));
+        this.addParam("weights", w);
+        this.addParam("benefits", b);
+        return this;
     }
 
     @Override
     public Instance loadInstance(InputStream is) throws IOException {
-        KnapsackIntance instance = new KnapsackIntance();
         Scanner sc = new Scanner(is);
 
         int num_elements = Integer.parseInt(sc.nextLine().trim());
@@ -48,12 +49,11 @@ public class KnapsackIntance extends Instance {
             b[i] = new IntegerData(Integer.parseInt(line[1].trim()));
         }
         sc.close();
-        instance.addParam("capacity", new IntegerData(capacity));
-        instance.addParam("num_elements", new IntegerData(num_elements));
-        instance.addParam("weights", w);
-        instance.addParam("benefits", b);
-
-        return instance;
+        this.addParam("capacity", new IntegerData(capacity));
+        this.addParam("num_elements", new IntegerData(num_elements));
+        this.addParam("weights", w);
+        this.addParam("benefits", b);
+        return this;
     }
 
 }

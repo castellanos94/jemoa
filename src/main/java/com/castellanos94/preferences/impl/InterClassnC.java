@@ -4,7 +4,7 @@ import com.castellanos94.components.impl.IntervalDominance;
 import com.castellanos94.preferences.Preference;
 import com.castellanos94.solutions.Solution;
 
-public class InterClassnC extends Preference<Solution> {
+public class InterClassnC extends Preference {
     protected IntervalDominance<Solution> dominance;
 
     public InterClassnC(IntervalDominance<Solution> dominance) {

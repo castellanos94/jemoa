@@ -98,7 +98,7 @@ public class ITHDM_Preference extends Preference {
         double cl = 0, cu = 0, dl = 0, du = 0;
         double lower = 0, upper = 0;
         Interval[] weights = (Interval[]) p.getInstance().getDataVector("weights");
-        for (int i = 0; i <p.getNumberOfObjectives(); i++) {
+        for (int i = 0; i < p.getNumberOfObjectives(); i++) {
             if (omegas.get(i).compareTo(gamma) >= 0) {
                 coalition[i] = 1;
                 cl += weights[i].getLower();
@@ -149,4 +149,11 @@ public class ITHDM_Preference extends Preference {
         return res;
     }
 
+    public static void main(String[] args) {
+        OutrankModel model = new OutrankModel();
+        model.setBeta(new Interval(0.62, 0.70));
+        model.setAlpha(new RealData(0.69));
+        model.setLambda(new Interval(0.51, 0.67));
+        model.setBeta(new Interval(0.62, 0.70));
+    }
 }

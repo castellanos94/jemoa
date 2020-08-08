@@ -8,26 +8,27 @@ import java.util.Scanner;
 import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.problems.Problem;
 
-
 /*
 *@author Castellanos Alvarez, Alejandro
 *@since 22/03/202
 */
 public class PSPInstance extends Instance {
 
-    public PSPInstance() {
+    public PSPInstance(String path) {
+        super(path);
     }
 
-    public Instance loadInstance(String path) throws FileNotFoundException {
+    public Instance loadInstance() throws FileNotFoundException {
         File f = new File(path);
         Scanner sc = new Scanner(f);
-        Instance i =read(sc);
-        i.setId(f.getName());
-        return i;
+        read(sc);
+        this.setId(f.getName());
+        if (sc != null)
+            sc.close();
+        return this;
     }
 
-    private Instance read(Scanner sc) {
-        PSPInstance instance = new PSPInstance();       
+    private void read(Scanner sc) {
         IntegerData budget = new IntegerData(Integer.parseInt(sc.nextLine().trim()));
         IntegerData nObj = new IntegerData(Integer.parseInt(sc.nextLine().trim()));
         IntegerData objectives[] = new IntegerData[nObj.intValue()];
@@ -70,19 +71,17 @@ public class PSPInstance extends Instance {
             }
         }
         sc.close();
-        instance.getParams().put("budget", budget);
-        instance.getParams().put("nObj", nObj);
-        instance.getParams().put("objectives", objectives);
-        instance.getParams().put("umbral_indiferencia", umbral_indiferencia);
-        instance.getParams().put("umbral_veto", umbral_veto);
-        instance.getParams().put("areas",areas);
-        instance.getParams().put("regions", regions);
-        instance.getParams().put("nProjects", nProjects);
-        instance.getParams().put("projects", projects);
-        instance.getParams().put("problem_type", new IntegerData(Problem.MAXIMIZATION));
-        return instance;
+        this.getParams().put("budget", budget);
+        this.getParams().put("nObj", nObj);
+        this.getParams().put("objectives", objectives);
+        this.getParams().put("umbral_indiferencia", umbral_indiferencia);
+        this.getParams().put("umbral_veto", umbral_veto);
+        this.getParams().put("areas", areas);
+        this.getParams().put("regions", regions);
+        this.getParams().put("nProjects", nProjects);
+        this.getParams().put("projects", projects);
+        this.getParams().put("problem_type", new IntegerData(Problem.MAXIMIZATION));
+        // return instance;
     }
 
-   
-  
 }

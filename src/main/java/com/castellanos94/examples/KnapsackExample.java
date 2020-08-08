@@ -22,8 +22,9 @@ public class KnapsackExample {
     public static void main(String[] args) throws IOException, CloneNotSupportedException {
         Problem problem;// new KnapsackProblem( (KnapsackIntance)
                         // Tools.getInstanceFromResource(ProblemType.Knapsack, "Instancia10.txt"));
-        problem = new KnapsackProblem((KnapsackIntance) new KnapsackIntance()
-                .loadInstance("src/main/resources/instances/knapsack/Instancia10.txt"));
+        problem = new KnapsackProblem((KnapsackIntance) new KnapsackIntance("src/main/resources/instances/knapsack/Instancia10.txt")
+                .loadInstance());
+        
         int maxIteration = 1000, popSize = 100;
         System.out.println(problem);
         SelectionOperator selectionOperator = new RandomSelection(popSize / 2);

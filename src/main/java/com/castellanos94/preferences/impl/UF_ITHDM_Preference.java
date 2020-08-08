@@ -9,7 +9,7 @@ import com.castellanos94.solutions.Solution;
 /**
  * Pendiente de revisar, implementacion base rara. 
  */
-public class UF_ITHDM_Preference extends Preference<Solution> {
+public class UF_ITHDM_Preference extends Preference {
     protected UF_ITHDM_Dominance<Solution> dominance;
     protected OutrankModel model;
     protected Problem p;
@@ -17,7 +17,7 @@ public class UF_ITHDM_Preference extends Preference<Solution> {
     public UF_ITHDM_Preference(Problem p, OutrankModel model) {
         this.model = model;
         this.p = p;
-        this.dominance = new UF_ITHDM_Dominance((RealData) model.getAlpha());
+        this.dominance = new UF_ITHDM_Dominance<>((RealData) model.getAlpha());
     }
 
     @Override
