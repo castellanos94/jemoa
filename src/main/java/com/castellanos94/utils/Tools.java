@@ -22,23 +22,6 @@ public class Tools {
         random.setSeed(seed);
     }
 
-    public static Instance getInstanceFromResource(ProblemType type, String name) throws IOException {
-        InputStream resourceAsStream;
-        switch (type) {
-            case Knapsack:
-                resourceAsStream = ClassLoader.getSystemClassLoader()
-                        .getResourceAsStream("resources/instances/knapsack/" + name);
-                // .getResourceAsStream("resources" + File.separator +
-                // "instances"+File.separator+"knapsack" + File.separator + name);
-                return new KnapsackIntance().loadInstance(resourceAsStream);
-            case PSP:
-                resourceAsStream = ClassLoader.getSystemClassLoader().getResourceAsStream(
-                        "resources" + File.separator + "instances" + File.separator + "psp" + File.separator + name);
-                return new PSPInstance().loadInstance(resourceAsStream);
-            default:
-                return null;
-        }
-    }
 
     public static Number getRandomNumberInRange(Number lowerBound, Number upperBound) {
         if (lowerBound instanceof Interval) {
