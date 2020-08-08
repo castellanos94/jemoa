@@ -17,7 +17,7 @@ public class InterClassnC extends Preference {
         return 0;
     }
     private int asc_rule(Solution x){
-        ITHDM_Preference pref = new ITHDM_Preference(x, null, dm);
+       /* ITHDM_Preference pref = new ITHDM_Preference(x, null, dm);
         IntervalValue[] xx = x.getObjectives().toArray(new IntervalValue[x.getNumberOfObjectives()]);
         int clase = -1;
         IntervalValue[][] r2 = instance.getR2()[dm];
@@ -33,7 +33,8 @@ public class InterClassnC extends Preference {
             if (pref.outranking(r1[i], xx) == -1)
                 clase = i;
         }
-        return (clase == -1) ? clase : clase + r2.length;
+        return (clase == -1) ? clase : clase + r2.length;*/
+        return 0;
     }
 
 }

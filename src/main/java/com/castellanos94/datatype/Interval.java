@@ -15,6 +15,7 @@ public class Interval extends Data {
         System.out.println("pow(n,2): " + a.pow(2));
         System.out.println("n * n: " + a.times(a));
     }
+
     /**
      *
      */
@@ -38,34 +39,37 @@ public class Interval extends Data {
         this.lower = lower.doubleValue();
         this.upper = upper.doubleValue();
     }
-    public RealData possGreaterThanOrEq(Interval e){
+
+    public RealData possGreaterThanOrEq(Interval e) {
         RealData r = this.possibility(e);
-        if(r.compareTo(0)<= 0)
+        if (r.compareTo(0) <= 0)
             return RealData.ZERO;
-        if(r.compareTo(1)>= 0)
+        if (r.compareTo(1) >= 0)
             return RealData.ONE;
         return r;
     }
-    public RealData possSmallerThanOrEq(Interval e){
+
+    public RealData possSmallerThanOrEq(Interval e) {
         return (RealData) RealData.ONE.minus(this.possGreaterThanOrEq(e));
     }
 
     public RealData possibility(Number value) {
-        Interval data;
+        Interval other;
         if (value instanceof Interval) {
-            data = (Interval) value;
+            other = (Interval) value;
 
         } else {
-            data = new Interval(value);
+            other = new Interval(value);
         }
-        if (lower.compareTo(data.getLower()) == 0 && upper.compareTo(data.getUpper()) == 0)
+        if (lower.compareTo(other.getLower()) == 0 && upper.compareTo(other.getUpper()) == 0)
             return RealData.ZERO;
-        if (data.getLower().compareTo(upper) > 0)
-            return RealData.ONE;
-        if (data.getLower().compareTo(lower) < 0)
-            return (RealData) RealData.ONE.times(-1);
-        double v = (upper - lower) + (data.getUpper() - data.getLower());
-        RealData ped = new RealData((upper - data.getLower()) / (v));
+        if (lower == upper && other.getLower() == other.getUpper()) {
+            if (lower >= other.getUpper())
+                return RealData.ONE;
+            return RealData.ZERO;
+        }
+        double v = (upper - lower) + (other.getUpper() - other.getLower());
+        RealData ped = new RealData((upper - other.getLower()) / (v));
 
         return (ped.compareTo(1.0) > 0) ? RealData.ONE : (ped.compareTo(0.0) <= 0) ? RealData.ZERO : ped;
     }
@@ -193,8 +197,9 @@ public class Interval extends Data {
         double lowerB = c.getLower();
         double upperB = c.getUpper();
 
-        if (Double.compare(lower, lowerB) == 0 && Double.compare(upper, upperB) == 0)
-            return 0;
+        if (Double.compare(lower, upper) == 0 && Double.compare(lowerB, upperB) == 0) {
+            return Double.compare(upper, upperB);
+        }        
 
         int ped = this.possibility(c).compareTo(0.5);
         return (ped == 0) ? 0 : (ped < 0.5) ? -1 : 1;

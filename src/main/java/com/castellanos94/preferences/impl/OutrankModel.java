@@ -25,10 +25,7 @@ public class OutrankModel {
     public void setLambda(Data lambda) {
         this.lambda = lambda;
     }
-    @Override
-    public String toString() {
-        return alpha+" "+beta+" "+lambda;
-    }
+  
 
     public OutrankModel(Data alpha, Data beta, Data lambda) {
         this.alpha = alpha;
@@ -37,5 +34,10 @@ public class OutrankModel {
     }
 
     public OutrankModel() {
+    }
+
+    @Override
+    public String toString() {
+        return "OutrankModel [alpha=" + alpha + ", beta=" + beta + ", lambda=" + lambda + "]";
     }
 }

@@ -8,6 +8,8 @@ public class IntegerData extends Data {
 
     private static final long serialVersionUID = 6987648766520291057L;
     protected Integer data;
+    public static final IntegerData ONE =  new IntegerData(1);
+    public static final IntegerData ZERO =  new IntegerData(0);
 
     public IntegerData(Number data) {
         this.data = data.intValue();
