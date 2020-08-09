@@ -175,7 +175,7 @@ public class Interval extends Data {
 
     @Override
     public String toString() {
-        return String.format("[%s,%s]", lower, upper);
+        return String.format("%s %s", lower, upper);
     }
 
     @Override
@@ -194,7 +194,7 @@ public class Interval extends Data {
 
         if (Double.compare(lower, upper) == 0 && Double.compare(lowerB, upperB) == 0) {
             return Double.compare(upper, upperB);
-        }        
+        }
 
         int ped = this.possibility(c).compareTo(0.5);
         return (ped == 0) ? 0 : (ped < 0.5) ? -1 : 1;

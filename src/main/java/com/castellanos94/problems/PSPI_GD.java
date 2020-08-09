@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.datatype.Interval;
+import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.PSPI_Instance;
 import com.castellanos94.preferences.impl.OutrankingModel;
 import com.castellanos94.solutions.Solution;
@@ -73,10 +74,15 @@ public class PSPI_GD extends Problem {
 
     }
 
+    /**
+     * No se encontraron diference entre los modelos UF y Outranking que definiera
+     * crear otra clase.
+     */
     @Override
     public int evaluateConstraints(Solution solution) {
-        // TODO: PENDIENTE INCORPORAR CHI Y REVISAR DIFF ENTRE UF, OUTRANKING
-        if (solution.getResources().get(0).compareTo(this.getInstance().getBudget()) > 0) {
+        Interval suma = new Interval(solution.getResources().get(0));
+        RealData poss = this.getInstance().getBudget().possGreaterThanOrEq(suma);
+        if (poss.compareTo(getPreferenceModel(0).getChi()) < 0) {
             Data tmp = getInstance().getBudget().minus(solution.getResources().get(0));
             solution.setPenalties(tmp);
             solution.setN_penalties(1);
@@ -96,9 +102,11 @@ public class PSPI_GD extends Problem {
         Interval budget = getInstance().getBudget();
         Interval current_budget = new Interval(0);
         for (int i = 0; i < positions.size(); i++) {
-            if (projects[positions.get(i)][0].plus(current_budget).compareTo(budget) <= 0) {
+            Interval suma = (Interval) projects[positions.get(i)][0].plus(current_budget);
+            RealData possGreaterThanOrEq = budget.possGreaterThanOrEq(suma);
+            if (possGreaterThanOrEq.compareTo(getPreferenceModel(0).getChi()) >= 0) {
                 sol.setDecisionVar(positions.get(i), new IntegerData(1));
-                current_budget = (Interval) current_budget.plus(projects[positions.get(i)][0]);
+                current_budget = suma;
             } else {
                 sol.setDecisionVar(positions.get(i), new IntegerData(0));
             }

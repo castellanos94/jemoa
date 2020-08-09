@@ -383,8 +383,8 @@ public class InterClassnC implements Classifier {
             classificator.classify(solutions[i]);
         }
         for (Solution s : solutions) {
-            System.out.println(
-                    s.getObjectives() + " " + Arrays.toString((int[]) s.getAttribute(InterClassnC.getAttributeKey())));
+            //System.out.println( s.getResources() + " " + Arrays.toString((int[]) s.getAttribute(InterClassnC.getAttributeKey())));
+            System.out.println(s);
         }
 
     }
