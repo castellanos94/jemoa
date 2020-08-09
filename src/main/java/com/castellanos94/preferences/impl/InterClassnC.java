@@ -1,6 +1,7 @@
 package com.castellanos94.preferences.impl;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.instances.PspIntervalInstance_GD;
@@ -15,12 +16,14 @@ import com.castellanos94.utils.Tools;
  * 
  */
 public class InterClassnC {
+    public static final String ATTRIBUTE_KEY = "com.castellanos94.preferences.impl.InterClassnCs";
     protected PSPI_GD problem;
     protected PspIntervalInstance_GD instance;
 
     public InterClassnC(PSPI_GD problem) {
         this.problem = problem;
         this.instance = (PspIntervalInstance_GD) problem.getInstance();
+
     }
 
     public void classificate(Solution x) {
@@ -68,10 +71,18 @@ public class InterClassnC {
                 }
 
             } else {
-                System.err.println("error dm no compatible");
+                throw new IllegalArgumentException(
+                        String.format("The dm (%3d) does not have a compatible preference model.", (dm + 1)));
             }
         }
-        System.out.printf("\tHSat = %2d, Sat = %2d, Dis = %2d, HDis = %2d\n", hsat, sat, dis, hdis);
+        // System.out.printf("\tHSat = %2d, Sat = %2d, Dis = %2d, HDis = %2d\n", hsat,
+        // sat, dis, hdis);
+        int[] iclass = new int[4];
+        iclass[0] = hsat;
+        iclass[1] = sat;
+        iclass[2] = dis;
+        iclass[3] = hdis;
+        x.setAttribute(ATTRIBUTE_KEY, iclass);
     }
 
     /**
@@ -360,8 +371,11 @@ public class InterClassnC {
         System.out.println("Clasifcando soluciones con InterClass-nC");
         InterClassnC classificator = new InterClassnC(problem);
         for (int i = 0; i < solutions.length; i++) {
-            System.out.println("Clasificando solucion: " + i);
+            // System.out.println("Clasificando solucion: " + i);
             classificator.classificate(solutions[i]);
+        }
+        for (Solution s : solutions) {
+            System.out.println(s.getObjectives() + " " + Arrays.toString((int[]) s.getAttribute(ATTRIBUTE_KEY)));
         }
 
     }
