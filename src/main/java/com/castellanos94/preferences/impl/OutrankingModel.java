@@ -3,6 +3,7 @@ package com.castellanos94.preferences.impl;
 import java.util.Arrays;
 
 import com.castellanos94.datatype.Data;
+import com.castellanos94.preferences.PreferenceModel;
 
 /**
  * This class represent the preference model associate with a dm using
