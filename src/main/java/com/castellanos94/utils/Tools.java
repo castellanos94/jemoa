@@ -15,7 +15,14 @@ public class Tools {
     public static void setSeed(Long seed) {
         random.setSeed(seed);
     }
-    @SuppressWarnings("unchecked")
+
+    /**
+     * This method is used to shuffle lists instead of using the Collections.shuffle
+     * method because if we set a seed, we never have full control with that method.
+     * 
+     * @param positions list to shuffle
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static void shuffle(List positions) {
         for (int i = 0; i < positions.size(); i++) {
             int randomIndexToSwap = random.nextInt(positions.size());

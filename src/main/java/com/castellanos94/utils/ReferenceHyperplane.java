@@ -45,7 +45,7 @@ public class ReferenceHyperplane {
         for (int i = 0; i < list.size(); i++) {
             for (int j = 1; j < list.get(i).size(); j++) {
                 Data xij = list.get(i).get(j);
-                xij = xij.minus(( j-1.0) / ((double) H));
+                xij = xij.minus((j - 1.0) / ((double) H));
                 list.get(i).set(j, xij);
             }
         }
@@ -82,7 +82,7 @@ public class ReferenceHyperplane {
         }
         s.addAll(s);
     }
-
+    @SuppressWarnings("unused")
     private long calculateH() {
         int n = number_of_objectives + segmentations - 1;
         int p = segmentations;
@@ -128,11 +128,12 @@ public class ReferenceHyperplane {
         this.references = references;
     }
 
+    @SuppressWarnings("unchecked")
     public ReferenceHyperplane copy() {
         ReferenceHyperplane referenceHyperplane = new ReferenceHyperplane(this.number_of_objectives,
                 this.segmentations);
         ArrayList<ReferencePointC> pointCs = new ArrayList<>();
-        for(ReferencePointC p: this.references){
+        for (ReferencePointC p : this.references) {
             pointCs.add(new ReferencePointC((ArrayList<Data>) p.getPoint().clone()));
         }
         referenceHyperplane.setReferences(pointCs);
@@ -217,6 +218,7 @@ public class ReferenceHyperplane {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Object clone() throws CloneNotSupportedException {
             ReferencePointC p = new ReferencePointC((ArrayList<Data>) this.point.clone());
             return p;
@@ -224,7 +226,7 @@ public class ReferenceHyperplane {
 
         @Override
         public String toString() {
-            return "Members: " + this.members.size() + ", potential: " + potentialMembers+", "+point;
+            return "Members: " + this.members.size() + ", potential: " + potentialMembers + ", " + point;
         }
     }
 }
