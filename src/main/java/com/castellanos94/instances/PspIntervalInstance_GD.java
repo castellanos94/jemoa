@@ -8,6 +8,11 @@ import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.datatype.RealData;
 
+/**
+ * Instance for the PSP with interval data and GD.
+ * 
+ * @see com.castellanos94.problems.PSPI_GD
+ */
 public class PspIntervalInstance_GD extends Instance {
 
     public PspIntervalInstance_GD(String path) {

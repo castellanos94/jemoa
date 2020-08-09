@@ -8,7 +8,9 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
 /**
- * Pendiente de revisar, implementacion base rara.
+ * <bold>Pendiente de revisar, implementacion base rara.</bold> This class
+ * determines what kind of outranking relationship exists between two solutions:
+ * x, y, when the dm is compatible with the utility function
  */
 public class UF_ITHDM_Preference extends Preference {
     protected UF_ITHDM_Dominance<Solution> dominance;

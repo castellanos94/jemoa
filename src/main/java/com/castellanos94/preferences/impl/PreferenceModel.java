@@ -4,6 +4,10 @@ import java.util.Arrays;
 
 import com.castellanos94.datatype.Data;
 
+/**
+ * This class represent the preference model associate with a dm using
+ * outranking preferences.
+ */
 public class PreferenceModel {
     protected Data[] weights;
     protected Data[] vetos;

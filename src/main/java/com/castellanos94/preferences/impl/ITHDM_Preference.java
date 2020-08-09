@@ -10,8 +10,10 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
 /**
- * Fernández,J.R.FigueiraandJ.Navarro,Interval-based extensions of two
- * outranking methods for multi-criteria ordinal classification, Omega,
+ * This class determines what kind of outranking relationship exists between two
+ * solutions: x, y. 
+ * Fernández,J.R.FigueiraandJ.Navarro,Interval-based extensions
+ * of two outranking methods for multi-criteria ordinal classification, Omega,
  * https://doi.org/10.1016/j.omega.2019.05.001
  */
 public class ITHDM_Preference extends Preference {
@@ -32,7 +34,7 @@ public class ITHDM_Preference extends Preference {
      * in [0], xR(δ,λ)y in [1]
      * 
      * @param x a solution
-     * @param y another solution 
+     * @param y another solution
      * @return x(S, λ-relation)y
      */
     @Override
