@@ -11,9 +11,11 @@ import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
 /**
- * Clasifica una solucion con respecto a los conjuntos [HSat, Sat, Dis, HDis].
- * Guarda el vector de clasicacion en los atributos extra de la solucion.
+ * Clasifica una solucion con respecto a los conjuntos R2, R2. Guarda el vector
+ * [HSat, Sat, Dis, HDis] de clasicacion en los atributos extra de la solucion.
  * Recuperar con getAttributeKey().
+ * 
+ * @see com.castellanos94.problems.PSPI_GD
  * 
  */
 public class InterClassnC implements Classifier {
@@ -30,6 +32,11 @@ public class InterClassnC implements Classifier {
         return InterClassnC.class.getName();
     }
 
+    /**
+     * Classify the solution using the preference model associated with the dm.
+     * 
+     * @param x solution to classify
+     */
     public void classify(Solution x) {
         int hsat = 0, sat = 0, dis = 0, hdis = 0;
         for (int dm = 0; dm < instance.getNumDMs(); dm++) {
