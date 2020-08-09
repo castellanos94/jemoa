@@ -12,7 +12,7 @@ public class OutrankingModel extends PreferenceModel {
     /**
      * DM supports utility function?
      */
-    protected boolean supports_utilityFunction;
+    protected boolean supportsUtilityFunction;
     /**
      * Weight of objectives
      */
@@ -87,15 +87,13 @@ public class OutrankingModel extends PreferenceModel {
         this.weights = weights;
     }
 
-    public boolean isSupports_utilityFunction() {
-        return supports_utilityFunction;
+    public boolean isSupportsUtilityFunction() {
+        return supportsUtilityFunction;
     }
 
-    public void setSupports_utilityFunction(boolean supports_utilityFunction) {
-        this.supports_utilityFunction = supports_utilityFunction;
+    public void setSupportsUtilityFunction(boolean supportsUtilityFunction) {
+        this.supportsUtilityFunction = supportsUtilityFunction;
     }
-
-    
 
     public OutrankingModel(Data[] weights, Data[] vetos, Data alpha, Data beta, Data lambda, Data chi) {
         this.weights = weights;
@@ -112,7 +110,7 @@ public class OutrankingModel extends PreferenceModel {
     @Override
     public String toString() {
         return "OutrankingModel [alpha=" + alpha + ", beta=" + beta + ", chi=" + chi + ", lambda=" + lambda
-                + ", supports_utilityFunction=" + supports_utilityFunction + ", vetos=" + Arrays.toString(vetos)
+                + ", supports utility Function=" + supportsUtilityFunction + ", vetos=" + Arrays.toString(vetos)
                 + ", weights=" + Arrays.toString(weights) + "]";
     }
 

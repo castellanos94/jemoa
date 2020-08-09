@@ -66,6 +66,7 @@ public class PSPI_Instance extends Instance {
         OutrankingModel[] models = new OutrankingModel[m];
         for (int i = 0; i < models.length; i++) {
             models[i] = new OutrankingModel();
+            models[i].setSupportsUtilityFunction(dm_type[i].compareTo(1) == 0);
         }
         // weights_DMs = new Interval[m][n];
         for (int j = 0; j < m; ++j) {

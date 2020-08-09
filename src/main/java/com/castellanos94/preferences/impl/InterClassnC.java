@@ -40,7 +40,7 @@ public class InterClassnC implements Classifier {
     public void classify(Solution x) {
         int hsat = 0, sat = 0, dis = 0, hdis = 0;
         for (int dm = 0; dm < instance.getNumDMs(); dm++) {
-            if (instance.getTypesOfDMs()[dm].compareTo(0) == 0) {// Dm con modelo de outranking
+            if (!problem.getPreferenceModel(dm).isSupportsUtilityFunction()) {// Dm con modelo de outranking
                 int asc = asc_rule(x, dm);
                 int dsc = desc_rule(x, dm);
                 if (asc == dsc) {
@@ -60,7 +60,7 @@ public class InterClassnC implements Classifier {
                 } else {
                     hdis++;
                 }
-            } else if (instance.getTypesOfDMs()[dm].compareTo(1) == 0) { // DM UF
+            } else { // DM UF
                 boolean bsat = isSatWithXUF(x, dm);
                 boolean bhsat = isHighSatWithXUF(x, dm);
                 boolean flag = false;
@@ -81,9 +81,6 @@ public class InterClassnC implements Classifier {
                     hdis++;
                 }
 
-            } else {
-                throw new IllegalArgumentException(
-                        String.format("The dm (%3d) does not have a compatible preference model.", (dm + 1)));
             }
         }
         // System.out.printf("\tHSat = %2d, Sat = %2d, Dis = %2d, HDis = %2d\n", hsat,
@@ -348,8 +345,8 @@ public class InterClassnC implements Classifier {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        PSPI_Instance ins = (PSPI_Instance) new PSPI_Instance(
-                "src/main/resources/instances/gd/GD_ITHDM-UFCA.txt").loadInstance();
+        PSPI_Instance ins = (PSPI_Instance) new PSPI_Instance("src/main/resources/instances/gd/GD_ITHDM-UFCA.txt")
+                .loadInstance();
         PSPI_GD problem = new PSPI_GD(ins);
         Solution[] solutions = new Solution[20];
         Tools.setSeed(1L);

@@ -76,6 +76,7 @@ public class PSPI_GD extends Problem {
 
     @Override
     public int evaluateConstraints(Solution solution) {
+        // TODO: PENDIENTE INCORPORAR CHI Y REVISAR DIFF ENTRE UF, OUTRANKING
         if (solution.getResources().get(0).compareTo(this.getInstance().getBudget()) > 0) {
             Data tmp = getInstance().getBudget().minus(solution.getResources().get(0));
             solution.setPenalties(tmp);
