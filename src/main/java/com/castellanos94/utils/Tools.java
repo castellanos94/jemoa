@@ -3,6 +3,7 @@ package com.castellanos94.utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Random;
 
 import com.castellanos94.datatype.Interval;
@@ -21,7 +22,16 @@ public class Tools {
     public static void setSeed(Long seed) {
         random.setSeed(seed);
     }
+    @SuppressWarnings("unchecked")
+    public static void shuffle(List positions) {
+        for (int i = 0; i < positions.size(); i++) {
+            int randomIndexToSwap = random.nextInt(positions.size());
+            Object tmp = positions.get(randomIndexToSwap);
+            positions.set(randomIndexToSwap, positions.get(i));
+            positions.set(i, tmp);
+        }
 
+    }
 
     public static Number getRandomNumberInRange(Number lowerBound, Number upperBound) {
         if (lowerBound instanceof Interval) {

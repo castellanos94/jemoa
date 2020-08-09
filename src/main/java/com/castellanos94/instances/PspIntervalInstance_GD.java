@@ -30,6 +30,9 @@ public class PspIntervalInstance_GD extends Instance {
 
         Interval[][] projects;
 
+        Interval[][] solutions_DMs; // the best compromises
+        Interval[][][] frontier_DMs;
+        Interval[][] initial_solutions;
         // Read Interval Budget
         data = this.readNextDataLine(in);
         this.addParam("Budget", new Interval(Double.parseDouble(data[0]), Double.parseDouble(data[1])));
@@ -139,7 +142,97 @@ public class PspIntervalInstance_GD extends Instance {
         this.addParam("Projects", projects);
 
         data = this.readNextDataLine(in);
+        if (data[0].equals("TRUE")) {
+            // Read DMs Best Compromises (Obtained possibly using I-NOSGA)
 
+            solutions_DMs = new Interval[m][p];
+            for (int k = 0; k < m; ++k) {
+                data = this.readNextDataLine(in); // read soluiton DM[k]
+                for (int j = 0; j < p; ++j) {
+                    solutions_DMs[k][j] = new Interval(Double.parseDouble(data[j]));
+                }
+            }
+
+            this.addParam("Solutions", solutions_DMs);
+        } else {
+            this.addParam("Solutions", null);
+        }
+
+        data = this.readNextDataLine(in);
+
+        if (data[0].equals("TRUE")) {
+            // Read DMs Frontier for Csat Cdis, there are m Sets of Lines
+            // each set begins with a line with: a single value ( or interval value) fi
+            // denoting the number of solutions in the frontier of DM i
+            // after that there will be fi lines each holding the realizations of each
+            // objective of a solution，it is assumed that the solutions are feasible
+            // if data[1] exists and is true it means that the fi values are interval
+            // values, otherwise, they will be single values
+            boolean as_interval = false;
+
+            if (data.length > 1 && data[1].equals("TRUE"))
+                as_interval = true;
+
+            frontier_DMs = new Interval[m][][];
+            Interval[][][] r2 = new Interval[m][][];
+            Interval[][][] r1 = new Interval[m][][];
+
+            for (int k = 0; k < m; ++k) {
+                data = this.readNextDataLine(in); // read number f_i of solutions in frontier
+                int n_fi = Integer.parseInt(data[0]);
+
+                frontier_DMs[k] = new Interval[n_fi][n];
+
+                for (int j = 0; j < n_fi; ++j) {
+                    data = this.readNextDataLine(in);
+                    for (int l = 0; l < n; ++l) {
+                        if (as_interval)
+                            frontier_DMs[k][j][l] = new Interval(Double.parseDouble(data[2 * l]),
+                                    Double.parseDouble(data[2 * l + 1]));
+                        if (!as_interval)
+                            frontier_DMs[k][j][l] = new Interval(Double.parseDouble(data[l]));
+                    }
+                }
+                r2[k] = new Interval[n_fi / 2][n];
+                r1[k] = new Interval[n_fi / 2][n];
+                for (int i = 0, j = 0; i < n_fi; i++) {
+                    if (i < n_fi / 2) {
+                        System.arraycopy(frontier_DMs[k][i], 0, r2[k][i], 0, n);
+                    } else {
+                        System.arraycopy(frontier_DMs[k][i], 0, r1[k][j++], 0, n);
+                    }
+                }
+                this.addParam("R2", r2);
+                this.addParam("R1", r1);
+            }
+
+            this.addParam("Frontiers", frontier_DMs);
+
+        } else {
+            this.addParam("Frontiers", null);
+        }
+
+        data = this.readNextDataLine(in);
+
+        if (data[0].equals("TRUE")) {
+            // Read DMs Best Compromises (Obtained possibly using I-NOSGA)
+
+            data = this.readNextDataLine(in);
+
+            int num = Integer.parseInt(data[0]);
+
+            initial_solutions = new Interval[num][p];
+            for (int k = 0; k < num; ++k) {
+                data = this.readNextDataLine(in); // read soluiton DM[k]
+                for (int j = 0; j < p; ++j) {
+                    initial_solutions[k][j] = new Interval(Double.parseDouble(data[j]));
+                }
+            }
+
+            this.addParam("InitialSolutions", initial_solutions);
+        } else {
+            this.addParam("InitialSolutions", null);
+        }
         in.close();
         return this;
     }
@@ -231,6 +324,29 @@ public class PspIntervalInstance_GD extends Instance {
         return (Interval[][]) this.getDataMatrix("Projects");
     }
 
+    public Interval[][] getSolutions() {
+        return (Interval[][]) this.params.get("Solutions");
+    }
+
+    public Interval[][][] getFrontiers() {
+        return (Interval[][][]) this.params.get("Frontiers");
+    }
+
+    public Interval[][] getInitialSolutions() {
+        return (Interval[][]) this.params.get("InitialSolutions");
+    }
+
+    public Interval[][][] getR2() {
+        return (Interval[][][]) this.getParams().get("R2");
+    }
+
+    public Interval[][][] getR1() {
+        return (Interval[][][]) this.params.get("R1");
+    }
+
+    public IntegerData[] getTypesOfDMs() {
+        return (IntegerData[]) this.getDataVector("TypeDMs");
+    }
 
     @Override
     public String toString() {

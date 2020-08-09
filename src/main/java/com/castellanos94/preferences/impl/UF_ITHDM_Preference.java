@@ -11,10 +11,10 @@ import com.castellanos94.solutions.Solution;
  */
 public class UF_ITHDM_Preference extends Preference {
     protected UF_ITHDM_Dominance<Solution> dominance;
-    protected OutrankModel model;
+    protected PreferenceModel model;
     protected Problem p;
 
-    public UF_ITHDM_Preference(Problem p, OutrankModel model) {
+    public UF_ITHDM_Preference(Problem p, PreferenceModel model) {
         this.model = model;
         this.p = p;
         this.dominance = new UF_ITHDM_Dominance<>((RealData) model.getAlpha());

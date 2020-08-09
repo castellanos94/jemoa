@@ -66,6 +66,9 @@ public class RealData extends Data {
 
     @Override
     public int compareTo(Number value) {
+        if (value instanceof Interval) {
+            return new Interval(this).compareTo(value);
+        }
         double a = this.data, b = value.doubleValue();
         /*
          * if (a > 1.0 || b > 1.0) return (a == b) ? 0 : (a > b) ? 1 : -1; double v =

@@ -45,7 +45,7 @@ public class ReferenceHyperplane {
         for (int i = 0; i < list.size(); i++) {
             for (int j = 1; j < list.get(i).size(); j++) {
                 Data xij = list.get(i).get(j);
-                xij = xij.minus(( 1.0) / ((double) H));
+                xij = xij.minus(( j-1.0) / ((double) H));
                 list.get(i).set(j, xij);
             }
         }

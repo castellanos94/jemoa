@@ -16,11 +16,11 @@ import com.castellanos94.solutions.Solution;
  */
 public class ITHDM_Preference extends Preference {
     protected ITHDM_Dominance dominance;
-    protected OutrankModel model;
+    protected PreferenceModel model;
     protected Problem p;
     private int[] coalition;
 
-    public ITHDM_Preference(Problem p, OutrankModel model) {
+    public ITHDM_Preference(Problem p, PreferenceModel model) {
         this.model = model;
         this.p = p;
         this.dominance = new ITHDM_Dominance((RealData) model.getAlpha());
@@ -28,10 +28,12 @@ public class ITHDM_Preference extends Preference {
     }
 
     /**
-     * xS(δ,λ)y in [-2], xP(δ,λ)y in [-1], xI(δ,λ)y in [0], xR(δ,λ)y in [1]
-     * Definition 3
+     * * Definition 3. Relatiopships: xS(δ,λ)y in [-2], xP(δ,λ)y in [-1], xI(δ,λ)y
+     * in [0], xR(δ,λ)y in [1]
      * 
-     * return (S, λ-relation)
+     * @param x a solution
+     * @param y another solution 
+     * @return x(S, λ-relation)y
      */
     @Override
     public int compare(Solution x, Solution y) {
@@ -97,7 +99,7 @@ public class ITHDM_Preference extends Preference {
     private Interval concordance_index(RealData gamma, ArrayList<RealData> omegas) {
         double cl = 0, cu = 0, dl = 0, du = 0;
         double lower = 0, upper = 0;
-        Interval[] weights = (Interval[]) p.getInstance().getDataVector("weights");
+        Interval[] weights = (Interval[]) model.getWeights();
         for (int i = 0; i < p.getNumberOfObjectives(); i++) {
             if (omegas.get(i).compareTo(gamma) >= 0) {
                 coalition[i] = 1;
@@ -124,7 +126,7 @@ public class ITHDM_Preference extends Preference {
     }
 
     private RealData compute_discordance_ij(Solution x, Solution y, int criteria) {
-        Data veto = p.getInstance().getDataVector("veto")[criteria];
+        Data veto = model.getVetos()[criteria];
         RealData res;
         Interval value_x = (Interval) x.getObjective(criteria);
         Interval value_y = (Interval) y.getObjective(criteria);
@@ -149,11 +151,4 @@ public class ITHDM_Preference extends Preference {
         return res;
     }
 
-    public static void main(String[] args) {
-        OutrankModel model = new OutrankModel();
-        model.setBeta(new Interval(0.62, 0.70));
-        model.setAlpha(new RealData(0.69));
-        model.setLambda(new Interval(0.51, 0.67));
-        model.setBeta(new Interval(0.62, 0.70));
-    }
 }

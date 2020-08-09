@@ -23,7 +23,13 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
     /**
      * @return -1 if this < b, 0 if this == b and 1 if this > 1
      */
-    abstract public int compareTo(Number b);
+    public int compareTo(Number b) {
+        if (b instanceof Interval && !(this instanceof Interval)) {
+            return new Interval(this).compareTo(b);
+        }
+    
+        return this.compareTo(b);
+    }
 
     @Override
     public Object clone() throws CloneNotSupportedException {
@@ -70,9 +76,11 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
         }
         return null;
     }
+
     /**
      * For interval used the definition of ISSN1360-1725
-     * @return absolute value 
+     * 
+     * @return absolute value
      */
     public Data abs() {
 
@@ -101,7 +109,7 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
         }
         if (this instanceof RealData) {
             return new RealData(Math.sqrt(this.doubleValue()));
-        }        
+        }
         return null;
     }
 

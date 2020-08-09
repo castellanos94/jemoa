@@ -61,6 +61,9 @@ public class IntegerData extends Data {
 
     @Override
     public int compareTo(Number value) {
+        if (value instanceof Interval) {
+            return new Interval(this).compareTo(value);
+        }
         double a = this.doubleValue(), b = value.doubleValue();
         return (a == b) ? 0 : (a > b) ? 1 : -1;
     }

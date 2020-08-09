@@ -9,19 +9,14 @@ package com.castellanos94.datatype;
  */
 public class Interval extends Data {
 
-    public static void main(String[] args) {
-        var a = new Interval(-2, 0);
-        System.out.println("number: " + a);
-        System.out.println("pow(n,2): " + a.pow(2));
-        System.out.println("n * n: " + a.times(a));
-    }
-
     /**
      *
      */
     private static final long serialVersionUID = -4032868859966244473L;
     private Double lower;
     private Double upper;
+    public static final Interval ONE = new Interval(1);
+    public static final Interval ZERO = new Interval(0);
 
     public Interval(Number n) {
         if (n instanceof Interval) {
