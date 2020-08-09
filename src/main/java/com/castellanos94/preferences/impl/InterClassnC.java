@@ -5,18 +5,18 @@ import java.util.Arrays;
 
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.instances.PspIntervalInstance_GD;
+import com.castellanos94.preferences.Classifier;
 import com.castellanos94.problems.PSPI_GD;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
 /**
- * Clasifica una solucion con respecto a los conjuntos Sat, Dist. Se asume que
- * se usara el recurso pos 2 para realizar dicha clasificacion. Esto lo hace por
- * cada DM.
+ * Clasifica una solucion con respecto a los conjuntos [HSat, Sat, Dis, HDis].
+ * Guarda el vector de clasicacion en los atributos extra de la solucion.
+ * Recuperar con getAttributeKey().
  * 
  */
-public class InterClassnC {
-    public static final String ATTRIBUTE_KEY = "com.castellanos94.preferences.impl.InterClassnCs";
+public class InterClassnC implements Classifier {
     protected PSPI_GD problem;
     protected PspIntervalInstance_GD instance;
 
@@ -26,7 +26,11 @@ public class InterClassnC {
 
     }
 
-    public void classificate(Solution x) {
+    public static String getAttributeKey() {
+        return InterClassnC.class.getName();
+    }
+
+    public void classify(Solution x) {
         int hsat = 0, sat = 0, dis = 0, hdis = 0;
         for (int dm = 0; dm < instance.getNumDMs(); dm++) {
             if (instance.getTypesOfDMs()[dm].compareTo(0) == 0) {// Dm con modelo de outranking
@@ -82,7 +86,7 @@ public class InterClassnC {
         iclass[1] = sat;
         iclass[2] = dis;
         iclass[3] = hdis;
-        x.setAttribute(ATTRIBUTE_KEY, iclass);
+        x.setAttribute(getAttributeKey(), iclass);
     }
 
     /**
@@ -372,10 +376,11 @@ public class InterClassnC {
         InterClassnC classificator = new InterClassnC(problem);
         for (int i = 0; i < solutions.length; i++) {
             // System.out.println("Clasificando solucion: " + i);
-            classificator.classificate(solutions[i]);
+            classificator.classify(solutions[i]);
         }
         for (Solution s : solutions) {
-            System.out.println(s.getObjectives() + " " + Arrays.toString((int[]) s.getAttribute(ATTRIBUTE_KEY)));
+            System.out.println(
+                    s.getObjectives() + " " + Arrays.toString((int[]) s.getAttribute(InterClassnC.getAttributeKey())));
         }
 
     }
