@@ -8,7 +8,8 @@ import java.util.stream.IntStream;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.datatype.Interval;
-import com.castellanos94.instances.PspIntervalInstance_GD;
+import com.castellanos94.instances.PSPI_Instance;
+import com.castellanos94.preferences.impl.OutrankingModel;
 import com.castellanos94.preferences.impl.PreferenceModel;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
@@ -17,21 +18,20 @@ import com.castellanos94.utils.Tools;
  * Portafolio Social Problem for Group Decision
  */
 public class PSPI_GD extends Problem {
-    protected PspIntervalInstance_GD pspInstance;
-    protected PreferenceModel[] preferenceModels;
+    protected OutrankingModel[] preference_models;
     protected int dms;
     private List<Integer> positions;
 
-    public PSPI_GD(PspIntervalInstance_GD instance_GD) {
+    public PSPI_GD(PSPI_Instance instance_GD) {
         this.instance = instance_GD;
-        this.pspInstance = instance_GD;
-        this.numberOfObjectives = pspInstance.getNumObjectives();
+        this.numberOfObjectives = instance_GD.getNumObjectives();
         this.numberOfConstrains = 1;
-        this.numberOfDecisionVars = pspInstance.getNumProjects();
-        this.dms = this.pspInstance.getNumDMs();
+        this.numberOfDecisionVars = instance_GD.getNumProjects();
+        this.dms = instance_GD.getNumDMs();
         this.lowerBound = new Data[this.numberOfDecisionVars];
         this.upperBound = new Data[this.numberOfDecisionVars];
         this.objectives_type = new int[this.numberOfObjectives];
+        this.preference_models = instance_GD.getOutrankingModels();
         for (int i = 0; i < this.numberOfObjectives; i++) {
             objectives_type[i] = Problem.MAXIMIZATION;
         }
@@ -40,25 +40,23 @@ public class PSPI_GD extends Problem {
             upperBound[i] = IntegerData.ONE;
         }
         positions = IntStream.range(0, numberOfDecisionVars).boxed().collect(Collectors.toList());
-        makePreferences();
+        // makePreferences();
     }
 
-    private void makePreferences() {
-        preferenceModels = new PreferenceModel[dms];
-        for (int i = 0; i < dms; i++) {
-            preferenceModels[i] = new PreferenceModel();
-            preferenceModels[i].setAlpha(pspInstance.getAlphas_DMs()[i]);
-            preferenceModels[i].setBeta(pspInstance.getBetas_DMs()[i]);
-            preferenceModels[i].setLambda(pspInstance.getLambdas_DMs()[i]);
-            preferenceModels[i].setVetos(pspInstance.getVetos_DMs()[i]);
-            preferenceModels[i].setWeights(pspInstance.getWeights_DMs()[i]);
-        }
-    }
+    /*
+     * private void makePreferences() { preferenceModels = new PreferenceModel[dms];
+     * for (int i = 0; i < dms; i++) { preferenceModels[i] = new PreferenceModel();
+     * preferenceModels[i].setAlpha(getInstance().getAlphas_DMs()[i]);
+     * preferenceModels[i].setBeta(getInstance().getBetas_DMs()[i]);
+     * preferenceModels[i].setLambda(getInstance().getLambdas_DMs()[i]);
+     * preferenceModels[i].setVetos(getInstance().getVetos_DMs()[i]);
+     * preferenceModels[i].setWeights(getInstance().getWeights_DMs()[i]); } }
+     */
 
     @Override
     public void evaluate(Solution solution) {
         Interval currentBudget = Interval.ZERO;
-        Interval[][] projects = pspInstance.getProjects();
+        Interval[][] projects = getInstance().getProjects();
         ArrayList<Data> objectives = new ArrayList<>();
         for (int i = 0; i < this.numberOfObjectives; i++) {
             objectives.add(new Interval(0));
@@ -78,8 +76,8 @@ public class PSPI_GD extends Problem {
 
     @Override
     public int evaluateConstraints(Solution solution) {
-        if (solution.getResources().get(0).compareTo(this.pspInstance.getBudget()) > 0) {
-            Data tmp = pspInstance.getBudget().minus(solution.getResources().get(0));
+        if (solution.getResources().get(0).compareTo(this.getInstance().getBudget()) > 0) {
+            Data tmp = getInstance().getBudget().minus(solution.getResources().get(0));
             solution.setPenalties(tmp);
             solution.setN_penalties(1);
         } else {
@@ -94,8 +92,8 @@ public class PSPI_GD extends Problem {
         Solution sol = new Solution(this);
 
         Tools.shuffle(positions);
-        Interval[][] projects = pspInstance.getProjects();
-        Interval budget = pspInstance.getBudget();
+        Interval[][] projects = getInstance().getProjects();
+        Interval budget = getInstance().getBudget();
         Interval current_budget = new Interval(0);
         for (int i = 0; i < positions.size(); i++) {
             if (projects[positions.get(i)][0].plus(current_budget).compareTo(budget) <= 0) {
@@ -109,13 +107,17 @@ public class PSPI_GD extends Problem {
         return sol;
     }
 
-    public PreferenceModel getPreferenceModel(int dm) {
-        return this.preferenceModels[dm];
+    public OutrankingModel getPreferenceModel(int dm) {
+        return this.preference_models[dm];
     }
 
-    public PreferenceModel[] getPreferenceModels() {
-        return preferenceModels;
+    public OutrankingModel[] getPreferenceModels() {
+        return preference_models;
     }
 
+    @Override
+    public PSPI_Instance getInstance() {
+        return (PSPI_Instance) this.instance;
+    }
 
 }

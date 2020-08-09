@@ -11,18 +11,17 @@ import com.castellanos94.solutions.Solution;
 
 /**
  * This class determines what kind of outranking relationship exists between two
- * solutions: x, y. 
- * Fernández,J.R.FigueiraandJ.Navarro,Interval-based extensions
+ * solutions: x, y. Fernández,J.R.FigueiraandJ.Navarro,Interval-based extensions
  * of two outranking methods for multi-criteria ordinal classification, Omega,
  * https://doi.org/10.1016/j.omega.2019.05.001
  */
 public class ITHDM_Preference extends Preference {
     protected ITHDM_Dominance dominance;
-    protected PreferenceModel model;
+    protected OutrankingModel model;
     protected Problem p;
     private int[] coalition;
 
-    public ITHDM_Preference(Problem p, PreferenceModel model) {
+    public ITHDM_Preference(Problem p, OutrankingModel model) {
         this.model = model;
         this.p = p;
         this.dominance = new ITHDM_Dominance((RealData) model.getAlpha());

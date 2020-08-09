@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 
 import com.castellanos94.datatype.Interval;
-import com.castellanos94.instances.PspIntervalInstance_GD;
+import com.castellanos94.instances.PSPI_Instance;
 import com.castellanos94.preferences.Classifier;
 import com.castellanos94.problems.PSPI_GD;
 import com.castellanos94.solutions.Solution;
@@ -20,11 +20,11 @@ import com.castellanos94.utils.Tools;
  */
 public class InterClassnC implements Classifier {
     protected PSPI_GD problem;
-    protected PspIntervalInstance_GD instance;
+    protected PSPI_Instance instance;
 
     public InterClassnC(PSPI_GD problem) {
         this.problem = problem;
-        this.instance = (PspIntervalInstance_GD) problem.getInstance();
+        this.instance = (PSPI_Instance) problem.getInstance();
 
     }
 
@@ -348,7 +348,7 @@ public class InterClassnC implements Classifier {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        PspIntervalInstance_GD ins = (PspIntervalInstance_GD) new PspIntervalInstance_GD(
+        PSPI_Instance ins = (PSPI_Instance) new PSPI_Instance(
                 "src/main/resources/instances/gd/GD_ITHDM-UFCA.txt").loadInstance();
         PSPI_GD problem = new PSPI_GD(ins);
         Solution[] solutions = new Solution[20];

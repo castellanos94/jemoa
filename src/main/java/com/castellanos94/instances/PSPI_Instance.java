@@ -7,15 +7,16 @@ import java.util.Scanner;
 import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.datatype.RealData;
+import com.castellanos94.preferences.impl.OutrankingModel;
 
 /**
  * Instance for the PSP with interval data and GD.
  * 
  * @see com.castellanos94.problems.PSPI_GD
  */
-public class PspIntervalInstance_GD extends Instance {
+public class PSPI_Instance extends Instance {
 
-    public PspIntervalInstance_GD(String path) {
+    public PSPI_Instance(String path) {
         super(path);
     }
 
@@ -26,12 +27,13 @@ public class PspIntervalInstance_GD extends Instance {
 
         int n, m, r, p;
 
-        Interval[][] weights_DMs; // pesos de los atributos
-        Interval[][] vetos_DMs; // umbrales de veto
-        Interval[] betas_DMs; // umbral de credibilidad del outranking
-        RealData[][] chis_DMs; // umbral para restricciones
-        RealData[] alphas_DMs; // umbral de dominancia
-        Interval[] lambdas_DMs; // umbral para la mayoria
+        /*
+         * Interval[][] weights_DMs; // pesos de los atributos Interval[][] vetos_DMs;
+         * // umbrales de veto Interval[] betas_DMs; // umbral de credibilidad del
+         * outranking RealData[][] chis_DMs; // umbral para restricciones RealData[]
+         * alphas_DMs; // umbral de dominancia Interval[] lambdas_DMs; // umbral para la
+         * mayoria
+         */
 
         Interval[][] projects;
 
@@ -60,74 +62,81 @@ public class PspIntervalInstance_GD extends Instance {
         this.addParam("NumResources", Integer.parseInt(data[0])); // number of resources or constraints
 
         // WEIGHTS, interval weights per DM j and objective i
-        weights_DMs = new Interval[m][n];
+        // Load Preference model for dm
+        OutrankingModel[] models = new OutrankingModel[m];
+        for (int i = 0; i < models.length; i++) {
+            models[i] = new OutrankingModel();
+        }
+        // weights_DMs = new Interval[m][n];
         for (int j = 0; j < m; ++j) {
             data = this.readNextDataLine(in); // read objectives of DM j
-
-            for (int i = 0; i < n; ++i) {
-                weights_DMs[j][i] = new Interval(Double.parseDouble(data[i * 2]), Double.parseDouble(data[i * 2 + 1]));
+            Interval weights_dm[] = new Interval[n];
+            for (int i = 0; i < n; ++i) {// obj
+                weights_dm[i] = new Interval(Double.parseDouble(data[i * 2]), Double.parseDouble(data[i * 2 + 1]));
             }
+            models[j].setWeights(weights_dm.clone());
         }
 
-        this.addParam("Weights_DMs", weights_DMs);
+        // this.addParam("Weights_DMs", weights_DMs);
 
         // VETO, interval veto per DM j and objective i
-        vetos_DMs = new Interval[m][n];
+        // vetos_DMs = new Interval[m][n];
         for (int j = 0; j < m; ++j) {
             data = this.readNextDataLine(in); // read objectives of DM j
-
-            for (int i = 0; i < n; ++i) {
-                vetos_DMs[j][i] = new Interval(Double.parseDouble(data[i * 2]), Double.parseDouble(data[i * 2 + 1]));
+            Interval vetos[] = new Interval[n];
+            for (int i = 0; i < n; ++i) {// obj
+                vetos[i] = new Interval(Double.parseDouble(data[i * 2]), Double.parseDouble(data[i * 2 + 1]));
             }
+            models[j].setVetos(vetos.clone());
         }
 
-        this.addParam("Vetos_DMs", vetos_DMs);
+        // this.addParam("Vetos_DMs", vetos_DMs);
 
         // BETA, interval BETA per DM j and objective i
-        betas_DMs = new Interval[m];
+        // betas_DMs = new Interval[m];
         for (int j = 0; j < m; ++j) {
             data = this.readNextDataLine(in); // read objectives of DM j
 
-            betas_DMs[j] = new Interval(Double.parseDouble(data[0]), Double.parseDouble(data[1]));
+            models[j].setBeta(new Interval(Double.parseDouble(data[0]), Double.parseDouble(data[1])));
         }
 
-        this.addParam("Betas_DMs", betas_DMs);
+        // this.addParam("Betas_DMs", betas_DMs);
 
         // ==
 
         // CHIs, interval CHI per DM j and constraint/resource i
-        chis_DMs = new RealData[m][r];
+        // chis_DMs = new RealData[m][r];
         for (int j = 0; j < m; ++j) {
             data = this.readNextDataLine(in); // read constraint/resource of DM j (it is a single value not an interval)
 
             for (int i = 0; i < r; ++i) {
-                chis_DMs[j][i] = new RealData(Double.parseDouble(data[i * 2]));
+                models[i].setChi(new RealData(Double.parseDouble(data[i * 2])));
             }
         }
 
-        this.addParam("Chis_DMs", chis_DMs);
+        // this.addParam("Chis_DMs", chis_DMs);
 
         // ==ALPHA
-        alphas_DMs = new RealData[m];
+        // alphas_DMs = new RealData[m];
 
         for (int i = 0; i < m; ++i) {
             data = this.readNextDataLine(in); // read alpha of DM i (it is a single value, no tan interval)
-            alphas_DMs[i] = new RealData(Double.parseDouble(data[0]));
+            models[i].setAlpha(new RealData(Double.parseDouble(data[0])));
         }
 
-        this.addParam("Alphas_DMs", alphas_DMs);
+        // this.addParam("Alphas_DMs", alphas_DMs);
 
         // ==
 
-        lambdas_DMs = new Interval[m];
+        // lambdas_DMs = new Interval[m];
 
         for (int i = 0; i < m; ++i) {
             data = this.readNextDataLine(in); // read delta of DM i
-            lambdas_DMs[i] = new Interval(Double.parseDouble(data[0]), Double.parseDouble(data[1]));
+            models[i].setLambda(new Interval(Double.parseDouble(data[0]), Double.parseDouble(data[1])));
         }
 
-        this.addParam("Lambdas_DMs", lambdas_DMs);
-
+        // this.addParam("Lambdas_DMs", lambdas_DMs);
+        this.addParam("outranking_models", models);
         // Read number of proyects
         data = this.readNextDataLine(in);
         p = Integer.parseInt(data[0]);
@@ -295,30 +304,31 @@ public class PspIntervalInstance_GD extends Instance {
         return (Integer) this.params.get("NumResources");
     }
 
-    public Interval[][] getWeights_DMs() {
-        return (Interval[][]) this.getDataMatrix("Weights_DMs");
-    }
-
-    public Interval[][] getVetos_DMs() {
-        return (Interval[][]) this.getDataMatrix("Vetos_DMs");
-    }
-
-    public Interval[] getBetas_DMs() {
-        return (Interval[]) this.getDataVector("Betas_DMs");
-    }
-
-    public RealData[][] getChis_DMs() {
-        return (RealData[][]) this.getDataMatrix("Chis_DMs");
-    }
-
-    public RealData[] getAlphas_DMs() {
-        return (RealData[]) this.getDataVector("Alphas_DMs");
-
-    }
-
-    public Interval[] getLambdas_DMs() {
-        return (Interval[]) this.getDataVector("Lambdas_DMs");
-
+    /*
+     * public Interval[][] getWeights_DMs() { return (Interval[][])
+     * this.getDataMatrix("Weights_DMs"); }
+     * 
+     * public Interval[][] getVetos_DMs() { return (Interval[][])
+     * this.getDataMatrix("Vetos_DMs"); }
+     * 
+     * public Interval[] getBetas_DMs() { return (Interval[])
+     * this.getDataVector("Betas_DMs"); }
+     * 
+     * public RealData[][] getChis_DMs() { return (RealData[][])
+     * this.getDataMatrix("Chis_DMs"); }
+     * 
+     * public RealData[] getAlphas_DMs() { return (RealData[])
+     * this.getDataVector("Alphas_DMs");
+     * 
+     * }
+     * 
+     * public Interval[] getLambdas_DMs() { return (Interval[])
+     * this.getDataVector("Lambdas_DMs");
+     * 
+     * }
+     */
+    public OutrankingModel[] getOutrankingModels() {
+        return (OutrankingModel[]) this.params.get("outranking_models");
     }
 
     public Integer getNumProjects() {
