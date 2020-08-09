@@ -1,14 +1,5 @@
 package com.castellanos94.operators.impl;
 
-import java.util.ArrayList;
-
-import com.castellanos94.datatype.Data;
-import com.castellanos94.datatype.RealData;
-import com.castellanos94.operators.SelectionOperator;
-import com.castellanos94.problems.Problem;
-import com.castellanos94.solutions.Solution;
-import com.castellanos94.utils.ReferenceHyperplane;
-import com.castellanos94.utils.Tools;
 
 public class NSGA3Selection {
  /*   private static Solution idealPoint;

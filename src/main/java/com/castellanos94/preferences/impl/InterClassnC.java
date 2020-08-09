@@ -44,11 +44,31 @@ public class InterClassnC {
                         }
                     }
                 } else {
-                    System.out.println("\t\tno se pudo, va pa hdis");
                     hdis++;
                 }
-            } else { // Dem uf
-                System.out.println("Pendiente...");
+            } else if (instance.getTypesOfDMs()[dm].compareTo(1) == 0) { // DM UF
+                boolean bsat = isSatWithXUF(x, dm);
+                boolean bhsat = isHighSatWithXUF(x, dm);
+                boolean flag = false;
+                if (bhsat && bsat) {
+                    hsat++;
+                } else if (!bhsat && bsat) {
+                    sat++;
+                } else {
+                    flag = true;
+                }
+                boolean bdis = isDisWithXUF(x, dm);
+                boolean bhdis = isHighSatWithXUF(x, dm);
+                if (bhdis && bdis) {
+                    hdis++;
+                } else if (!bhdis && bdis) {
+                    dis++;
+                } else if (flag) {
+                    hdis++;
+                }
+
+            } else {
+                System.err.println("error dm no compatible");
             }
         }
         System.out.printf("\tHSat = %2d, Sat = %2d, Dis = %2d, HDis = %2d\n", hsat, sat, dis, hdis);
@@ -176,6 +196,133 @@ public class InterClassnC {
             }
         }
         return true;
+    }
+
+    /**
+     * Def 18: DM is compatible with weighted-sum function model, The DM is said to
+     * be sat with a feasible solution x iff the following conditions are fulfilled:
+     * i) For all w belonging to R1, x is alpha-preferred to w. ii) Theres is no z
+     * belonging to R2 such that z is alpha-preferred to x.
+     * 
+     * @param x
+     * @param dm
+     * @return
+     */
+    public boolean isSatWithXUF(Solution x, int dm) {
+        UF_ITHDM_Preference pref = new UF_ITHDM_Preference(problem, problem.getPreferenceModel(dm));
+        Interval[][] r1 = instance.getR1()[dm];
+        Solution w = new Solution(problem);
+        w.setPenalties(Interval.ZERO);
+        w.setN_penalties(0);
+        for (int i = 0; i < r1.length; i++) {
+            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
+                w.setObjective(j, r1[i][j]);
+            }
+            if (pref.compare(x, w) > -1)
+                return false;
+        }
+
+        Interval[][] r2 = instance.getR2()[dm];
+        int count = 0;
+        for (int i = 0; i < r2.length; i++) {
+            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
+                w.setObjective(j, r2[i][j]);
+            }
+            if (pref.compare(w, x) == -1)
+                count++;
+        }
+        return (count == 0);
+    }
+
+    /**
+     * Def 19: DM is compatible with weighted-sum function model, The DM is said to
+     * be dissatisfied with a feasible solution x if at least one of the following
+     * conditions is fullfilled: i) For all w belonging to R2, w is alpha-pref to x;
+     * ii) There is no z belonging to R1 such that x is alpha-pref to z.
+     * 
+     * @param x
+     * @param dm
+     * @return
+     */
+    public boolean isDisWithXUF(Solution x, int dm) {
+        UF_ITHDM_Preference pref = new UF_ITHDM_Preference(problem, problem.getPreferenceModel(dm));
+        Interval[][] r2 = instance.getR2()[dm];
+        Solution w = new Solution(problem);
+        w.setPenalties(Interval.ZERO);
+        w.setN_penalties(0);
+        int count = 0;
+        for (int i = 0; i < r2.length; i++) {
+            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
+                w.setObjective(j, r2[i][j]);
+            }
+            if (pref.compare(w, x) == -1)
+                count++;
+        }
+        if (count == r2.length)
+            return true;
+
+        count = 0;
+        Interval[][] r1 = instance.getR1()[dm];
+        for (int i = 0; i < r1.length; i++) {
+            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
+                w.setObjective(j, r1[i][j]);
+            }
+            if (pref.compare(x, w) == -1)
+                count++;
+        }
+
+        return count == 0;
+    }
+
+    /**
+     * Def 20: If the DM is sat with x, we say that the DM is high sat with x iff
+     * the following condition is also fulfilled: - For all w belonging to R2, x is
+     * alph-pref to w.
+     * 
+     * @param x
+     * @param dm
+     * @return
+     */
+    public boolean isHighSatWithXUF(Solution x, int dm) {
+        UF_ITHDM_Preference pref = new UF_ITHDM_Preference(problem, problem.getPreferenceModel(dm));
+        Interval[][] r2 = instance.getR2()[dm];
+        Solution w = new Solution(problem);
+        w.setPenalties(Interval.ZERO);
+        w.setN_penalties(0);
+        for (int i = 0; i < r2.length; i++) {
+            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
+                w.setObjective(j, r2[i][j]);
+            }
+            if (pref.compare(x, w) > -1)
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * Def 21: Suppose that the DM is dissat with a solution x, We say that the DM
+     * is highly dissatisfied with x if the following condition is also fulfilled -
+     * For all w belonging to R1, w is alpha-pref to x.
+     * 
+     * @param x
+     * @param dm
+     * @return
+     */
+    public boolean isHighDisWithXUF(Solution x, int dm) {
+        UF_ITHDM_Preference pref = new UF_ITHDM_Preference(problem, problem.getPreferenceModel(dm));
+        Interval[][] r1 = instance.getR2()[dm];
+        Solution w = new Solution(problem);
+        w.setPenalties(Interval.ZERO);
+        w.setN_penalties(0);
+        for (int i = 0; i < r1.length; i++) {
+            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
+                w.setObjective(j, r1[i][j]);
+            }
+            if (pref.compare(w, x) > -1)
+                return false;
+        }
+        return true;
+
     }
 
     public static void main(String[] args) throws FileNotFoundException {

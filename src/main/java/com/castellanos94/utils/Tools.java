@@ -1,16 +1,9 @@
 package com.castellanos94.utils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Random;
 
 import com.castellanos94.datatype.Interval;
-import com.castellanos94.instances.Instance;
-import com.castellanos94.instances.KnapsackIntance;
-import com.castellanos94.instances.PSPInstance;
-import com.castellanos94.problems.ProblemType;
 
 public class Tools {
     private static Random random = new Random();

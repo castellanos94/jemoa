@@ -5,9 +5,7 @@ import java.util.List;
 
 import com.castellanos94.datatype.Data;
 import com.castellanos94.operators.SelectionOperator;
-import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
-
 
 public class NSGA3Replacement implements SelectionOperator {
     private ReferenceHyperplane referencePoints;
@@ -64,6 +62,7 @@ public class NSGA3Replacement implements SelectionOperator {
         return ideal_point;
     }
 
+    @SuppressWarnings("unchecked")
     private ArrayList<Data> getAttribute(Solution s) {
         return (ArrayList<Data>) s.getAttribute(OBJECTIVES_TRANSLATED);
     }
@@ -318,7 +317,6 @@ public class NSGA3Replacement implements SelectionOperator {
         try {
             associate(source);
         } catch (CloneNotSupportedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -350,13 +348,11 @@ public class NSGA3Replacement implements SelectionOperator {
                     }
                 }
             }
-           /* Problem p = source.get(0).getProblem();
-            while(source.size() < this.pop_size){
-                Solution s = p.randomSolution();
-                p.evaluate(s);
-                p.evaluateConstraints(s);
-                source.add(s);
-            }*/
+            /*
+             * Problem p = source.get(0).getProblem(); while(source.size() < this.pop_size){
+             * Solution s = p.randomSolution(); p.evaluate(s); p.evaluateConstraints(s);
+             * source.add(s); }
+             */
         }
         parents = source;
 
@@ -369,8 +365,7 @@ public class NSGA3Replacement implements SelectionOperator {
 
     @Override
     public void setPopulaitonSize(int size) {
-        // TODO Auto-generated method stub
-
+        this.pop_size = size;
     }
 
 }

@@ -6,8 +6,9 @@ import com.castellanos94.datatype.RealData;
 import com.castellanos94.preferences.Preference;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
+
 /**
- * Pendiente de revisar, implementacion base rara. 
+ * Pendiente de revisar, implementacion base rara.
  */
 public class UF_ITHDM_Preference extends Preference {
     protected UF_ITHDM_Dominance<Solution> dominance;
@@ -20,15 +21,17 @@ public class UF_ITHDM_Preference extends Preference {
         this.dominance = new UF_ITHDM_Dominance<>((RealData) model.getAlpha());
     }
 
+    /**
+     * @return -1 if xPy, 0 x~y
+     */
     @Override
     public int compare(Solution x, Solution y) {
+        // TODO: Pendiende revisar esto
         if (dominance.compare(x, y) == -1)
             return -1;
-        if (dominance.compare(y, x) == -1)
-            return 1;
         Data alpha = model.getAlpha();
         Interval ux = new Interval(0), uy = new Interval(0);
-        Data weights[] = p.getInstance().getDataVector("weights");
+        Data weights[] = model.getWeights();
         for (int i = 0; i < p.getNumberOfObjectives(); i++) {
             ux = (Interval) ux.plus(weights[i].times(x.getObjective(i)));
             uy = (Interval) uy.plus(weights[i].times(y.getObjective(i)));
@@ -37,10 +40,6 @@ public class UF_ITHDM_Preference extends Preference {
         Interval poss = new Interval(ux.possGreaterThanOrEq(uy));
         if (poss.compareTo(alpha) >= 0)
             return -1;
-        poss = new Interval(uy.possGreaterThanOrEq(ux));
-        if (poss.compareTo(alpha) >= 0)
-            return -1;
-
         return 0;
     }
 }

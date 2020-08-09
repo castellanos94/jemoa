@@ -1,7 +1,6 @@
 package com.castellanos94.algorithms.multi;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
@@ -11,14 +10,11 @@ import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.RepairOperator;
 import com.castellanos94.operators.SelectionOperator;
-import com.castellanos94.operators.impl.EnvironmentalSelection;
-import com.castellanos94.operators.impl.NSGA3Selection;
 import com.castellanos94.operators.impl.RepairRandomBoundary;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.NSGA3Replacement;
 import com.castellanos94.utils.ReferenceHyperplane;
-import com.castellanos94.utils.ReferencePoint;
 
 public class NSGA_III extends AbstractEvolutionaryAlgorithm {
     protected int maxIterations;
@@ -85,8 +81,8 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
         if (Pt.size() == populationSize)
             return Pt;
 
-        NSGA3Replacement selection = new NSGA3Replacement(fronts, referenceHyperplane.copy(), problem.getNumberOfObjectives(),
-                populationSize);
+        NSGA3Replacement selection = new NSGA3Replacement(fronts, referenceHyperplane.copy(),
+                problem.getNumberOfObjectives(), populationSize);
         selection.execute(Pt);
         return selection.getParents();
         // return Pt;
@@ -116,8 +112,8 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
          */
         referenceHyperplane = new ReferenceHyperplane(problem.getNumberOfObjectives(), numberOfDivisions);
         referenceHyperplane.execute();
-       // System.out.println(referenceHyperplane.getNumberOfPoints());
-       // int populationRSize = referenceHyperplane.getNumberOfPoints();
+        // System.out.println(referenceHyperplane.getNumberOfPoints());
+        // int populationRSize = referenceHyperplane.getNumberOfPoints();
 
         // setPopulationSize(populationRSize);
         // selectionOperator.setPopulaitonSize(populationRSize);
@@ -146,16 +142,6 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
         // setPopulationSize(populationRSize);
         // selectionOperator.setPopulaitonSize(populationRSize);
 
-    }
-
-    @Deprecated
-    private List<ReferencePoint> getReferencePointsCopy() {
-        List<ReferencePoint> copy = new ArrayList<>();
-        /*
-         * for (ReferencePoint r : this.referencePoints) { copy.add(new
-         * ReferencePoint(r)); }
-         */
-        return copy;
     }
 
     public void setReferenceHyperplane(ReferenceHyperplane referenceHyperplane) {

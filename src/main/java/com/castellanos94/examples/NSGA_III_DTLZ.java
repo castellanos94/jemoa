@@ -20,7 +20,6 @@ import com.castellanos94.operators.impl.TournamentSelection;
 import com.castellanos94.problems.benchmarks.dtlz.*;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
-import com.castellanos94.utils.ReferenceHyperplane;
 import com.castellanos94.utils.Scatter3D;
 import com.castellanos94.utils.Tools;
 
