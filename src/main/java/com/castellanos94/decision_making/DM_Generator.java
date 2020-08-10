@@ -1,5 +1,7 @@
 package com.castellanos94.decision_making;
 
+import java.util.Arrays;
+
 import com.castellanos94.utils.Tools;
 
 public class DM_Generator {
@@ -14,7 +16,9 @@ public class DM_Generator {
     public void execute() {
         for (int i = 0; i < number_of_dms; i++) {
             System.out.println("Generate dm: " + (i + 1));
-
+            double weights[] = generateWeight();
+            System.out.println(Arrays.toString(weights));
+            // generar vetos, requiero los pesos previos generados y los objetivos
         }
     }
 
@@ -34,14 +38,14 @@ public class DM_Generator {
             double sum = 0.0;
             for (int i = 0; i < weights.length; i++) {
                 sum += weights[i];
-                if (weights[i] > 0.5 * (1 - weights[i])) {
+                double v = 0.5 * (1 - weights[i]);
+                if (weights[i] > v) {
                     descartar = true;
                 }
             }
-            if (sum != 1.0) {
-                descartar = true;
-                System.out.println("Weigths is not 1.0 " + sum);
-            }
+
+            descartar = (descartar) ? descartar : sum != 1;
+          
         } while (descartar);
         return weights;
     }
@@ -82,5 +86,14 @@ public class DM_Generator {
         }
 
         return weights;
+    }
+
+    public static void main(String[] args) {
+        long start = System.currentTimeMillis();
+        Tools.setSeed(8435L);
+        DM_Generator dm_Generator = new DM_Generator(2, 3);
+        dm_Generator.execute();
+        long end = System.currentTimeMillis() - start;
+        System.out.println("Time :" + end + " ms.");
     }
 }

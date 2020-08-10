@@ -16,23 +16,23 @@ public class CrowdingDistance implements DensityEstimator {
         if (solutions.size() == 0) {
             return;
         } else if (solutions.size() == 1) {
-            solutions.get(0).getProperties().put(getKey(), maxValue(solutions.get(0)));
+            solutions.get(0).getAttributes().put(getKey(), maxValue(solutions.get(0)));
             return;
         } else if (solutions.size() == 2) {
-            solutions.get(0).getProperties().put(getKey(), maxValue(solutions.get(0)));
-            solutions.get(1).getProperties().put(getKey(), maxValue(solutions.get(0)));
+            solutions.get(0).getAttributes().put(getKey(), maxValue(solutions.get(0)));
+            solutions.get(1).getAttributes().put(getKey(), maxValue(solutions.get(0)));
             return;
         }
         for (Solution solution : solutions) {
-            solution.getProperties().put(getKey(), Data.getZeroByType(solution.getObjectives().get(0)));
+            solution.getAttributes().put(getKey(), Data.getZeroByType(solution.getObjectives().get(0)));
         }
         int numOfObj = solutions.get(0).getObjectives().size();
         Data MaxValue = maxValue(solutions.get(0));
         for (int i = 0; i < numOfObj; i++) {
             Collections.sort(solutions, new ObjectiveComparator(i));
             try {
-                solutions.get(0).getProperties().put(getKey(), (Data) MaxValue.clone());
-                solutions.get(solutions.size() - 1).getProperties().put(getKey(), (Data) MaxValue.clone());
+                solutions.get(0).getAttributes().put(getKey(), (Data) MaxValue.clone());
+                solutions.get(solutions.size() - 1).getAttributes().put(getKey(), (Data) MaxValue.clone());
                 Data min = solutions.get(0).getObjectives().get(i);
                 Data max = solutions.get(solutions.size() - 1).getObjectives().get(i);
                 Data distance = Data.getZeroByType(min);
@@ -41,8 +41,8 @@ public class CrowdingDistance implements DensityEstimator {
                             .minus(solutions.get(j - 1).getObjectives().get(i));
                     distance = distance.div(max.minus(min));
                     distance = distance.plus(
-                            (Data) solutions.get(j).getProperties().getOrDefault(getKey(), Data.getZeroByType(min)));
-                    solutions.get(j).getProperties().put(getKey(), distance);
+                            (Data) solutions.get(j).getAttributes().getOrDefault(getKey(), Data.getZeroByType(min)));
+                    solutions.get(j).getAttributes().put(getKey(), distance);
                 }
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
@@ -69,7 +69,7 @@ public class CrowdingDistance implements DensityEstimator {
 
         @Override
         public int compare(Solution a, Solution b) {
-            return ((Data) a.getProperties().get(getKey())).compareTo(((Data) b.getProperties().get(getKey())));
+            return ((Data) a.getAttributes().get(getKey())).compareTo(((Data) b.getAttributes().get(getKey())));
         }
 
     }

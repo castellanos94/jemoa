@@ -320,11 +320,11 @@ public class EnvironmentalSelection implements SelectionOperator {
         System.out.println(size);
     }
     public void setAttribute(Solution solution, List<Data> value) {
-        solution.getProperties().put(getAttributeIdentifier(), value);
+        solution.getAttributes().put(getAttributeIdentifier(), value);
     }
     @SuppressWarnings("unchecked")
     public List<Data> getAttribute(Solution solution) {
-        return (List<Data>) solution.getProperties().getOrDefault(getAttributeIdentifier(), new ArrayList<>());
+        return (List<Data>) solution.getAttributes().getOrDefault(getAttributeIdentifier(), new ArrayList<>());
     }
 
     public String getAttributeIdentifier() {

@@ -22,7 +22,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
 
     protected Problem problem;
     protected Integer n_penalties = 0;
-    protected HashMap<String, Object> properties;
+    protected HashMap<String, Object> attributes;
     protected Data[] lowerBound;
     protected Data[] upperBound;
 
@@ -39,7 +39,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
             Data[] upperBound) {
         this.decision_vars = new ArrayList<>(numberOfObjectives);
         this.objectives = new ArrayList<>(numberOfObjectives);
-        this.resources = new ArrayList<>(problem.getNumberOfConstrains());
+        this.resources = new ArrayList<>(numberOfResources);
 
         for (int i = 0; i < numberOfVariables; i++) {
             decision_vars.add(null);
@@ -50,7 +50,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
         for (int i = 0; i < numberOfResources; i++) {
             resources.add(null);
         }
-        properties = new HashMap<>();
+        attributes = new HashMap<>();
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
 
@@ -60,7 +60,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
         this.decision_vars = new ArrayList<>();
         this.objectives = new ArrayList<>();
         this.resources = new ArrayList<>();
-        properties = new HashMap<>();
+        attributes = new HashMap<>();
     }
 
     public void setDecisionVar(int index, Data element) {
@@ -149,20 +149,20 @@ public class Solution implements Cloneable, Comparable<Solution> {
         this.penalties = penalties;
     }
 
-    public HashMap<String, Object> getProperties() {
-        return this.properties;
+    public HashMap<String, Object> getAttributes() {
+        return this.attributes;
     }
 
     public Object getAttribute(String key) {
-        return this.properties.get(key);
+        return this.attributes.get(key);
     }
 
     public void setAttribute(String key, Object value) {
-        this.properties.put(key, value);
+        this.attributes.put(key, value);
     }
 
-    public void setProperties(HashMap<String, Object> properties) {
-        this.properties = properties;
+    public void setAttributes(HashMap<String, Object> properties) {
+        this.attributes = properties;
     }
 
     @SuppressWarnings("unchecked")
@@ -177,8 +177,8 @@ public class Solution implements Cloneable, Comparable<Solution> {
             clone.setPenalties((Data) this.getPenalties().clone());
         }
         clone.setN_penalties(this.getN_penalties());
-        if (this.properties != null)
-            clone.setProperties((HashMap<String, Object>) this.getProperties().clone());
+        if (this.attributes != null)
+            clone.setAttributes((HashMap<String, Object>) this.getAttributes().clone());
         return clone;
     }
 
