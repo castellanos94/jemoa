@@ -41,8 +41,8 @@ public class PSP extends Problem {
         }
         Data[][] projects = instance.getDataMatrix("projects");
 
-        for (int i = 0; i < solution.getDecision_vars().size(); i++) {
-            if (solution.getDecision_vars().get(i).compareTo(1) == 0) {
+        for (int i = 0; i < solution.getVariables().size(); i++) {
+            if (solution.getVariables().get(i).compareTo(1) == 0) {
                 // current_budget = (IntegerData) current_budget.addition(projects[i][0]);
                 for (int j = 0; j < numberOfObjectives; j++) {
                     objs[j] = objs[j].plus(projects[i][3 + j]);
@@ -76,7 +76,7 @@ public class PSP extends Problem {
         }
 
         for (int i = 0; i < numberOfDecisionVars; i++) {
-            if (sol.getDecision_vars().get(i).compareTo(one) == 0) {
+            if (sol.getVariables().get(i).compareTo(one) == 0) {
                 current_budget = (IntegerData) current_budget.plus(projects[i][0]);
                 int area = projects[i][1].intValue() - 1;
                 int region = projects[i][2].intValue() - 1;
@@ -130,14 +130,14 @@ public class PSP extends Problem {
         for (int i = 0; i < positions.size(); i++) {
             if (Tools.getRandom().nextDouble() < 0.5
                     && projects[positions.get(i)][0].plus(current_budget).compareTo(budget) <= 0) {
-                sol.setDecisionVar(positions.get(i), new IntegerData(1));
+                sol.setVariables(positions.get(i), new IntegerData(1));
                 current_budget = (IntegerData) current_budget.plus(projects[positions.get(i)][0]);
                 /*
                  * for (int j = 0; j < nObjectives ;j++) { objs[j] = (RealData)
                  * objs[j].addition(projects[positions.get(i)][3 + j]); }
                  */
             } else {
-                sol.setDecisionVar(positions.get(i), new IntegerData(0));
+                sol.setVariables(positions.get(i), new IntegerData(0));
             }
         }
         sol.setResource(0,current_budget);

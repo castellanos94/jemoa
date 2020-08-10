@@ -15,15 +15,15 @@ public class BinaryMutation implements MutationOperator {
     @Override
     public void execute(Solution solution) throws CloneNotSupportedException {
         if (Tools.getRandom().nextDouble() < probability) {
-            Data zero = Data.getZeroByType(solution.getDecision_vars().get(0));
-            Data one = Data.getOneByType(solution.getDecision_vars().get(0));
+            Data zero = Data.getZeroByType(solution.getVariables().get(0));
+            Data one = Data.getOneByType(solution.getVariables().get(0));
 
-            for (int i = 0; i < solution.getDecision_vars().size(); i++) {
+            for (int i = 0; i < solution.getVariables().size(); i++) {
                 if (Tools.getRandom().nextDouble() < 0.5) {
-                    if (solution.getDecision_vars().get(i).compareTo(1) == 0) {
-                        solution.setDecisionVar(i, (Data) zero.clone());
+                    if (solution.getVariables().get(i).compareTo(1) == 0) {
+                        solution.setVariables(i, (Data) zero.clone());
                     } else {
-                        solution.setDecisionVar(i, (Data) one.clone());
+                        solution.setVariables(i, (Data) one.clone());
                     }
                 }
             }

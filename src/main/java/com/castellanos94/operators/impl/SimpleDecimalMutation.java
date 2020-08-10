@@ -15,11 +15,11 @@ public class SimpleDecimalMutation implements MutationOperator {
     @Override
     public void execute(Solution solution) throws CloneNotSupportedException {
         if (Tools.getRandom().nextDouble() < probability) {
-            for (int i = 0; i < solution.getDecision_vars().size(); i++) {
+            for (int i = 0; i < solution.getVariables().size(); i++) {
                 if (Tools.getRandom().nextDouble() < 0.5) {
                     double min = solution.getProblem().getLowerBound()[i].doubleValue();
                     double max = solution.getProblem().getUpperBound()[i].doubleValue();
-                    solution.setDecisionVar(i, new RealData(Tools.getRandomNumberInRange(min, max)));
+                    solution.setVariables(i, new RealData(Tools.getRandomNumberInRange(min, max)));
                 }
             }
         }

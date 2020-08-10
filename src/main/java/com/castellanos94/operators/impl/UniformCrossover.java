@@ -19,9 +19,9 @@ public class UniformCrossover implements CrossoverOperator {
         Solution b = parents.get(1);
         for (int i = 0; i < 2; i++) {
             Solution c = (Solution) a.clone();
-            for (int j = 0; j < a.getDecision_vars().size(); j++) {
+            for (int j = 0; j < a.getVariables().size(); j++) {
                 if (Tools.getRandom().nextDouble() < 0.5) {
-                    c.setDecisionVar(i, (Data) b.getDecision_vars().get(i).clone());
+                    c.setVariables(i, (Data) b.getVariables().get(i).clone());
                 }
             }
             child.add(c);

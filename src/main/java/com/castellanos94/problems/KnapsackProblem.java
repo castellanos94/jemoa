@@ -36,7 +36,7 @@ public class KnapsackProblem extends Problem {
         IntegerData current_w = new IntegerData(0);
         IntegerData current_b = new IntegerData(0);
         for (int i = 0; i < numberOfDecisionVars; i++) {
-            if (solution.getDecision_vars().get(i).compareTo(1) == 0) {
+            if (solution.getVariables().get(i).compareTo(1) == 0) {
                 current_w = (IntegerData) current_w.plus(w[i]);
                 current_b = (IntegerData) current_b.plus(b[i]);
             }
@@ -69,11 +69,11 @@ public class KnapsackProblem extends Problem {
         for (int i = 0; i < numberOfDecisionVars; i++) {
             IntegerData tmp = (IntegerData) current_w.plus(w[index.get(i)]);
             if (tmp.compareTo(capacity) <= 0) {
-                solution.setDecisionVar(index.get(i), new IntegerData(1));
+                solution.setVariables(index.get(i), new IntegerData(1));
                 current_w = tmp;
                 current_b = (IntegerData) current_b.plus(b[i]);
             }else{
-                solution.setDecisionVar(index.get(i), new IntegerData(0));
+                solution.setVariables(index.get(i), new IntegerData(0));
             }
         }
         solution.setObjective(0, current_b);

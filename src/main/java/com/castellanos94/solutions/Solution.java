@@ -15,7 +15,7 @@ import com.castellanos94.problems.Problem;
 *@since 22/03/202
 */
 public class Solution implements Cloneable, Comparable<Solution> {
-    protected ArrayList<Data> decision_vars;
+    protected ArrayList<Data> variables;
     protected ArrayList<Data> objectives;
     protected ArrayList<Data> resources;
     protected Data penalties;
@@ -37,12 +37,12 @@ public class Solution implements Cloneable, Comparable<Solution> {
 
     public Solution(int numberOfObjectives, int numberOfVariables, int numberOfResources, Data[] lowerBound,
             Data[] upperBound) {
-        this.decision_vars = new ArrayList<>(numberOfObjectives);
+        this.variables = new ArrayList<>(numberOfObjectives);
         this.objectives = new ArrayList<>(numberOfObjectives);
         this.resources = new ArrayList<>(numberOfResources);
 
         for (int i = 0; i < numberOfVariables; i++) {
-            decision_vars.add(null);
+            variables.add(null);
         }
         for (int i = 0; i < numberOfObjectives; i++) {
             objectives.add(null);
@@ -57,14 +57,14 @@ public class Solution implements Cloneable, Comparable<Solution> {
     }
 
     public Solution() {
-        this.decision_vars = new ArrayList<>();
+        this.variables = new ArrayList<>();
         this.objectives = new ArrayList<>();
         this.resources = new ArrayList<>();
         attributes = new HashMap<>();
     }
 
-    public void setDecisionVar(int index, Data element) {
-        this.decision_vars.set(index, element);
+    public void setVariables(int index, Data element) {
+        this.variables.set(index, element);
     }
 
     public void setObjective(int index, Data element) {
@@ -92,15 +92,15 @@ public class Solution implements Cloneable, Comparable<Solution> {
     /**
      * @param decision_vars the decision_vars to set
      */
-    public void setDecision_vars(ArrayList<Data> decision_vars) {
-        this.decision_vars = decision_vars;
+    public void setVariable(ArrayList<Data> decision_vars) {
+        this.variables = decision_vars;
     }
 
     /**
      * @return the decision_vars
      */
-    public ArrayList<Data> getDecision_vars() {
-        return this.decision_vars;
+    public ArrayList<Data> getVariables() {
+        return this.variables;
     }
 
     /**
@@ -169,7 +169,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
     @Override
     public Object clone() throws CloneNotSupportedException {
         Solution clone = new Solution(this.getProblem());
-        clone.setDecision_vars((ArrayList<Data>) this.getDecision_vars().clone());
+        clone.setVariable((ArrayList<Data>) this.getVariables().clone());
         clone.setObjectives((ArrayList<Data>) (this.getObjectives().clone()));
         clone.setResources((ArrayList<Data>) this.getResources().clone());
         clone.setRank(this.getRank());
@@ -193,14 +193,14 @@ public class Solution implements Cloneable, Comparable<Solution> {
 
     @Override
     public String toString() {
-        return String.format("%s * %s * %s * %s * %3d", decision_vars.toString().replace("[", "").replace("]", ""),
+        return String.format("%s * %s * %s * %s * %3d", variables.toString().replace("[", "").replace("]", ""),
                 objectives.toString().replace("[", "").replace("]", ""),
                 resources.toString().replace("[", "").replace("]", ""), penalties, n_penalties);
         // return objectives.toString();
     }
 
     public Data getVariable(int index) {
-        return this.decision_vars.get(index);
+        return this.variables.get(index);
     }
 
     public Data getLowerBound(int i) {
@@ -220,7 +220,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
     }
 
     public void setVariable(int i, Data y) {
-        this.decision_vars.set(i, y);
+        this.variables.set(i, y);
     }
 
     public Data getObjective(int index) {
@@ -239,7 +239,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((decision_vars == null) ? 0 : decision_vars.hashCode());
+        result = prime * result + ((variables == null) ? 0 : variables.hashCode());
         return result;
     }
 
@@ -252,10 +252,10 @@ public class Solution implements Cloneable, Comparable<Solution> {
         if (getClass() != obj.getClass())
             return false;
         Solution other = (Solution) obj;
-        if (decision_vars == null) {
-            if (other.decision_vars != null)
+        if (variables == null) {
+            if (other.variables != null)
                 return false;
-        } else if (!decision_vars.equals(other.decision_vars))
+        } else if (!variables.equals(other.variables))
             return false;
         return true;
     }

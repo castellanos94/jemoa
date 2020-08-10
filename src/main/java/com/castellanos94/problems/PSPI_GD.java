@@ -105,10 +105,10 @@ public class PSPI_GD extends Problem {
             Interval suma = (Interval) projects[positions.get(i)][0].plus(current_budget);
             RealData possGreaterThanOrEq = budget.possGreaterThanOrEq(suma);
             if (possGreaterThanOrEq.compareTo(getPreferenceModel(0).getChi()) >= 0) {
-                sol.setDecisionVar(positions.get(i), new IntegerData(1));
+                sol.setVariables(positions.get(i), new IntegerData(1));
                 current_budget = suma;
             } else {
-                sol.setDecisionVar(positions.get(i), new IntegerData(0));
+                sol.setVariables(positions.get(i), new IntegerData(0));
             }
         }
         sol.setResource(0, current_budget);

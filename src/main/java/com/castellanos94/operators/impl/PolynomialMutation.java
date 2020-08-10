@@ -31,7 +31,7 @@ public class PolynomialMutation implements MutationOperator {
         Data y, yl, yu, val, xy;
         double mutPow;
 
-        for (int i = 0; i < solution.getDecision_vars().size(); i++) {
+        for (int i = 0; i < solution.getVariables().size(); i++) {
             if (randomGenerator.nextDouble() <= mutationProbability) {
                 y = solution.getVariable(i);
                 yl = solution.getLowerBound(i);

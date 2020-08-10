@@ -36,7 +36,7 @@ public class ZDT1 extends Problem {
         // Double f1 = solution.getDecision_vars()[0].doubleValue();
 
         try {
-            solution.setObjective(0, (Data) solution.getDecision_vars().get(0).clone());
+            solution.setObjective(0, (Data) solution.getVariables().get(0).clone());
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -45,10 +45,10 @@ public class ZDT1 extends Problem {
         RealData sum = new RealData(0);
 
         for (int i = 1; i < numberOfDecisionVars; i++) {
-            sum = (RealData) sum.plus(solution.getDecision_vars().get(i));
+            sum = (RealData) sum.plus(solution.getVariables().get(i));
         }
         // g = (RealData) RealData.ONE.addition(new RealData(9).multiplication(g));
-        Data tmp = new RealData(9).div(solution.getDecision_vars().size() - 1);
+        Data tmp = new RealData(9).div(solution.getVariables().size() - 1);
         g = (RealData) RealData.ONE.plus(tmp.times(sum));
         // h = (RealData)
         // RealData.ONE.subtraction(solution.getObjectives().get(0).division(g).sqr());
@@ -63,8 +63,8 @@ public class ZDT1 extends Problem {
     public int evaluateConstraints(Solution solution) {
         int count = 0;
         for (int i = 0; i < numberOfDecisionVars; i++) {
-            if (solution.getDecision_vars().get(i).compareTo(0.0) < 0
-                    || solution.getDecision_vars().get(i).compareTo(1.0) > 0) {
+            if (solution.getVariables().get(i).compareTo(0.0) < 0
+                    || solution.getVariables().get(i).compareTo(1.0) > 0) {
                 count++;
             }
         }
@@ -77,7 +77,7 @@ public class ZDT1 extends Problem {
     public Solution randomSolution() {
         Solution solution = new Solution(this);
         for (int i = 0; i < this.numberOfDecisionVars; i++) {
-            solution.setDecisionVar(i, new RealData(Tools.getRandom().nextDouble()));
+            solution.setVariables(i, new RealData(Tools.getRandom().nextDouble()));
         }
         return solution;
     }

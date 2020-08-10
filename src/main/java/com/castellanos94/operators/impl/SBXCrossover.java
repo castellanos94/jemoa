@@ -33,7 +33,7 @@ public class SBXCrossover implements CrossoverOperator {
         Solution parent1 = parents.get(0);
         Solution parent2 = parents.get(1);
         if (Tools.getRandom().nextDouble() <= crossoverProbability) {
-            for (i = 0; i < parent1.getDecision_vars().size(); i++) {
+            for (i = 0; i < parent1.getVariables().size(); i++) {
                 valueX1 = parent1.getVariable(i);
                 valueX2 = parent2.getVariable(i);
                 if (randomGenerator.nextDouble() <= 0.5) {
@@ -94,19 +94,19 @@ public class SBXCrossover implements CrossoverOperator {
                         c2 = RealData.ONE.div(2)
                                 .times(y1.plus(y2).plus(betaq.times(y2.minus(y1))));
                         if (randomGenerator.nextDouble() <= 0.5) {
-                            offspring.get(0).setDecisionVar(i, c2);
-                            offspring.get(1).setDecisionVar(i, c1);
+                            offspring.get(0).setVariables(i, c2);
+                            offspring.get(1).setVariables(i, c1);
                         } else {
-                            offspring.get(0).setDecisionVar(i, c1);
-                            offspring.get(1).setDecisionVar(i, c2);
+                            offspring.get(0).setVariables(i, c1);
+                            offspring.get(1).setVariables(i, c2);
                         }
                     } else {
-                        offspring.get(0).setDecisionVar(i, valueX1);
-                        offspring.get(1).setDecisionVar(i, valueX2);
+                        offspring.get(0).setVariables(i, valueX1);
+                        offspring.get(1).setVariables(i, valueX2);
                     }
                 } else {
-                    offspring.get(0).setDecisionVar(i, valueX2);
-                    offspring.get(1).setDecisionVar(i, valueX1);
+                    offspring.get(0).setVariables(i, valueX2);
+                    offspring.get(1).setVariables(i, valueX1);
                 }
             }
             repair.repair(offspring.get(0));
