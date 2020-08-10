@@ -1,5 +1,7 @@
 package com.castellanos94.utils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Random;
 
@@ -7,7 +9,7 @@ import com.castellanos94.datatype.Interval;
 
 public class Tools {
     private static Random random = new Random();
-
+    public static final int PLACES = 6;
     public static Random getRandom() {
         return random;
     }
@@ -51,5 +53,12 @@ public class Tools {
 
         // return random.nextDouble() * ((max - min) + 1) + min;
         return random.doubles(lowerBound.doubleValue(), upperBound.doubleValue()).findFirst().getAsDouble();
+    }
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+    
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 }
