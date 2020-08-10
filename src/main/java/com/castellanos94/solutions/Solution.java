@@ -29,32 +29,26 @@ public class Solution implements Cloneable, Comparable<Solution> {
     protected int rank;
 
     public Solution(Problem problem) {
+        this(problem.getNumberOfObjectives(), problem.getNumberOfDecisionVars(), problem.getNumberOfConstrains(),
+                problem.getLowerBound(), problem.getUpperBound());
         this.problem = problem;
-        this.decision_vars = new ArrayList<>(problem.getNumberOfDecisionVars());
-        this.objectives = new ArrayList<>(problem.getNumberOfObjectives());
-        this.resources = new ArrayList<>(problem.getNumberOfConstrains());
-        for (int i = 0; i < problem.getNumberOfDecisionVars(); i++) {
-            decision_vars.add(null);
-        }
-        for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
-            objectives.add(null);
-        }
-        for (int i = 0; i < problem.getNumberOfConstrains(); i++) {
-            resources.add(null);
-        }
-        properties = new HashMap<>();
-        this.upperBound = problem.getUpperBound();
-        this.lowerBound = problem.getLowerBound();
+
     }
 
-    public Solution(int n_objectives, int n_decision_vars, Data[] lowerBound, Data[] upperBound) {
-        this.decision_vars = new ArrayList<>(n_decision_vars);
-        this.objectives = new ArrayList<>(n_objectives);
-        for (int i = 0; i < n_decision_vars; i++) {
+    public Solution(int numberOfObjectives, int numberOfVariables, int numberOfResources, Data[] lowerBound,
+            Data[] upperBound) {
+        this.decision_vars = new ArrayList<>(numberOfObjectives);
+        this.objectives = new ArrayList<>(numberOfObjectives);
+        this.resources = new ArrayList<>(problem.getNumberOfConstrains());
+
+        for (int i = 0; i < numberOfVariables; i++) {
             decision_vars.add(null);
         }
-        for (int i = 0; i < n_objectives; i++) {
+        for (int i = 0; i < numberOfObjectives; i++) {
             objectives.add(null);
+        }
+        for (int i = 0; i < numberOfResources; i++) {
+            resources.add(null);
         }
         properties = new HashMap<>();
         this.lowerBound = lowerBound;
@@ -63,6 +57,9 @@ public class Solution implements Cloneable, Comparable<Solution> {
     }
 
     public Solution() {
+        this.decision_vars = new ArrayList<>();
+        this.objectives = new ArrayList<>();
+        this.resources = new ArrayList<>();
         properties = new HashMap<>();
     }
 
@@ -197,7 +194,8 @@ public class Solution implements Cloneable, Comparable<Solution> {
     @Override
     public String toString() {
         return String.format("%s * %s * %s * %s * %3d", decision_vars.toString().replace("[", "").replace("]", ""),
-                objectives.toString().replace("[", "").replace("]", ""), resources.toString().replace("[", "").replace("]", ""), penalties, n_penalties);
+                objectives.toString().replace("[", "").replace("]", ""),
+                resources.toString().replace("[", "").replace("]", ""), penalties, n_penalties);
         // return objectives.toString();
     }
 

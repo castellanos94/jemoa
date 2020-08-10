@@ -1,7 +1,6 @@
 package com.castellanos94.preferences.impl;
 
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.instances.PSPI_Instance;
