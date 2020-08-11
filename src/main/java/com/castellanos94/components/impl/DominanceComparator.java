@@ -7,11 +7,11 @@ import com.castellanos94.components.Ranking;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
-public class DominanceCompartor implements Comparator<Solution>, Ranking {
+public class DominanceComparator implements Comparator<Solution>, Ranking {
 
     protected ArrayList<Solution> front;
 
-    public DominanceCompartor() {
+    public DominanceComparator() {
     }
 
     /**

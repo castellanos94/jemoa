@@ -8,10 +8,10 @@ import com.castellanos94.solutions.Solution;
 
 public class FastNonDominatedSort implements Ranking {
     protected ArrayList<ArrayList<Solution>> fronts;
-    protected DominanceCompartor paretoDominance;
+    protected DominanceComparator paretoDominance;
 
     public FastNonDominatedSort() {
-        this.paretoDominance = new DominanceCompartor();
+        this.paretoDominance = new DominanceComparator();
         this.fronts = new ArrayList<>();
     }
 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.castellanos94.algorithms.AbstractAlgorithm;
 import com.castellanos94.algorithms.multi.MuGeneticAlgorithm;
-import com.castellanos94.components.impl.DominanceCompartor;
+import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
@@ -20,7 +20,7 @@ public class GAMultiExample {
         Problem problem = new ZDT1();
         int maxIteration = 50000, popSize = 100;
         System.out.println(problem);
-        SelectionOperator selectionOperator = new TournamentSelection(popSize, new DominanceCompartor());
+        SelectionOperator selectionOperator = new TournamentSelection(popSize, new DominanceComparator());
         double crossoverProbability = 0.9;
         double crossoverDistributionIndex = 20.0;
 

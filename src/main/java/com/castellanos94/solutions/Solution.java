@@ -92,7 +92,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
     /**
      * @param decision_vars the decision_vars to set
      */
-    public void setVariable(ArrayList<Data> decision_vars) {
+    public void setVariables(ArrayList<Data> decision_vars) {
         this.variables = decision_vars;
     }
 
@@ -169,7 +169,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
     @Override
     public Object clone() throws CloneNotSupportedException {
         Solution clone = new Solution(this.getProblem());
-        clone.setVariable((ArrayList<Data>) this.getVariables().clone());
+        clone.setVariables((ArrayList<Data>) this.getVariables().clone());
         clone.setObjectives((ArrayList<Data>) (this.getObjectives().clone()));
         clone.setResources((ArrayList<Data>) this.getResources().clone());
         clone.setRank(this.getRank());

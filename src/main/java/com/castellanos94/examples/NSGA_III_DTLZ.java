@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 import com.castellanos94.algorithms.multi.NSGA_III;
 import com.castellanos94.components.Ranking;
-import com.castellanos94.components.impl.DominanceCompartor;
+import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
@@ -83,7 +83,7 @@ public class NSGA_III_DTLZ {
         System.out.println("Average time : " + (double) averageTime / EXPERIMENT + " ms.");
         System.out.println("Solutions in the bag: " + bag.size());
 
-        Ranking compartor = new DominanceCompartor();
+        Ranking compartor = new DominanceComparator();
         compartor.computeRanking(bag);
 
         System.setOut(console);
@@ -215,7 +215,7 @@ public class NSGA_III_DTLZ {
         }
 
         SelectionOperator selectionOperator = new TournamentSelection((int) options.get("pop_size"),
-                new DominanceCompartor());
+                new DominanceComparator());
         return new NSGA_III(problem, (int) options.get("pop_size"), maxIterations, (int) options.get("partitions"),
                 selectionOperator, (CrossoverOperator) options.get("crossover"),
                 (MutationOperator) options.get("mutation"));

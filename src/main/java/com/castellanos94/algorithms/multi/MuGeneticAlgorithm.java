@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.components.Ranking;
-import com.castellanos94.components.impl.DominanceCompartor;
+import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
@@ -26,7 +26,7 @@ public class MuGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
         this.mutationOperator = mutationOperator;
         this.currentIteration = 0;
         this.populationSize = populationSize;
-        this.ranking = new DominanceCompartor();
+        this.ranking = new DominanceComparator();
     }
 
     @Override
