@@ -2,14 +2,15 @@ package com.castellanos94.instances;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import com.castellanos94.datatype.Interval;
+import com.castellanos94.datatype.RealData;
 import com.castellanos94.preferences.impl.OutrankingModel;
 
 public class DTLZ_Instance extends Instance {
     protected OutrankingModel preferenceModel[];
-    protected int problem_number;
 
     public DTLZ_Instance(String path) {
         super(path);
@@ -20,44 +21,45 @@ public class DTLZ_Instance extends Instance {
         File f = new File(path);
         Scanner in = new Scanner(f);
         String[] data = this.readNextDataLine(in);
-        problem_number = Integer.parseInt(data[0]);
-        data = this.readNextDataLine(in);
+
         int n = Integer.parseInt(data[0]);
         this.params.put("NumObjectives", Integer.parseInt(data[0]));
         data = this.readNextDataLine(in);
         int dv = Integer.parseInt(data[0]);
         this.params.put("NumDecisionVariables", Integer.parseInt(data[0]));
         data = this.readNextDataLine(in);
-        int m = Integer.parseInt(data[0]);
-        this.params.put("NumDMs", m);
-        Interval[][] weights_DMs = new Interval[m][n];
+        int dm = Integer.parseInt(data[0]);
+        this.params.put("NumDMs", dm);
+        Interval[][] weights_DMs = new Interval[dm][n];
 
+        int dms;
         int k;
-        for (k = 0; k < m; ++k) {
+        for (dms = 0; dms < dm; ++dms) {
             data = this.readNextDataLine(in);
 
             for (k = 0; k < n; ++k) {
-                weights_DMs[k][k] = new Interval(Double.parseDouble(data[k * 2]), Double.parseDouble(data[k * 2 + 1]));
+                weights_DMs[dms][k] = new Interval(Double.parseDouble(data[k * 2]),
+                        Double.parseDouble(data[k * 2 + 1]));
             }
         }
 
         // this.params.put("Weights_DMs", weights_DMs);
-        Interval[][] vetos_DMs = new Interval[m][n];
+        Interval[][] vetos_DMs = new Interval[dm][n];
 
-        for (k = 0; k < m; ++k) {
+        for (dms = 0; dms < dm; ++dms) {
             data = this.readNextDataLine(in);
 
             for (k = 0; k < n; ++k) {
-                vetos_DMs[k][k] = new Interval(Double.parseDouble(data[k * 2]), Double.parseDouble(data[k * 2 + 1]));
+                vetos_DMs[dms][k] = new Interval(Double.parseDouble(data[k * 2]), Double.parseDouble(data[k * 2 + 1]));
             }
         }
 
         // this.params.put("Vetos_DMs", vetos_DMs);
-        Interval[] lambdas_DMs = new Interval[m];
+        Interval[] lambdas_DMs = new Interval[dm];
 
-        for (k = 0; k < m; ++k) {
+        for (dms = 0; dms < dm; ++dms) {
             data = this.readNextDataLine(in);
-            lambdas_DMs[k] = new Interval(Double.parseDouble(data[0]), Double.parseDouble(data[1]));
+            lambdas_DMs[dms] = new Interval(Double.parseDouble(data[0]), Double.parseDouble(data[1]));
         }
 
         // this.params.put("Lambdas_DMs", lambdas_DMs);
@@ -73,23 +75,19 @@ public class DTLZ_Instance extends Instance {
         if (!data[0].equals("TRUE")) {
             this.params.put("BestCompromises", (Object) null);
         } else {
-            Interval[][] solutions_DMs = new Interval[m][dv];
-            k = 0;
-
-            while (true) {
-                if (k >= m) {
-                    this.params.put("BestCompromises", solutions_DMs);
-                    break;
-                }
-
+            data = this.readNextDataLine(in);
+            int n_solutions = Integer.parseInt(data[0]);
+            RealData[][] solutions_DMs = new RealData[n_solutions][dv];
+            System.out.println(n_solutions);
+            for (int i = 0; i < n_solutions; i++) {
                 data = this.readNextDataLine(in);
 
-                for (k = 0; k < dv; ++k) {
-                    solutions_DMs[k][k] = new Interval(Double.parseDouble(data[k]));
+                for (int j = 0; j < dv; j++) {
+                    solutions_DMs[i][j] = new RealData(Double.parseDouble(data[j]));
                 }
-
-                ++k;
             }
+            this.params.put("BestCompromises", solutions_DMs);
+
         }
 
         data = this.readNextDataLine(in);
@@ -97,24 +95,18 @@ public class DTLZ_Instance extends Instance {
             this.params.put("InitialSolutions", (Object) null);
         } else {
             data = this.readNextDataLine(in);
-            k = Integer.parseInt(data[0]);
-            Interval[][] initial_solutions = new Interval[k][dv];
-            k = 0;
-
-            while (true) {
-                if (k >= k) {
-                    this.params.put("InitialSolutions", initial_solutions);
-                    break;
-                }
-
+            int n_solutions = Integer.parseInt(data[0]);
+            RealData[][] initial_solutions = new RealData[n_solutions][dv];
+            System.out.println(n_solutions);
+            for (int i = 0; i < n_solutions; i++) {
                 data = this.readNextDataLine(in);
 
-                for (int j = 0; j < dv; ++j) {
-                    initial_solutions[k][j] = new Interval(Double.parseDouble(data[j]));
+                for (int j = 0; j < dv; j++) {
+                    initial_solutions[i][j] = new RealData(Double.parseDouble(data[j]));
                 }
-
-                ++k;
             }
+            this.params.put("InitialSolutions", initial_solutions);
+
         }
 
         in.close();
@@ -172,8 +164,42 @@ public class DTLZ_Instance extends Instance {
         return this.preferenceModel[dm];
     }
 
-    public int getProblem_number() {
-        return problem_number;
+    public RealData[][] getBestCompromises() {
+        return (RealData[][]) ((RealData[][]) this.getDataMatrix("BestCompromises"));
     }
 
+    public RealData[][] getInitialSolutions() {
+        return (RealData[][]) ((RealData[][]) this.getDataMatrix("InitialSolutions"));
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder("\n");
+        for (int i = 0; i < preferenceModel.length; i++) {
+            str.append(String.format("Dm %3d: %s\n", (i + 1), preferenceModel[i]));
+        }
+        StringBuilder other = new StringBuilder();
+        if (getBestCompromises() != null) {
+            other.append("Best compromises:\n");
+            for (RealData[] sInterval : getBestCompromises()) {
+                other.append(Arrays.toString(sInterval) + "\n");
+            }
+        }
+        if (getInitialSolutions() != null) {
+            other.append("Initial solutions:\n");
+            for (RealData[] sInterval : getInitialSolutions()) {
+                other.append(Arrays.toString(sInterval) + "\n");
+            }
+        }
+        return String.format("Objetives : %3d, Vars : %3d, DMs : %3d\nPreference Model: %s\n%s", getNumObjectives(),
+                getNumDecisionVariables(), getNumDMs(), str.toString(), other.toString());
+
+    }
+
+    public static void main(String[] args) throws FileNotFoundException {
+        DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(
+                "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt").loadInstance();
+        System.out.println(instance);
+        System.out.println();
+    }
 }

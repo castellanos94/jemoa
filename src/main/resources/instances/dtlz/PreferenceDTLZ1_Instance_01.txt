@@ -1,0 +1,11 @@
+3							//number of objectives
+6							//number of decision variables
+1							//number of DMs
+0.30 0.50 0.20 0.40 0.20 0.40				//weights of each DM
+0.20 0.40 0.30 0.50 0.30 0.50				//vetos
+0.51 0.67						//lambda: credibility threshold
+FALSE							//specify if there is best compromises
+TRUE							//specify if there is initial solutions
+2
+0.0 0.0 0.5 0.5 0.5 0.5
+0.5 0.5 0.0 0.0 0.0 0.0
