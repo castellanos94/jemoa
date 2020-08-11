@@ -1,19 +1,13 @@
 package com.castellanos94.problems.benchmarks.dtlz;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.List;
 
-import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
-import com.castellanos94.utils.Scatter3D;
 import com.castellanos94.utils.Tools;
-
-import org.paukov.combinatorics3.Generator;
 
 public abstract class DTLZ extends Problem {
     protected int k;
@@ -163,31 +157,4 @@ public abstract class DTLZ extends Problem {
         return solutions;
     }
 
-    public static void main(String[] args) {
-        // Tools.setSeed(14081996L);
-        DTLZ4 p = new DTLZ4();
-        long start = System.currentTimeMillis();
-        ArrayList<Solution> generateSample = p.generateSample(500000);
-        Scatter3D scatter = new Scatter3D(generateSample, "rp");
-        scatter.plot();
-        /*
-         * DominanceCompartor compartor = new DominanceCompartor(); //
-         * compartor.computeRanking(solutions); ArrayList<Solution> bag = new
-         * ArrayList<>();
-         * 
-         * do {
-         * 
-         * solutions.clear(); for (int i = bag.size(); i < pop * 101 / 100; i++) {
-         * solutions.add(p.generate()); } solutions.addAll(bag);
-         * compartor.computeRanking(solutions); bag.clear();
-         * compartor.getSubFront(0).forEach(bag::add);
-         * System.out.println(compartor.getNumberOfSubFronts() + " " +
-         * compartor.getSubFront(0).size());
-         * 
-         * } while (bag.size() < pop);
-         * 
-         * 
-         */
-        System.out.println("Time: " + (System.currentTimeMillis() - start) + " ms.");
-    }
 }
