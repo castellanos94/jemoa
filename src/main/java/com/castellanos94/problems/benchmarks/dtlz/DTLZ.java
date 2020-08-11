@@ -114,6 +114,11 @@ public abstract class DTLZ extends Problem {
                 numberOfDecisionVars, numberOfObjectives, k);
     }
 
+    /**
+     * https://github.com/MOEAFramework/MOEAFramework/issues/49
+     * 
+     * @return
+     */
     public Solution generate() {
         Solution solution = new Solution(this);
 
@@ -130,31 +135,39 @@ public abstract class DTLZ extends Problem {
         return solution;
     }
 
+    /**
+     * Usando Latin Hypercube Sampling para las primera M variables de cada
+     * solucion, se genera la lista de soluciones muestra del frente aproximado. No
+     * se garantiza que todas estas soluciones sean no dominadas.
+     * 
+     * @param size sampling size
+     * @return solutions uniform dist
+     */
     public ArrayList<Solution> generateSample(int size) {
         ArrayList<Solution> solutions = new ArrayList<>();
-
+        double matrix[][] = Tools.LHS(size, numberOfObjectives);
         for (int i = 0; i < size; i++) {
-            solutions.add(generate());
-        }
-        DominanceComparator comparator = new DominanceComparator();
-        comparator.computeRanking(solutions);
-        ArrayList<Solution> bag = new ArrayList<>(comparator.getSubFront(0));
-        while (bag.size() < size) {
-            for (int i = 0; i < size / 10; i++) {
-                bag.add(generate());
+            Solution solution = new Solution(this);
+            for (int ii = 0; ii < numberOfObjectives - 1; ii++) {
+                solution.setVariable(ii, new RealData(matrix[i][ii]));
             }
-            comparator.computeRanking(bag);
-            bag.clear();
-            comparator.getSubFront(0).forEach(bag::add);
+
+            for (int ii = numberOfObjectives - 1; ii < numberOfDecisionVars; ii++) {
+                solution.setVariable(ii, new RealData(0.5));
+            }
+            evaluate(solution);
+            evaluateConstraints(solution);
+            solutions.add(solution);
         }
-        return bag;
+
+        return solutions;
     }
 
     public static void main(String[] args) {
-        //Tools.setSeed(14081996L);
+        // Tools.setSeed(14081996L);
         DTLZ4 p = new DTLZ4();
         long start = System.currentTimeMillis();
-        ArrayList<Solution> generateSample = p.generateSample(100000);
+        ArrayList<Solution> generateSample = p.generateSample(500000);
         Scatter3D scatter = new Scatter3D(generateSample, "rp");
         scatter.plot();
         /*
