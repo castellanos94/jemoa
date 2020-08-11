@@ -1,33 +1,67 @@
 package com.castellanos94.decision_making;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.utils.Tools;
+import com.google.common.io.Files;
 
-public class DM_Generator {
+public class DTZLInstanceGenerator {
 
     protected int number_of_objectives;
     protected int number_of_dms;
     protected Interval[] max_objectives;
+    protected int numberOfVars;
+    protected Interval lambdaInterval;
 
-    public DM_Generator(int number_of_dms, int number_of_objectives, Interval[] max_objectives) {
+    public DTZLInstanceGenerator(int number_of_dms, int numberOfVars, int number_of_objectives,
+            Interval[] max_objectives) {
         this.number_of_objectives = number_of_objectives;
         this.number_of_dms = number_of_dms;
+        this.numberOfVars = numberOfVars;
         this.max_objectives = max_objectives;
+        this.lambdaInterval = new Interval(0.51, 0.67);
     }
 
-    public void execute() {
+    public void execute(String path) throws IOException {
+        StringBuilder content = new StringBuilder();
+        content.append(number_of_objectives + " //objectives\n");
+        content.append(numberOfVars + " //vars\n");
+        content.append(number_of_dms + " //dms\n");
+        Interval[][] weights = new Interval[number_of_dms][number_of_objectives];
+        Interval[][] vetos = new Interval[number_of_dms][number_of_objectives];
+
         for (int i = 0; i < number_of_dms; i++) {
+
             System.out.println("Generate dm: " + (i + 1));
-            Interval weights[] = generateWeight();
-            System.out.println(Arrays.toString(weights));
-            // generar vetos, requiero los pesos previos generados y los objetivos
-
-            Interval vetos[] = generateVeto(weights);
-            System.out.println(Arrays.toString(vetos));
-
+            if (number_of_objectives > 3)
+                weights[i] = generateWeight();
+            else {
+                for (int j = 0; j < number_of_objectives; j++) {
+                    weights[i][j] = new Interval(Tools.round(1.0 / 3, 3));
+                }
+            }
+            content.append(String.format("%s // weight dm %d\n",
+                    Arrays.toString(weights[i]).replace("[", "").replace("]", ""), (i + 1)));
+            vetos[i] = generateVeto(weights[i]);
+        }
+        System.out.println("Agregando vetos");
+        for (int i = 0; i < number_of_dms; i++) {
+            content.append(String.format("%s // veto dm %d\n",
+                    Arrays.toString(vetos[i]).replace("[", "").replace("]", ""), (i + 1)));
+        }
+        System.out.println("Agregando lambdas");
+        for (int i = 0; i < number_of_dms; i++) {
+            content.append(String.format("%s // lambda %d\n", lambdaInterval, (i + 1)));
+        }
+        if (path == null || path.isEmpty())
+            System.out.println(content);
+        else {
+            File file = new File(path);
+            Files.write(content.toString().getBytes(), file);
         }
     }
 
@@ -131,17 +165,20 @@ public class DM_Generator {
         return weights;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         long start = System.currentTimeMillis();
         Tools.setSeed(8435L);
-        int dms = 2;
-        int number_of_objectives = 10;
+        int dms = 1;
+        int number_of_objectives = 3;
+        int numberOfVars = 7;
         Interval max_objectives[] = new Interval[number_of_objectives];
         for (int i = 0; i < number_of_objectives; i++) {
-            max_objectives[i] = new Interval(0, 0.5);
+            max_objectives[i] = new Interval(0, .5);
         }
-        DM_Generator dm_Generator = new DM_Generator(dms, number_of_objectives, max_objectives);
-        dm_Generator.execute();
+        DTZLInstanceGenerator dm_Generator = new DTZLInstanceGenerator(dms, numberOfVars, number_of_objectives,
+                max_objectives);
+        String path = "src/main/resources/instances/dtlz/DTLZInstance.txt";
+        dm_Generator.execute(path);
         long end = System.currentTimeMillis() - start;
         System.out.println("Time :" + end + " ms.");
     }
