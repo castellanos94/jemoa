@@ -37,7 +37,7 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
         for (Solution solution : offspring) {
             mutationOperator.execute(solution);
             problem.evaluate(solution);
-            //problem.evaluateConstraints(solution);
+            problem.evaluateConstraint(solution);
         }
         return offspring;
     }

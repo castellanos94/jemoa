@@ -2,6 +2,7 @@ package com.castellanos94.preferences.impl;
 
 import java.io.FileNotFoundException;
 
+import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.instances.PSPI_Instance;
 import com.castellanos94.preferences.Classifier;
@@ -27,6 +28,11 @@ public class InterClassnC extends Classifier {
 
     }
 
+    /**
+     * The data is a vector of integers, such that: [hsat, sat, dis, hdis]
+     * 
+     * @return key to access data in solution attributes
+     */
     @Override
     public String getAttributeKey() {
         return getClass().getName();
@@ -85,6 +91,29 @@ public class InterClassnC extends Classifier {
         }
         // System.out.printf("\tHSat = %2d, Sat = %2d, Dis = %2d, HDis = %2d\n", hsat,
         // sat, dis, hdis);
+
+        Data penaltie = x.getPenalties();
+        int violated = x.getN_penalties();
+        if (hsat < sat) {
+            penaltie = penaltie.plus((hsat - sat) / 3.0);
+            violated++;
+        } else if (hsat == sat) {
+            penaltie = penaltie.plus(-sat / 3.0);
+            violated++;
+        }
+        if (sat < dis) {
+            penaltie = penaltie.plus((double) sat - dis);
+            violated++;
+        } else if (sat == dis) {
+            penaltie = penaltie.plus(-dis / 2.0);
+            violated++;
+        }
+        if (dis < hdis) {
+            penaltie = penaltie.plus((sat - dis) * 2.0);
+            violated++;
+        }
+        x.setPenalties(penaltie);
+        x.setN_penalties(violated);
         int[] iclass = new int[4];
         iclass[0] = hsat;
         iclass[1] = sat;

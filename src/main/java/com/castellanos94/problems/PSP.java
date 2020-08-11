@@ -53,10 +53,10 @@ public class PSP extends Problem {
         }
         solution.setResource(0, current_budget);
         solution.setObjectives(new ArrayList<>(Arrays.asList(objs)));
-        evaluateConstraints(solution);
     }
 
-    public void evaluateConstraints(Solution sol) {
+    @Override
+    public void evaluateConstraint(Solution sol) {
         Data budget = instance.getData("budget");
         IntegerData current_budget = new IntegerData(0);
         Data one = new IntegerData(1);
@@ -84,12 +84,12 @@ public class PSP extends Problem {
         }
         Data penaltie = new IntegerData(0);
         int penalties = 0;
-      //  int violate_budget = 0; // restriccion fuerte
+        int violate_budget = 0; // restriccion fuerte
 
         if (current_budget.compareTo(budget) > 0) {
             penalties++;
             penaltie = budget.minus(current_budget);
-        //    violate_budget = 1;
+            violate_budget = 1;
         }
         for (int i = 0; i < regionSum.length; i++) {
             if (regionSum[i].compareTo(regions[i][0]) < 0) {// limite inferior

@@ -44,7 +44,7 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
             mutationOperator.execute(solution);
             repair.repair(solution);
             problem.evaluate(solution);
-            //problem.evaluateConstraints(solution);
+            problem.evaluateConstraint(solution);
         }
         return offspring;
     }
@@ -57,7 +57,7 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
         while (Rt.size() < populationSize) {
             Solution r = problem.randomSolution();
             problem.evaluate(r);
-           // problem.evaluateConstraints(r);
+            problem.evaluateConstraint(r);
             Rt.add(r);
         }
         ranking.computeRanking(Rt);

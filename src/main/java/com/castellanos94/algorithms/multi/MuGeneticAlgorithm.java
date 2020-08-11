@@ -47,15 +47,15 @@ public class MuGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
         for (Solution solution : offspring) {
             mutationOperator.execute(solution);
             problem.evaluate(solution);
-            //problem.evaluateConstraints(solution);
+            problem.evaluateConstraint(solution);
         }
         return offspring;
     }
 
     @Override
     protected ArrayList<Solution> replacement(ArrayList<Solution> population, ArrayList<Solution> offspring) {
-        population.addAll(offspring);        
-        ranking.computeRanking(population);        
+        population.addAll(offspring);
+        ranking.computeRanking(population);
         return new ArrayList<>(ranking.getSubFront(0).subList(0, populationSize));
     }
 

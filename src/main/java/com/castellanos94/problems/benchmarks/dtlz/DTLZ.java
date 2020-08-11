@@ -68,7 +68,8 @@ public abstract class DTLZ extends Problem {
 
     public abstract double[][] getParetoOptimal3Obj() throws FileNotFoundException;
 
-    /*public void evaluateConstraints(Solution solution) {
+    @Override
+    public void evaluateConstraint(Solution solution) {
         int cn = 0;
         double v = 0;
         for (int i = 0; i < numberOfDecisionVars; i++) {
@@ -82,7 +83,8 @@ public abstract class DTLZ extends Problem {
         }
         solution.setPenalties(new RealData(v));
         solution.setN_penalties(cn);
-    }*/
+
+    }
 
     public DTLZ setK(int k) {
         this.k = k;
@@ -97,7 +99,6 @@ public abstract class DTLZ extends Problem {
         for (int i = 0; i < this.numberOfDecisionVars; i++) {
             solution.setVariable(i, new RealData(Tools.getRandom().nextDouble()));
         }
-        solution.setPenalties(RealData.ZERO);
         return solution;
     }
 
@@ -122,9 +123,9 @@ public abstract class DTLZ extends Problem {
         for (int i = numberOfObjectives - 1; i < numberOfDecisionVars; i++) {
             solution.setVariable(i, new RealData(0.5));
         }
-        solution.setPenalties(RealData.ZERO);
+
         evaluate(solution);
-        //evaluateConstraints(solution);
+        evaluateConstraint(solution);
         return solution;
     }
 
@@ -148,9 +149,8 @@ public abstract class DTLZ extends Problem {
             for (int ii = numberOfObjectives - 1; ii < numberOfDecisionVars; ii++) {
                 solution.setVariable(ii, new RealData(0.5));
             }
-            solution.setPenalties(RealData.ZERO);
             evaluate(solution);
-           // evaluateConstraints(solution);
+            evaluateConstraint(solution);
             solutions.add(solution);
         }
 

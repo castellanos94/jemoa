@@ -43,11 +43,17 @@ public class KnapsackProblem extends Problem {
         }
         solution.setResource(0, current_w);
         solution.setObjective(0, current_b);
-        if (current_w.compareTo(capacity) > 0) {
-            solution.setN_penalties(1);
-            solution.setPenalties(capacity.minus(current_w));
+    }
+
+    @Override
+    public void evaluateConstraint(Solution sol) {
+
+        IntegerData cw = (IntegerData) sol.getResources().get(0);
+        if (cw.compareTo(capacity) > 0) {
+            sol.setN_penalties(1);
+            sol.setPenalties(capacity.minus(cw));
         } else {
-            solution.setPenalties(new IntegerData(0));
+            sol.setPenalties(new IntegerData(0));
         }
     }
 

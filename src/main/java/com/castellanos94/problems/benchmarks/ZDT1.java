@@ -56,10 +56,11 @@ public class ZDT1 extends Problem {
         f2 = (RealData) g.times(RealData.ONE.minus(tmp.sqrt()));
         solution.setObjective(1, f2);
 
-        evaluateConstraints(solution);
+        evaluateConstraint(solution);
     }
 
-    public void evaluateConstraints(Solution solution) {
+    @Override
+    public void evaluateConstraint(Solution solution) {
         int count = 0;
         for (int i = 0; i < numberOfDecisionVars; i++) {
             if (solution.getVariables().get(i).compareTo(0.0) < 0

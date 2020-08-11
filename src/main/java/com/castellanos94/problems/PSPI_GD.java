@@ -52,10 +52,7 @@ public class PSPI_GD extends Problem {
      * preferenceModels[i].setVetos(getInstance().getVetos_DMs()[i]);
      * preferenceModels[i].setWeights(getInstance().getWeights_DMs()[i]); } }
      */
-    /**
-     * No se encontraron diference entre los modelos UF y Outranking que definiera
-     * crear otra clase.
-     */
+
     @Override
     public void evaluate(Solution solution) {
         Interval currentBudget = Interval.ZERO;
@@ -74,7 +71,17 @@ public class PSPI_GD extends Problem {
         }
         solution.setResource(0, currentBudget);
         solution.setObjectives(objectives);
-        RealData poss = this.getInstance().getBudget().possGreaterThanOrEq(currentBudget);
+
+    }
+
+    /**
+     * No se encontraron diference entre los modelos UF y Outranking que definiera
+     * crear otra clase.
+     */
+    @Override
+    public void evaluateConstraint(Solution solution) {
+        Interval suma = new Interval(solution.getResources().get(0));
+        RealData poss = this.getInstance().getBudget().possGreaterThanOrEq(suma);
         if (poss.compareTo(getPreferenceModel(0).getChi()) < 0) {
             Data tmp = getInstance().getBudget().minus(solution.getResources().get(0));
             solution.setPenalties(tmp);
