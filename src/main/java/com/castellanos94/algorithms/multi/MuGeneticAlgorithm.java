@@ -47,7 +47,7 @@ public class MuGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
         for (Solution solution : offspring) {
             mutationOperator.execute(solution);
             problem.evaluate(solution);
-            problem.evaluateConstraints(solution);
+            //problem.evaluateConstraints(solution);
         }
         return offspring;
     }

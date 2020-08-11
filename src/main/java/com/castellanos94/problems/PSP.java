@@ -13,8 +13,6 @@ import com.castellanos94.instances.PSPInstance;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
-
-
 /*
 *@author Castellanos Alvarez, Alejandro
 *@since 22/03/202
@@ -29,7 +27,7 @@ public class PSP extends Problem {
         for (int i = 0; i < objectives_type.length; i++) {
             objectives_type[i] = Problem.MAXIMIZATION;
         }
-        this.numberOfConstrains =1;
+        this.numberOfConstrains = 1;
     }
 
     @Override
@@ -53,12 +51,12 @@ public class PSP extends Problem {
         for (int i = 1; i < objs.length; i++) {
             current_budget = current_budget.plus(objs[i]);
         }
-        solution.setResource(0,current_budget);
+        solution.setResource(0, current_budget);
         solution.setObjectives(new ArrayList<>(Arrays.asList(objs)));
+        evaluateConstraints(solution);
     }
 
-    @Override
-    public int evaluateConstraints(Solution sol) {
+    public void evaluateConstraints(Solution sol) {
         Data budget = instance.getData("budget");
         IntegerData current_budget = new IntegerData(0);
         Data one = new IntegerData(1);
@@ -86,12 +84,12 @@ public class PSP extends Problem {
         }
         Data penaltie = new IntegerData(0);
         int penalties = 0;
-        int violate_budget = 0; // restriccion fuerte
+      //  int violate_budget = 0; // restriccion fuerte
 
         if (current_budget.compareTo(budget) > 0) {
             penalties++;
             penaltie = budget.minus(current_budget);
-            violate_budget = 1;
+        //    violate_budget = 1;
         }
         for (int i = 0; i < regionSum.length; i++) {
             if (regionSum[i].compareTo(regions[i][0]) < 0) {// limite inferior
@@ -116,7 +114,6 @@ public class PSP extends Problem {
 
         sol.setN_penalties(penalties);
         sol.setPenalties(penaltie);
-        return violate_budget;
     }
 
     @Override
@@ -140,7 +137,7 @@ public class PSP extends Problem {
                 sol.setVariables(positions.get(i), new IntegerData(0));
             }
         }
-        sol.setResource(0,current_budget);
+        sol.setResource(0, current_budget);
         return sol;
     }
 

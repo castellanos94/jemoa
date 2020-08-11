@@ -24,7 +24,6 @@ public abstract class Problem {
 
     public abstract void evaluate(Solution solution);
 
-    public abstract int evaluateConstraints(Solution solution);
 
     public abstract Solution randomSolution();
 

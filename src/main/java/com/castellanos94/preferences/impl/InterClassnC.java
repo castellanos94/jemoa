@@ -17,7 +17,7 @@ import com.castellanos94.utils.Tools;
  * @see com.castellanos94.problems.PSPI_GD
  * 
  */
-public class InterClassnC implements Classifier {
+public class InterClassnC extends Classifier {
     protected PSPI_GD problem;
     protected PSPI_Instance instance;
 
@@ -27,8 +27,9 @@ public class InterClassnC implements Classifier {
 
     }
 
-    public static String getAttributeKey() {
-        return InterClassnC.class.getName();
+    @Override
+    public String getAttributeKey() {
+        return getClass().getName();
     }
 
     /**
@@ -352,7 +353,7 @@ public class InterClassnC implements Classifier {
         for (int i = 0; i < solutions.length; i++) {
             solutions[i] = problem.randomSolution();
             problem.evaluate(solutions[i]);
-            problem.evaluateConstraints(solutions[i]);
+            // problem.evaluateConstraints(solutions[i]);
             // System.out.println(solutions[i]);
         }
         ITHDM_Preference preference = new ITHDM_Preference(problem, problem.getPreferenceModel(1));
@@ -382,7 +383,8 @@ public class InterClassnC implements Classifier {
             classificator.classify(solutions[i]);
         }
         for (Solution s : solutions) {
-            //System.out.println( s.getResources() + " " + Arrays.toString((int[]) s.getAttribute(InterClassnC.getAttributeKey())));
+            // System.out.println( s.getResources() + " " + Arrays.toString((int[])
+            // s.getAttribute(InterClassnC.getAttributeKey())));
             System.out.println(s);
         }
 

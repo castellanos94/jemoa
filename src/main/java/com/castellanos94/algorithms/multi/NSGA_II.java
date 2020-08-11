@@ -89,7 +89,7 @@ public class NSGA_II extends AbstractEvolutionaryAlgorithm {
             mutationOperator.execute(solution);
             repairOperator.repair(solution);
             problem.evaluate(solution);
-            problem.evaluateConstraints(solution);
+            //problem.evaluateConstraints(solution);
         }
         return offspring;
     }

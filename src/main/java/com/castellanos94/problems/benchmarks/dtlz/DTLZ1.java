@@ -49,8 +49,7 @@ public class DTLZ1 extends DTLZ {
         for (int i = 0; i < this.numberOfObjectives; i++) {
             solution.setObjective(i, new RealData((f[i] < THRESHOLD)? 0: f[i]));
          //   solution.setObjective(i, new RealData(f[i]));
-
-        }
+        }        
 
     }
 

@@ -59,8 +59,7 @@ public class ZDT1 extends Problem {
         evaluateConstraints(solution);
     }
 
-    @Override
-    public int evaluateConstraints(Solution solution) {
+    public void evaluateConstraints(Solution solution) {
         int count = 0;
         for (int i = 0; i < numberOfDecisionVars; i++) {
             if (solution.getVariables().get(i).compareTo(0.0) < 0
@@ -70,7 +69,6 @@ public class ZDT1 extends Problem {
         }
         solution.setN_penalties(count);
         solution.setPenalties(new IntegerData(0));
-        return 0;
     }
 
     @Override

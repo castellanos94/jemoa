@@ -43,7 +43,7 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
         for (int i = 0; i < populationSize; i++) {
             Solution s = problem.randomSolution();
             problem.evaluate(s);
-            problem.evaluateConstraints(s);
+           // problem.evaluateConstraints(s);
             solutions.add(s);
         }
         return solutions;

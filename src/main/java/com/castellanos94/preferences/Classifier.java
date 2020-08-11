@@ -1,11 +1,9 @@
 package com.castellanos94.preferences;
 
 import com.castellanos94.solutions.Solution;
+import com.castellanos94.utils.ExtraInformation;
 
-public interface Classifier {
-    public void classify(Solution x);
+public abstract class Classifier implements ExtraInformation {
+    public abstract void classify(Solution x);
 
-    public static String getAttributeKey() {
-        throw new UnsupportedOperationException("the method is not defined yet.");
-    }
 }

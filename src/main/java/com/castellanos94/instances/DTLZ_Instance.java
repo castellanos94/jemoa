@@ -9,6 +9,7 @@ import com.castellanos94.preferences.impl.OutrankingModel;
 
 public class DTLZ_Instance extends Instance {
     protected OutrankingModel preferenceModel[];
+    protected int problem_number;
 
     public DTLZ_Instance(String path) {
         super(path);
@@ -19,6 +20,8 @@ public class DTLZ_Instance extends Instance {
         File f = new File(path);
         Scanner in = new Scanner(f);
         String[] data = this.readNextDataLine(in);
+        problem_number = Integer.parseInt(data[0]);
+        data = this.readNextDataLine(in);
         int n = Integer.parseInt(data[0]);
         this.params.put("NumObjectives", Integer.parseInt(data[0]));
         data = this.readNextDataLine(in);
@@ -168,4 +171,9 @@ public class DTLZ_Instance extends Instance {
     public OutrankingModel getPreferenceModel(int dm) {
         return this.preferenceModel[dm];
     }
+
+    public int getProblem_number() {
+        return problem_number;
+    }
+
 }

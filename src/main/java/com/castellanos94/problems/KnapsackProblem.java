@@ -20,10 +20,10 @@ public class KnapsackProblem extends Problem {
         this.numberOfDecisionVars = instance.getData("num_elements").intValue();
         this.numberOfConstrains = 1;
         this.numberOfObjectives = 1;
-        
+
         this.objectives_type = new int[1];
         this.objectives_type[0] = Problem.MAXIMIZATION;
-        
+
         this.w = (IntegerData[]) instance.getDataVector("weights");
         this.b = (IntegerData[]) instance.getDataVector("benefits");
         this.capacity = (IntegerData) instance.getData("capacity");
@@ -41,22 +41,14 @@ public class KnapsackProblem extends Problem {
                 current_b = (IntegerData) current_b.plus(b[i]);
             }
         }
-        solution.setResource(0,current_w);
+        solution.setResource(0, current_w);
         solution.setObjective(0, current_b);
-    }
-
-    @Override
-    public int evaluateConstraints(Solution sol) {
-
-        IntegerData cw = (IntegerData) sol.getResources().get(0);
-        if (cw.compareTo(capacity) > 0) {
-            sol.setN_penalties(1);
-            sol.setPenalties(capacity.minus(cw));
-            return -1;
-        }else{
-            sol.setPenalties(new IntegerData(0));
+        if (current_w.compareTo(capacity) > 0) {
+            solution.setN_penalties(1);
+            solution.setPenalties(capacity.minus(current_w));
+        } else {
+            solution.setPenalties(new IntegerData(0));
         }
-        return 0;
     }
 
     @Override
@@ -72,7 +64,7 @@ public class KnapsackProblem extends Problem {
                 solution.setVariables(index.get(i), new IntegerData(1));
                 current_w = tmp;
                 current_b = (IntegerData) current_b.plus(b[i]);
-            }else{
+            } else {
                 solution.setVariables(index.get(i), new IntegerData(0));
             }
         }
