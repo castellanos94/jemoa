@@ -120,12 +120,12 @@ public class NSGA_III extends AbstractEvolutionaryAlgorithm {
 
     }
 
-    public NSGA_III(Problem problem, int populationSize, int maxIterations, int numberOfDivisions,
-            SelectionOperator selectionOperator, CrossoverOperator crossoverOperator, MutationOperator mutationOperator,
-            Ranking ranking, RepairOperator repairOperator, ReferenceHyperplane referenceHyperplane) {
+    public NSGA_III(Problem problem, int populationSize, int maxIterations, SelectionOperator selectionOperator,
+            CrossoverOperator crossoverOperator, MutationOperator mutationOperator, Ranking ranking,
+            RepairOperator repairOperator, ReferenceHyperplane referenceHyperplane) {
         super(problem);
         this.maxIterations = maxIterations;
-        this.numberOfDivisions = numberOfDivisions;
+        this.numberOfDivisions = referenceHyperplane.getNumberOfPoints();
         this.selectionOperator = selectionOperator;
         this.crossoverOperator = crossoverOperator;
         this.mutationOperator = mutationOperator;

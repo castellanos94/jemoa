@@ -27,6 +27,16 @@ public class ReferenceHyperplane {
 
     }
 
+    public void transformToReferencePoint(ArrayList<Solution> solutions) {
+        if (references == null)
+            references = new ArrayList<>();
+        else
+            references.clear();
+        for (Solution solution : solutions) {
+            references.add(new ReferencePointC(solution.getObjectives()));
+        }
+    }
+
     public void execute() {
         ArrayList<Data> elements = generateX();
         ArrayList<List<Data>> list = new ArrayList<>();
@@ -82,6 +92,7 @@ public class ReferenceHyperplane {
         }
         s.addAll(s);
     }
+
     @SuppressWarnings("unused")
     private long calculateH() {
         int n = number_of_objectives + segmentations - 1;

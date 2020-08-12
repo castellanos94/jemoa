@@ -2,6 +2,8 @@ package com.castellanos94.decision_making;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+
+import com.castellanos94.components.impl.CrowdingDistance;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.impl.ITHDM_Preference;
@@ -14,7 +16,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class BestCompromiseDTLZ {
-    protected int MAX_T = 1000;
+    protected int MAX_T = 10000;
     protected DTLZPreferences problem;
     protected ITHDM_Preference preference;
 
@@ -42,13 +44,15 @@ public class BestCompromiseDTLZ {
                 sigma_out = preference.getSigmaXY();
                 sigma_in = preference.getSigmaYX();
                 RealData tmp = (RealData) sigma_out.minus(sigma_in);
-
+                ImmutablePair<Solution, RealData> c;
                 if (value == -2 && tmp.compareTo(bestPref) >= 0) {
                     System.out.println("Last best i: " + bestIndexPref + " , value : " + bestPref + ", objs : "
                             + sample.get(i).getObjectives());
                     bestIndexPref = i;
                     bestPref = tmp;
-                    candidatos.add(new ImmutablePair<Solution, RealData>(sample.get(i), best));
+                    c = new ImmutablePair<Solution, RealData>(sample.get(i), bestPref);
+                    if (!candidatos.contains(c))
+                        candidatos.add(c);
                 } else if (value == -1) {
                     if (tmp.compareTo(best) >= 0) {
                         /*
@@ -57,18 +61,35 @@ public class BestCompromiseDTLZ {
                          */
                         bestIndex = i;
                         best = (RealData) tmp;
-                        candidatos.add(new ImmutablePair<Solution, RealData>(sample.get(i), best));
+                        c = new ImmutablePair<Solution, RealData>(sample.get(i), best);
+                        if (!candidatos.contains(c))
+                            candidatos.add(c);
                     }
                 }
             }
         }
-        System.out.println("Candidatos : " + candidatos.size());
 
         RealData bestf = (bestPref.compareTo(RealData.ZERO) != 0) ? bestPref : best;
         candidatos.removeIf(c -> c.getRight().compareTo(bestf) < 0);
+
         System.out.println("Candidatos : " + candidatos.size());
+        CrowdingDistance distance = new CrowdingDistance();
+        System.out.println("Sin crowding");
         for (Pair<Solution, RealData> pair : candidatos) {
             System.out.println(pair.getLeft() + " : " + pair.getRight());
+        }
+        ArrayList<Solution> solutions = new ArrayList<>();
+        candidatos.forEach(c -> {
+            solutions.add(c.getLeft());
+        });
+        /**
+         * Propuesta crear soluciones de referencia con el metodo de mejor compromiso y
+         * usando una metrica de dispersion.
+         */
+        distance.compute(solutions);
+        distance.sort(solutions);
+        for (Solution solution : solutions) {
+            System.out.println(solution + " " + solution.getAttribute(distance.getKey()));
         }
         return null;
 
@@ -85,10 +106,10 @@ public class BestCompromiseDTLZ {
     public static void main(String[] args) throws FileNotFoundException {
         Tools.setSeed(8435L);
         String path = "src/main/resources/instances/dtlz/DTLZInstance.txt";
-       //  path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
+        // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         System.out.println(instance);
-        DTLZ1_P problem = new DTLZ1_P(instance, null);
+        DTLZ2_P problem = new DTLZ2_P(instance, null);
         BestCompromiseDTLZ bestCompromiseDTLZ = new BestCompromiseDTLZ(problem);
         bestCompromiseDTLZ.execute("path");
     }
