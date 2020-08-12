@@ -69,6 +69,8 @@ public class DTLZ_Instance extends Instance {
             preferenceModel[i].setLambda(lambdas_DMs[i]);
             preferenceModel[i].setVetos(vetos_DMs[i]);
             preferenceModel[i].setWeights(weights_DMs[i]);
+            preferenceModel[i].setAlpha(RealData.ONE);
+            preferenceModel[i].setBeta(lambdas_DMs[i]);
         }
 
         data = this.readNextDataLine(in);
@@ -135,7 +137,7 @@ public class DTLZ_Instance extends Instance {
 
                 for (i = 0; i < data.length; ++i) {
                     if (data[i].length() > 0) {
-                        final_data[j++] = data[i];
+                        final_data[j++] = data[i].replaceAll(",", "");
                     }
                 }
             }

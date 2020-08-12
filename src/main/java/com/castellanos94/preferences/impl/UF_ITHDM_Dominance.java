@@ -7,7 +7,7 @@ import com.castellanos94.datatype.RealData;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
-public class UF_ITHDM_Dominance<S extends Solution> extends IntervalDominance<S> {
+public class UF_ITHDM_Dominance extends IntervalDominance {
     protected RealData alpha;
 
     public UF_ITHDM_Dominance(RealData alpha) {
@@ -79,9 +79,11 @@ public class UF_ITHDM_Dominance<S extends Solution> extends IntervalDominance<S>
         return 0;
 
     }
+
     public RealData getAlpha() {
         return alpha;
     }
+
     public void setAlpha(RealData alpha) {
         this.alpha = alpha;
     }

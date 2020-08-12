@@ -7,7 +7,7 @@ import com.castellanos94.datatype.RealData;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
-public class ITHDM_Dominance extends IntervalDominance<Solution> {
+public class ITHDM_Dominance extends IntervalDominance {
     protected RealData alpha;
 
     public ITHDM_Dominance(RealData alpha) {
@@ -42,8 +42,8 @@ public class ITHDM_Dominance extends IntervalDominance<Solution> {
         int better_a = 0;
         int better_b = 0;
         for (int i = 0; i < x.getObjectives().size(); i++) {
-            a = (Interval) x.getObjective(i);
-            b = (Interval) y.getObjective(i);
+            a = x.getObjective(i).toInterval();
+            b = y.getObjective(i).toInterval();
             boolean isMax = x.getProblem().getObjectives_type()[i] == Problem.MAXIMIZATION;
             Data possibility;
             if (isMax) {
@@ -75,9 +75,11 @@ public class ITHDM_Dominance extends IntervalDominance<Solution> {
             return 1;
         return 0;
     }
+
     public RealData getAlpha() {
         return alpha;
     }
+
     public void setAlpha(RealData alpha) {
         this.alpha = alpha;
     }

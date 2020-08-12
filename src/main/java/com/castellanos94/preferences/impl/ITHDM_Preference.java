@@ -20,6 +20,7 @@ public class ITHDM_Preference extends Preference {
     protected OutrankingModel model;
     protected Problem p;
     private int[] coalition;
+    private RealData sigmaXY, sigmaYX;
 
     public ITHDM_Preference(Problem p, OutrankingModel model) {
         this.model = model;
@@ -38,15 +39,14 @@ public class ITHDM_Preference extends Preference {
      */
     @Override
     public int compare(Solution x, Solution y) {
-        if (dominance.compare(x, y) == -1)// x outranks y
-            return -2;
 
-        RealData cxy, cyx;
         try {
-            cxy = credibility_index(x, y);
-            cyx = credibility_index(y, x);
-            int xy = cxy.compareTo(model.getBeta());
-            int yx = cyx.compareTo(model.getBeta());
+            sigmaXY = credibility_index(x, y);
+            sigmaYX = credibility_index(y, x);
+            if (dominance.compare(x, y) == -1)// x outranks y
+                return -2;
+            int xy = sigmaXY.compareTo(model.getBeta());
+            int yx = sigmaYX.compareTo(model.getBeta());
             if (xy >= 0 && yx < 0)
                 return -1;
             if (xy >= 0 && yx >= 0)
@@ -129,8 +129,8 @@ public class ITHDM_Preference extends Preference {
     private RealData compute_discordance_ij(Solution x, Solution y, int criteria) {
         Data veto = model.getVetos()[criteria];
         RealData res;
-        Interval value_x = (Interval) x.getObjective(criteria);
-        Interval value_y = (Interval) y.getObjective(criteria);
+        Interval value_x = x.getObjective(criteria).toInterval();
+        Interval value_y = y.getObjective(criteria).toInterval();
         if (p.getObjectives_type()[criteria] == Problem.MAXIMIZATION) {
             res = value_y.possGreaterThanOrEq((Interval) value_x.plus(veto));
         } else {
@@ -142,8 +142,8 @@ public class ITHDM_Preference extends Preference {
 
     private RealData compute_alpha_ij(Solution x, Solution y, int criteria) {
         RealData res;
-        Interval value_x = (Interval) x.getObjective(criteria);
-        Interval value_y = (Interval) y.getObjective(criteria);
+        Interval value_x = x.getObjective(criteria).toInterval();
+        Interval value_y = y.getObjective(criteria).toInterval();
         if (p.getObjectives_type()[criteria] == Problem.MAXIMIZATION) {
             res = value_x.possGreaterThanOrEq(value_y);
         } else {
@@ -152,4 +152,15 @@ public class ITHDM_Preference extends Preference {
         return res;
     }
 
+    public RealData getSigmaXY() {
+        return sigmaXY;
+    }
+
+    public RealData getSigmaYX() {
+        return sigmaYX;
+    }
+
+    public ITHDM_Dominance getDominance() {
+        return dominance;
+    }
 }

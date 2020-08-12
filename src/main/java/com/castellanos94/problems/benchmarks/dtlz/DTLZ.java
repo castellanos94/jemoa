@@ -3,6 +3,7 @@ package com.castellanos94.problems.benchmarks.dtlz;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.problems.Problem;
@@ -125,7 +126,9 @@ public abstract class DTLZ extends Problem {
         }
 
         evaluate(solution);
-        evaluateConstraint(solution);
+
+        solution.setN_penalties(0);
+        solution.setPenalties(RealData.ZERO);
         return solution;
     }
 
@@ -150,11 +153,24 @@ public abstract class DTLZ extends Problem {
                 solution.setVariable(ii, new RealData(0.5));
             }
             evaluate(solution);
-            evaluateConstraint(solution);
+            // evaluateConstraint(solution);
+            solution.setN_penalties(0);
+            solution.setPenalties(RealData.ZERO);
             solutions.add(solution);
         }
 
         return solutions;
     }
 
+    public ArrayList<Solution> generateSampleNonDominated(int size) {
+        ArrayList<Solution> bag = generateSample(size);
+        DominanceComparator dominanceComparator = new DominanceComparator();
+        dominanceComparator.computeRanking(bag);
+        while (dominanceComparator.getSubFront(0).size() < size) {
+            bag = dominanceComparator.getSubFront(0);
+            bag.addAll(generateSample((bag.size() > size / 2) ? size / 3 : size / 2));
+        }
+        return new ArrayList<>(dominanceComparator.getSubFront(0).subList(0, size));
+
+    }
 }

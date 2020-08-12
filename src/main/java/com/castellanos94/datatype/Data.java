@@ -27,7 +27,7 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
         if (b instanceof Interval && !(this instanceof Interval)) {
             return new Interval(this).compareTo(b);
         }
-    
+
         return this.compareTo(b);
     }
 
@@ -144,5 +144,12 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
             return Double.isNaN(data.getLower().doubleValue()) || Double.isNaN(data.getUpper().doubleValue());
         }
         throw new IllegalArgumentException("is not number");
+    }
+
+    public Interval toInterval() {
+        if (this instanceof Interval) {
+            return (Interval) this;
+        }
+        return new Interval(this);
     }
 }

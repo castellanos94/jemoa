@@ -57,6 +57,8 @@ public class DTZLInstanceGenerator {
         for (int i = 0; i < number_of_dms; i++) {
             content.append(String.format("%s // lambda %d\n", lambdaInterval, (i + 1)));
         }
+        content.append("FALSE\n");
+        content.append("FALSE\n");
         if (path == null || path.isEmpty())
             System.out.println(content);
         else {

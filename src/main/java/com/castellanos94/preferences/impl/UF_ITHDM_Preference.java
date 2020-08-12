@@ -13,14 +13,14 @@ import com.castellanos94.solutions.Solution;
  * x, y, when the dm is compatible with the utility function
  */
 public class UF_ITHDM_Preference extends Preference {
-    protected UF_ITHDM_Dominance<Solution> dominance;
+    protected UF_ITHDM_Dominance dominance;
     protected OutrankingModel model;
     protected Problem p;
 
     public UF_ITHDM_Preference(Problem p, OutrankingModel model) {
         this.model = model;
         this.p = p;
-        this.dominance = new UF_ITHDM_Dominance<>((RealData) model.getAlpha());
+        this.dominance = new UF_ITHDM_Dominance((RealData) model.getAlpha());
     }
 
     /**
