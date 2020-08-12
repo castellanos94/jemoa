@@ -20,7 +20,7 @@ import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.components.impl.FastNonDominatedSort;
 import com.castellanos94.operators.impl.SBXCrossover;
-import com.castellanos94.problems.preferences.dtlz.DTLZ1_P;
+import com.castellanos94.problems.preferences.dtlz.*;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
 import com.castellanos94.utils.ReferenceHyperplane;
@@ -32,17 +32,17 @@ import tech.tablesaw.api.Table;
 
 public class DTLZ_usingPref {
     static final String directory = "experiments" + File.separator + "dtlz_preferences";
-    private static int EXPERIMENT = 10;
+    private static int EXPERIMENT = 30;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         Tools.setSeed(8435L);
-        String path = "src/main/resources/instances/dtlz/DTLZInstance.txt";
+        String path = "src/main/resources/instances/dtlz/DTLZ3Instance.txt";
         // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         System.out.println(instance);
 
       
-        DTLZ1_P problem = new DTLZ1_P(instance, null);
+        DTLZ3_P problem = new DTLZ3_P(instance, null);
         ArrayList<Solution> solutions = new ArrayList<>();
         for (int i = 0; i < instance.getInitialSolutions().length; i++) {
             Solution s = new Solution(problem);

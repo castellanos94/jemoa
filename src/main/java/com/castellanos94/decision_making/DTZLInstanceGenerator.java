@@ -169,17 +169,17 @@ public class DTZLInstanceGenerator {
 
     public static void main(String[] args) throws IOException {
         long start = System.currentTimeMillis();
-        Tools.setSeed(8435L);
+       // Tools.setSeed(8435L);
         int dms = 1;
         int number_of_objectives = 3;
-        int numberOfVars = 7;
+        int numberOfVars = 12;
         Interval max_objectives[] = new Interval[number_of_objectives];
         for (int i = 0; i < number_of_objectives; i++) {
-            max_objectives[i] = new Interval(0, .5);
+            max_objectives[i] = new Interval(0, 1);
         }
         DTZLInstanceGenerator dm_Generator = new DTZLInstanceGenerator(dms, numberOfVars, number_of_objectives,
                 max_objectives);
-        String path = "src/main/resources/instances/dtlz/DTLZInstance.txt";
+        String path = "src/main/resources/instances/dtlz/DTLZ7Instance.txt";
         dm_Generator.execute(path);
         long end = System.currentTimeMillis() - start;
         System.out.println("Time :" + end + " ms.");

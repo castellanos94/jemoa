@@ -1,13 +1,16 @@
 package com.castellanos94.decision_making;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.castellanos94.components.impl.CrowdingDistance;
+import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.impl.ITHDM_Preference;
-import com.castellanos94.problems.preferences.dtlz.DTLZ1_P;
+import com.castellanos94.problems.preferences.dtlz.*;
 import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
@@ -16,7 +19,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class BestCompromiseDTLZ {
-    protected int MAX_T = 10000;
+    protected int MAX_T = 1000;
     protected DTLZPreferences problem;
     protected ITHDM_Preference preference;
 
@@ -28,16 +31,19 @@ public class BestCompromiseDTLZ {
     /**
      * Solo se toma encuenta el dm 1 para realizar el mejor compromiso.
      * 
-     * @param path to save instance
      * @return
      */
-    public Solution execute(String path) {
-        System.out.println("call sampling");
-        ArrayList<Solution> sample = problem.generateSampleNonDominated(MAX_T);
-        System.out.println("Sample size: " + sample.size());
+    public ArrayList<Solution> execute() {
+        // System.out.println("call sampling");
+        ArrayList<Solution> sample;
+       // sample = problem.generateSampleNonDominated(MAX_T);
+        // sample = problem.generateSample(MAX_T);
+         sample = problem.generateRandomSample(MAX_T);
+        // System.out.println("Sample size: " + sample.size());
         RealData sigma_out, sigma_in, best = RealData.ZERO, bestPref = RealData.ZERO;
         int bestIndex = -1, bestIndexPref = -1;
         ArrayList<Pair<Solution, RealData>> candidatos = new ArrayList<>();
+        int ratio = MAX_T / 10;
         for (int i = 0; i < sample.size() - 1; i++) {
             for (int j = 1; j < sample.size(); j++) {
                 int value = preference.compare(sample.get(i), sample.get(j));
@@ -46,8 +52,7 @@ public class BestCompromiseDTLZ {
                 RealData tmp = (RealData) sigma_out.minus(sigma_in);
                 ImmutablePair<Solution, RealData> c;
                 if (value == -2 && tmp.compareTo(bestPref) >= 0) {
-                    System.out.println("Last best i: " + bestIndexPref + " , value : " + bestPref + ", objs : "
-                            + sample.get(i).getObjectives());
+
                     bestIndexPref = i;
                     bestPref = tmp;
                     c = new ImmutablePair<Solution, RealData>(sample.get(i), bestPref);
@@ -55,10 +60,6 @@ public class BestCompromiseDTLZ {
                         candidatos.add(c);
                 } else if (value == -1) {
                     if (tmp.compareTo(best) >= 0) {
-                        /*
-                         * System.out.println("Last i: " + bestIndex + " , value : " + best +
-                         * ", objs : " + sample.get(i).getObjectives());
-                         */
                         bestIndex = i;
                         best = (RealData) tmp;
                         c = new ImmutablePair<Solution, RealData>(sample.get(i), best);
@@ -67,31 +68,32 @@ public class BestCompromiseDTLZ {
                     }
                 }
             }
+
         }
 
         RealData bestf = (bestPref.compareTo(RealData.ZERO) != 0) ? bestPref : best;
         candidatos.removeIf(c -> c.getRight().compareTo(bestf) < 0);
 
-        System.out.println("Candidatos : " + candidatos.size());
-        CrowdingDistance distance = new CrowdingDistance();
-        System.out.println("Sin crowding");
-        for (Pair<Solution, RealData> pair : candidatos) {
-            System.out.println(pair.getLeft() + " : " + pair.getRight());
-        }
         ArrayList<Solution> solutions = new ArrayList<>();
         candidatos.forEach(c -> {
             solutions.add(c.getLeft());
         });
-        /**
-         * Propuesta crear soluciones de referencia con el metodo de mejor compromiso y
-         * usando una metrica de dispersion.
-         */
-        distance.compute(solutions);
-        distance.sort(solutions);
-        for (Solution solution : solutions) {
-            System.out.println(solution + " " + solution.getAttribute(distance.getKey()));
+        Iterator<Solution> iterator = solutions.iterator();
+        System.out.println(solutions.size());
+        while (iterator.hasNext()) {
+            Solution next = iterator.next();
+            for (int i = 0; i < candidatos.size(); i++) {
+                Solution other = candidatos.get(i).getLeft();
+                if (!next.equals(other)) {
+                    int v = preference.getDominance().compare(next, other);
+                    if (v > 0) {
+                        iterator.remove();
+                        break;
+                    }
+                }
+            }
         }
-        return null;
+        return solutions;
 
     }
 
@@ -103,15 +105,66 @@ public class BestCompromiseDTLZ {
         return MAX_T;
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-        Tools.setSeed(8435L);
-        String path = "src/main/resources/instances/dtlz/DTLZInstance.txt";
+    public ITHDM_Preference getPreference() {
+        return preference;
+    }
+
+    public static void main(String[] args) throws IOException {
+        // Tools.setSeed(8435L);
+
+        String path = "src/main/resources/instances/dtlz/DTLZ2Instance.txt";
         // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         System.out.println(instance);
+
         DTLZ2_P problem = new DTLZ2_P(instance, null);
+        System.out.println(problem);
         BestCompromiseDTLZ bestCompromiseDTLZ = new BestCompromiseDTLZ(problem);
-        bestCompromiseDTLZ.execute("path");
+        ArrayList<Solution> bag = new ArrayList<>();
+        for (int i = 0; i < 50; i++) {
+            System.out.println("inteto " + (i + 1) + " bag: " + bag.size());
+            ArrayList<Solution> candidatos = bestCompromiseDTLZ.execute();
+            System.out.println("\tsize? " + candidatos.size());
+            Iterator<Solution> otheIterator = candidatos.iterator();
+            Iterator<Solution> iterator = bag.iterator();
+            DominanceComparator dominanceComparator = new DominanceComparator();
+            while (iterator.hasNext()) {
+                Solution a = iterator.next();
+                while (otheIterator.hasNext()) {
+                    Solution b = otheIterator.next();
+                    if (a.equals(b)) {
+                        otheIterator.remove();
+                        break;
+                    }
+                    int v = dominanceComparator.compare(a, b);
+                    // int vb = dominanceComparator.compare(b, a);
+                    if (v == -1) {
+                        otheIterator.remove();
+                    } else if (v == 1) {
+                        iterator.remove();
+                        break;
+                    }
+                }
+            }
+            bag.addAll(candidatos);
+
+        }
+        /**
+         * Propuesta crear soluciones de referencia con el metodo de mejor compromiso y
+         * usando una metrica de dispersion.
+         */
+        System.out.println("Candidatos : " + bag.size());
+        CrowdingDistance distance = new CrowdingDistance();
+        System.out.println("Sin crowding");
+        System.out.println("After crowindg");
+        distance.compute(bag);
+        distance.sort(bag);
+        for (Solution solution : bag) {
+            System.out.println(solution + " " + solution.getAttribute(distance.getKey()));
+        }
+        System.out.println("Candidatos : " + bag.size());
+
+        Solution.writSolutionsToFile("bestCompromise_" + problem.getName(), bag);
     }
 
 }

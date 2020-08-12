@@ -132,6 +132,14 @@ public abstract class DTLZ extends Problem {
         return solution;
     }
 
+    public ArrayList<Solution> generateRandomSample(int size) {
+        ArrayList<Solution> solutions = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            solutions.add(generate());
+        }
+        return solutions;
+    }
+
     /**
      * Usando Latin Hypercube Sampling para las primera M variables de cada
      * solucion, se genera la lista de soluciones muestra del frente aproximado. No

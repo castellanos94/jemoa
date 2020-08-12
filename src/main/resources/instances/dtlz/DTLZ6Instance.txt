@@ -1,0 +1,8 @@
+3 //objectives
+12 //vars
+1 //dms
+0.333 0.333, 0.333 0.333, 0.334 0.334 // weight dm 1
+0.249925 0.292028, 0.221534 0.28284, 0.238867 0.287402 // veto dm 1
+0.51 0.67 // lambda 1
+FALSE // best compr
+FALSE // initial solutions se usara como conjunto de referencia 
