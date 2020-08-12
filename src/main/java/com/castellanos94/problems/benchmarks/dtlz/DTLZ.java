@@ -168,7 +168,7 @@ public abstract class DTLZ extends Problem {
         dominanceComparator.computeRanking(bag);
         while (dominanceComparator.getSubFront(0).size() < size) {
             bag = dominanceComparator.getSubFront(0);
-            bag.addAll(generateSample((bag.size() > size / 2) ? size / 3 : size / 2));
+            bag.addAll(generateSample((bag.size() > size / 2) ? size / 4 : size / 2));
         }
         return new ArrayList<>(dominanceComparator.getSubFront(0).subList(0, size));
 
