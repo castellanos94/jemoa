@@ -15,3 +15,4 @@ Java Evolutionary Multi-Objective Algorithm
 *  For multi-objective optimization:
    * GA: A multi-objectve evolutionary algorithm (using dominance)
    * NSGA-II
+   * NSGA-III
