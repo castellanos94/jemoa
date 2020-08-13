@@ -114,7 +114,7 @@ public class PSP extends Problem<BinarySolution> {
             }
         }
 
-        sol.setN_penalties(penalties);
+        sol.setNumberOfPenalties(penalties);
         sol.setPenalties(penaltie);
     }
 

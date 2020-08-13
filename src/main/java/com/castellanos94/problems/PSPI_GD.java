@@ -85,10 +85,10 @@ public class PSPI_GD extends Problem<BinarySolution> {
         if (poss.compareTo(getPreferenceModel(0).getChi()) < 0) {
             Data tmp = getInstance().getBudget().minus(solution.getResources().get(0));
             solution.setPenalties(tmp);
-            solution.setN_penalties(1);
+            solution.setNumberOfPenalties(1);
         } else {
             solution.setPenalties(RealData.ZERO);
-            solution.setN_penalties(0);
+            solution.setNumberOfPenalties(0);
         }
     }
 

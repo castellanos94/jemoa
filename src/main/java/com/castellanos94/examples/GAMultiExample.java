@@ -13,6 +13,7 @@ import com.castellanos94.operators.impl.SimpleDecimalMutation;
 import com.castellanos94.operators.impl.TournamentSelection;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.problems.benchmarks.ZDT1;
+import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 
 public class GAMultiExample {
@@ -20,19 +21,19 @@ public class GAMultiExample {
         Problem problem = new ZDT1();
         int maxIteration = 50000, popSize = 100;
         System.out.println(problem);
-        SelectionOperator selectionOperator = new TournamentSelection(popSize, new DominanceComparator());
+        SelectionOperator<DoubleSolution> selectionOperator = new TournamentSelection<>(popSize, new DominanceComparator<>());
         double crossoverProbability = 0.9;
         double crossoverDistributionIndex = 20.0;
 
-        CrossoverOperator crossoverOperator = new SBXCrossover(crossoverDistributionIndex, crossoverProbability);
-        MutationOperator mutationOperator = new SimpleDecimalMutation(1.0 / problem.getNumberOfDecisionVars());
-        AbstractAlgorithm algorithm = new MuGeneticAlgorithm(problem, maxIteration, popSize, selectionOperator,
+        CrossoverOperator<DoubleSolution> crossoverOperator = new SBXCrossover(crossoverDistributionIndex, crossoverProbability);
+        MutationOperator<DoubleSolution> mutationOperator = new SimpleDecimalMutation(1.0 / problem.getNumberOfDecisionVars());
+        AbstractAlgorithm<DoubleSolution> algorithm = new MuGeneticAlgorithm<>(problem, maxIteration, popSize, selectionOperator,
                 crossoverOperator, mutationOperator);
         System.out.println(algorithm);
         algorithm.execute();
         System.out.println("Time: " + algorithm.getComputeTime() + " ms.");
         System.out.println(algorithm.getSolutions().size());
-        ArrayList<Solution> solutions = algorithm.getSolutions();
+        ArrayList<DoubleSolution> solutions = algorithm.getSolutions();
         for (int i = 0; i < popSize; i++) {
             System.out.println(i + ") " + solutions.get(i));
         }

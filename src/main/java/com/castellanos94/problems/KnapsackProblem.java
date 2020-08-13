@@ -50,7 +50,7 @@ public class KnapsackProblem extends Problem<BinarySolution> {
 
         IntegerData cw = (IntegerData) sol.getResources().get(0);
         if (cw.compareTo(capacity) > 0) {
-            sol.setN_penalties(1);
+            sol.setNumberOfPenalties(1);
             sol.setPenalties(capacity.minus(cw));
         } else {
             sol.setPenalties(new IntegerData(0));

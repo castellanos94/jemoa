@@ -45,7 +45,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
             for (ArrayList<S> list : fronts) {
                 for (S s : list) {
                     if (f == 0) // in the first objective we create the vector of conv_objs
-                        setAttribute(s, new ArrayList<Data>());
+                        setAttribute(s, new ArrayList<>());
                     Data tmp = s.getObjective(f).minus(minf);
                     if (tmp.compareTo(1e-3) < 0)
                         try {
@@ -203,21 +203,18 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
         Data numerator = ZERO_VALUE, denominator = ZERO_VALUE;
         for (int i = 0; i < direction.size(); i += 1) {
             numerator = numerator.plus(direction.get(i).times(point.get(i)));
-            // numerator += direction.get(i) * point.get(i);
             denominator = denominator.plus(direction.get(i).pow(2));
-            // denominator += Math.pow(direction.get(i), 2.0);
         }
         Data k = numerator.div(denominator);
 
         Data d = ZERO_VALUE;
         for (int i = 0; i < direction.size(); i += 1) {
-            // d += Math.pow(k * direction.get(i) - point.get(i), 2.0);
             d = d.plus(k.times(direction.get(i).minus(point.get(i)).pow(2)));
         }
         return d.sqrt();
     }
 
-    public void associate(ArrayList<S> population) throws CloneNotSupportedException {
+    public void associate(ArrayList<S> population)  {
 
         for (int t = 0; t < fronts.size(); t++) {
             for (S s : fronts.get(t)) {
@@ -236,9 +233,8 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
                     if (min_rp != -1)
                         this.referencePoints.get(min_rp).incrementPotentialMembers();
                 } else {
-                    // this.referencePoints.get(min_rp).AddPotentialMember(s, min_dist);
                     if (min_rp != -1)
-                        this.referencePoints.get(min_rp).addMember((S) s.clone(), min_dist);
+                        this.referencePoints.get(min_rp).addMember((S) s.copy(), min_dist);
                 }
             }
         }
@@ -313,11 +309,8 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
 
         normalizeObjectives(source, intercepts, ideal_point);
         // ---------- Step 15 / Algorithm 3, Step 16 ----------
-        try {
             associate(source);
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+     
 
         // ---------- Step 17 / Algorithm 4 ----------
         while (source.size() < this.pop_size && referencePoints.getNumberOfPoints() > 0) {
@@ -330,8 +323,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
                 } else {
                     this.referencePoints.get(min_rp).incrementPotentialMembers();
                     this.referencePoints.get(min_rp).RemovePotentialMember(chosen);
-                    // this.referencePoints.addMember(min_rp);
-                    // this.referencePoints.RemovePotentialMember(min_rp, chosen);
+                   
                     source.add(chosen);
                 }
             }
@@ -347,10 +339,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
                     }
                 }
             }
-            /*
-             * Problem p = source.get(0).getProblem(); while(source.size() < this.pop_size){
-             * S s = p.randomS(); p.evaluate(s); p.evaluateConstraints(s); source.add(s); }
-             */
+         
         }
         parents = source;
         return null;

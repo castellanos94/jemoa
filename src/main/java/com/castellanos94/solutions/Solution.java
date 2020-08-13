@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.castellanos94.datatype.Data;
 import com.castellanos94.problems.Problem;
@@ -14,14 +15,14 @@ import com.castellanos94.problems.Problem;
 *@author Castellanos Alvarez, Alejandro
 *@since 22/03/202
 */
-public abstract class Solution<T> implements Cloneable, Comparable<Solution<?>> {
-    protected ArrayList<T> variables;
-    protected ArrayList<Data> objectives;
-    protected ArrayList<Data> resources;
+public abstract class Solution<T> implements Comparable<Solution<?>> {
+    protected List<T> variables;
+    protected List<Data> objectives;
+    protected List<Data> resources;
     protected Data penalties;
 
     protected Problem problem;
-    protected Integer n_penalties = 0;
+    protected Integer numberOfPenalties = 0;
     protected HashMap<String, Object> attributes;
 
     protected int rank;
@@ -98,28 +99,28 @@ public abstract class Solution<T> implements Cloneable, Comparable<Solution<?>> 
     /**
      * @return the objectives
      */
-    public ArrayList<Data> getObjectives() {
+    public List<Data> getObjectives() {
         return objectives;
     }
 
     /**
      * @param objectives the objectives to set
      */
-    public void setObjectives(ArrayList<Data> objectives) {
+    public void setObjectives(List<Data> objectives) {
         this.objectives = objectives;
     }
 
     /**
      * @param decision_vars the decision_vars to set
      */
-    public void setVariables(ArrayList<T> decision_vars) {
+    public void setVariables(List<T> decision_vars) {
         this.variables = decision_vars;
     }
 
     /**
      * @return the decision_vars
      */
-    public ArrayList<T> getVariables() {
+    public List<T> getVariables() {
         return this.variables;
     }
 
@@ -137,11 +138,11 @@ public abstract class Solution<T> implements Cloneable, Comparable<Solution<?>> 
         return this.rank;
     }
 
-    public ArrayList<Data> getResources() {
+    public List<Data> getResources() {
         return this.resources;
     }
 
-    public void setResources(ArrayList<Data> resources) {
+    public void setResources(List<Data> resources) {
         this.resources = resources;
     }
 
@@ -153,16 +154,16 @@ public abstract class Solution<T> implements Cloneable, Comparable<Solution<?>> 
         this.problem = problem;
     }
 
-    public Integer getN_penalties() {
-        return this.n_penalties;
+    public Integer getNumberOfPenalties() {
+        return this.numberOfPenalties;
     }
 
     public Data getPenalties() {
         return this.penalties;
     }
 
-    public void setN_penalties(Integer n_penalties) {
-        this.n_penalties = n_penalties;
+    public void setNumberOfPenalties(Integer numberOfPenalties) {
+        this.numberOfPenalties = numberOfPenalties;
     }
 
     public void setPenalties(Data penalties) {
@@ -185,8 +186,7 @@ public abstract class Solution<T> implements Cloneable, Comparable<Solution<?>> 
         this.attributes = properties;
     }
 
-    @Override
-    public abstract Object clone() throws CloneNotSupportedException;
+    public abstract Object copy();
 
     @Override
     public int compareTo(Solution<?> o) {
@@ -201,8 +201,7 @@ public abstract class Solution<T> implements Cloneable, Comparable<Solution<?>> 
     public String toString() {
         return String.format("%s * %s * %s * %s * %3d", variables.toString().replace("[", "").replace("]", ""),
                 objectives.toString().replace("[", "").replace("]", ""),
-                resources.toString().replace("[", "").replace("]", ""), penalties, n_penalties);
-        // return objectives.toString();
+                resources.toString().replace("[", "").replace("]", ""), penalties, numberOfPenalties);
     }
 
     public T getVariable(int index) {
@@ -243,8 +242,8 @@ public abstract class Solution<T> implements Cloneable, Comparable<Solution<?>> 
     }
 
     @SuppressWarnings("rawtypes")
-    public static void writSolutionsToFile(String string, ArrayList<Solution> solutions) throws IOException {
-        ArrayList<String> strings = new ArrayList<>();
+    public static void writSolutionsToFile(String string, List<Solution> solutions) throws IOException {
+        List<String> strings = new ArrayList<>();
         File f = new File(string + ".out");
         for (Solution solution : solutions)
             strings.add(solution.toString());

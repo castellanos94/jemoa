@@ -65,7 +65,7 @@ public class ZDT1 extends Problem<DoubleSolution> {
                 count++;
             }
         }
-        solution.setN_penalties(count);
+        solution.setNumberOfPenalties(count);
         solution.setPenalties(new IntegerData(0));
     }
 

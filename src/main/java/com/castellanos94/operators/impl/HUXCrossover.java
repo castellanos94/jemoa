@@ -27,18 +27,15 @@ public class HUXCrossover implements CrossoverOperator<BinarySolution> {
         BinarySolution b = parents.get(1);
         for (int i = 0; i < 2; i++) {
             BinarySolution c;
-            try {
-                c = (BinarySolution) a.clone();
-                if (Tools.getRandom().nextDouble() <= probability)
-                    for (int j = 0; j < a.getNumberOfVariables(); j++) {
-                        if (Tools.getRandom().nextDouble() < 0.5) {
-                            c.getVariable(0).set(j, b.getVariable(0).get(j));
-                        }
+            c = a.copy();
+            if (Tools.getRandom().nextDouble() <= probability)
+                for (int j = 0; j < a.getNumberOfVariables(); j++) {
+                    if (Tools.getRandom().nextDouble() < 0.5) {
+                        c.getVariable(0).set(j, b.getVariable(0).get(j));
                     }
-                child.add(c);
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
+                }
+            child.add(c);
+
         }
         return child;
     }

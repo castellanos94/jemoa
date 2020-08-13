@@ -29,22 +29,21 @@ public class NSGA_II<S extends Solution<?>> extends AbstractEvolutionaryAlgorith
         this.mutationOperator = mutationOperator;
         this.currentEvaluation = 0;
         this.populationSize = populationSize;
-        this.densityEstimator = new CrowdingDistance<S>();
-        this.fastNonDominatedSort = new FastNonDominatedSort<S>();
-        this.repairOperator = new RepairOperator<S>() {
+        this.densityEstimator = new CrowdingDistance<>();
+        this.fastNonDominatedSort = new FastNonDominatedSort<>();
+        this.repairOperator = new RepairOperator<>() {
 
             @Override
             public Void execute(S source) {
-                // TODO Auto-generated method stub
                 return null;
             }
-
 
         };
     }
 
     public NSGA_II(Problem<S> problem, int maxEvaluation, int populationSize, SelectionOperator<S> selectionOperator,
-            CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator, RepairOperator<S> repairOperator) {
+            CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
+            RepairOperator<S> repairOperator) {
         super(problem);
         this.maxEvaluation = maxEvaluation;
         this.selectionOperator = selectionOperator;
@@ -58,8 +57,8 @@ public class NSGA_II<S extends Solution<?>> extends AbstractEvolutionaryAlgorith
     }
 
     public NSGA_II(Problem<S> problem, int maxEvaluation, int populationSize, SelectionOperator<S> selectionOperator,
-            CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator, DensityEstimator<S> densityEstimator,
-            RepairOperator<S> repairOperator) {
+            CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
+            DensityEstimator<S> densityEstimator, RepairOperator<S> repairOperator) {
         super(problem);
         this.maxEvaluation = maxEvaluation;
         this.selectionOperator = selectionOperator;
@@ -105,25 +104,15 @@ public class NSGA_II<S extends Solution<?>> extends AbstractEvolutionaryAlgorith
         while (index < populationSize && frontIndex < fastNonDominatedSort.getNumberOfSubFronts()) {
             ArrayList<S> front = fastNonDominatedSort.getSubFront(frontIndex++);
             if (front.size() + index < populationSize) {
-                for (int i = 0; i < front.size(); i++) {
-                    try {
-                        Pt.add((S) front.get(i).clone());
-                        index++;
-                    } catch (CloneNotSupportedException e) {
-                        e.printStackTrace();
-                    }
+                for (int i = 0; i < front.size(); i++, index++) {
+                    Pt.add((S) front.get(i).copy());
                 }
 
             } else {
                 densityEstimator.compute(front);
                 front = densityEstimator.sort(front);
-                for (int i = 0; i < front.size() && index < populationSize; i++) {
-                    try {
-                        Pt.add((S) front.get(i).clone());
-                        index++;
-                    } catch (CloneNotSupportedException e) {
-                        e.printStackTrace();
-                    }
+                for (int i = 0; i < front.size() && index < populationSize; i++, index++) {
+                    Pt.add((S) front.get(i).copy());
                 }
             }
         }

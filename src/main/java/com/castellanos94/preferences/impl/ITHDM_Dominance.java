@@ -26,11 +26,11 @@ public class ITHDM_Dominance extends IntervalDominance {
     public int compare(Solution x, Solution y) {
         alpha_ND[0] = -1.0;
         alpha_ND[1] = -1.0;
-        if (x.getN_penalties() != y.getN_penalties() || x.getPenalties().compareTo(0) < 0
+        if (x.getNumberOfPenalties() != y.getNumberOfPenalties() || x.getPenalties().compareTo(0) < 0
                 || y.getPenalties().compareTo(0) < 0) {
-            if (x.getN_penalties() < y.getN_penalties())
+            if (x.getNumberOfPenalties() < y.getNumberOfPenalties())
                 return -1;
-            if (x.getN_penalties() < y.getN_penalties())
+            if (x.getNumberOfPenalties() < y.getNumberOfPenalties())
                 return 1;
             int value = x.getPenalties().compareTo(y.getPenalties());
             if (value != 0)

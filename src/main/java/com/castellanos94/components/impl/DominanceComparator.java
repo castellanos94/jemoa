@@ -9,7 +9,7 @@ import com.castellanos94.solutions.Solution;
 
 public class DominanceComparator<S extends Solution<?>> implements Comparator<S>, Ranking<S> {
 
-    protected ArrayList<S> front;
+    protected ArrayList<ArrayList<S>> front;
 
     public DominanceComparator() {
     }
@@ -29,11 +29,11 @@ public class DominanceComparator<S extends Solution<?>> implements Comparator<S>
         }
         Problem problem = a.getProblem();
 
-        if (a.getN_penalties() != b.getN_penalties() || a.getPenalties().compareTo(0) < 0
+        if (a.getNumberOfPenalties() != b.getNumberOfPenalties() || a.getPenalties().compareTo(0) < 0
                 || b.getPenalties().compareTo(0) < 0) {
-            if (a.getN_penalties() < b.getN_penalties())
+            if (a.getNumberOfPenalties() < b.getNumberOfPenalties())
                 return -1;
-            if (b.getN_penalties() < a.getN_penalties())
+            if (b.getNumberOfPenalties() < a.getNumberOfPenalties())
                 return 1;
             int value = a.getPenalties().compareTo(b.getPenalties());
             if (value != 0)
@@ -74,23 +74,30 @@ public class DominanceComparator<S extends Solution<?>> implements Comparator<S>
             }
         }
         this.front = new ArrayList<>();
+        ArrayList<S> zero = new ArrayList<>();
+        ArrayList<S> others = new ArrayList<>();
+
         for (int i = 0; i < population.size(); i++) {
             population.get(i).setRank(dominate_me.get(i).size());
             if (population.get(i).getRank() == 0)
-                front.add(population.get(i));
+                zero.add(population.get(i));
+            else
+                others.add(population.get(i));
         }
+        front.add(zero);
+        front.add(others);
         // Collections.sort(population);
 
     }
 
     @Override
     public ArrayList<S> getSubFront(int index) {
-        return this.front;
+        return this.front.get(0);
     }
 
     @Override
     public int getNumberOfSubFronts() {
-        return 1;
+        return 2;
     }
 
 }

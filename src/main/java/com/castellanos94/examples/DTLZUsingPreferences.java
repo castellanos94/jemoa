@@ -14,7 +14,6 @@ import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.operators.impl.PolynomialMutation;
-import com.castellanos94.operators.impl.RepairBoundary;
 import com.castellanos94.operators.impl.TournamentSelection;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
@@ -32,16 +31,16 @@ import tech.tablesaw.api.Table;
 
 public class DTLZUsingPreferences {
     static final String DIRECTORY = "experiments" + File.separator + "dtlz_preferences";
-    static final int EXPERIMENT = 30;
+    static final int EXPERIMENT = 50;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         Tools.setSeed(8435L);
-        String path = "src/main/resources/instances/dtlz/DTLZ3Instance.txt";
+        String path = "src/main/resources/instances/dtlz/DTLZInstance.txt";
         // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         System.out.println(instance);
 
-        DTLZ3_P problem = new DTLZ3_P(instance, null);
+        DTLZ1_P problem = new DTLZ1_P(instance, null);
         ArrayList<DoubleSolution> solutions = new ArrayList<>();
         for (int i = 0; i < instance.getInitialSolutions().length; i++) {
             DoubleSolution s = new DoubleSolution(problem);
@@ -67,7 +66,7 @@ public class DTLZUsingPreferences {
         NSGA_III<DoubleSolution> algorithm = new NSGA_III<>(problem, (int) options.get("pop_size"), maxIterations,
                 selectionOperator, (CrossoverOperator<DoubleSolution>) options.get("crossover"),
                 (MutationOperator<DoubleSolution>) options.get("mutation"), new FastNonDominatedSort<DoubleSolution>(),
-                new RepairBoundary(), referencias);
+                referencias);
         PrintStream console = System.out;
         PrintStream ps = new PrintStream(
                 DIRECTORY + File.separator + "resume_" + problem.getName() + "_" + problem.getNumberOfObjectives());
@@ -85,7 +84,7 @@ public class DTLZUsingPreferences {
             algorithm = new NSGA_III<>(problem, (int) options.get("pop_size"), maxIterations, selectionOperator,
                     (CrossoverOperator<DoubleSolution>) options.get("crossover"),
                     (MutationOperator<DoubleSolution>) options.get("mutation"),
-                    new FastNonDominatedSort<DoubleSolution>(), new RepairBoundary(), referencias); // algorithm.setReferenceHyperplane(referenceHyperplane);
+                    new FastNonDominatedSort<DoubleSolution>(), referencias); // algorithm.setReferenceHyperplane(referenceHyperplane);
             // referenceHyperplane.resetCount();
 
             algorithm.execute();

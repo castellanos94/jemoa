@@ -1,5 +1,7 @@
 package com.castellanos94.algorithms;
 
-public interface AlgorithmBuilder<A extends AbstractAlgorithm> {
+import com.castellanos94.solutions.Solution;
+
+public interface AlgorithmBuilder<A extends AbstractAlgorithm<Solution<?>>> {
     A build();
 }

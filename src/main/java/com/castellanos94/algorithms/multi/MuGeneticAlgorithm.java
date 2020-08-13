@@ -56,7 +56,15 @@ public class MuGeneticAlgorithm<S extends Solution<?>> extends AbstractEvolution
     protected ArrayList<S> replacement(ArrayList<S> population, ArrayList<S> offspring) {
         population.addAll(offspring);
         ranking.computeRanking(population);
-        return new ArrayList<>(ranking.getSubFront(0).subList(0, populationSize));
+
+        if (ranking.getSubFront(0).size() >= populationSize)
+            return new ArrayList<>(ranking.getSubFront(0).subList(0, populationSize));
+        ArrayList<S> r = new ArrayList<>();
+        r.addAll(ranking.getSubFront(0));
+        for (int i = 0; i < ranking.getSubFront(1).size() && r.size() < populationSize; i++) {
+            r.add(ranking.getSubFront(1).get(i));
+        }
+        return r;
     }
 
     @Override

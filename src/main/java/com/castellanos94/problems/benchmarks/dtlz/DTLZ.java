@@ -83,7 +83,7 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
             }
         }
         solution.setPenalties(new RealData(v));
-        solution.setN_penalties(cn);
+        solution.setNumberOfPenalties(cn);
 
     }
 
@@ -127,7 +127,7 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
 
         evaluate(solution);
 
-        solution.setN_penalties(0);
+        solution.setNumberOfPenalties(0);
         solution.setPenalties(RealData.ZERO);
         return solution;
     }
@@ -162,7 +162,7 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
             }
             evaluate(solution);
             // evaluateConstraint(solution);
-            solution.setN_penalties(0);
+            solution.setNumberOfPenalties(0);
             solution.setPenalties(RealData.ZERO);
             solutions.add(solution);
         }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 
-import com.castellanos94.datatype.Data;
 import com.castellanos94.problems.Problem;
 
 public class BinarySolution extends Solution<BitSet> {
@@ -31,6 +30,24 @@ public class BinarySolution extends Solution<BitSet> {
         }
     }
 
+    public BinarySolution(BinarySolution binarySolution) {
+        this(binarySolution.getNumberOfObjectives(), binarySolution.getNumberOfVariables(),
+                binarySolution.getNumberOfResources());
+        for (int i = 0; i < numberOfVariables; i++) {
+            this.variables.get(0).set(i, binarySolution.getVariable(0).get(i));
+        }
+        for (int i = 0; i < numberOfObjectives; i++) {
+            this.objectives.set(i, binarySolution.getObjective(i));
+        }
+        for (int i = 0; i < numberOfResources; i++) {
+            this.resources.set(i, binarySolution.getResources().get(i));
+        }
+        this.problem = binarySolution.getProblem();
+        this.penalties = binarySolution.getPenalties();
+        this.numberOfPenalties = binarySolution.getNumberOfPenalties();
+        this.attributes = (HashMap<String, Object>) binarySolution.getAttributes().clone();
+    }
+
     @Override
     public BitSet getVariable(int index) {
         if (index != 0)
@@ -45,24 +62,9 @@ public class BinarySolution extends Solution<BitSet> {
         super.setVariable(index, value);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Object clone() throws CloneNotSupportedException {
-        BinarySolution clone = new BinarySolution(this.getNumberOfObjectives(), this.getNumberOfVariables(),
-                this.getNumberOfResources());
-        clone.setVariables((ArrayList<BitSet>) this.getVariables().clone());
-        clone.setObjectives((ArrayList<Data>) (this.getObjectives().clone()));
-        clone.setResources((ArrayList<Data>) this.getResources().clone());
-        clone.setRank(this.getRank());
-        clone.setProblem(this.problem);
-
-        if (this.getPenalties() != null) {
-            clone.setPenalties((Data) this.getPenalties().clone());
-        }
-        clone.setN_penalties(this.getN_penalties());
-        if (this.attributes != null)
-            clone.setAttributes((HashMap<String, Object>) this.getAttributes().clone());
-        return clone;
+    public BinarySolution copy() {
+        return new BinarySolution(this);
     }
 
     @Override
@@ -73,7 +75,7 @@ public class BinarySolution extends Solution<BitSet> {
         }
         return String.format("%s * %s * %s * %s * %3d", str.toString(),
                 objectives.toString().replace("[", "").replace("]", ""),
-                resources.toString().replace("[", "").replace("]", ""), penalties, n_penalties);
+                resources.toString().replace("[", "").replace("]", ""), penalties, numberOfPenalties);
     }
 
 }

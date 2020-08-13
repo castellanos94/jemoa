@@ -50,7 +50,7 @@ public class GeneticAlgorithm<S extends Solution<?>> extends AbstractEvolutionar
             S a = offspring.get(i);
             for (int j = 0; j < population.size(); j++) {
                 int value = a.getObjectives().get(0).compareTo(population.get(j).getObjectives().get(0));
-                int penal = a.getN_penalties().compareTo(population.get(j).getN_penalties());
+                int penal = a.getNumberOfPenalties().compareTo(population.get(j).getNumberOfPenalties());
                 if (Problem.MAXIMIZATION == problem.getObjectives_type()[0]) {
                     if (value == 1 && penal < 0) {
                         population.set(j, a);

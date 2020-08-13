@@ -33,7 +33,7 @@ public class ReferenceHyperplane<S extends Solution<?>> {
         else
             references.clear();
         for (S solution : solutions) {
-            references.add(new ReferencePointC<>(solution.getObjectives()));
+            references.add(new ReferencePointC<S>(solution.getObjectives()));
         }
     }
 
@@ -107,7 +107,6 @@ public class ReferenceHyperplane<S extends Solution<?>> {
 
         for (int i = 0; i <= H + number_of_objectives - 2; i++) {
             double tmp = (double) i / H;
-            // if (!list.contains(tmp))
             list.add(new RealData(tmp));
         }
         return list;
@@ -145,28 +144,28 @@ public class ReferenceHyperplane<S extends Solution<?>> {
                 this.segmentations);
         ArrayList<ReferencePointC<S>> pointCs = new ArrayList<>();
         for (ReferencePointC<S> p : this.references) {
-            pointCs.add(new ReferencePointC<>((ArrayList<Data>) p.getPoint().clone()));
+            pointCs.add(new ReferencePointC<>(p.getPoint()));
         }
         referenceHyperplane.setReferences(pointCs);
         return referenceHyperplane;
     }
 
     public static class ReferencePointC<S extends Solution<?>> {
-        private ArrayList<Data> point;
-        private ArrayList<Pair<S, Data>> members;
+        private List<Data> point;
+        private List<Pair<S, Data>> members;
         private int potentialMembers;
 
-        public ReferencePointC(ArrayList<Data> point) {
+        public ReferencePointC(List<Data> point) {
             this.point = point;
             this.members = new ArrayList<>();
             this.potentialMembers = 0;
         }
 
-        public ArrayList<Pair<S, Data>> getMembers() {
+        public List<Pair<S, Data>> getMembers() {
             return members;
         }
 
-        public ArrayList<Data> getPoint() {
+        public List<Data> getPoint() {
             return point;
         }
 
@@ -228,11 +227,8 @@ public class ReferenceHyperplane<S extends Solution<?>> {
             return members.size() > 0;
         }
 
-        @Override
-        @SuppressWarnings("unchecked")
-        public Object clone() throws CloneNotSupportedException {
-            ReferencePointC<S> p = new ReferencePointC<>((ArrayList<Data>) this.point.clone());
-            return p;
+        public Object copy() {
+            return new ReferencePointC<>(this.point);
         }
 
         @Override

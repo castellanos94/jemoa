@@ -44,9 +44,8 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * Classify the solution using the preference model associated with the dm.
      * 
      * @param x solution to classify
-     * @throws CloneNotSupportedException
      */
-    public void classify(S x) throws CloneNotSupportedException {
+    public void classify(S x) {
         int hsat = 0, sat = 0, dis = 0, hdis = 0;
         for (int dm = 0; dm < instance.getNumDMs(); dm++) {
             if (!problem.getPreferenceModel(dm).isSupportsUtilityFunction()) {// Dm con modelo de outranking
@@ -92,12 +91,14 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
 
             }
         }
-        // System.out.printf("\tHSat = %2d, Sat = %2d, Dis = %2d, HDis = %2d\n", hsat,
-        // sat, dis, hdis);
+        setPenalties(x, hsat, sat, dis, hdis);
 
+    }
+
+    private void setPenalties(S x, int hsat, int sat, int dis, int hdis) {
         Data penaltie = x.getPenalties();
-        int violated = x.getN_penalties();
-        
+        int violated = x.getNumberOfPenalties();
+
         if (hsat < sat) {
             penaltie = penaltie.plus((hsat - sat) / 3.0);
             violated++;
@@ -117,7 +118,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
             violated++;
         }
         x.setPenalties(penaltie);
-        x.setN_penalties(violated);
+        x.setNumberOfPenalties(violated);
         int[] iclass = new int[4];
         iclass[0] = hsat;
         iclass[1] = sat;
@@ -134,13 +135,13 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * @return
      * @throws CloneNotSupportedException
      */
-    protected int asc_rule(S x, int dm) throws CloneNotSupportedException {
+    protected int asc_rule(S x, int dm) {
         ITHDM_Preference pref = new ITHDM_Preference(problem, problem.getPreferenceModel(dm));
         Interval[][] r2 = instance.getR2()[dm];
         int clase = -1;
-        S w = (S) x.clone();
+        S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
-        w.setN_penalties(0);
+        w.setNumberOfPenalties(0);
         for (int i = 0; i < r2.length && clase == -1; i++) {
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
                 w.setObjective(j, r2[i][j]);
@@ -172,13 +173,13 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * @return
      * @throws CloneNotSupportedException
      */
-    protected int desc_rule(S x, int dm) throws CloneNotSupportedException {
+    protected int desc_rule(S x, int dm) {
         ITHDM_Preference pref = new ITHDM_Preference(problem, problem.getPreferenceModel(dm));
         Interval[][] r1 = instance.getR1()[dm];
         int clase = -1;
-        S w = (S) x.clone();
+        S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
-        w.setN_penalties(0);
+        w.setNumberOfPenalties(0);
         for (int i = r1.length - 1; i > 0 && clase == -1; i--) {
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
                 w.setObjective(j, r1[i][j]);
@@ -209,14 +210,13 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * @param x  solution to classificate
      * @param dm prefence model
      * @return True if isHighSat otherwise false
-     * @throws CloneNotSupportedException
      */
-    protected boolean isHighSat(S x, int dm) throws CloneNotSupportedException {
+    protected boolean isHighSat(S x, int dm) {
         ITHDM_Preference pref = new ITHDM_Preference(problem, problem.getPreferenceModel(dm));
         Interval[][] r2 = instance.getR2()[dm];
-        S w = (S) x.clone();
+        S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
-        w.setN_penalties(0);
+        w.setNumberOfPenalties(0);
         for (int i = 0; i < r2.length; i++) {
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
                 w.setObjective(j, r2[i][j]);
@@ -235,14 +235,13 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * @param x  solution to class
      * @param dm model preference
      * @return true if is high dis otherwise false
-     * @throws CloneNotSupportedException
      */
-    protected boolean isHighDis(S x, int dm) throws CloneNotSupportedException {
+    protected boolean isHighDis(S x, int dm) {
         ITHDM_Preference pref = new ITHDM_Preference(problem, problem.getPreferenceModel(dm));
         Interval[][] r1 = instance.getR1()[dm];
-        S w = (S) x.clone();
+        S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
-        w.setN_penalties(0);
+        w.setNumberOfPenalties(0);
         for (int i = 0; i < r1.length; i++) {
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
                 w.setObjective(j, r1[i][j]);
@@ -263,14 +262,13 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * @param x
      * @param dm
      * @return
-     * @throws CloneNotSupportedException
      */
-    public boolean isSatWithXUF(S x, int dm) throws CloneNotSupportedException {
+    public boolean isSatWithXUF(S x, int dm) {
         UF_ITHDM_Preference pref = new UF_ITHDM_Preference(problem, problem.getPreferenceModel(dm));
         Interval[][] r1 = instance.getR1()[dm];
-        S w = (S) x.clone();
+        S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
-        w.setN_penalties(0);
+        w.setNumberOfPenalties(0);
         for (int i = 0; i < r1.length; i++) {
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
                 w.setObjective(j, r1[i][j]);
@@ -300,14 +298,13 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * @param x
      * @param dm
      * @return
-     * @throws CloneNotSupportedException
      */
-    public boolean isDisWithXUF(S x, int dm) throws CloneNotSupportedException {
+    public boolean isDisWithXUF(S x, int dm) {
         UF_ITHDM_Preference pref = new UF_ITHDM_Preference(problem, problem.getPreferenceModel(dm));
         Interval[][] r2 = instance.getR2()[dm];
-        S w = (S) x.clone();
+        S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
-        w.setN_penalties(0);
+        w.setNumberOfPenalties(0);
         int count = 0;
         for (int i = 0; i < r2.length; i++) {
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
@@ -340,14 +337,13 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * @param x
      * @param dm
      * @return
-     * @throws CloneNotSupportedException
      */
-    public boolean isHighSatWithXUF(S x, int dm) throws CloneNotSupportedException {
+    public boolean isHighSatWithXUF(S x, int dm) {
         UF_ITHDM_Preference pref = new UF_ITHDM_Preference(problem, problem.getPreferenceModel(dm));
         Interval[][] r2 = instance.getR2()[dm];
-        S w = (S) x.clone();
+        S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
-        w.setN_penalties(0);
+        w.setNumberOfPenalties(0);
         for (int i = 0; i < r2.length; i++) {
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
                 w.setObjective(j, r2[i][j]);
@@ -366,14 +362,13 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * @param x
      * @param dm
      * @return
-     * @throws CloneNotSupportedException
      */
-    public boolean isHighDisWithXUF(S x, int dm) throws CloneNotSupportedException {
+    public boolean isHighDisWithXUF(S x, int dm) {
         UF_ITHDM_Preference pref = new UF_ITHDM_Preference(problem, problem.getPreferenceModel(dm));
         Interval[][] r1 = instance.getR2()[dm];
-        S w = (S) x.clone();
+        S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
-        w.setN_penalties(0);
+        w.setNumberOfPenalties(0);
         for (int i = 0; i < r1.length; i++) {
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
                 w.setObjective(j, r1[i][j]);
@@ -385,7 +380,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
 
     }
 
-    public static void main(String[] args) throws FileNotFoundException, CloneNotSupportedException {
+    public static void main(String[] args) throws FileNotFoundException {
         PSPI_Instance ins = (PSPI_Instance) new PSPI_Instance("src/main/resources/instances/gd/GD_ITHDM-UFCA.txt")
                 .loadInstance();
         PSPI_GD problem = new PSPI_GD(ins);

@@ -33,6 +33,25 @@ public class DoubleSolution extends Solution<Double> {
         this.bounds = bounds;
     }
 
+    public DoubleSolution(DoubleSolution doubleSolution) {
+        this(doubleSolution.getNumberOfObjectives(), doubleSolution.getNumberOfVariables(),
+                doubleSolution.getNumberOfResources(), doubleSolution.getBounds());
+        for (int i = 0; i < numberOfVariables; i++) {
+            this.variables.set(i, doubleSolution.getVariable(i));
+        }
+        for (int i = 0; i < numberOfObjectives; i++) {
+            this.objectives.set(i, doubleSolution.getObjective(i));
+        }
+        for (int i = 0; i < numberOfResources; i++) {
+            this.resources.set(i, doubleSolution.getResources().get(i));
+        }
+        this.problem = doubleSolution.getProblem();
+        this.attributes = (HashMap<String, Object>) doubleSolution.getAttributes().clone();
+        this.penalties = doubleSolution.getPenalties();
+        this.numberOfPenalties = doubleSolution.getNumberOfPenalties();
+
+    }
+
     public ArrayList<Pair<Data, Data>> getBounds() {
         return bounds;
     }
@@ -49,27 +68,9 @@ public class DoubleSolution extends Solution<Double> {
         this.bounds = bounds;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Object clone() throws CloneNotSupportedException {
-        DoubleSolution clone = new DoubleSolution(this.getNumberOfObjectives(), this.getNumberOfVariables(),
-                this.getNumberOfResources(), this.bounds);
-        if (this.problem != null) {
-            clone.setProblem(this.problem);
-        }
-        clone.setVariables((ArrayList<Double>) this.getVariables().clone());
-        clone.setObjectives((ArrayList<Data>) (this.getObjectives().clone()));
-        clone.setResources((ArrayList<Data>) this.getResources().clone());
-        clone.setRank(this.getRank());
-        if (this.getPenalties() != null) {
-            clone.setPenalties((Data) this.getPenalties().clone());
-        }
-        clone.setN_penalties(this.getN_penalties());
-        if (this.attributes != null)
-            clone.setAttributes((HashMap<String, Object>) this.getAttributes().clone());
-        if (this.bounds != null)
-            clone.setBounds(this.bounds);
-        return clone;
+    public DoubleSolution copy() {
+        return new DoubleSolution(this);
     }
 
 }
