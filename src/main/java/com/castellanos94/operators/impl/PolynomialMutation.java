@@ -2,11 +2,8 @@ package com.castellanos94.operators.impl;
 
 import java.util.Random;
 
-import com.castellanos94.datatype.Data;
-import com.castellanos94.datatype.RealData;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.solutions.DoubleSolution;
-import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
 public class PolynomialMutation implements MutationOperator<DoubleSolution> {
@@ -41,35 +38,19 @@ public class PolynomialMutation implements MutationOperator<DoubleSolution> {
                     y = yl;
                 } else {
                     delta1 = (y - yl) / (yu - yl);
-                    // delta1 = y.minus(yl).div(yu.minus(yl));
                     delta2 = (yu - y) / (yu - yl);
-                    // delta2 = yu.minus(y).div(yu.minus(yl));
-                    // rnd = Data.getZeroByType(y).plus(randomGenerator.nextDouble());
                     rnd = y + randomGenerator.nextDouble();
                     mutPow = 1.0 / (distributionIndex + 1.0);
                     if (rnd.compareTo(0.5) <= 0) {
                         xy = 1.0 - delta1;
-                        // xy = RealData.ONE.minus(delta1);
                         val = 2.0 * rnd + (1.0 - 2.0 * rnd) * (Math.pow(xy, distributionIndex + 1.0));
-                        // Data value = RealData.ONE.minus(rnd.times(2)).times(xy.pow(distributionIndex
-                        // + 1.0));
-                        // val = RealData.ZERO.plus(2).plus(value);
                         deltaq = Math.pow(val, mutPow) - 1.0;
-                        // deltaq = val.pow(mutPow).minus(RealData.ONE);
                     } else {
                         xy = 1.0 - delta2;
-                        // xy = RealData.ONE.minus(delta2);
-                        val = 2.0 * (1.0 - rnd) + 2.0 * (rnd - 0.5) * (Math.pow(xy, distributionIndex + 1.0));
-                        // val = RealData.ZERO.plus(2).times(RealData.ONE.minus(rnd)).plus(
-                        // RealData.ZERO.plus(2).times(rnd.minus(0.5).times(xy.pow(distributionIndex +
-                        // 1.0))));
-
+                        val = 2.0 * (1.0 - rnd) + 2.0 * (rnd - 0.5) * (Math.pow(xy, distributionIndex + 1.0));                    
                         deltaq = 1.0 - Math.pow(val, mutPow);
-                        // deltaq = RealData.ONE.minus(val.pow(mutPow));
                     }
                     y = y + deltaq * (yu - yl);
-                    // y = y.plus(deltaq.times(yu.minus(yl)));
-                    // y = solutionRepair.repairSolutionVariableValue(y, yl, yu);
                 }
                 solution.setVariable(i, y);
             }

@@ -337,7 +337,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
             }
         }
         if (source.size() < this.pop_size) {
-            int lastIndex = source.get(source.size() - 1).getRank();
+            int lastIndex = (source.isEmpty()) ? 0 : source.get(source.size() - 1).getRank();
             for (int i = lastIndex; i < this.fronts.size() && source.size() < this.pop_size; i++) {
                 for (int j = 0; j < this.fronts.get(i).size(); j++) {
                     if (source.size() < this.pop_size - 1) {

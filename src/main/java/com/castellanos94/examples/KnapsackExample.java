@@ -20,13 +20,13 @@ import com.castellanos94.solutions.BinarySolution;
 
 public class KnapsackExample {
     public static void main(String[] args) throws IOException, CloneNotSupportedException {
-        Problem<BinarySolution> problem;// new KnapsackProblem( (KnapsackIntance)
-        // Tools.getInstanceFromResource(ProblemType.Knapsack, "Instancia10.txt"));
+        Problem<BinarySolution> problem;
         problem = new KnapsackProblem(
                 (KnapsackIntance) new KnapsackIntance("src/main/resources/instances/knapsack/Instancia10.txt")
                         .loadInstance());
 
-        int maxIteration = 1000, popSize = 100;
+        int maxIteration = 1000;
+        int popSize = 100;
         System.out.println(problem);
         SelectionOperator<BinarySolution> selectionOperator = new RandomSelection<>(popSize / 2);
         CrossoverOperator<BinarySolution> crossoverOperator = new HUXCrossover();

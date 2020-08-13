@@ -18,7 +18,7 @@ import com.castellanos94.operators.impl.PolynomialMutation;
 import com.castellanos94.operators.impl.SBXCrossover;
 import com.castellanos94.operators.impl.TournamentSelection;
 import com.castellanos94.problems.benchmarks.dtlz.*;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.Plotter;
 import com.castellanos94.utils.Scatter3D;
 import com.castellanos94.utils.Tools;
@@ -26,29 +26,25 @@ import com.castellanos94.utils.Tools;
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.Table;
 
-public class NSGA_III_DTLZ {
-    static final String directory = "experiments" + File.separator + "dtlz" ;
-    private static int EXPERIMENT = 30;
+public class DTLZNsga3 {
+    static final String DIRECTORY = "experiments" + File.separator + "dtlz";
+    static final int EXPERIMENT = 50;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
-         //Tools.setSeed(141414L);
         Tools.setSeed(8435L);
-        
-        int n_problem = 1;
-        int number_of_objectives = 3;
 
-        ArrayList<Solution> bag = new ArrayList<>();
+        int numberProblem = 1;
+        int numberOfObjectives = 3;
+
+        ArrayList<DoubleSolution> bag = new ArrayList<>();
         long averageTime = 0;
         // 1,3
-        NSGA_III algorithm = DTLZ_TestSuite(n_problem, number_of_objectives);
-        /*ReferenceHyperplane referenceHyperplane = new ReferenceHyperplane(number_of_objectives,
-                algorithm.getNumberOfDivisions());
-        referenceHyperplane.execute();
-        algorithm.setReferenceHyperplane(referenceHyperplane);*/
+        NSGA_III<DoubleSolution> algorithm = dtlzTestSuite(numberProblem, numberOfObjectives);
+
         DTLZ problem = (DTLZ) algorithm.getProblem();
         PrintStream console = System.out;
         PrintStream ps = new PrintStream(
-                directory + File.separator + "resume_" + problem.getName() + "_" + problem.getNumberOfObjectives());
+                DIRECTORY + File.separator + "resume_" + problem.getName() + "_" + problem.getNumberOfObjectives());
 
         System.setOut(console);
         System.out.println(problem);
@@ -59,9 +55,7 @@ public class NSGA_III_DTLZ {
         System.out.println(algorithm);
 
         for (int i = 0; i < EXPERIMENT; i++) {
-            algorithm = DTLZ_TestSuite(n_problem, number_of_objectives);
-            //algorithm.setReferenceHyperplane(referenceHyperplane);
-            //referenceHyperplane.resetCount();
+            algorithm = dtlzTestSuite(numberProblem, numberOfObjectives);
 
             algorithm.execute();
             averageTime += algorithm.getComputeTime();
@@ -70,7 +64,6 @@ public class NSGA_III_DTLZ {
             System.out.println(i + " time: " + algorithm.getComputeTime() + " ms.");
             System.setOut(ps);
             System.out.println(i + " time: " + algorithm.getComputeTime() + " ms.");
-           // Solution.writSolutionsToFile(directory + File.separator + problem.getName() + "_" + i, algorithm.getSolutions());
             bag.addAll(algorithm.getSolutions());
         }
         System.setOut(console);
@@ -83,7 +76,7 @@ public class NSGA_III_DTLZ {
         System.out.println("Average time : " + (double) averageTime / EXPERIMENT + " ms.");
         System.out.println("Solutions in the bag: " + bag.size());
 
-        Ranking compartor = new DominanceComparator();
+        Ranking<DoubleSolution> compartor = new DominanceComparator<>();
         compartor.computeRanking(bag);
 
         System.setOut(console);
@@ -94,22 +87,23 @@ public class NSGA_III_DTLZ {
         System.out.println("Fronts : " + compartor.getNumberOfSubFronts());
         System.out.println("Front 0: " + compartor.getSubFront(0).size());
 
-        File f = new File(directory);
+        File f = new File(DIRECTORY);
         if (!f.exists())
             f.mkdirs();
-        f = new File(directory + File.separator + "nsga_iii_bag_" + problem.getName() + "_f0_"
+        f = new File(DIRECTORY + File.separator + "nsga_iii_bag_" + problem.getName() + "_f0_"
                 + problem.getNumberOfObjectives());
 
         ArrayList<String> strings = new ArrayList<>();
-        for (Solution solution : compartor.getSubFront(0))
+        for (DoubleSolution solution : compartor.getSubFront(0))
             strings.add(solution.toString());
 
         Files.write(f.toPath(), strings, Charset.defaultCharset());
         if (problem.getNumberOfObjectives() == 3) {
-            Plotter plotter = new Scatter3D(compartor.getSubFront(0),
-                    directory + File.separator + problem.getName() + "_nsga3");
+            Plotter plotter = new Scatter3D<>(compartor.getSubFront(0),
+                    DIRECTORY + File.separator + problem.getName() + "_nsga3");
             plotter.plot();
-            //new Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator + problem.getName()).plot();
+            // new Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator +
+            // problem.getName()).plot();
         } else {
             Table table = Table.create(problem.getName() + "_f0_" + problem.getNumberOfObjectives());
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
@@ -123,81 +117,78 @@ public class NSGA_III_DTLZ {
         }
     }
 
-    private static NSGA_III DTLZ_TestSuite(int p, int number_of_objectives) {
+    private static NSGA_III<DoubleSolution> dtlzTestSuite(int p, int numberOfObjectives) {
 
-        HashMap<String, Object> options = setup(number_of_objectives);
+        HashMap<String, Object> options = setup(numberOfObjectives);
         DTLZ problem = null;
         int maxIterations = 100;
         switch (p) {
             case 1:
-                if (number_of_objectives == 3) {
+                if (numberOfObjectives == 3) {
                     problem = new DTLZ1();
                     maxIterations = 400;
-                } else if (number_of_objectives == 5) {
-                    problem = new DTLZ1(number_of_objectives, number_of_objectives + 5).setK(5);
+                } else if (numberOfObjectives == 5) {
+                    problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
                     maxIterations = 600;
-                } else if (number_of_objectives == 8) {
-                    problem = new DTLZ1(number_of_objectives, number_of_objectives + 5).setK(5);
+                } else if (numberOfObjectives == 8) {
+                    problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
                     maxIterations = 750;
-                } else if (number_of_objectives == 10) {
-                    problem = new DTLZ1(number_of_objectives, number_of_objectives + 5).setK(5);
+                } else if (numberOfObjectives == 10) {
+                    problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
                     maxIterations = 1000;
-                } else if (number_of_objectives == 15) {
-                    problem = new DTLZ1(number_of_objectives, number_of_objectives + 5).setK(5);
+                } else if (numberOfObjectives == 15) {
+                    problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
                     maxIterations = 1500;
                 }
                 break;
             case 2:
-                if (number_of_objectives == 3) {
+                if (numberOfObjectives == 3) {
                     problem = new DTLZ2();
                     maxIterations = 250;
-                } else if (number_of_objectives == 5) {
-                    problem = new DTLZ2(number_of_objectives, number_of_objectives + 10).setK(10);
+                } else if (numberOfObjectives == 5) {
+                    problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
                     maxIterations = 350;
-                } else if (number_of_objectives == 8) {
-                    problem = new DTLZ2(number_of_objectives, number_of_objectives + 10).setK(10);
+                } else if (numberOfObjectives == 8) {
+                    problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
                     maxIterations = 500;
-                } else if (number_of_objectives == 10) {
-                    problem = new DTLZ2(number_of_objectives, number_of_objectives + 10).setK(10);
+                } else if (numberOfObjectives == 10) {
+                    problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
                     maxIterations = 750;
-                } else if (number_of_objectives == 15) {
-                    problem = new DTLZ2(number_of_objectives, number_of_objectives + 10).setK(10);
+                } else if (numberOfObjectives == 15) {
+                    problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
                     maxIterations = 1000;
                 }
                 break;
             case 3:
-                if (number_of_objectives == 3) {
+                if (numberOfObjectives == 3) {
                     problem = new DTLZ3();
                     maxIterations = 1000;
-                } else if (number_of_objectives == 5) {
-                    problem = new DTLZ3(number_of_objectives, number_of_objectives + 10).setK(10);
+                } else if (numberOfObjectives == 5 || numberOfObjectives == 9) {
+                    problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
                     maxIterations = 1000;
-                } else if (number_of_objectives == 8) {
-                    problem = new DTLZ3(number_of_objectives, number_of_objectives + 10).setK(10);
-                    maxIterations = 1000;
-                } else if (number_of_objectives == 10) {
-                    problem = new DTLZ3(number_of_objectives, number_of_objectives + 10).setK(10);
+                } else if (numberOfObjectives == 10) {
+                    problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
                     maxIterations = 1500;
-                } else if (number_of_objectives == 15) {
-                    problem = new DTLZ3(number_of_objectives, number_of_objectives + 10).setK(10);
+                } else if (numberOfObjectives == 15) {
+                    problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
                     maxIterations = 2000;
                 }
                 break;
             case 4:
-                if (number_of_objectives == 3) {
+                if (numberOfObjectives == 3) {
                     problem = new DTLZ4();
                     maxIterations = 600;
-                } else if (number_of_objectives == 5) {
-                    problem = new DTLZ4(number_of_objectives, number_of_objectives + 10).setK(10);
+                } else if (numberOfObjectives == 5) {
+                    problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
                     maxIterations = 1000;
-                } else if (number_of_objectives == 8) {
-                    problem = new DTLZ4(number_of_objectives, number_of_objectives + 10).setK(10);
+                } else if (numberOfObjectives == 8) {
+                    problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
                     maxIterations = 1250;
-                } else if (number_of_objectives == 10) {
-                    problem = new DTLZ4(number_of_objectives, number_of_objectives + 10).setK(10);
+                } else if (numberOfObjectives == 10) {
+                    problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
                     maxIterations = 2000;
-                } else if (number_of_objectives == 15) {
-                    problem = new DTLZ4(number_of_objectives, number_of_objectives + 10).setK(10);
+                } else if (numberOfObjectives == 15) {
+                    problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
                     maxIterations = 3000;
                 }
                 break;
@@ -212,18 +203,22 @@ public class NSGA_III_DTLZ {
             case 7:
                 problem = new DTLZ7();
                 maxIterations = 500;
+                break;
+            default:
+                error("Invalid number problem");
+                break;
         }
 
-        SelectionOperator selectionOperator = new TournamentSelection((int) options.get("pop_size"),
-                new DominanceComparator());
-        return new NSGA_III(problem, (int) options.get("pop_size"), maxIterations, (int) options.get("partitions"),
-                selectionOperator, (CrossoverOperator) options.get("crossover"),
-                (MutationOperator) options.get("mutation"));
+        SelectionOperator<DoubleSolution> selectionOperator = new TournamentSelection<>((int) options.get("pop_size"),
+                new DominanceComparator<>());
+        return new NSGA_III<>(problem, (int) options.get("pop_size"), maxIterations, (int) options.get("partitions"),
+                selectionOperator, (CrossoverOperator<DoubleSolution>) options.get("crossover"),
+                (MutationOperator<DoubleSolution>) options.get("mutation"));
     }
 
-    private static HashMap<String, Object> setup(int number_of_objectives) {
+    private static HashMap<String, Object> setup(int numberOfObjectives) {
         HashMap<String, Object> map = new HashMap<>();
-        switch (number_of_objectives) {
+        switch (numberOfObjectives) {
             case 3:
                 map.put("pop_size", 92);
                 map.put("partitions", 12);
@@ -244,10 +239,17 @@ public class NSGA_III_DTLZ {
                 map.put("pop_size", 136);
                 map.put("partitions", 3);
                 break;
+            default:
+                error("Invalid number of objectives");
+                break;
         }
         map.put("crossover", new SBXCrossover(30, 1.0));
         map.put("mutation", new PolynomialMutation());
         return map;
+    }
+
+    private static void error(String msg) {
+        throw new IllegalArgumentException(msg);
     }
 
 }

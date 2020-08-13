@@ -18,16 +18,16 @@ import com.castellanos94.utils.Plotter;
 import com.castellanos94.utils.Scatter2D;
 import com.castellanos94.utils.Tools;
 
-public class NSGA_IIExample {
+public class ZDT1Nsga2Example {
     public static void main(String[] args) throws CloneNotSupportedException {
         Tools.setSeed(77003L);
 
         ZDT1 problem = new ZDT1();
-        int maxIteration = 100000, popSize = 100;
+        int maxIteration = 100000;
+        int popSize = 100;
         System.out.println(problem);
         SelectionOperator<DoubleSolution> selectionOperator = new TournamentSelection<>(popSize,
-                new DominanceComparator<DoubleSolution>());
-        // selectionOperator = new RandomSelection(popSize / 2);
+                new DominanceComparator<>());
         double crossoverProbability = 0.9;
         double crossoverDistributionIndex = 20.0;
 

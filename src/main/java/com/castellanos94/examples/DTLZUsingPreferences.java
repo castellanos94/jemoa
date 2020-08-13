@@ -30,9 +30,9 @@ import com.castellanos94.utils.Tools;
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.Table;
 
-public class DTLZ_usingPref {
-    static final String directory = "experiments" + File.separator + "dtlz_preferences";
-    private static int EXPERIMENT = 30;
+public class DTLZUsingPreferences {
+    static final String DIRECTORY = "experiments" + File.separator + "dtlz_preferences";
+    static final int EXPERIMENT = 30;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         Tools.setSeed(8435L);
@@ -70,7 +70,7 @@ public class DTLZ_usingPref {
                 new RepairBoundary(), referencias);
         PrintStream console = System.out;
         PrintStream ps = new PrintStream(
-                directory + File.separator + "resume_" + problem.getName() + "_" + problem.getNumberOfObjectives());
+                DIRECTORY + File.separator + "resume_" + problem.getName() + "_" + problem.getNumberOfObjectives());
 
         System.setOut(console);
         System.out.println(problem);
@@ -120,10 +120,10 @@ public class DTLZ_usingPref {
         System.out.println("Fronts : " + compartor.getNumberOfSubFronts());
         System.out.println("Front 0: " + compartor.getSubFront(0).size());
 
-        File f = new File(directory);
+        File f = new File(DIRECTORY);
         if (!f.exists())
             f.mkdirs();
-        f = new File(directory + File.separator + "nsga_iii_bag_" + problem.getName() + "_f0_"
+        f = new File(DIRECTORY + File.separator + "nsga_iii_bag_" + problem.getName() + "_f0_"
                 + problem.getNumberOfObjectives());
 
         ArrayList<String> strings = new ArrayList<>();
@@ -133,7 +133,7 @@ public class DTLZ_usingPref {
         Files.write(f.toPath(), strings, Charset.defaultCharset());
         if (problem.getNumberOfObjectives() == 3) {
             Plotter plotter = new Scatter3D<DoubleSolution>(compartor.getSubFront(0),
-                    directory + File.separator + problem.getName() + "_nsga3");
+                    DIRECTORY + File.separator + problem.getName() + "_nsga3");
             plotter.plot();
             // new Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator +
             // problem.getName()).plot();
