@@ -10,14 +10,14 @@ import java.util.stream.IntStream;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.instances.PSPInstance;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.BinarySolution;
 import com.castellanos94.utils.Tools;
 
 /*
 *@author Castellanos Alvarez, Alejandro
 *@since 22/03/202
 */
-public class PSP extends Problem {
+public class PSP extends Problem<BinarySolution> {
 
     public PSP(PSPInstance instance) {
         this.instance = instance;
@@ -31,7 +31,7 @@ public class PSP extends Problem {
     }
 
     @Override
-    public void evaluate(Solution solution) {
+    public void evaluate(BinarySolution solution) {
 
         Data[] objs = new Data[numberOfObjectives];
         for (int i = 0; i < objs.length; i++) {
@@ -40,7 +40,8 @@ public class PSP extends Problem {
         Data[][] projects = instance.getDataMatrix("projects");
 
         for (int i = 0; i < solution.getVariables().size(); i++) {
-            if (solution.getVariables().get(i).compareTo(1) == 0) {
+            if (solution.getVariable(0).get(i)) {
+                // if (solution.getVariables().get(i).compareTo(1) == 0) {
                 // current_budget = (IntegerData) current_budget.addition(projects[i][0]);
                 for (int j = 0; j < numberOfObjectives; j++) {
                     objs[j] = objs[j].plus(projects[i][3 + j]);
@@ -56,7 +57,7 @@ public class PSP extends Problem {
     }
 
     @Override
-    public void evaluateConstraint(Solution sol) {
+    public void evaluateConstraint(BinarySolution sol) {
         Data budget = instance.getData("budget");
         IntegerData current_budget = new IntegerData(0);
         Data one = new IntegerData(1);
@@ -74,7 +75,8 @@ public class PSP extends Problem {
         }
 
         for (int i = 0; i < numberOfDecisionVars; i++) {
-            if (sol.getVariables().get(i).compareTo(one) == 0) {
+            if (sol.getVariable(0).get(i)) {
+                // if (sol.getVariables().get(i).compareTo(one) == 0) {
                 current_budget = (IntegerData) current_budget.plus(projects[i][0]);
                 int area = projects[i][1].intValue() - 1;
                 int region = projects[i][2].intValue() - 1;
@@ -117,8 +119,8 @@ public class PSP extends Problem {
     }
 
     @Override
-    public Solution randomSolution() {
-        Solution sol = new Solution(this);
+    public BinarySolution randomSolution() {
+        BinarySolution sol = new BinarySolution(this);
         List<Integer> positions = IntStream.range(0, numberOfDecisionVars).boxed().collect(Collectors.toList());
         Collections.shuffle(positions);
         Data[][] projects = instance.getDataMatrix("projects");
@@ -127,14 +129,13 @@ public class PSP extends Problem {
         for (int i = 0; i < positions.size(); i++) {
             if (Tools.getRandom().nextDouble() < 0.5
                     && projects[positions.get(i)][0].plus(current_budget).compareTo(budget) <= 0) {
-                sol.setVariables(positions.get(i), new IntegerData(1));
+                // sol.setVariables(positions.get(i), new IntegerData(1));
+                sol.getVariable(0).set(positions.get(i));
                 current_budget = (IntegerData) current_budget.plus(projects[positions.get(i)][0]);
                 /*
                  * for (int j = 0; j < nObjectives ;j++) { objs[j] = (RealData)
                  * objs[j].addition(projects[positions.get(i)][3 + j]); }
                  */
-            } else {
-                sol.setVariables(positions.get(i), new IntegerData(0));
             }
         }
         sol.setResource(0, current_budget);

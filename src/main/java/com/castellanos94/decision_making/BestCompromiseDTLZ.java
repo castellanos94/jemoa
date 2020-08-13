@@ -12,6 +12,7 @@ import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.impl.ITHDM_Preference;
 import com.castellanos94.problems.preferences.dtlz.*;
 import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
+import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
@@ -33,16 +34,16 @@ public class BestCompromiseDTLZ {
      * 
      * @return
      */
-    public ArrayList<Solution> execute() {
+    public ArrayList<DoubleSolution> execute() {
         // System.out.println("call sampling");
-        ArrayList<Solution> sample;
+        ArrayList<DoubleSolution> sample;
        // sample = problem.generateSampleNonDominated(MAX_T);
         // sample = problem.generateSample(MAX_T);
          sample = problem.generateRandomSample(MAX_T);
         // System.out.println("Sample size: " + sample.size());
         RealData sigma_out, sigma_in, best = RealData.ZERO, bestPref = RealData.ZERO;
         int bestIndex = -1, bestIndexPref = -1;
-        ArrayList<Pair<Solution, RealData>> candidatos = new ArrayList<>();
+        ArrayList<Pair<DoubleSolution, RealData>> candidatos = new ArrayList<>();
         int ratio = MAX_T / 10;
         for (int i = 0; i < sample.size() - 1; i++) {
             for (int j = 1; j < sample.size(); j++) {
@@ -50,19 +51,19 @@ public class BestCompromiseDTLZ {
                 sigma_out = preference.getSigmaXY();
                 sigma_in = preference.getSigmaYX();
                 RealData tmp = (RealData) sigma_out.minus(sigma_in);
-                ImmutablePair<Solution, RealData> c;
+                ImmutablePair<DoubleSolution, RealData> c;
                 if (value == -2 && tmp.compareTo(bestPref) >= 0) {
 
                     bestIndexPref = i;
                     bestPref = tmp;
-                    c = new ImmutablePair<Solution, RealData>(sample.get(i), bestPref);
+                    c = new ImmutablePair<DoubleSolution, RealData>(sample.get(i), bestPref);
                     if (!candidatos.contains(c))
                         candidatos.add(c);
                 } else if (value == -1) {
                     if (tmp.compareTo(best) >= 0) {
                         bestIndex = i;
                         best = (RealData) tmp;
-                        c = new ImmutablePair<Solution, RealData>(sample.get(i), best);
+                        c = new ImmutablePair<DoubleSolution, RealData>(sample.get(i), best);
                         if (!candidatos.contains(c))
                             candidatos.add(c);
                     }
@@ -74,16 +75,16 @@ public class BestCompromiseDTLZ {
         RealData bestf = (bestPref.compareTo(RealData.ZERO) != 0) ? bestPref : best;
         candidatos.removeIf(c -> c.getRight().compareTo(bestf) < 0);
 
-        ArrayList<Solution> solutions = new ArrayList<>();
+        ArrayList<DoubleSolution> solutions = new ArrayList<>();
         candidatos.forEach(c -> {
             solutions.add(c.getLeft());
         });
-        Iterator<Solution> iterator = solutions.iterator();
+        Iterator<DoubleSolution> iterator = solutions.iterator();
         System.out.println(solutions.size());
         while (iterator.hasNext()) {
-            Solution next = iterator.next();
+            DoubleSolution next = iterator.next();
             for (int i = 0; i < candidatos.size(); i++) {
-                Solution other = candidatos.get(i).getLeft();
+                DoubleSolution other = candidatos.get(i).getLeft();
                 if (!next.equals(other)) {
                     int v = preference.getDominance().compare(next, other);
                     if (v > 0) {
@@ -120,18 +121,18 @@ public class BestCompromiseDTLZ {
         DTLZ2_P problem = new DTLZ2_P(instance, null);
         System.out.println(problem);
         BestCompromiseDTLZ bestCompromiseDTLZ = new BestCompromiseDTLZ(problem);
-        ArrayList<Solution> bag = new ArrayList<>();
+        ArrayList<DoubleSolution> bag = new ArrayList<>();
         for (int i = 0; i < 50; i++) {
             System.out.println("inteto " + (i + 1) + " bag: " + bag.size());
-            ArrayList<Solution> candidatos = bestCompromiseDTLZ.execute();
+            ArrayList<DoubleSolution> candidatos = bestCompromiseDTLZ.execute();
             System.out.println("\tsize? " + candidatos.size());
-            Iterator<Solution> otheIterator = candidatos.iterator();
-            Iterator<Solution> iterator = bag.iterator();
-            DominanceComparator dominanceComparator = new DominanceComparator();
+            Iterator<DoubleSolution> otheIterator = candidatos.iterator();
+            Iterator<DoubleSolution> iterator = bag.iterator();
+            DominanceComparator<DoubleSolution> dominanceComparator = new DominanceComparator<>();
             while (iterator.hasNext()) {
-                Solution a = iterator.next();
+                DoubleSolution a = iterator.next();
                 while (otheIterator.hasNext()) {
-                    Solution b = otheIterator.next();
+                    DoubleSolution b = otheIterator.next();
                     if (a.equals(b)) {
                         otheIterator.remove();
                         break;
@@ -154,17 +155,17 @@ public class BestCompromiseDTLZ {
          * usando una metrica de dispersion.
          */
         System.out.println("Candidatos : " + bag.size());
-        CrowdingDistance distance = new CrowdingDistance();
+        CrowdingDistance<DoubleSolution> distance = new CrowdingDistance<>();
         System.out.println("Sin crowding");
         System.out.println("After crowindg");
         distance.compute(bag);
         distance.sort(bag);
-        for (Solution solution : bag) {
-            System.out.println(solution + " " + solution.getAttribute(distance.getKey()));
+        for (DoubleSolution solution : bag) {
+            System.out.println(solution + " " + solution.getAttribute(distance.getAttributeKey()));
         }
         System.out.println("Candidatos : " + bag.size());
 
-        Solution.writSolutionsToFile("bestCompromise_" + problem.getName(), bag);
+        Solution.writSolutionsToFile("bestCompromise_" + problem.getName(), new ArrayList<>(bag));
     }
 
 }

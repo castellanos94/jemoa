@@ -1,16 +1,14 @@
 package com.castellanos94.components.impl;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
-import com.castellanos94.components.Ranking;
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
-public class IntervalDominance implements Comparator<Solution>, Ranking {
+public class IntervalDominance<S extends Solution<?>> extends DominanceComparator<S> {
     protected Double alpha_ND[]; // Interval non-dominance support of solution s1 and solution s2
-    protected ArrayList<Solution> front;
+    protected ArrayList<S> front;
 
     public IntervalDominance() {
         this.alpha_ND = new Double[2];
@@ -24,7 +22,7 @@ public class IntervalDominance implements Comparator<Solution>, Ranking {
      *         non-dominated 0.
      */
     @Override
-    public int compare(Solution x, Solution y) {
+    public int compare(S x, S y) {
         this.alpha_ND[0] = -1.0;
         this.alpha_ND[1] = -1.0;
 
@@ -86,7 +84,7 @@ public class IntervalDominance implements Comparator<Solution>, Ranking {
     }
 
     @Override
-    public void computeRanking(ArrayList<Solution> population) {
+    public void computeRanking(ArrayList<S> population) {
         ArrayList<ArrayList<Integer>> dominate_me = new ArrayList<>();
         for (int i = 0; i < population.size(); i++) {
             dominate_me.add(new ArrayList<>());
@@ -114,7 +112,7 @@ public class IntervalDominance implements Comparator<Solution>, Ranking {
     }
 
     @Override
-    public ArrayList<Solution> getSubFront(int index) {
+    public ArrayList<S> getSubFront(int index) {
         return this.front;
     }
 

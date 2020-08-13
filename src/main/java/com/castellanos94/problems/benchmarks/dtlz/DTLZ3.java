@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.castellanos94.datatype.RealData;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.DoubleSolution;
 
 /**
  * In order to investigate an MOEA’s ability to converge to the global
@@ -28,14 +28,14 @@ public class DTLZ3 extends DTLZ {
     }
 
     @Override
-    public void evaluate(Solution solution) {
+    public void evaluate(DoubleSolution solution) {
         int numberOfVariables = getNumberOfDecisionVars();
         int numberOfObjectives = getNumberOfObjectives();
         double[] f = new double[numberOfObjectives];
         double[] x = new double[numberOfVariables];
 
         for (int i = 0; i < numberOfVariables; i++) {
-            x[i] = solution.getVariable(i).doubleValue();
+            x[i] = solution.getVariable(i);
         }
 
         double g = g(x);

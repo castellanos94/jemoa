@@ -7,9 +7,9 @@ import java.util.stream.IntStream;
 
 import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.instances.KnapsackIntance;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.BinarySolution;
 
-public class KnapsackProblem extends Problem {
+public class KnapsackProblem extends Problem<BinarySolution> {
     protected IntegerData w[];
     protected IntegerData b[];
     protected IntegerData capacity;
@@ -32,11 +32,11 @@ public class KnapsackProblem extends Problem {
     }
 
     @Override
-    public void evaluate(Solution solution) {
+    public void evaluate(BinarySolution solution) {
         IntegerData current_w = new IntegerData(0);
         IntegerData current_b = new IntegerData(0);
         for (int i = 0; i < numberOfDecisionVars; i++) {
-            if (solution.getVariables().get(i).compareTo(1) == 0) {
+            if (solution.getVariable(0).get(i)) {
                 current_w = (IntegerData) current_w.plus(w[i]);
                 current_b = (IntegerData) current_b.plus(b[i]);
             }
@@ -46,7 +46,7 @@ public class KnapsackProblem extends Problem {
     }
 
     @Override
-    public void evaluateConstraint(Solution sol) {
+    public void evaluateConstraint(BinarySolution sol) {
 
         IntegerData cw = (IntegerData) sol.getResources().get(0);
         if (cw.compareTo(capacity) > 0) {
@@ -58,8 +58,8 @@ public class KnapsackProblem extends Problem {
     }
 
     @Override
-    public Solution randomSolution() {
-        Solution solution = new Solution(this);
+    public BinarySolution randomSolution() {
+        BinarySolution solution = new BinarySolution(this);
         Collections.shuffle(index);
         IntegerData current_w = new IntegerData(0);
         IntegerData current_b = new IntegerData(0);
@@ -67,11 +67,9 @@ public class KnapsackProblem extends Problem {
         for (int i = 0; i < numberOfDecisionVars; i++) {
             IntegerData tmp = (IntegerData) current_w.plus(w[index.get(i)]);
             if (tmp.compareTo(capacity) <= 0) {
-                solution.setVariables(index.get(i), new IntegerData(1));
+                solution.getVariable(0).set(index.get(i));
                 current_w = tmp;
                 current_b = (IntegerData) current_b.plus(b[i]);
-            } else {
-                solution.setVariables(index.get(i), new IntegerData(0));
             }
         }
         solution.setObjective(0, current_b);

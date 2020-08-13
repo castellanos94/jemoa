@@ -1,7 +1,6 @@
 package com.castellanos94.operators;
 
-import com.castellanos94.solutions.Solution;
 
-public interface MutationOperator {
-    void execute(Solution solution) throws CloneNotSupportedException;
+public interface MutationOperator<Source> extends Operator<Source, Source> {
+    
 }

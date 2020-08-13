@@ -21,7 +21,7 @@ import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.components.impl.FastNonDominatedSort;
 import com.castellanos94.operators.impl.SBXCrossover;
 import com.castellanos94.problems.preferences.dtlz.*;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.Plotter;
 import com.castellanos94.utils.ReferenceHyperplane;
 import com.castellanos94.utils.Scatter3D;
@@ -41,19 +41,18 @@ public class DTLZ_usingPref {
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         System.out.println(instance);
 
-      
         DTLZ3_P problem = new DTLZ3_P(instance, null);
-        ArrayList<Solution> solutions = new ArrayList<>();
+        ArrayList<DoubleSolution> solutions = new ArrayList<>();
         for (int i = 0; i < instance.getInitialSolutions().length; i++) {
-            Solution s = new Solution(problem);
+            DoubleSolution s = new DoubleSolution(problem);
             for (int j = 0; j < problem.getNumberOfDecisionVars(); j++) {
-                s.setVariable(j, instance.getInitialSolutions()[i][j]);
+                s.setVariable(j, instance.getInitialSolutions()[i][j].doubleValue());
             }
             problem.evaluate(s);
             problem.evaluateConstraint(s);
             solutions.add(s);
         }
-        ReferenceHyperplane referencias = new ReferenceHyperplane(problem.getNumberOfObjectives(), 5);
+        ReferenceHyperplane<DoubleSolution> referencias = new ReferenceHyperplane<>(problem.getNumberOfObjectives(), 5);
         referencias.transformToReferencePoint(solutions);
         referencias.getReferences().forEach(System.out::println);
         HashMap<String, Object> options = new HashMap<>();
@@ -63,11 +62,12 @@ public class DTLZ_usingPref {
         options.put("mutation", new PolynomialMutation());
         int maxIterations = 400;
 
-        SelectionOperator selectionOperator = new TournamentSelection((int) options.get("pop_size"),
-                new DominanceComparator());
-        NSGA_III algorithm = new NSGA_III(problem, (int) options.get("pop_size"), maxIterations, selectionOperator,
-                (CrossoverOperator) options.get("crossover"), (MutationOperator) options.get("mutation"),
-                new FastNonDominatedSort(), new RepairBoundary(), referencias);
+        SelectionOperator<DoubleSolution> selectionOperator = new TournamentSelection<>((int) options.get("pop_size"),
+                new DominanceComparator<DoubleSolution>());
+        NSGA_III<DoubleSolution> algorithm = new NSGA_III<>(problem, (int) options.get("pop_size"), maxIterations,
+                selectionOperator, (CrossoverOperator<DoubleSolution>) options.get("crossover"),
+                (MutationOperator<DoubleSolution>) options.get("mutation"), new FastNonDominatedSort<DoubleSolution>(),
+                new RepairBoundary(), referencias);
         PrintStream console = System.out;
         PrintStream ps = new PrintStream(
                 directory + File.separator + "resume_" + problem.getName() + "_" + problem.getNumberOfObjectives());
@@ -79,13 +79,13 @@ public class DTLZ_usingPref {
         System.setOut(ps);
         System.out.println(problem);
         System.out.println(algorithm);
-        ArrayList<Solution> bag = new ArrayList<>();
+        ArrayList<DoubleSolution> bag = new ArrayList<>();
         long averageTime = 0;
         for (int i = 0; i < EXPERIMENT; i++) {
-            algorithm = new NSGA_III(problem, (int) options.get("pop_size"), maxIterations, selectionOperator,
-            (CrossoverOperator) options.get("crossover"), (MutationOperator) options.get("mutation"),
-            new FastNonDominatedSort(), new RepairBoundary(), referencias);
-            // algorithm.setReferenceHyperplane(referenceHyperplane);
+            algorithm = new NSGA_III<>(problem, (int) options.get("pop_size"), maxIterations, selectionOperator,
+                    (CrossoverOperator<DoubleSolution>) options.get("crossover"),
+                    (MutationOperator<DoubleSolution>) options.get("mutation"),
+                    new FastNonDominatedSort<DoubleSolution>(), new RepairBoundary(), referencias); // algorithm.setReferenceHyperplane(referenceHyperplane);
             // referenceHyperplane.resetCount();
 
             algorithm.execute();
@@ -109,7 +109,7 @@ public class DTLZ_usingPref {
         System.out.println("Average time : " + (double) averageTime / EXPERIMENT + " ms.");
         System.out.println("Solutions in the bag: " + bag.size());
 
-        Ranking compartor = new DominanceComparator();
+        Ranking<DoubleSolution> compartor = new DominanceComparator<>();
         compartor.computeRanking(bag);
 
         System.setOut(console);
@@ -127,12 +127,12 @@ public class DTLZ_usingPref {
                 + problem.getNumberOfObjectives());
 
         ArrayList<String> strings = new ArrayList<>();
-        for (Solution solution : compartor.getSubFront(0))
+        for (DoubleSolution solution : compartor.getSubFront(0))
             strings.add(solution.toString());
 
         Files.write(f.toPath(), strings, Charset.defaultCharset());
         if (problem.getNumberOfObjectives() == 3) {
-            Plotter plotter = new Scatter3D(compartor.getSubFront(0),
+            Plotter plotter = new Scatter3D<DoubleSolution>(compartor.getSubFront(0),
                     directory + File.separator + problem.getName() + "_nsga3");
             plotter.plot();
             // new Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator +

@@ -4,10 +4,10 @@ import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.problems.Problem;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.Tools;
 
-public class ZDT1 extends Problem {
+public class ZDT1 extends Problem<DoubleSolution> {
     // private List<Integer> index;
     public ZDT1() {
         this(30);
@@ -32,14 +32,11 @@ public class ZDT1 extends Problem {
     }
 
     @Override
-    public void evaluate(Solution solution) {
+    public void evaluate(DoubleSolution solution) {
         // Double f1 = solution.getDecision_vars()[0].doubleValue();
 
-        try {
-            solution.setObjective(0, (Data) solution.getVariables().get(0).clone());
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
+        solution.setObjective(0, new RealData(solution.getVariable(0)));
+
         RealData g = new RealData(0);
         RealData f2 = new RealData(0);
         RealData sum = new RealData(0);
@@ -60,7 +57,7 @@ public class ZDT1 extends Problem {
     }
 
     @Override
-    public void evaluateConstraint(Solution solution) {
+    public void evaluateConstraint(DoubleSolution solution) {
         int count = 0;
         for (int i = 0; i < numberOfDecisionVars; i++) {
             if (solution.getVariables().get(i).compareTo(0.0) < 0
@@ -73,10 +70,10 @@ public class ZDT1 extends Problem {
     }
 
     @Override
-    public Solution randomSolution() {
-        Solution solution = new Solution(this);
+    public DoubleSolution randomSolution() {
+        DoubleSolution solution = new DoubleSolution(this);
         for (int i = 0; i < this.numberOfDecisionVars; i++) {
-            solution.setVariables(i, new RealData(Tools.getRandom().nextDouble()));
+            solution.setVariable(i, Tools.getRandom().nextDouble());
         }
         return solution;
     }

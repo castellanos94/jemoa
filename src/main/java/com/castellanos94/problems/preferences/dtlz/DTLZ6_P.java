@@ -8,7 +8,7 @@ import java.util.Scanner;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.Classifier;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.DoubleSolution;
 
 public class DTLZ6_P extends DTLZPreferences {
 
@@ -17,7 +17,7 @@ public class DTLZ6_P extends DTLZPreferences {
     }
 
     @Override
-    public void evaluate(Solution solution) {
+    public void evaluate(DoubleSolution solution) {
         int numberOfVariables = getNumberOfDecisionVars();
         int numberOfObjectives = getNumberOfObjectives();
         double[] theta = new double[numberOfObjectives - 1];
@@ -26,7 +26,7 @@ public class DTLZ6_P extends DTLZPreferences {
         double[] x = new double[numberOfVariables];
 
         for (int i = 0; i < numberOfVariables; i++) {
-            x[i] = solution.getVariable(i).doubleValue();
+            x[i] = solution.getVariable(i);
         }
 
         double g = 0.0;

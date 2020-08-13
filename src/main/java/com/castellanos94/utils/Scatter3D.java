@@ -10,12 +10,13 @@ import tech.tablesaw.api.Table;
 import tech.tablesaw.plotly.Plot;
 import tech.tablesaw.plotly.api.Scatter3DPlot;
 
-public class Scatter3D implements Plotter {
+public class Scatter3D<S extends Solution<?>> implements Plotter {
 
     private double[][] matrix;
     private String plotTitle;
     private Table table;
-    public Scatter3D(ArrayList<Solution> front, String title) {
+
+    public Scatter3D(ArrayList<S> front, String title) {
         this.matrix = new double[front.size()][front.get(0).getObjectives().size()];
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
@@ -48,11 +49,11 @@ public class Scatter3D implements Plotter {
             f3[i] = matrix[i][2];
         }
 
-         table = Table.create("table").addColumns(DoubleColumn.create("f1", f1), DoubleColumn.create("f2", f2),
+        table = Table.create("table").addColumns(DoubleColumn.create("f1", f1), DoubleColumn.create("f2", f2),
                 DoubleColumn.create("f3", f3));
 
         System.out.println(table.summary());
-        Plot.show(Scatter3DPlot.create(plotTitle, table, "f1", "f2", "f3"), new File(plotTitle+".html"));
+        Plot.show(Scatter3DPlot.create(plotTitle, table, "f1", "f2", "f3"), new File(plotTitle + ".html"));
     }
 
     @Override

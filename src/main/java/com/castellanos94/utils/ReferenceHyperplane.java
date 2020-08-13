@@ -14,11 +14,11 @@ import org.paukov.combinatorics3.Generator;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class ReferenceHyperplane {
+public class ReferenceHyperplane<S extends Solution<?>> {
     protected long H;
     protected int number_of_objectives;
     protected int segmentations;
-    protected ArrayList<ReferencePointC> references;
+    protected ArrayList<ReferencePointC<S>> references;
 
     public ReferenceHyperplane(int number_of_objectives, int segmentations) {
         this.segmentations = segmentations;
@@ -27,13 +27,13 @@ public class ReferenceHyperplane {
 
     }
 
-    public void transformToReferencePoint(ArrayList<Solution> solutions) {
+    public void transformToReferencePoint(ArrayList<S> solutions) {
         if (references == null)
             references = new ArrayList<>();
         else
             references.clear();
-        for (Solution solution : solutions) {
-            references.add(new ReferencePointC(solution.getObjectives()));
+        for (S solution : solutions) {
+            references.add(new ReferencePointC<>(solution.getObjectives()));
         }
     }
 
@@ -46,7 +46,7 @@ public class ReferenceHyperplane {
         debAndJains(list);
         references = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            references.add(new ReferencePointC(new ArrayList<>(list.get(i))));
+            references.add(new ReferencePointC<>(new ArrayList<>(list.get(i))));
         }
 
     }
@@ -117,7 +117,7 @@ public class ReferenceHyperplane {
         return references.size();
     }
 
-    public ReferencePointC get(int index) {
+    public ReferencePointC<S> get(int index) {
         return this.references.get(index);
     }
 
@@ -131,29 +131,29 @@ public class ReferenceHyperplane {
         this.references.remove(min_rp);
     }
 
-    public ArrayList<ReferencePointC> getReferences() {
+    public ArrayList<ReferencePointC<S>> getReferences() {
         return references;
     }
 
-    public void setReferences(ArrayList<ReferencePointC> references) {
+    public void setReferences(ArrayList<ReferencePointC<S>> references) {
         this.references = references;
     }
 
     @SuppressWarnings("unchecked")
-    public ReferenceHyperplane copy() {
-        ReferenceHyperplane referenceHyperplane = new ReferenceHyperplane(this.number_of_objectives,
+    public ReferenceHyperplane<S> copy() {
+        ReferenceHyperplane<S> referenceHyperplane = new ReferenceHyperplane<>(this.number_of_objectives,
                 this.segmentations);
-        ArrayList<ReferencePointC> pointCs = new ArrayList<>();
-        for (ReferencePointC p : this.references) {
-            pointCs.add(new ReferencePointC((ArrayList<Data>) p.getPoint().clone()));
+        ArrayList<ReferencePointC<S>> pointCs = new ArrayList<>();
+        for (ReferencePointC<S> p : this.references) {
+            pointCs.add(new ReferencePointC<>((ArrayList<Data>) p.getPoint().clone()));
         }
         referenceHyperplane.setReferences(pointCs);
         return referenceHyperplane;
     }
 
-    public static class ReferencePointC {
+    public static class ReferencePointC<S extends Solution<?>> {
         private ArrayList<Data> point;
-        private ArrayList<Pair<Solution, Data>> members;
+        private ArrayList<Pair<S, Data>> members;
         private int potentialMembers;
 
         public ReferencePointC(ArrayList<Data> point) {
@@ -162,7 +162,7 @@ public class ReferenceHyperplane {
             this.potentialMembers = 0;
         }
 
-        public ArrayList<Pair<Solution, Data>> getMembers() {
+        public ArrayList<Pair<S, Data>> getMembers() {
             return members;
         }
 
@@ -178,12 +178,12 @@ public class ReferenceHyperplane {
             this.potentialMembers += 1;
         }
 
-        public void addMember(Solution s, Data distance) {
-            this.members.add(new ImmutablePair<Solution, Data>(s, distance));
+        public void addMember(S s, Data distance) {
+            this.members.add(new ImmutablePair<S, Data>(s, distance));
         }
 
-        public void removeMember(Solution s) {
-            Iterator<Pair<Solution, Data>> iterator = this.members.iterator();
+        public void removeMember(S s) {
+            Iterator<Pair<S, Data>> iterator = this.members.iterator();
             while (iterator.hasNext()) {
                 if (iterator.next().getLeft().equals(s)) {
                     iterator.remove();
@@ -192,10 +192,10 @@ public class ReferenceHyperplane {
             }
         }
 
-        public Solution FindClosestMember() {
+        public S FindClosestMember() {
             Data minDistance = new RealData(Double.MAX_VALUE);
-            Solution closetMember = null;
-            for (Pair<Solution, Data> p : this.members) {
+            S closetMember = null;
+            for (Pair<S, Data> p : this.members) {
                 if (p.getRight().compareTo(minDistance) < 0) {
                     minDistance = p.getRight();
                     closetMember = p.getLeft();
@@ -205,18 +205,18 @@ public class ReferenceHyperplane {
             return closetMember;
         }
 
-        public Solution RandomMember() {
+        public S RandomMember() {
             int i = this.members.size() > 1 ? Tools.getRandom().nextInt(this.members.size() - 1) : 0;
-            Pair<Solution, Data> p = this.members.get(i);
+            Pair<S, Data> p = this.members.get(i);
             if (p == null)
                 return null;
             return this.members.get(i).getLeft();
         }
 
-        public void RemovePotentialMember(Solution solution) {
-            Iterator<Pair<Solution, Data>> it = this.members.iterator();
+        public void RemovePotentialMember(S solution) {
+            Iterator<Pair<S, Data>> it = this.members.iterator();
             while (it.hasNext()) {
-                Pair<Solution, Data> next = it.next();
+                Pair<S, Data> next = it.next();
                 if (next != null && next.getLeft().equals(solution)) {
                     it.remove();
                     break;
@@ -231,7 +231,7 @@ public class ReferenceHyperplane {
         @Override
         @SuppressWarnings("unchecked")
         public Object clone() throws CloneNotSupportedException {
-            ReferencePointC p = new ReferencePointC((ArrayList<Data>) this.point.clone());
+            ReferencePointC<S> p = new ReferencePointC<>((ArrayList<Data>) this.point.clone());
             return p;
         }
 

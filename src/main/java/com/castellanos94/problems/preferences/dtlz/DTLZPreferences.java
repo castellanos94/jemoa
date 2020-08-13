@@ -4,7 +4,7 @@ import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.Classifier;
 import com.castellanos94.problems.benchmarks.dtlz.DTLZ;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.DoubleSolution;
 
 public abstract class DTLZPreferences extends DTLZ {
     private Classifier classifier;
@@ -15,7 +15,7 @@ public abstract class DTLZPreferences extends DTLZ {
     }
 
     @Override
-    public void evaluateConstraint(Solution solution) {
+    public void evaluateConstraint(DoubleSolution solution) {
         solution.setPenalties(RealData.ZERO);
         //classifier.classify(solution);
     }

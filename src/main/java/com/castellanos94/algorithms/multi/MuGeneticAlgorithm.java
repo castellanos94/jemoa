@@ -11,14 +11,14 @@ import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
-public class MuGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
+public class MuGeneticAlgorithm<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<S> {
     protected int maxIteration;
     protected int currentIteration;
-    protected Ranking ranking;
+    protected Ranking<S> ranking;
 
-    public MuGeneticAlgorithm(Problem problem, int maxIteration, int populationSize,
-            SelectionOperator selectionOperator, CrossoverOperator crossoverOperator,
-            MutationOperator mutationOperator) {
+    public MuGeneticAlgorithm(Problem<S> problem, int maxIteration, int populationSize,
+            SelectionOperator<S> selectionOperator, CrossoverOperator<S> crossoverOperator,
+            MutationOperator<S> mutationOperator) {
         super(problem);
         this.maxIteration = maxIteration;
         this.selectionOperator = selectionOperator;
@@ -26,7 +26,7 @@ public class MuGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
         this.mutationOperator = mutationOperator;
         this.currentIteration = 0;
         this.populationSize = populationSize;
-        this.ranking = new DominanceComparator();
+        this.ranking = new DominanceComparator<>();
     }
 
     @Override
@@ -35,25 +35,25 @@ public class MuGeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
     }
 
     @Override
-    protected ArrayList<Solution> reproduction(ArrayList<Solution> parents) throws CloneNotSupportedException {
-        ArrayList<Solution> offspring = new ArrayList<>();
+    protected ArrayList<S> reproduction(ArrayList<S> parents) throws CloneNotSupportedException {
+        ArrayList<S> offspring = new ArrayList<>();
         for (int i = 0; i < parents.size(); i++) {
-            ArrayList<Solution> p = new ArrayList<>();
+            ArrayList<S> p = new ArrayList<>();
             p.add(parents.get(i++));
             p.add(parents.get((i < parents.size()) ? i : 0));
             offspring.addAll(crossoverOperator.execute(p));
 
         }
-        for (Solution solution : offspring) {
-            mutationOperator.execute(solution);
-            problem.evaluate(solution);
-            problem.evaluateConstraint(solution);
+        for (S s : offspring) {
+            mutationOperator.execute(s);
+            problem.evaluate(s);
+            problem.evaluateConstraint(s);
         }
         return offspring;
     }
 
     @Override
-    protected ArrayList<Solution> replacement(ArrayList<Solution> population, ArrayList<Solution> offspring) {
+    protected ArrayList<S> replacement(ArrayList<S> population, ArrayList<S> offspring) {
         population.addAll(offspring);
         ranking.computeRanking(population);
         return new ArrayList<>(ranking.getSubFront(0).subList(0, populationSize));

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.castellanos94.datatype.RealData;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.DoubleSolution;
 
 /**
  * This problem will test an MOEA’s ability to converge to a cruve and will also
@@ -27,7 +27,7 @@ public class DTLZ5 extends DTLZ {
     }
 
     @Override
-    public void evaluate(Solution solution) {
+    public void evaluate(DoubleSolution solution) {
         int numberOfVariables = getNumberOfDecisionVars();
         int numberOfObjectives = getNumberOfObjectives();
         double[] theta = new double[numberOfObjectives - 1];
@@ -36,7 +36,7 @@ public class DTLZ5 extends DTLZ {
         double[] x = new double[numberOfVariables];
 
         for (int i = 0; i < numberOfVariables; i++) {
-            x[i] = solution.getVariable(i).doubleValue();
+            x[i] = solution.getVariable(i);
         }
         double g = g2(x);
 

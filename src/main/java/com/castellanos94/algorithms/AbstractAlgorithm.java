@@ -5,19 +5,19 @@ import java.util.ArrayList;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
-public abstract class AbstractAlgorithm {
-    protected Problem problem;
-    protected ArrayList<Solution> solutions;
+public abstract class AbstractAlgorithm<S extends Solution<?>> {
+    protected Problem<S> problem;
+    protected ArrayList<S> solutions;
     protected long init_time;
     protected long computeTime;
 
-    public AbstractAlgorithm(Problem problem) {
+    public AbstractAlgorithm(Problem<S> problem) {
         this.problem = problem;
     }
 
     public abstract void execute() throws CloneNotSupportedException;
 
-    public ArrayList<Solution> getSolutions() {
+    public ArrayList<S> getSolutions() {
         return solutions;
     }
 
@@ -28,7 +28,8 @@ public abstract class AbstractAlgorithm {
     public long getInit_time() {
         return init_time;
     }
-    public Problem getProblem() {
+
+    public Problem<S> getProblem() {
         return problem;
     }
 }

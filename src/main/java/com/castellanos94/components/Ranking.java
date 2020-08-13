@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 import com.castellanos94.solutions.Solution;
 
-public interface Ranking {
-    void computeRanking(ArrayList<Solution> population);
-    ArrayList<Solution> getSubFront(int index);
+public interface Ranking<S extends Solution<?>> {
+    void computeRanking(ArrayList<S> population);
+
+    ArrayList<S> getSubFront(int index);
+
     int getNumberOfSubFronts();
 }

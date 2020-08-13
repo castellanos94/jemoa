@@ -8,23 +8,23 @@ import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
-public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
+public abstract class AbstractEvolutionaryAlgorithm<S extends Solution<?>> extends AbstractAlgorithm<S> {
 
-    public AbstractEvolutionaryAlgorithm(Problem problem) {
+    public AbstractEvolutionaryAlgorithm(Problem<S> problem) {
         super(problem);
     }
 
     protected int populationSize;
-    protected SelectionOperator selectionOperator;
-    protected CrossoverOperator crossoverOperator;
-    protected MutationOperator mutationOperator;
+    protected SelectionOperator<S> selectionOperator;
+    protected CrossoverOperator<S> crossoverOperator;
+    protected MutationOperator<S> mutationOperator;
 
     @Override
     public void execute() throws CloneNotSupportedException {
         init_time = System.currentTimeMillis();
         solutions = initPopulation();
-        ArrayList<Solution> offspring;
-        ArrayList<Solution> parents;
+        ArrayList<S> offspring;
+        ArrayList<S> parents;
         updateProgress();
         while (isStoppingCriteriaReached()) {
             selectionOperator.execute(solutions);
@@ -38,10 +38,10 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
 
     protected abstract void updateProgress();
 
-    protected ArrayList<Solution> initPopulation() {
-        ArrayList<Solution> solutions = new ArrayList<>();
+    protected ArrayList<S> initPopulation() {
+        ArrayList<S> solutions = new ArrayList<>();
         for (int i = 0; i < populationSize; i++) {
-            Solution s = problem.randomSolution();
+            S s = problem.randomSolution();
             problem.evaluate(s);
             problem.evaluateConstraint(s);
             solutions.add(s);
@@ -49,9 +49,9 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
         return solutions;
     }
 
-    protected abstract ArrayList<Solution> reproduction(ArrayList<Solution> parents) throws CloneNotSupportedException;
+    protected abstract ArrayList<S> reproduction(ArrayList<S> parents) throws CloneNotSupportedException;
 
-    protected abstract ArrayList<Solution> replacement(ArrayList<Solution> population, ArrayList<Solution> offspring);
+    protected abstract ArrayList<S> replacement(ArrayList<S> population, ArrayList<S> offspring);
 
     protected abstract boolean isStoppingCriteriaReached();
 
@@ -63,19 +63,19 @@ public abstract class AbstractEvolutionaryAlgorithm extends AbstractAlgorithm {
         this.populationSize = populationSize;
     }
 
-    public CrossoverOperator getCrossoverOperator() {
+    public CrossoverOperator<S> getCrossoverOperator() {
         return crossoverOperator;
     }
 
-    public void setCrossoverOperator(CrossoverOperator crossoverOperator) {
+    public void setCrossoverOperator(CrossoverOperator<S> crossoverOperator) {
         this.crossoverOperator = crossoverOperator;
     }
 
-    public MutationOperator getMutationOperator() {
+    public MutationOperator<S> getMutationOperator() {
         return mutationOperator;
     }
 
-    public void setMutationOperator(MutationOperator mutationOperator) {
+    public void setMutationOperator(MutationOperator<S> mutationOperator) {
         this.mutationOperator = mutationOperator;
     }
 

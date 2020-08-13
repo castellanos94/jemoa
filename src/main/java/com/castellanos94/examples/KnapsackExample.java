@@ -13,31 +13,32 @@ import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.operators.impl.BinaryMutation;
 import com.castellanos94.operators.impl.RandomSelection;
-import com.castellanos94.operators.impl.UniformCrossover;
+import com.castellanos94.operators.impl.HUXCrossover;
 import com.castellanos94.problems.KnapsackProblem;
 import com.castellanos94.problems.Problem;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.BinarySolution;
 
 public class KnapsackExample {
     public static void main(String[] args) throws IOException, CloneNotSupportedException {
-        Problem problem;// new KnapsackProblem( (KnapsackIntance)
-                        // Tools.getInstanceFromResource(ProblemType.Knapsack, "Instancia10.txt"));
-        problem = new KnapsackProblem((KnapsackIntance) new KnapsackIntance("src/main/resources/instances/knapsack/Instancia10.txt")
-                .loadInstance());
-        
+        Problem<BinarySolution> problem;// new KnapsackProblem( (KnapsackIntance)
+        // Tools.getInstanceFromResource(ProblemType.Knapsack, "Instancia10.txt"));
+        problem = new KnapsackProblem(
+                (KnapsackIntance) new KnapsackIntance("src/main/resources/instances/knapsack/Instancia10.txt")
+                        .loadInstance());
+
         int maxIteration = 1000, popSize = 100;
         System.out.println(problem);
-        SelectionOperator selectionOperator = new RandomSelection(popSize / 2);
-        CrossoverOperator crossoverOperator = new UniformCrossover();
-        MutationOperator mutationOperator = new BinaryMutation(1.0 / popSize);
-        AbstractAlgorithm algorithm = new GeneticAlgorithm(problem, maxIteration, popSize, selectionOperator,
+        SelectionOperator<BinarySolution> selectionOperator = new RandomSelection<>(popSize / 2);
+        CrossoverOperator<BinarySolution> crossoverOperator = new HUXCrossover();
+        MutationOperator<BinarySolution> mutationOperator = new BinaryMutation(1.0 / popSize);
+        AbstractAlgorithm<BinarySolution> algorithm = new GeneticAlgorithm<>(problem, maxIteration, popSize, selectionOperator,
                 crossoverOperator, mutationOperator);
         System.out.println(algorithm);
         algorithm.execute();
         System.out.println("Time: " + algorithm.getComputeTime() + " ms.");
         System.out.println(algorithm.getSolutions().size());
-        ArrayList<Solution> solutions = algorithm.getSolutions();
-        Collections.sort(solutions, Comparator.comparing(Solution::getObjectives,(a,b)->{
+        ArrayList<BinarySolution> solutions = algorithm.getSolutions();
+        Collections.sort(solutions, Comparator.comparing(BinarySolution::getObjectives, (a, b) -> {
             return a.get(0).compareTo(b.get(0));
         }).reversed());
         for (int i = 0; i < popSize; i++) {

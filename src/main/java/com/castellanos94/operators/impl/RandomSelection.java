@@ -6,8 +6,8 @@ import java.util.Collections;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.solutions.Solution;
 
-public class RandomSelection implements SelectionOperator {
-    private ArrayList<Solution> parents;
+public class RandomSelection<S extends Solution<?>> implements SelectionOperator<S> {
+    private ArrayList<S> parents;
     private int size;
 
     public RandomSelection(int size) {
@@ -15,12 +15,13 @@ public class RandomSelection implements SelectionOperator {
     }
 
     @Override
-    public void execute(final ArrayList<Solution> solutions) {
+    public Void execute(ArrayList<S> solutions) {
         Collections.shuffle(solutions);
         this.parents = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             parents.add(solutions.get(i));
         }
+        return null;
     }
 
     @Override
@@ -34,7 +35,7 @@ public class RandomSelection implements SelectionOperator {
     }
 
     @Override
-    public ArrayList<Solution> getParents() {
+    public ArrayList<S> getParents() {
         return parents;
     }
 

@@ -14,8 +14,8 @@ import com.castellanos94.problems.Problem;
 *@author Castellanos Alvarez, Alejandro
 *@since 22/03/202
 */
-public class Solution implements Cloneable, Comparable<Solution> {
-    protected ArrayList<Data> variables;
+public abstract class Solution<T> implements Cloneable, Comparable<Solution<?>> {
+    protected ArrayList<T> variables;
     protected ArrayList<Data> objectives;
     protected ArrayList<Data> resources;
     protected Data penalties;
@@ -23,20 +23,19 @@ public class Solution implements Cloneable, Comparable<Solution> {
     protected Problem problem;
     protected Integer n_penalties = 0;
     protected HashMap<String, Object> attributes;
-    protected Data[] lowerBound;
-    protected Data[] upperBound;
 
     protected int rank;
+    protected int numberOfObjectives;
+    protected int numberOfResources;
+    protected int numberOfVariables;
 
     public Solution(Problem problem) {
-        this(problem.getNumberOfObjectives(), problem.getNumberOfDecisionVars(), problem.getNumberOfConstrains(),
-                problem.getLowerBound(), problem.getUpperBound());
+        this(problem.getNumberOfObjectives(), problem.getNumberOfDecisionVars(), problem.getNumberOfConstrains());
         this.problem = problem;
 
     }
 
-    public Solution(int numberOfObjectives, int numberOfVariables, int numberOfResources, Data[] lowerBound,
-            Data[] upperBound) {
+    public Solution(int numberOfObjectives, int numberOfVariables, int numberOfResources) {
         this.variables = new ArrayList<>(numberOfObjectives);
         this.objectives = new ArrayList<>(numberOfObjectives);
         this.resources = new ArrayList<>(numberOfResources);
@@ -51,9 +50,34 @@ public class Solution implements Cloneable, Comparable<Solution> {
             resources.add(null);
         }
         attributes = new HashMap<>();
-        this.lowerBound = lowerBound;
-        this.upperBound = upperBound;
+        this.numberOfObjectives = numberOfObjectives;
+        this.numberOfVariables = numberOfVariables;
+        this.numberOfResources = numberOfResources;
 
+    }
+
+    public int getNumberOfObjectives() {
+        return numberOfObjectives;
+    }
+
+    public int getNumberOfResources() {
+        return numberOfResources;
+    }
+
+    public int getNumberOfVariables() {
+        return numberOfVariables;
+    }
+
+    public void setNumberOfObjectives(int numberOfObjectives) {
+        this.numberOfObjectives = numberOfObjectives;
+    }
+
+    public void setNumberOfResources(int numberOfResources) {
+        this.numberOfResources = numberOfResources;
+    }
+
+    public void setNumberOfVariables(int numberOfVariables) {
+        this.numberOfVariables = numberOfVariables;
     }
 
     public Solution() {
@@ -61,10 +85,6 @@ public class Solution implements Cloneable, Comparable<Solution> {
         this.objectives = new ArrayList<>();
         this.resources = new ArrayList<>();
         attributes = new HashMap<>();
-    }
-
-    public void setVariables(int index, Data element) {
-        this.variables.set(index, element);
     }
 
     public void setObjective(int index, Data element) {
@@ -92,14 +112,14 @@ public class Solution implements Cloneable, Comparable<Solution> {
     /**
      * @param decision_vars the decision_vars to set
      */
-    public void setVariables(ArrayList<Data> decision_vars) {
+    public void setVariables(ArrayList<T> decision_vars) {
         this.variables = decision_vars;
     }
 
     /**
      * @return the decision_vars
      */
-    public ArrayList<Data> getVariables() {
+    public ArrayList<T> getVariables() {
         return this.variables;
     }
 
@@ -165,25 +185,11 @@ public class Solution implements Cloneable, Comparable<Solution> {
         this.attributes = properties;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Object clone() throws CloneNotSupportedException {
-        Solution clone = new Solution(this.getProblem());
-        clone.setVariables((ArrayList<Data>) this.getVariables().clone());
-        clone.setObjectives((ArrayList<Data>) (this.getObjectives().clone()));
-        clone.setResources((ArrayList<Data>) this.getResources().clone());
-        clone.setRank(this.getRank());
-        if (this.getPenalties() != null) {
-            clone.setPenalties((Data) this.getPenalties().clone());
-        }
-        clone.setN_penalties(this.getN_penalties());
-        if (this.attributes != null)
-            clone.setAttributes((HashMap<String, Object>) this.getAttributes().clone());
-        return clone;
-    }
+    public abstract Object clone() throws CloneNotSupportedException;
 
     @Override
-    public int compareTo(Solution o) {
+    public int compareTo(Solution<?> o) {
         if (rank > o.getRank())
             return 1;
         if (rank == o.getRank())
@@ -199,40 +205,16 @@ public class Solution implements Cloneable, Comparable<Solution> {
         // return objectives.toString();
     }
 
-    public Data getVariable(int index) {
+    public T getVariable(int index) {
         return this.variables.get(index);
     }
 
-    public Data getLowerBound(int i) {
-        return this.lowerBound[i];
-    }
-
-    public Data getUpperBound(int i) {
-        return this.upperBound[i];
-    }
-
-    public void setLowerBound(Data[] lowerBound) {
-        this.lowerBound = lowerBound;
-    }
-
-    public void setUpperBound(Data[] upperBound) {
-        this.upperBound = upperBound;
-    }
-
-    public void setVariable(int i, Data y) {
-        this.variables.set(i, y);
+    public void setVariable(int i, T value) {
+        this.variables.set(i, value);
     }
 
     public Data getObjective(int index) {
         return this.objectives.get(index);
-    }
-
-    public Data[] getLowerBound() {
-        return this.lowerBound;
-    }
-
-    public Data[] getUpperBound() {
-        return this.upperBound;
     }
 
     @Override
@@ -251,7 +233,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Solution other = (Solution) obj;
+        Solution<?> other = (Solution<?>) obj;
         if (variables == null) {
             if (other.variables != null)
                 return false;
@@ -260,6 +242,7 @@ public class Solution implements Cloneable, Comparable<Solution> {
         return true;
     }
 
+    @SuppressWarnings("rawtypes")
     public static void writSolutionsToFile(String string, ArrayList<Solution> solutions) throws IOException {
         ArrayList<String> strings = new ArrayList<>();
         File f = new File(string + ".out");

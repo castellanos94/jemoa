@@ -11,13 +11,13 @@ import com.castellanos94.datatype.Interval;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.PSPI_Instance;
 import com.castellanos94.preferences.impl.OutrankingModel;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.BinarySolution;
 import com.castellanos94.utils.Tools;
 
 /**
  * Portafolio Social Problem for Group Decision
  */
-public class PSPI_GD extends Problem {
+public class PSPI_GD extends Problem<BinarySolution> {
     protected OutrankingModel[] preference_models;
     protected int dms;
     private List<Integer> positions;
@@ -54,7 +54,7 @@ public class PSPI_GD extends Problem {
      */
 
     @Override
-    public void evaluate(Solution solution) {
+    public void evaluate(BinarySolution solution) {
         Interval currentBudget = Interval.ZERO;
         Interval[][] projects = getInstance().getProjects();
         ArrayList<Data> objectives = new ArrayList<>();
@@ -62,7 +62,7 @@ public class PSPI_GD extends Problem {
             objectives.add(new Interval(0));
         }
         for (int i = 0; i < this.numberOfDecisionVars; i++) {
-            if (solution.getVariable(i).compareTo(1) == 0) {
+            if (solution.getVariable(0).get(i)) {
                 currentBudget = (Interval) currentBudget.plus(projects[i][0]);
                 for (int j = 0; j < this.numberOfObjectives; j++) {
                     objectives.set(j, objectives.get(j).plus(projects[i][j + 1]));
@@ -79,7 +79,7 @@ public class PSPI_GD extends Problem {
      * crear otra clase.
      */
     @Override
-    public void evaluateConstraint(Solution solution) {
+    public void evaluateConstraint(BinarySolution solution) {
         Interval suma = new Interval(solution.getResources().get(0));
         RealData poss = this.getInstance().getBudget().possGreaterThanOrEq(suma);
         if (poss.compareTo(getPreferenceModel(0).getChi()) < 0) {
@@ -87,14 +87,14 @@ public class PSPI_GD extends Problem {
             solution.setPenalties(tmp);
             solution.setN_penalties(1);
         } else {
-            solution.setPenalties(Interval.ZERO);
+            solution.setPenalties(RealData.ZERO);
             solution.setN_penalties(0);
         }
     }
 
     @Override
-    public Solution randomSolution() {
-        Solution sol = new Solution(this);
+    public BinarySolution randomSolution() {
+        BinarySolution sol = new BinarySolution(this);
 
         Tools.shuffle(positions);
         Interval[][] projects = getInstance().getProjects();
@@ -104,10 +104,9 @@ public class PSPI_GD extends Problem {
             Interval suma = (Interval) projects[positions.get(i)][0].plus(current_budget);
             RealData possGreaterThanOrEq = budget.possGreaterThanOrEq(suma);
             if (possGreaterThanOrEq.compareTo(getPreferenceModel(0).getChi()) >= 0) {
-                sol.setVariables(positions.get(i), new IntegerData(1));
+                // sol.setVariables(positions.get(i), new IntegerData(1));
+                sol.getVariable(0).set(positions.get(i));
                 current_budget = suma;
-            } else {
-                sol.setVariables(positions.get(i), new IntegerData(0));
             }
         }
         sol.setResource(0, current_budget);

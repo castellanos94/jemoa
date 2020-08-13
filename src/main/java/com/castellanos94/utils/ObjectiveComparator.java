@@ -5,7 +5,7 @@ import java.util.Comparator;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
-public class ObjectiveComparator implements Comparator<Solution> {
+public class ObjectiveComparator implements Comparator<Solution<?>> {
     protected int index;
     protected ORDER type;
 
@@ -23,7 +23,7 @@ public class ObjectiveComparator implements Comparator<Solution> {
     }
 
     @Override
-    public int compare(Solution a, Solution b) {
+    public int compare(Solution<?> a, Solution<?> b) {
         if (type == null) {
             if (a.getProblem().getObjectives_type()[index] == Problem.MINIMIZATION) {
                 type = ORDER.ASC;

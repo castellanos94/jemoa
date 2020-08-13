@@ -2,12 +2,9 @@ package com.castellanos94.operators;
 
 import java.util.ArrayList;
 
-import com.castellanos94.solutions.Solution;
+public interface SelectionOperator<Source> extends Operator<ArrayList<Source>, Void> {
 
-public interface SelectionOperator {
+    public ArrayList<Source> getParents();
 
-    public void execute(ArrayList<Solution> solutions);
-
-    public ArrayList<Solution> getParents();
     public void setPopulaitonSize(int size);
 }

@@ -7,18 +7,18 @@ import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
-public class TournamentSelection implements SelectionOperator {
+public class TournamentSelection<S extends Solution<?>> implements SelectionOperator<S> {
     private int n_offsrping;
-    private ArrayList<Solution> parents;
-    private Comparator<Solution> comparator;
+    private ArrayList<S> parents;
+    private Comparator<S> comparator;
 
-    public TournamentSelection(int n_offsrping, Comparator<Solution> comparator) {
+    public TournamentSelection(int n_offsrping, Comparator<S> comparator) {
         this.n_offsrping = n_offsrping;
         this.comparator = comparator;
     }
 
     @Override
-    public void execute(final ArrayList<Solution> solutions) {
+    public Void execute(final ArrayList<S> solutions) {
         this.parents = new ArrayList<>();
         for (int i = 0; i < n_offsrping; i++) {
             int pos_a = Tools.getRandom().nextInt(solutions.size());
@@ -36,11 +36,11 @@ public class TournamentSelection implements SelectionOperator {
             }
 
         }
-
+        return null;
     }
 
     @Override
-    public ArrayList<Solution> getParents() {
+    public ArrayList<S> getParents() {
         return parents;
     }
 

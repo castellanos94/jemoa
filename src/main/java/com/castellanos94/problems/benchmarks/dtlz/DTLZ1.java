@@ -1,7 +1,7 @@
 package com.castellanos94.problems.benchmarks.dtlz;
 
 import com.castellanos94.datatype.RealData;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.DoubleSolution;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,12 +23,12 @@ public class DTLZ1 extends DTLZ {
     }
 
     @Override
-    public void evaluate(Solution solution) {
+    public void evaluate(DoubleSolution solution) {
         double[] f = new double[this.numberOfObjectives];
         double[] x = new double[this.numberOfDecisionVars];
 
         for (int i = 0; i < this.numberOfDecisionVars; i++) {
-            x[i] = solution.getVariable(i).doubleValue();
+            x[i] = solution.getVariable(i);
         }
 
         double g = g(x);

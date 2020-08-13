@@ -7,17 +7,17 @@ import com.castellanos94.datatype.Data;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.solutions.Solution;
 
-public class NSGA3Replacement implements SelectionOperator {
-    private ReferenceHyperplane referencePoints;
+public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperator<S> {
+    private ReferenceHyperplane<S> referencePoints;
     private int number_of_objectives;
     private int pop_size;
-    private ArrayList<ArrayList<Solution>> fronts;
+    private ArrayList<ArrayList<S>> fronts;
     private final double epsilon = 1e-6;
     private Data MAX_VALUE, MIN_VALUE, ZERO_VALUE, ONE_VALUE;
     private static final String OBJECTIVES_TRANSLATED = "objectivos_transladados_nsga3";
-    private ArrayList<Solution> parents;
+    private ArrayList<S> parents;
 
-    public NSGA3Replacement(ArrayList<ArrayList<Solution>> fronts, ReferenceHyperplane referencePoints,
+    public NSGA3Replacement(ArrayList<ArrayList<S>> fronts, ReferenceHyperplane<S> referencePoints,
             int number_of_objectives, int pop_size) {
         this.fronts = fronts;
         this.number_of_objectives = number_of_objectives;
@@ -29,7 +29,7 @@ public class NSGA3Replacement implements SelectionOperator {
         ONE_VALUE = Data.initByRefType(fronts.get(0).get(0).getObjective(0), 1);
     }
 
-    public ArrayList<Data> translateObjectives(ArrayList<Solution> population) {
+    public ArrayList<Data> translateObjectives(ArrayList<S> population) {
         ArrayList<Data> ideal_point;
         ideal_point = new ArrayList<>(number_of_objectives);
 
@@ -42,8 +42,8 @@ public class NSGA3Replacement implements SelectionOperator {
             }
             ideal_point.add(minf);
 
-            for (ArrayList<Solution> list : fronts) {
-                for (Solution s : list) {
+            for (ArrayList<S> list : fronts) {
+                for (S s : list) {
                     if (f == 0) // in the first objective we create the vector of conv_objs
                         setAttribute(s, new ArrayList<Data>());
                     Data tmp = s.getObjective(f).minus(minf);
@@ -63,11 +63,11 @@ public class NSGA3Replacement implements SelectionOperator {
     }
 
     @SuppressWarnings("unchecked")
-    private ArrayList<Data> getAttribute(Solution s) {
+    private ArrayList<Data> getAttribute(S s) {
         return (ArrayList<Data>) s.getAttribute(OBJECTIVES_TRANSLATED);
     }
 
-    private void setAttribute(Solution s, ArrayList<Data> arrayList) {
+    private void setAttribute(S s, ArrayList<Data> arrayList) {
         s.setAttribute(OBJECTIVES_TRANSLATED, arrayList);
     }
 
@@ -77,7 +77,7 @@ public class NSGA3Replacement implements SelectionOperator {
     // of the objective which uses 1.0; the rest will use 0.00001. This is
     // different to the one impelemented in C++
     // ----------------------------------------------------------------------
-    private Data ASF(Solution s, int index) {
+    private Data ASF(S s, int index) {
         Data max_ratio = MIN_VALUE;
         for (int i = 0; i < s.getObjectives().size(); i++) {
             double weight = (index == i) ? 1.0 : epsilon;
@@ -89,12 +89,12 @@ public class NSGA3Replacement implements SelectionOperator {
         return max_ratio;
     }
 
-    private ArrayList<Solution> findExtremePoints(ArrayList<Solution> population) {
-        ArrayList<Solution> extremePoints = new ArrayList<>();
-        Solution min_indv = null;
+    private ArrayList<S> findExtremePoints(ArrayList<S> population) {
+        ArrayList<S> extremePoints = new ArrayList<>();
+        S min_indv = null;
         for (int f = 0; f < number_of_objectives; f += 1) {
             Data min_ASF = MAX_VALUE;
-            for (Solution s : fronts.get(0)) { // only consider the individuals in the first front
+            for (S s : fronts.get(0)) { // only consider the individuals in the first front
                 Data asf = ASF(s, f);
                 if (asf.compareTo(min_ASF) < 0) {
                     min_ASF = asf;
@@ -136,7 +136,7 @@ public class NSGA3Replacement implements SelectionOperator {
         return x;
     }
 
-    public ArrayList<Data> constructHyperplane(ArrayList<Solution> population, ArrayList<Solution> extreme_points) {
+    public ArrayList<Data> constructHyperplane(ArrayList<S> population, ArrayList<S> extreme_points) {
         // Check whether there are duplicate extreme points.
         // This might happen but the original paper does not mention how to deal with
         // it.
@@ -164,7 +164,7 @@ public class NSGA3Replacement implements SelectionOperator {
                 b.add(ONE_VALUE);
 
             ArrayList<ArrayList<Data>> A = new ArrayList<>();
-            for (Solution s : extreme_points) {
+            for (S s : extreme_points) {
                 ArrayList<Data> aux = new ArrayList<>();
                 for (int i = 0; i < number_of_objectives; i++)
                     aux.add(s.getObjective(i));
@@ -181,10 +181,9 @@ public class NSGA3Replacement implements SelectionOperator {
         return intercepts;
     }
 
-    public void normalizeObjectives(ArrayList<Solution> population, ArrayList<Data> intercepts,
-            ArrayList<Data> ideal_point) {
+    public void normalizeObjectives(ArrayList<S> population, ArrayList<Data> intercepts, ArrayList<Data> ideal_point) {
         for (int t = 0; t < fronts.size(); t += 1) {
-            for (Solution s : fronts.get(t)) {
+            for (S s : fronts.get(t)) {
                 for (int f = 0; f < number_of_objectives; f++) {
                     ArrayList<Data> conv_obj = getAttribute(s);
                     if (intercepts.get(f).minus(ideal_point.get(f)).abs().compareTo(epsilon) > 0) {
@@ -218,10 +217,10 @@ public class NSGA3Replacement implements SelectionOperator {
         return d.sqrt();
     }
 
-    public void associate(ArrayList<Solution> population) throws CloneNotSupportedException {
+    public void associate(ArrayList<S> population) throws CloneNotSupportedException {
 
         for (int t = 0; t < fronts.size(); t++) {
-            for (Solution s : fronts.get(t)) {
+            for (S s : fronts.get(t)) {
                 int min_rp = -1;
                 Data min_dist = MAX_VALUE;
                 Data d = ZERO_VALUE;
@@ -239,7 +238,7 @@ public class NSGA3Replacement implements SelectionOperator {
                 } else {
                     // this.referencePoints.get(min_rp).AddPotentialMember(s, min_dist);
                     if (min_rp != -1)
-                        this.referencePoints.get(min_rp).addMember((Solution) s.clone(), min_dist);
+                        this.referencePoints.get(min_rp).addMember((S) s.clone(), min_dist);
                 }
             }
         }
@@ -275,8 +274,8 @@ public class NSGA3Replacement implements SelectionOperator {
     //
     // Check the last two paragraphs in Section IV-E in the original paper.
     // ----------------------------------------------------------------------
-    Solution SelectClusterMember(int index) {
-        Solution chosen = null;
+    S SelectClusterMember(int index) {
+        S chosen = null;
         if (this.referencePoints.get(index).HasPotentialMember()) {
             if (this.referencePoints.get(index).getPotentialMembers() == 0) {
                 chosen = this.referencePoints.get(index).FindClosestMember();
@@ -297,19 +296,19 @@ public class NSGA3Replacement implements SelectionOperator {
      * This method performs the environmental Selection indicated in the paper
      * describing NSGAIII
      */
-    public void execute(ArrayList<Solution> source) {
+    public Void execute(ArrayList<S> source) {
         // The comments show the C++ code
 
         // ---------- Steps 9-10 in Algorithm 1 ----------
         if (source.size() == this.pop_size) {
             parents = source;
-            return;
+            return null;
         }
 
         // ---------- Step 14 / Algorithm 2 ----------
         // vector<double> ideal_point = TranslateObjectives(&cur, fronts);
         ArrayList<Data> ideal_point = translateObjectives(source);
-        ArrayList<Solution> extreme_points = findExtremePoints(source);
+        ArrayList<S> extreme_points = findExtremePoints(source);
         ArrayList<Data> intercepts = constructHyperplane(source, extreme_points);
 
         normalizeObjectives(source, intercepts, ideal_point);
@@ -324,7 +323,7 @@ public class NSGA3Replacement implements SelectionOperator {
         while (source.size() < this.pop_size && referencePoints.getNumberOfPoints() > 0) {
             int min_rp = FindNicheReferencePoint();
             if (min_rp != -1) {
-                Solution chosen = SelectClusterMember(min_rp);
+                S chosen = SelectClusterMember(min_rp);
                 if (chosen == null) // no potential member in Fl, disregard this reference point
                 {
                     this.referencePoints.remove(min_rp);
@@ -350,16 +349,16 @@ public class NSGA3Replacement implements SelectionOperator {
             }
             /*
              * Problem p = source.get(0).getProblem(); while(source.size() < this.pop_size){
-             * Solution s = p.randomSolution(); p.evaluate(s); p.evaluateConstraints(s);
-             * source.add(s); }
+             * S s = p.randomS(); p.evaluate(s); p.evaluateConstraints(s); source.add(s); }
              */
         }
         parents = source;
+        return null;
 
     }
 
     @Override
-    public ArrayList<Solution> getParents() {
+    public ArrayList<S> getParents() {
         return parents;
     }
 

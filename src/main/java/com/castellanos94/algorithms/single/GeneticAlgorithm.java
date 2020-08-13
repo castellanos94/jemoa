@@ -9,12 +9,12 @@ import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
-public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
+public class GeneticAlgorithm<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<S> {
     protected int maxIteration;
     protected int currentIteration;
 
-    public GeneticAlgorithm(Problem problem, int maxIteration, int popSize, SelectionOperator selectionOperator,
-            CrossoverOperator crossoverOperator, MutationOperator mutationOperator) {
+    public GeneticAlgorithm(Problem<S> problem, int maxIteration, int popSize, SelectionOperator<S> selectionOperator,
+            CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator) {
         super(problem);
         this.maxIteration = maxIteration;
         this.populationSize = popSize;
@@ -25,16 +25,16 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
     }
 
     @Override
-    protected ArrayList<Solution> reproduction(ArrayList<Solution> parents) throws CloneNotSupportedException {
-        ArrayList<Solution> offspring = new ArrayList<>();
+    protected ArrayList<S> reproduction(ArrayList<S> parents) throws CloneNotSupportedException {
+        ArrayList<S> offspring = new ArrayList<>();
         for (int i = 0; i < parents.size(); i++) {
-            ArrayList<Solution> p = new ArrayList<>();
+            ArrayList<S> p = new ArrayList<>();
             p.add(parents.get(i++));
             p.add(parents.get(i));
             offspring.addAll(crossoverOperator.execute(p));
 
         }
-        for (Solution solution : offspring) {
+        for (S solution : offspring) {
             mutationOperator.execute(solution);
             problem.evaluate(solution);
             problem.evaluateConstraint(solution);
@@ -43,11 +43,11 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
     }
 
     @Override
-    protected ArrayList<Solution> replacement(ArrayList<Solution> population, ArrayList<Solution> offspring) {
+    protected ArrayList<S> replacement(ArrayList<S> population, ArrayList<S> offspring) {
         // ArrayList<Solution> newPop = new ArrayList<>();
         // newPop.addAll((Collection<? extends Solution>) population.clone());
         for (int i = 0; i < offspring.size(); i++) {
-            Solution a = offspring.get(i);
+            S a = offspring.get(i);
             for (int j = 0; j < population.size(); j++) {
                 int value = a.getObjectives().get(0).compareTo(population.get(j).getObjectives().get(0));
                 int penal = a.getN_penalties().compareTo(population.get(j).getN_penalties());
@@ -79,9 +79,11 @@ public class GeneticAlgorithm extends AbstractEvolutionaryAlgorithm {
     protected boolean isStoppingCriteriaReached() {
         return currentIteration < maxIteration;
     }
+
     public int getMaxIteration() {
         return maxIteration;
     }
+
     public void setMaxIteration(int maxIteration) {
         this.maxIteration = maxIteration;
     }

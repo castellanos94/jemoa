@@ -1,24 +1,21 @@
 package com.castellanos94.operators.impl;
 
-import com.castellanos94.datatype.Data;
 import com.castellanos94.operators.RepairOperator;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.Tools;
 
-public class RepairBoundary implements RepairOperator {
+public class RepairBoundary implements RepairOperator<DoubleSolution> {
     @Override
-    public void repair(Solution solution) {
+    public Void execute(DoubleSolution solution) {
         for (int i = 0; i < solution.getVariables().size(); i++) {
-            Data var = solution.getVariable(i);
-            if (Data.checkNaN(var)) {
-                solution.setVariables(i, Data.initByRefType(var, Data.initByRefType(var,
-                        Tools.getRandomNumberInRange(solution.getLowerBound(i), solution.getUpperBound(i)))));
-            } else            if (var.compareTo(solution.getLowerBound(i)) < 0) {
-                solution.setVariables(i, Data.initByRefType(var, solution.getLowerBound(i)));
-            } else if (var.compareTo(solution.getUpperBound(i)) > 0) {
-                solution.setVariables(i, Data.initByRefType(var, solution.getUpperBound(i)));
+            Double var = solution.getVariable(i);
+            Double l = solution.getLowerBound(i).doubleValue();
+            Double u = solution.getUpperBound(i).doubleValue();
+            if (Double.isNaN(var) || var < l || var > u) {
+                solution.setVariable(i, Tools.getRandomNumberInRange(l, u).doubleValue());
             }
         }
+        return null;
     }
 
 }

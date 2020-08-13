@@ -16,11 +16,11 @@ import org.apache.commons.lang3.tuple.Pair;
  * https://github.com/jMetal/jMetal
  * 
  */
-public class ReferencePoint {
+public class ReferencePoint<S extends Solution<?>> {
 
     public List<Data> position;
     private int memberSize;
-    private List<Pair<Solution, Data>> potentialMembers;
+    private List<Pair<S, Data>> potentialMembers;
 
     public ReferencePoint() {
     }
@@ -34,28 +34,28 @@ public class ReferencePoint {
         potentialMembers = new ArrayList<>();
     }
 
-    public ReferencePoint(ReferencePoint point) {
+    public ReferencePoint(ReferencePoint<S> point) {
         position = new ArrayList<>(point.position.size());
         for (Data d : point.position) {
-                position.add(d);
-           
+            position.add(d);
+
         }
         memberSize = 0;
         potentialMembers = new ArrayList<>();
     }
 
-    public void generateReferencePoints(List<ReferencePoint> referencePoints, int numberOfObjectives,
+    public void generateReferencePoints(List<ReferencePoint<S>> referencePoints, int numberOfObjectives,
             int numberOfDivisions) {
 
-        ReferencePoint refPoint = new ReferencePoint(numberOfObjectives);
+        ReferencePoint<S> refPoint = new ReferencePoint<S>(numberOfObjectives);
         generateRecursive(referencePoints, refPoint, numberOfObjectives, numberOfDivisions, numberOfDivisions, 0);
     }
 
-    private void generateRecursive(List<ReferencePoint> referencePoints, ReferencePoint refPoint,
+    private void generateRecursive(List<ReferencePoint<S>> referencePoints, ReferencePoint<S> refPoint,
             int numberOfObjectives, int left, int total, int element) {
         if (element == (numberOfObjectives - 1)) {
             refPoint.position.set(element, new RealData(left / total));
-            referencePoints.add(new ReferencePoint(refPoint));
+            referencePoints.add(new ReferencePoint<>(refPoint));
         } else {
             for (int i = 0; i <= left; i += 1) {
                 refPoint.position.set(element, new RealData(i / total));
@@ -86,14 +86,14 @@ public class ReferencePoint {
         this.memberSize++;
     }
 
-    public void AddPotentialMember(Solution member_ind, Data distance) {
-        this.potentialMembers.add(new ImmutablePair<Solution, Data>(member_ind, distance));
+    public void AddPotentialMember(S member_ind, Data distance) {
+        this.potentialMembers.add(new ImmutablePair<S, Data>(member_ind, distance));
     }
 
-    public Solution FindClosestMember() {
+    public S FindClosestMember() {
         Data minDistance = new RealData(Double.MAX_VALUE);
-        Solution closetMember = null;
-        for (Pair<Solution, Data> p : this.potentialMembers) {
+        S closetMember = null;
+        for (Pair<S, Data> p : this.potentialMembers) {
             if (p.getRight().compareTo(minDistance) < 0) {
                 minDistance = p.getRight();
                 closetMember = p.getLeft();
@@ -102,15 +102,14 @@ public class ReferencePoint {
 
         return closetMember;
     }
-    
 
-    public Solution RandomMember() {
+    public S RandomMember() {
         int index = this.potentialMembers.size() > 1 ? Tools.getRandom().nextInt(this.potentialMembers.size() - 1) : 0;
         return this.potentialMembers.get(index).getLeft();
     }
 
-    public void RemovePotentialMember(Solution solution) {
-        Iterator<Pair<Solution, Data>> it = this.potentialMembers.iterator();
+    public void RemovePotentialMember(S solution) {
+        Iterator<Pair<S, Data>> it = this.potentialMembers.iterator();
         while (it.hasNext()) {
             if (it.next().getLeft().equals(solution)) {
                 it.remove();
@@ -118,6 +117,7 @@ public class ReferencePoint {
             }
         }
     }
+
     @Override
     public String toString() {
         return position.toString();

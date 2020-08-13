@@ -6,17 +6,17 @@ import java.util.Iterator;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.solutions.Solution;
 
-public class FastNonDominatedSort implements Ranking {
-    protected ArrayList<ArrayList<Solution>> fronts;
-    protected DominanceComparator paretoDominance;
+public class FastNonDominatedSort<S extends Solution<?>> implements Ranking<S> {
+    protected ArrayList<ArrayList<S>> fronts;
+    protected DominanceComparator<S> paretoDominance;
 
     public FastNonDominatedSort() {
-        this.paretoDominance = new DominanceComparator();
+        this.paretoDominance = new DominanceComparator<>();
         this.fronts = new ArrayList<>();
     }
 
     @Override
-    public void computeRanking(ArrayList<Solution> population) {
+    public void computeRanking(ArrayList<S> population) {
         this.fronts = new ArrayList<>();
         ArrayList<ArrayList<Integer>> dominate_me = new ArrayList<>();
 
@@ -54,7 +54,7 @@ public class FastNonDominatedSort implements Ranking {
             solutionRemove(integer, dominate_me);
         }
         for (int j = 1; j < fronts.size(); j++) {
-            ArrayList<Solution> currentFront = fronts.get(j);
+            ArrayList<S> currentFront = fronts.get(j);
             i = 0;
             min = getMinDom(dominate_me);
             for (ArrayList<Integer> dom_me : dominate_me) {
@@ -75,8 +75,8 @@ public class FastNonDominatedSort implements Ranking {
         fronts.removeIf(front -> front.size() == 0);
 
         for (int j = 0; j < fronts.size(); j++) {
-            ArrayList<Solution> front = fronts.get(j);
-            for (Solution solution : front) {
+            ArrayList<S> front = fronts.get(j);
+            for (S solution : front) {
                 solution.setRank(j);
             }
         }
@@ -101,7 +101,7 @@ public class FastNonDominatedSort implements Ranking {
     }
 
     @Override
-    public ArrayList<Solution> getSubFront(int index) {
+    public ArrayList<S> getSubFront(int index) {
         return fronts.get(index);
     }
 

@@ -7,10 +7,10 @@ import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.problems.Problem;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.Tools;
 
-public abstract class DTLZ extends Problem {
+public abstract class DTLZ extends Problem<DoubleSolution> {
     protected int k;
     protected final double THRESHOLD = 10e-3;
 
@@ -70,14 +70,14 @@ public abstract class DTLZ extends Problem {
     public abstract double[][] getParetoOptimal3Obj() throws FileNotFoundException;
 
     @Override
-    public void evaluateConstraint(Solution solution) {
+    public void evaluateConstraint(DoubleSolution solution) {
         int cn = 0;
         double v = 0;
         for (int i = 0; i < numberOfDecisionVars; i++) {
-            if (solution.getVariable(i).compareTo(lowerBound[i]) < 0) {
+            if (solution.getVariable(i).compareTo(lowerBound[i].doubleValue()) < 0) {
                 cn++;
                 v += lowerBound[i].doubleValue() - solution.getVariable(i).doubleValue();
-            } else if (solution.getVariable(i).compareTo(upperBound[i]) > 0) {
+            } else if (solution.getVariable(i).compareTo(upperBound[i].doubleValue()) > 0) {
                 cn++;
                 v += upperBound[i].doubleValue() - solution.getVariable(i).doubleValue();
             }
@@ -95,10 +95,10 @@ public abstract class DTLZ extends Problem {
     }
 
     @Override
-    public Solution randomSolution() {
-        Solution solution = new Solution(this);
+    public DoubleSolution randomSolution() {
+        DoubleSolution solution = new DoubleSolution(this);
         for (int i = 0; i < this.numberOfDecisionVars; i++) {
-            solution.setVariable(i, new RealData(Tools.getRandom().nextDouble()));
+            solution.setVariable(i, Tools.getRandom().nextDouble());
         }
         return solution;
     }
@@ -114,15 +114,15 @@ public abstract class DTLZ extends Problem {
      * 
      * @return
      */
-    public Solution generate() {
-        Solution solution = new Solution(this);
+    public DoubleSolution generate() {
+        DoubleSolution solution = new DoubleSolution(this);
 
         for (int i = 0; i < numberOfObjectives - 1; i++) {
-            solution.setVariable(i, new RealData(Tools.getRandom().nextDouble()));
+            solution.setVariable(i, Tools.getRandom().nextDouble());
         }
 
         for (int i = numberOfObjectives - 1; i < numberOfDecisionVars; i++) {
-            solution.setVariable(i, new RealData(0.5));
+            solution.setVariable(i, 0.5);
         }
 
         evaluate(solution);
@@ -132,8 +132,8 @@ public abstract class DTLZ extends Problem {
         return solution;
     }
 
-    public ArrayList<Solution> generateRandomSample(int size) {
-        ArrayList<Solution> solutions = new ArrayList<>();
+    public ArrayList<DoubleSolution> generateRandomSample(int size) {
+        ArrayList<DoubleSolution> solutions = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             solutions.add(generate());
         }
@@ -148,17 +148,17 @@ public abstract class DTLZ extends Problem {
      * @param size sampling size
      * @return solutions uniform dist
      */
-    public ArrayList<Solution> generateSample(int size) {
-        ArrayList<Solution> solutions = new ArrayList<>();
+    public ArrayList<DoubleSolution> generateSample(int size) {
+        ArrayList<DoubleSolution> solutions = new ArrayList<>();
         double matrix[][] = Tools.LHS(size, numberOfObjectives);
         for (int i = 0; i < size; i++) {
-            Solution solution = new Solution(this);
+            DoubleSolution solution = new DoubleSolution(this);
             for (int ii = 0; ii < numberOfObjectives - 1; ii++) {
-                solution.setVariable(ii, new RealData(matrix[i][ii]));
+                solution.setVariable(ii, matrix[i][ii]);
             }
 
             for (int ii = numberOfObjectives - 1; ii < numberOfDecisionVars; ii++) {
-                solution.setVariable(ii, new RealData(0.5));
+                solution.setVariable(ii, 0.5);
             }
             evaluate(solution);
             // evaluateConstraint(solution);
@@ -170,9 +170,9 @@ public abstract class DTLZ extends Problem {
         return solutions;
     }
 
-    public ArrayList<Solution> generateSampleNonDominated(int size) {
-        ArrayList<Solution> bag = generateSample(size);
-        DominanceComparator dominanceComparator = new DominanceComparator();
+    public ArrayList<DoubleSolution> generateSampleNonDominated(int size) {
+        ArrayList<DoubleSolution> bag = generateSample(size);
+        DominanceComparator<DoubleSolution> dominanceComparator = new DominanceComparator<>();
         dominanceComparator.computeRanking(bag);
         while (dominanceComparator.getSubFront(0).size() < size) {
             bag = dominanceComparator.getSubFront(0);

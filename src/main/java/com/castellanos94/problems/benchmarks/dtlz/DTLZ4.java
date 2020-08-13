@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.castellanos94.datatype.RealData;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.DoubleSolution;
 
 /**
  * The search space contains a dense area of solutions next to the fM/f1 plane.
@@ -24,7 +24,7 @@ public class DTLZ4 extends DTLZ {
     }
 
     @Override
-    public void evaluate(Solution solution) {
+    public void evaluate(DoubleSolution solution) {
         int numberOfVariables = getNumberOfDecisionVars();
         int numberOfObjectives = getNumberOfObjectives();
         double alpha = 100.0;
@@ -34,7 +34,7 @@ public class DTLZ4 extends DTLZ {
 
 
         for (int i = 0; i < numberOfVariables; i++) {
-            x[i] = solution.getVariable(i).doubleValue();
+            x[i] = solution.getVariable(i);
         }
 
         double g =g2(x);

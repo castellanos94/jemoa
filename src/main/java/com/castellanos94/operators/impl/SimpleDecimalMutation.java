@@ -1,11 +1,10 @@
 package com.castellanos94.operators.impl;
 
-import com.castellanos94.datatype.RealData;
 import com.castellanos94.operators.MutationOperator;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.Tools;
 
-public class SimpleDecimalMutation implements MutationOperator {
+public class SimpleDecimalMutation implements MutationOperator<DoubleSolution> {
     protected Double probability;
 
     public SimpleDecimalMutation(Double probability) {
@@ -13,17 +12,19 @@ public class SimpleDecimalMutation implements MutationOperator {
     }
 
     @Override
-    public void execute(Solution solution) throws CloneNotSupportedException {
-        if (Tools.getRandom().nextDouble() < probability) {
-            for (int i = 0; i < solution.getVariables().size(); i++) {
-                if (Tools.getRandom().nextDouble() < 0.5) {
-                    double min = solution.getProblem().getLowerBound()[i].doubleValue();
-                    double max = solution.getProblem().getUpperBound()[i].doubleValue();
-                    solution.setVariables(i, new RealData(Tools.getRandomNumberInRange(min, max)));
-                }
+    public DoubleSolution execute(DoubleSolution solution) {
+        for (int i = 0; i < solution.getVariables().size(); i++) {
+            if (Tools.getRandom().nextDouble() <= probability) {
+                double min = solution.getProblem().getLowerBound()[i].doubleValue();
+                double max = solution.getProblem().getUpperBound()[i].doubleValue();
+                solution.setVariable(i, Tools.getRandomNumberInRange(min, max).doubleValue());
             }
         }
+        return solution;
+    }
 
+    public Double getProbability() {
+        return probability;
     }
 
 }

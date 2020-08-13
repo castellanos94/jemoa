@@ -10,7 +10,7 @@ import com.castellanos94.solutions.Solution;
 *@author Castellanos Alvarez, Alejandro
 *@since 22/03/202
 */
-public abstract class Problem {
+public abstract class Problem<S extends Solution<?>> {
     public static int MAXIMIZATION = 1;
     public static int MINIMIZATION = -1;
     protected int numberOfObjectives;
@@ -22,11 +22,11 @@ public abstract class Problem {
     protected Data[] upperBound;
     protected String name;
 
-    public abstract void evaluate(Solution solution);
+    public abstract void evaluate(S solution);
 
-    public abstract void evaluateConstraint(Solution solution);
+    public abstract void evaluateConstraint(S solution);
 
-    public abstract Solution randomSolution();
+    public abstract S randomSolution();
 
     /**
      * @return the instance

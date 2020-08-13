@@ -2,8 +2,10 @@ package com.castellanos94.operators;
 
 import java.util.ArrayList;
 
-import com.castellanos94.solutions.Solution;
+public interface CrossoverOperator<Source> extends Operator<ArrayList<Source>, ArrayList<Source>> {
+    double getCrossoverProbability();
 
-public interface CrossoverOperator {
-    ArrayList<Solution>  execute(ArrayList<Solution> parents) throws CloneNotSupportedException;
+    int getNumberOfRequiredParents();
+
+    int getNumberOfGeneratedChildren();
 }

@@ -9,16 +9,16 @@ import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.ReferencePoint;
 import com.castellanos94.utils.Tools;
 
-public class EnvironmentalSelection implements SelectionOperator {
-    private List<List<Solution>> fronts;
+public class EnvironmentalSelection<S extends Solution<?>> implements SelectionOperator<S> {
+    private List<List<S>> fronts;
     private int solutionsToSelect;
-    private List<ReferencePoint> referencePoints;
+    private List<ReferencePoint<S>> referencePoints;
     private int numberOfObjectives;
-    protected ArrayList<Solution> parents;
+    protected ArrayList<S> parents;
     protected Data MaxValue, InfinityNegative, zeroValue, oneValue;
 
-    public EnvironmentalSelection(List<List<Solution>> fronts, int solutionsToSelect,
-            List<ReferencePoint> referencePoints, int numberOfObjectives) {
+    public EnvironmentalSelection(List<List<S>> fronts, int solutionsToSelect, List<ReferencePoint<S>> referencePoints,
+            int numberOfObjectives) {
         this.fronts = fronts;
         this.solutionsToSelect = solutionsToSelect;
         this.referencePoints = referencePoints;
@@ -28,10 +28,9 @@ public class EnvironmentalSelection implements SelectionOperator {
         this.zeroValue = Data.initByRefType(fronts.get(0).get(0).getObjective(0), 0.0);
         this.oneValue = Data.initByRefType(fronts.get(0).get(0).getObjective(0), 1.0);
 
-
     }
 
-    public List<Data> translateObjectives(List<Solution> population) {
+    public List<Data> translateObjectives(List<S> population) {
         List<Data> ideal_point;
         ideal_point = new ArrayList<>(numberOfObjectives);
 
@@ -45,8 +44,8 @@ public class EnvironmentalSelection implements SelectionOperator {
             }
             ideal_point.add(minf);
 
-            for (List<Solution> list : fronts) {
-                for (Solution s : list) {
+            for (List<S> list : fronts) {
+                for (S s : list) {
                     if (f == 0) // in the first objective we create the vector of conv_objs
                         setAttribute(s, new ArrayList<Data>());
                     getAttribute(s).add(s.getObjective(f).minus(minf));
@@ -63,7 +62,7 @@ public class EnvironmentalSelection implements SelectionOperator {
     // of the objective which uses 1.0; the rest will use 0.00001. This is
     // different to the one impelemented in C++
     // ----------------------------------------------------------------------
-    private Data ASF(Solution s, int index) {
+    private Data ASF(S s, int index) {
         Data max_ratio = InfinityNegative;
         for (int i = 0; i < s.getObjectives().size(); i++) {
             double weight = (index == i) ? 1.0 : 0.000001;
@@ -77,12 +76,12 @@ public class EnvironmentalSelection implements SelectionOperator {
     }
 
     // ----------------------------------------------------------------------
-    private List<Solution> findExtremePoints(List<Solution> population) {
-        List<Solution> extremePoints = new ArrayList<>();
-        Solution min_indv = null;
+    private List<S> findExtremePoints(List<S> population) {
+        List<S> extremePoints = new ArrayList<>();
+        S min_indv = null;
         for (int f = 0; f < numberOfObjectives; f += 1) {
             Data min_ASF = MaxValue;
-            for (Solution s : fronts.get(0)) { // only consider the individuals in the first front
+            for (S s : fronts.get(0)) { // only consider the individuals in the first front
                 Data asf = ASF(s, f);
                 if (asf.compareTo(min_ASF) < 0) {
                     min_ASF = asf;
@@ -107,8 +106,7 @@ public class EnvironmentalSelection implements SelectionOperator {
             for (int target = base + 1; target < N; target += 1) {
                 Data ratio = A.get(target).get(base).div(A.get(base).get(base));
                 for (int term = 0; term < A.get(base).size(); term += 1) {
-                    A.get(target).set(term,
-                            A.get(target).get(term).minus(A.get(base).get(term).times(ratio)));
+                    A.get(target).set(term, A.get(target).get(term).minus(A.get(base).get(term).times(ratio)));
                 }
             }
         }
@@ -125,7 +123,7 @@ public class EnvironmentalSelection implements SelectionOperator {
         return x;
     }
 
-    public List<Data> constructHyperplane(List<Solution> population, List<Solution> extreme_points) {
+    public List<Data> constructHyperplane(List<S> population, List<S> extreme_points) {
         // Check whether there are duplicate extreme points.
         // This might happen but the original paper does not mention how to deal with
         // it.
@@ -153,7 +151,7 @@ public class EnvironmentalSelection implements SelectionOperator {
                 b.add(oneValue);
 
             List<List<Data>> A = new ArrayList<>();
-            for (Solution s : extreme_points) {
+            for (S s : extreme_points) {
                 List<Data> aux = new ArrayList<>();
                 for (int i = 0; i < numberOfObjectives; i++)
                     aux.add(s.getObjective(i));
@@ -170,9 +168,9 @@ public class EnvironmentalSelection implements SelectionOperator {
         return intercepts;
     }
 
-    public void normalizeObjectives(List<Solution> population, List<Data> intercepts, List<Data> ideal_point) {
+    public void normalizeObjectives(List<S> population, List<Data> intercepts, List<Data> ideal_point) {
         for (int t = 0; t < fronts.size(); t += 1) {
-            for (Solution s : fronts.get(t)) {
+            for (S s : fronts.get(t)) {
 
                 for (int f = 0; f < numberOfObjectives; f++) {
                     List<Data> conv_obj = (List<Data>) getAttribute(s);
@@ -207,10 +205,10 @@ public class EnvironmentalSelection implements SelectionOperator {
         return d.sqrt();
     }
 
-    public void associate(List<Solution> population) {
+    public void associate(List<S> population) {
 
         for (int t = 0; t < fronts.size(); t++) {
-            for (Solution s : fronts.get(t)) {
+            for (S s : fronts.get(t)) {
                 int min_rp = -1;
                 Data min_dist = MaxValue;
                 for (int r = 0; r < this.referencePoints.size(); r++) {
@@ -233,7 +231,7 @@ public class EnvironmentalSelection implements SelectionOperator {
     int FindNicheReferencePoint() {
         // find the minimal cluster size
         int min_size = Integer.MAX_VALUE;
-        for (ReferencePoint referencePoint : this.referencePoints)
+        for (ReferencePoint<S> referencePoint : this.referencePoints)
             min_size = Math.min(min_size, referencePoint.MemberSize());
 
         // find the reference points with the minimal cluster size Jmin
@@ -256,8 +254,8 @@ public class EnvironmentalSelection implements SelectionOperator {
     //
     // Check the last two paragraphs in Section IV-E in the original paper.
     // ----------------------------------------------------------------------
-    Solution SelectClusterMember(ReferencePoint rp) {
-        Solution chosen = null;
+    S SelectClusterMember(ReferencePoint<S> rp) {
+        S chosen = null;
         if (rp.HasPotentialMember()) {
             if (rp.MemberSize() == 0) // currently has no member
             {
@@ -274,19 +272,19 @@ public class EnvironmentalSelection implements SelectionOperator {
      * This method performs the environmental Selection indicated in the paper
      * describing NSGAIII
      */
-    public void execute(ArrayList<Solution> source) {
+    public Void execute(ArrayList<S> source) {
         // The comments show the C++ code
 
         // ---------- Steps 9-10 in Algorithm 1 ----------
         if (source.size() == this.solutionsToSelect) {
             parents = source;
-            return;
+            return null;
         }
 
         // ---------- Step 14 / Algorithm 2 ----------
         // vector<double> ideal_point = TranslateObjectives(&cur, fronts);
         List<Data> ideal_point = translateObjectives(source);
-        List<Solution> extreme_points = findExtremePoints(source);
+        List<S> extreme_points = findExtremePoints(source);
         List<Data> intercepts = constructHyperplane(source, extreme_points);
 
         normalizeObjectives(source, intercepts, ideal_point);
@@ -297,7 +295,7 @@ public class EnvironmentalSelection implements SelectionOperator {
         while (source.size() < this.solutionsToSelect) {
             int min_rp = FindNicheReferencePoint();
 
-            Solution chosen = SelectClusterMember(this.referencePoints.get(min_rp));
+            S chosen = SelectClusterMember(this.referencePoints.get(min_rp));
             if (chosen == null) // no potential member in Fl, disregard this reference point
             {
                 this.referencePoints.remove(min_rp);
@@ -308,22 +306,25 @@ public class EnvironmentalSelection implements SelectionOperator {
             }
         }
         parents = source;
-
+        return null;
     }
 
     @Override
-    public ArrayList<Solution> getParents() {
+    public ArrayList<S> getParents() {
         return parents;
     }
+
     @Override
     public void setPopulaitonSize(int size) {
         System.out.println(size);
     }
-    public void setAttribute(Solution solution, List<Data> value) {
+
+    public void setAttribute(S solution, List<Data> value) {
         solution.getAttributes().put(getAttributeIdentifier(), value);
     }
+
     @SuppressWarnings("unchecked")
-    public List<Data> getAttribute(Solution solution) {
+    public List<Data> getAttribute(S solution) {
         return (List<Data>) solution.getAttributes().getOrDefault(getAttributeIdentifier(), new ArrayList<>());
     }
 

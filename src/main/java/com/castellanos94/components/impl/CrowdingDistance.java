@@ -9,30 +9,30 @@ import com.castellanos94.datatype.Data;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.ObjectiveComparator;
 
-public class CrowdingDistance implements DensityEstimator {
+public class CrowdingDistance<S extends Solution<?>> implements DensityEstimator<S> {
 
     @Override
-    public void compute(ArrayList<Solution> solutions) {
+    public void compute(ArrayList<S> solutions) {
         if (solutions.size() == 0) {
             return;
         } else if (solutions.size() == 1) {
-            solutions.get(0).getAttributes().put(getKey(), maxValue(solutions.get(0)));
+            solutions.get(0).getAttributes().put(getAttributeKey(), maxValue(solutions.get(0)));
             return;
         } else if (solutions.size() == 2) {
-            solutions.get(0).getAttributes().put(getKey(), maxValue(solutions.get(0)));
-            solutions.get(1).getAttributes().put(getKey(), maxValue(solutions.get(0)));
+            solutions.get(0).getAttributes().put(getAttributeKey(), maxValue(solutions.get(0)));
+            solutions.get(1).getAttributes().put(getAttributeKey(), maxValue(solutions.get(0)));
             return;
         }
-        for (Solution solution : solutions) {
-            solution.getAttributes().put(getKey(), Data.getZeroByType(solution.getObjectives().get(0)));
+        for (S solution : solutions) {
+            solution.getAttributes().put(getAttributeKey(), Data.getZeroByType(solution.getObjectives().get(0)));
         }
         int numOfObj = solutions.get(0).getObjectives().size();
         Data MaxValue = maxValue(solutions.get(0));
         for (int i = 0; i < numOfObj; i++) {
             Collections.sort(solutions, new ObjectiveComparator(i));
             try {
-                solutions.get(0).getAttributes().put(getKey(), (Data) MaxValue.clone());
-                solutions.get(solutions.size() - 1).getAttributes().put(getKey(), (Data) MaxValue.clone());
+                solutions.get(0).getAttributes().put(getAttributeKey(), (Data) MaxValue.clone());
+                solutions.get(solutions.size() - 1).getAttributes().put(getAttributeKey(), (Data) MaxValue.clone());
                 Data min = solutions.get(0).getObjectives().get(i);
                 Data max = solutions.get(solutions.size() - 1).getObjectives().get(i);
                 Data distance = Data.getZeroByType(min);
@@ -41,8 +41,8 @@ public class CrowdingDistance implements DensityEstimator {
                             .minus(solutions.get(j - 1).getObjectives().get(i));
                     distance = distance.div(max.minus(min));
                     distance = distance.plus(
-                            (Data) solutions.get(j).getAttributes().getOrDefault(getKey(), Data.getZeroByType(min)));
-                    solutions.get(j).getAttributes().put(getKey(), distance);
+                            (Data) solutions.get(j).getAttributes().getOrDefault(getAttributeKey(), Data.getZeroByType(min)));
+                    solutions.get(j).getAttributes().put(getAttributeKey(), distance);
                 }
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
@@ -50,26 +50,27 @@ public class CrowdingDistance implements DensityEstimator {
         }
     }
 
-    private Data maxValue(Solution solution) {
+    private Data maxValue(S solution) {
         return Data.initByRefType(solution.getObjectives().get(0), Double.POSITIVE_INFINITY);
     }
 
     @Override
-    public String getKey() {
+    public String getAttributeKey() {
         return getClass().getName();
     }
 
     @Override
-    public ArrayList<Solution> sort(ArrayList<Solution> solutions) {
-        solutions.sort(new CrowdingDistanceComparator().reversed());
+    public ArrayList<S> sort(ArrayList<S> solutions) {
+        solutions.sort(new CrowdingDistanceComparator<>().reversed());
         return solutions;
     }
 
-    public class CrowdingDistanceComparator implements Comparator<Solution> {
+    public class CrowdingDistanceComparator<S extends Solution<?>> implements Comparator<S> {
 
         @Override
-        public int compare(Solution a, Solution b) {
-            return ((Data) a.getAttributes().get(getKey())).compareTo(((Data) b.getAttributes().get(getKey())));
+        public int compare(S a, S b) {
+            return ((Data) a.getAttributes().get(getAttributeKey()))
+                    .compareTo(((Data) b.getAttributes().get(getAttributeKey())));
         }
 
     }

@@ -1,4 +1,5 @@
 package com.castellanos94.problems.preferences.dtlz;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -7,21 +8,23 @@ import java.util.Scanner;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.Classifier;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.DoubleSolution;
+
 public class DTLZ2_P extends DTLZPreferences {
 
     public DTLZ2_P(DTLZ_Instance instance, Classifier classifier) {
         super(instance, classifier);
     }
+
     @Override
-    public void evaluate(Solution solution) {
+    public void evaluate(DoubleSolution solution) {
         int numberOfVariables = getNumberOfDecisionVars();
         int numberOfObjectives = getNumberOfObjectives();
         double[] f = new double[numberOfObjectives];
         double[] x = new double[numberOfVariables];
 
         for (int i = 0; i < numberOfVariables; i++) {
-            x[i] = solution.getVariable(i).doubleValue();
+            x[i] = solution.getVariable(i);
         }
 
         double g = g2(x);
@@ -41,7 +44,7 @@ public class DTLZ2_P extends DTLZPreferences {
         }
 
         for (int i = 0; i < numberOfObjectives; i++) {
-           // solution.setObjective(i, new RealData((f[i] < THRESHOLD)? 0: f[i]));
+            // solution.setObjective(i, new RealData((f[i] < THRESHOLD)? 0: f[i]));
             solution.setObjective(i, new RealData(f[i]));
 
         }
