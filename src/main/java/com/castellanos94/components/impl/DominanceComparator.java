@@ -92,7 +92,7 @@ public class DominanceComparator<S extends Solution<?>> implements Comparator<S>
 
     @Override
     public ArrayList<S> getSubFront(int index) {
-        return this.front.get(0);
+        return this.front.get(index);
     }
 
     @Override

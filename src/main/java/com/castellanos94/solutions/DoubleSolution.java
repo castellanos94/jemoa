@@ -33,6 +33,7 @@ public class DoubleSolution extends Solution<Double> {
         this.bounds = bounds;
     }
 
+    @SuppressWarnings("unchecked")
     public DoubleSolution(DoubleSolution doubleSolution) {
         this(doubleSolution.getNumberOfObjectives(), doubleSolution.getNumberOfVariables(),
                 doubleSolution.getNumberOfResources(), doubleSolution.getBounds());

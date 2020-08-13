@@ -113,12 +113,12 @@ public class BestCompromiseDTLZ {
     public static void main(String[] args) throws IOException {
         // Tools.setSeed(8435L);
 
-        String path = "src/main/resources/instances/dtlz/DTLZ2Instance.txt";
+        String path = "src/main/resources/instances/dtlz/DTLZInstance.txt";
         // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         System.out.println(instance);
 
-        DTLZ2_P problem = new DTLZ2_P(instance, null);
+        DTLZ1_P problem = new DTLZ1_P(instance, null);
         System.out.println(problem);
         BestCompromiseDTLZ bestCompromiseDTLZ = new BestCompromiseDTLZ(problem);
         ArrayList<DoubleSolution> bag = new ArrayList<>();
@@ -148,7 +148,9 @@ public class BestCompromiseDTLZ {
                 }
             }
             bag.addAll(candidatos);
-
+            if(bag.size()>500){
+                break;
+            }
         }
         /**
          * Propuesta crear soluciones de referencia con el metodo de mejor compromiso y

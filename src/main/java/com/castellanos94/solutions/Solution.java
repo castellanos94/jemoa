@@ -30,6 +30,7 @@ public abstract class Solution<T> implements Comparable<Solution<?>> {
     protected int numberOfResources;
     protected int numberOfVariables;
 
+    
     public Solution(Problem problem) {
         this(problem.getNumberOfObjectives(), problem.getNumberOfDecisionVars(), problem.getNumberOfConstrains());
         this.problem = problem;

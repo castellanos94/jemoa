@@ -30,6 +30,7 @@ public class BinarySolution extends Solution<BitSet> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public BinarySolution(BinarySolution binarySolution) {
         this(binarySolution.getNumberOfObjectives(), binarySolution.getNumberOfVariables(),
                 binarySolution.getNumberOfResources());

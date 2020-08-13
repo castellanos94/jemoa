@@ -51,7 +51,8 @@ public class DTLZUsingPreferences {
             problem.evaluateConstraint(s);
             solutions.add(s);
         }
-        ReferenceHyperplane<DoubleSolution> referencias = new ReferenceHyperplane<>(problem.getNumberOfObjectives(), 5);
+        ReferenceHyperplane<DoubleSolution> referencias = new ReferenceHyperplane<>(problem.getNumberOfObjectives(),
+                instance.getInitialSolutions().length);
         referencias.transformToReferencePoint(solutions);
         referencias.getReferences().forEach(System.out::println);
         HashMap<String, Object> options = new HashMap<>();
