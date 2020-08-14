@@ -138,7 +138,6 @@ public class ReferenceHyperplane<S extends Solution<?>> {
         this.references = references;
     }
 
-    @SuppressWarnings("unchecked")
     public ReferenceHyperplane<S> copy() {
         ReferenceHyperplane<S> referenceHyperplane = new ReferenceHyperplane<>(this.number_of_objectives,
                 this.segmentations);

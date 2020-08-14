@@ -32,6 +32,7 @@ import tech.tablesaw.api.Table;
 public class DTLZUsingPreferences {
     static final String DIRECTORY = "experiments" + File.separator + "dtlz_preferences";
     static final int EXPERIMENT = 50;
+    @SuppressWarnings("unchecked")
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         Tools.setSeed(8435L);

@@ -1,6 +1,5 @@
 package com.castellanos94.decision_making;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,7 +13,6 @@ import com.castellanos94.problems.preferences.dtlz.*;
 import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
-import com.castellanos94.utils.Tools;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -22,11 +20,11 @@ import org.apache.commons.lang3.tuple.Pair;
 public class BestCompromiseDTLZ {
     protected int MAX_T = 1000;
     protected DTLZPreferences problem;
-    protected ITHDM_Preference preference;
+    protected ITHDM_Preference<DoubleSolution> preference;
 
     public BestCompromiseDTLZ(DTLZPreferences problem) {
         this.problem = problem;
-        this.preference = new ITHDM_Preference(problem, problem.getInstance().getPreferenceModel(0));
+        this.preference = new ITHDM_Preference<>(problem, problem.getInstance().getPreferenceModel(0));
     }
 
     /**
@@ -37,14 +35,12 @@ public class BestCompromiseDTLZ {
     public ArrayList<DoubleSolution> execute() {
         // System.out.println("call sampling");
         ArrayList<DoubleSolution> sample;
-       // sample = problem.generateSampleNonDominated(MAX_T);
+        // sample = problem.generateSampleNonDominated(MAX_T);
         // sample = problem.generateSample(MAX_T);
-         sample = problem.generateRandomSample(MAX_T);
+        sample = problem.generateRandomSample(MAX_T);
         // System.out.println("Sample size: " + sample.size());
         RealData sigma_out, sigma_in, best = RealData.ZERO, bestPref = RealData.ZERO;
-        int bestIndex = -1, bestIndexPref = -1;
         ArrayList<Pair<DoubleSolution, RealData>> candidatos = new ArrayList<>();
-        int ratio = MAX_T / 10;
         for (int i = 0; i < sample.size() - 1; i++) {
             for (int j = 1; j < sample.size(); j++) {
                 int value = preference.compare(sample.get(i), sample.get(j));
@@ -53,15 +49,12 @@ public class BestCompromiseDTLZ {
                 RealData tmp = (RealData) sigma_out.minus(sigma_in);
                 ImmutablePair<DoubleSolution, RealData> c;
                 if (value == -2 && tmp.compareTo(bestPref) >= 0) {
-
-                    bestIndexPref = i;
                     bestPref = tmp;
                     c = new ImmutablePair<DoubleSolution, RealData>(sample.get(i), bestPref);
                     if (!candidatos.contains(c))
                         candidatos.add(c);
                 } else if (value == -1) {
                     if (tmp.compareTo(best) >= 0) {
-                        bestIndex = i;
                         best = (RealData) tmp;
                         c = new ImmutablePair<DoubleSolution, RealData>(sample.get(i), best);
                         if (!candidatos.contains(c))
@@ -106,7 +99,7 @@ public class BestCompromiseDTLZ {
         return MAX_T;
     }
 
-    public ITHDM_Preference getPreference() {
+    public ITHDM_Preference<DoubleSolution> getPreference() {
         return preference;
     }
 
@@ -148,7 +141,7 @@ public class BestCompromiseDTLZ {
                 }
             }
             bag.addAll(candidatos);
-            if(bag.size()>500){
+            if (bag.size() > 500) {
                 break;
             }
         }

@@ -47,12 +47,12 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
                     if (f == 0) // in the first objective we create the vector of conv_objs
                         setAttribute(s, new ArrayList<>());
                     Data tmp = s.getObjective(f).minus(minf);
-                    if (tmp.compareTo(1e-3) < 0)
+                  /*  if (tmp.compareTo(1e-3) < 0)
                         try {
                             tmp = (Data) ZERO_VALUE.clone();
                         } catch (CloneNotSupportedException e) {
                             e.printStackTrace();
-                        }
+                        }*/
 
                     getAttribute(s).add(tmp);
                 }
@@ -186,7 +186,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
             for (S s : fronts.get(t)) {
                 for (int f = 0; f < number_of_objectives; f++) {
                     ArrayList<Data> conv_obj = getAttribute(s);
-                    if (intercepts.get(f).minus(ideal_point.get(f)).abs().compareTo(epsilon) > 0) {
+                    if (intercepts.get(f).minus(ideal_point.get(f)).abs().compareTo(10e-10) > 0) {
                         // if (Math.abs(intercepts.get(f) - ideal_point.get(f)) > 10e-10) {
                         conv_obj.set(f, conv_obj.get(f).div(intercepts.get(f).minus(ideal_point.get(f))));
                     } else {
@@ -214,7 +214,8 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
         return d.sqrt();
     }
 
-    public void associate(ArrayList<S> population)  {
+    @SuppressWarnings("unchecked")
+    public void associate(ArrayList<S> population) {
 
         for (int t = 0; t < fronts.size(); t++) {
             for (S s : fronts.get(t)) {
@@ -309,8 +310,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
 
         normalizeObjectives(source, intercepts, ideal_point);
         // ---------- Step 15 / Algorithm 3, Step 16 ----------
-            associate(source);
-     
+        associate(source);
 
         // ---------- Step 17 / Algorithm 4 ----------
         while (source.size() < this.pop_size && referencePoints.getNumberOfPoints() > 0) {
@@ -323,7 +323,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
                 } else {
                     this.referencePoints.get(min_rp).incrementPotentialMembers();
                     this.referencePoints.get(min_rp).RemovePotentialMember(chosen);
-                   
+
                     source.add(chosen);
                 }
             }
@@ -339,7 +339,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
                     }
                 }
             }
-         
+
         }
         parents = source;
         return null;

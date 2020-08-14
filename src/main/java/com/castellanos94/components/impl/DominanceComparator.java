@@ -27,7 +27,7 @@ public class DominanceComparator<S extends Solution<?>> implements Comparator<S>
         if (a.getObjectives().size() != b.getObjectives().size()) {
             throw new IllegalArgumentException("Solution must be same objective size");
         }
-        Problem problem = a.getProblem();
+        Problem<?> problem = a.getProblem();
 
         if (a.getNumberOfPenalties() != b.getNumberOfPenalties() || a.getPenalties().compareTo(0) < 0
                 || b.getPenalties().compareTo(0) < 0) {

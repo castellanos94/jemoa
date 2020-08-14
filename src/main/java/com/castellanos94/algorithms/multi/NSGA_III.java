@@ -8,7 +8,6 @@ import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.FastNonDominatedSort;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
-import com.castellanos94.operators.RepairOperator;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
@@ -38,14 +37,15 @@ public class NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryAlgorit
             offspring.addAll(crossoverOperator.execute(p));
 
         }
-        for (S solution : offspring) {
-            mutationOperator.execute(solution);
-            problem.evaluate(solution);
-            problem.evaluateConstraint(solution);
+        for (int i = 0; i < offspring.size(); i++) {
+            offspring.set(i, mutationOperator.execute(offspring.get(i)));
+            problem.evaluate(offspring.get(i));
+            problem.evaluateConstraint(offspring.get(i));
         }
         return offspring;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected ArrayList<S> replacement(ArrayList<S> population, ArrayList<S> offspring) {
         ArrayList<S> Rt = new ArrayList<>(population);
@@ -96,7 +96,7 @@ public class NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryAlgorit
         this.mutationOperator = mutationOperator;
         this.populationSize = populationSize;
         this.ranking = new FastNonDominatedSort<S>();
-      
+
         /*
          * (new ReferencePoint()).generateReferencePoints(referencePoints,
          * getProblem().getNumberOfObjectives(), numberOfDivisions);
@@ -112,7 +112,8 @@ public class NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryAlgorit
     }
 
     public NSGA_III(Problem<S> problem, int populationSize, int maxIterations, SelectionOperator<S> selectionOperator,
-            CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator, Ranking<S> ranking, ReferenceHyperplane<S> referenceHyperplane) {
+            CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator, Ranking<S> ranking,
+            ReferenceHyperplane<S> referenceHyperplane) {
         super(problem);
         this.maxIterations = maxIterations;
         this.numberOfDivisions = referenceHyperplane.getNumberOfPoints();

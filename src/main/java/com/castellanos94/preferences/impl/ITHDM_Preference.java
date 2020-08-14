@@ -15,17 +15,17 @@ import com.castellanos94.solutions.Solution;
  * of two outranking methods for multi-criteria ordinal classification, Omega,
  * https://doi.org/10.1016/j.omega.2019.05.001
  */
-public class ITHDM_Preference extends Preference {
-    protected ITHDM_Dominance dominance;
+public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
+    protected ITHDM_Dominance<S> dominance;
     protected OutrankingModel model;
-    protected Problem p;
+    protected Problem<?> p;
     private int[] coalition;
     private RealData sigmaXY, sigmaYX;
 
-    public ITHDM_Preference(Problem p, OutrankingModel model) {
+    public ITHDM_Preference(Problem<?> p, OutrankingModel model) {
         this.model = model;
         this.p = p;
-        this.dominance = new ITHDM_Dominance((RealData) model.getAlpha());
+        this.dominance = new ITHDM_Dominance<>((RealData) model.getAlpha());
         coalition = new int[p.getNumberOfObjectives()];
     }
 
@@ -38,7 +38,7 @@ public class ITHDM_Preference extends Preference {
      * @return x(S, λ-relation)y
      */
     @Override
-    public int compare(Solution x, Solution y) {
+    public int compare(S x, S y) {
 
         try {
             sigmaXY = credibility_index(x, y);
@@ -60,7 +60,7 @@ public class ITHDM_Preference extends Preference {
         return 1;
     }
 
-    private RealData credibility_index(Solution x, Solution y) throws CloneNotSupportedException {
+    private RealData credibility_index(S x, S y) throws CloneNotSupportedException {
         ArrayList<RealData> omegas = new ArrayList<>();
         RealData[] eta_gamma = new RealData[p.getNumberOfObjectives()];
         RealData max_discordance;
@@ -126,7 +126,7 @@ public class ITHDM_Preference extends Preference {
         return new Interval(lower, upper);
     }
 
-    private RealData compute_discordance_ij(Solution x, Solution y, int criteria) {
+    private RealData compute_discordance_ij(S x, S y, int criteria) {
         Data veto = model.getVetos()[criteria];
         RealData res;
         Interval value_x = x.getObjective(criteria).toInterval();
@@ -140,7 +140,7 @@ public class ITHDM_Preference extends Preference {
         return res;
     }
 
-    private RealData compute_alpha_ij(Solution x, Solution y, int criteria) {
+    private RealData compute_alpha_ij(S x, S y, int criteria) {
         RealData res;
         Interval value_x = x.getObjective(criteria).toInterval();
         Interval value_y = y.getObjective(criteria).toInterval();
@@ -160,7 +160,7 @@ public class ITHDM_Preference extends Preference {
         return sigmaYX;
     }
 
-    public ITHDM_Dominance getDominance() {
+    public ITHDM_Dominance<S> getDominance() {
         return dominance;
     }
 }

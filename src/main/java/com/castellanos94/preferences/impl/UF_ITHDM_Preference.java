@@ -12,22 +12,22 @@ import com.castellanos94.solutions.Solution;
  * determines what kind of outranking relationship exists between two solutions:
  * x, y, when the dm is compatible with the utility function
  */
-public class UF_ITHDM_Preference extends Preference {
-    protected UF_ITHDM_Dominance dominance;
+public class UF_ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
+    protected UF_ITHDM_Dominance<S> dominance;
     protected OutrankingModel model;
-    protected Problem p;
+    protected Problem<?> p;
 
-    public UF_ITHDM_Preference(Problem p, OutrankingModel model) {
+    public UF_ITHDM_Preference(Problem<?> p, OutrankingModel model) {
         this.model = model;
         this.p = p;
-        this.dominance = new UF_ITHDM_Dominance((RealData) model.getAlpha());
+        this.dominance = new UF_ITHDM_Dominance<>((RealData) model.getAlpha());
     }
 
     /**
      * @return -1 if xPy, 0 x~y
      */
     @Override
-    public int compare(Solution x, Solution y) {
+    public int compare(S x, S y) {
         // TODO: Pendiende revisar esto
         if (dominance.compare(x, y) == -1)
             return -1;

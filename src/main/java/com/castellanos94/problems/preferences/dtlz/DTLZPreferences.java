@@ -7,9 +7,9 @@ import com.castellanos94.problems.benchmarks.dtlz.DTLZ;
 import com.castellanos94.solutions.DoubleSolution;
 
 public abstract class DTLZPreferences extends DTLZ {
-    private Classifier classifier;
+    private Classifier<DoubleSolution> classifier;
 
-    public DTLZPreferences(DTLZ_Instance instance, Classifier classifier) {
+    public DTLZPreferences(DTLZ_Instance instance, Classifier<DoubleSolution> classifier) {
         super(instance.getNumObjectives(), instance.getNumDecisionVariables());
         this.instance = instance;
     }
@@ -17,7 +17,7 @@ public abstract class DTLZPreferences extends DTLZ {
     @Override
     public void evaluateConstraint(DoubleSolution solution) {
         solution.setPenalties(RealData.ZERO);
-        //classifier.classify(solution);
+        // classifier.classify(solution);
     }
 
     @Override

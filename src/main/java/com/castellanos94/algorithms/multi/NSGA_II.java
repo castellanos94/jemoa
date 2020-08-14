@@ -95,6 +95,7 @@ public class NSGA_II<S extends Solution<?>> extends AbstractEvolutionaryAlgorith
         return offspring;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected ArrayList<S> replacement(ArrayList<S> population, ArrayList<S> offspring) {
         ArrayList<S> Pt = new ArrayList<>();

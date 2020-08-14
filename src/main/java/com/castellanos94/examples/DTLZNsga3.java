@@ -31,7 +31,7 @@ public class DTLZNsga3 {
     static final int EXPERIMENT = 50;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
-       Tools.setSeed(1L);
+       Tools.setSeed(140895L);
 
         int numberProblem = 1;
         int numberOfObjectives = 3;
@@ -116,7 +116,7 @@ public class DTLZNsga3 {
             System.out.println(table.summary());
         }
     }
-
+    @SuppressWarnings("unchecked")
     private static NSGA_III<DoubleSolution> dtlzTestSuite(int p, int numberOfObjectives) {
 
         HashMap<String, Object> options = setup(numberOfObjectives);

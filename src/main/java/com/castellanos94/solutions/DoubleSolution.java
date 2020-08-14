@@ -12,7 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 public class DoubleSolution extends Solution<Double> {
     protected ArrayList<Pair<Data, Data>> bounds;
 
-    public DoubleSolution(Problem problem) {
+    public DoubleSolution(Problem<?> problem) {
         this(problem.getNumberOfObjectives(), problem.getNumberOfDecisionVars(), problem.getNumberOfConstrains(),
                 problem.getLowerBound(), problem.getUpperBound());
         this.problem = problem;

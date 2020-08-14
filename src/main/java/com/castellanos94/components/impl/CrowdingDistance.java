@@ -40,8 +40,8 @@ public class CrowdingDistance<S extends Solution<?>> implements DensityEstimator
                     distance = solutions.get(j + 1).getObjectives().get(i)
                             .minus(solutions.get(j - 1).getObjectives().get(i));
                     distance = distance.div(max.minus(min));
-                    distance = distance.plus(
-                            (Data) solutions.get(j).getAttributes().getOrDefault(getAttributeKey(), Data.getZeroByType(min)));
+                    distance = distance.plus((Data) solutions.get(j).getAttributes().getOrDefault(getAttributeKey(),
+                            Data.getZeroByType(min)));
                     solutions.get(j).getAttributes().put(getAttributeKey(), distance);
                 }
             } catch (CloneNotSupportedException e) {
@@ -61,11 +61,11 @@ public class CrowdingDistance<S extends Solution<?>> implements DensityEstimator
 
     @Override
     public ArrayList<S> sort(ArrayList<S> solutions) {
-        solutions.sort(new CrowdingDistanceComparator<>().reversed());
+        solutions.sort(new CrowdingDistanceComparator().reversed());
         return solutions;
     }
 
-    public class CrowdingDistanceComparator<S extends Solution<?>> implements Comparator<S> {
+    public class CrowdingDistanceComparator implements Comparator<S> {
 
         @Override
         public int compare(S a, S b) {

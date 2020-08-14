@@ -7,7 +7,7 @@ import com.castellanos94.datatype.RealData;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
-public class ITHDM_Dominance extends IntervalDominance {
+public class ITHDM_Dominance<S extends Solution<?>> extends IntervalDominance<S> {
     protected RealData alpha;
 
     public ITHDM_Dominance(RealData alpha) {
@@ -23,7 +23,7 @@ public class ITHDM_Dominance extends IntervalDominance {
      *         non-dominated 0.
      */
     @Override
-    public int compare(Solution x, Solution y) {
+    public int compare(S x, S y) {
         alpha_ND[0] = -1.0;
         alpha_ND[1] = -1.0;
         if (x.getNumberOfPenalties() != y.getNumberOfPenalties() || x.getPenalties().compareTo(0) < 0

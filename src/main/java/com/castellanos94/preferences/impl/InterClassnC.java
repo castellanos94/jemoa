@@ -20,6 +20,8 @@ import com.castellanos94.utils.Tools;
  * @see com.castellanos94.problems.PSPI_GD
  * 
  */
+@SuppressWarnings("unchecked")
+
 public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
     protected PSPI_GD problem;
     protected PSPI_Instance instance;
@@ -136,7 +138,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * @throws CloneNotSupportedException
      */
     protected int asc_rule(S x, int dm) {
-        ITHDM_Preference pref = new ITHDM_Preference(problem, problem.getPreferenceModel(dm));
+        ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r2 = instance.getR2()[dm];
         int clase = -1;
         S w = (S) x.copy();
@@ -174,7 +176,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * @throws CloneNotSupportedException
      */
     protected int desc_rule(S x, int dm) {
-        ITHDM_Preference pref = new ITHDM_Preference(problem, problem.getPreferenceModel(dm));
+        ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r1 = instance.getR1()[dm];
         int clase = -1;
         S w = (S) x.copy();
@@ -212,7 +214,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * @return True if isHighSat otherwise false
      */
     protected boolean isHighSat(S x, int dm) {
-        ITHDM_Preference pref = new ITHDM_Preference(problem, problem.getPreferenceModel(dm));
+        ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r2 = instance.getR2()[dm];
         S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
@@ -237,7 +239,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * @return true if is high dis otherwise false
      */
     protected boolean isHighDis(S x, int dm) {
-        ITHDM_Preference pref = new ITHDM_Preference(problem, problem.getPreferenceModel(dm));
+        ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r1 = instance.getR1()[dm];
         S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
@@ -264,7 +266,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * @return
      */
     public boolean isSatWithXUF(S x, int dm) {
-        UF_ITHDM_Preference pref = new UF_ITHDM_Preference(problem, problem.getPreferenceModel(dm));
+        UF_ITHDM_Preference<S> pref = new UF_ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r1 = instance.getR1()[dm];
         S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
@@ -300,7 +302,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * @return
      */
     public boolean isDisWithXUF(S x, int dm) {
-        UF_ITHDM_Preference pref = new UF_ITHDM_Preference(problem, problem.getPreferenceModel(dm));
+        UF_ITHDM_Preference<S> pref = new UF_ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r2 = instance.getR2()[dm];
         S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
@@ -339,7 +341,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * @return
      */
     public boolean isHighSatWithXUF(S x, int dm) {
-        UF_ITHDM_Preference pref = new UF_ITHDM_Preference(problem, problem.getPreferenceModel(dm));
+        UF_ITHDM_Preference<S> pref = new UF_ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r2 = instance.getR2()[dm];
         S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
@@ -364,7 +366,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      * @return
      */
     public boolean isHighDisWithXUF(S x, int dm) {
-        UF_ITHDM_Preference pref = new UF_ITHDM_Preference(problem, problem.getPreferenceModel(dm));
+        UF_ITHDM_Preference<S> pref = new UF_ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r1 = instance.getR2()[dm];
         S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
@@ -394,7 +396,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
             problem.evaluateConstraint(solutions[i]);
             // System.out.println(solutions[i]);
         }
-        ITHDM_Preference preference = new ITHDM_Preference(problem, problem.getPreferenceModel(1));
+        ITHDM_Preference<BinarySolution> preference = new ITHDM_Preference<>(problem, problem.getPreferenceModel(1));
         System.out.println("Evaluando el sistema de preferencia del DM 1");
         int[][] matrix = new int[solutions.length][solutions.length];
 

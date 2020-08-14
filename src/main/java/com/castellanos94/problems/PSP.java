@@ -60,7 +60,6 @@ public class PSP extends Problem<BinarySolution> {
     public void evaluateConstraint(BinarySolution sol) {
         Data budget = instance.getData("budget");
         IntegerData current_budget = new IntegerData(0);
-        Data one = new IntegerData(1);
         Data[][] projects = instance.getDataMatrix("projects");
 
         IntegerData[][] areas = (IntegerData[][]) instance.getDataMatrix("areas");
@@ -86,12 +85,10 @@ public class PSP extends Problem<BinarySolution> {
         }
         Data penaltie = new IntegerData(0);
         int penalties = 0;
-        int violate_budget = 0; // restriccion fuerte
 
         if (current_budget.compareTo(budget) > 0) {
             penalties++;
             penaltie = budget.minus(current_budget);
-            violate_budget = 1;
         }
         for (int i = 0; i < regionSum.length; i++) {
             if (regionSum[i].compareTo(regions[i][0]) < 0) {// limite inferior

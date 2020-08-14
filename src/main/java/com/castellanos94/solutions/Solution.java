@@ -21,7 +21,7 @@ public abstract class Solution<T> implements Comparable<Solution<?>> {
     protected List<Data> resources;
     protected Data penalties;
 
-    protected Problem problem;
+    protected Problem<?> problem;
     protected Integer numberOfPenalties = 0;
     protected HashMap<String, Object> attributes;
 
@@ -31,7 +31,7 @@ public abstract class Solution<T> implements Comparable<Solution<?>> {
     protected int numberOfVariables;
 
     
-    public Solution(Problem problem) {
+    public Solution(Problem<?> problem) {
         this(problem.getNumberOfObjectives(), problem.getNumberOfDecisionVars(), problem.getNumberOfConstrains());
         this.problem = problem;
 
@@ -147,11 +147,11 @@ public abstract class Solution<T> implements Comparable<Solution<?>> {
         this.resources = resources;
     }
 
-    public Problem getProblem() {
+    public Problem<?> getProblem() {
         return this.problem;
     }
 
-    public void setProblem(Problem problem) {
+    public void setProblem(Problem<?> problem) {
         this.problem = problem;
     }
 

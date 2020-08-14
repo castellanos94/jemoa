@@ -12,7 +12,7 @@ import com.castellanos94.solutions.DoubleSolution;
 
 public class DTLZ3_P extends DTLZPreferences {
 
-    public DTLZ3_P(DTLZ_Instance instance, Classifier classifier) {
+    public DTLZ3_P(DTLZ_Instance instance, Classifier<DoubleSolution> classifier) {
         super(instance, classifier);
     }
 

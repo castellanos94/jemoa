@@ -1,12 +1,12 @@
 package com.castellanos94.indicators.impl;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.castellanos94.datatype.Data;
 import com.castellanos94.indicators.Indicator;
 import com.castellanos94.solutions.Solution;
 
-public class InvertedGenerationalDistance implements Indicator<Solution> {
+public class InvertedGenerationalDistance<S extends Solution<?>> implements Indicator<S> {
     private Data[][] reference;
 
     public InvertedGenerationalDistance(Data[][] referenceFront) {
@@ -14,7 +14,7 @@ public class InvertedGenerationalDistance implements Indicator<Solution> {
     }
 
     @Override
-    public Data evaluate(ArrayList<Solution> solutions) {
+    public Data evaluate(List<S> solutions) {
         Data sum = Data.getZeroByType(solutions.get(0).getObjective(0));
         for (int i = 0; i < reference.length; i++) {
             sum = sum.plus(distanceToClosestPoint(reference[i], solutions).pow(2));
@@ -23,7 +23,7 @@ public class InvertedGenerationalDistance implements Indicator<Solution> {
         return sum.div(reference.length);
     }
 
-    private Data distanceToClosestPoint(Data[] point, ArrayList<Solution> front) {
+    private Data distanceToClosestPoint(Data[] point, List<S> front) {
         Data values[] = new Data[front.get(0).getObjectives().size()];
         for (int i = 0; i < values.length; i++) {
             values[i] = front.get(0).getObjective(i);
