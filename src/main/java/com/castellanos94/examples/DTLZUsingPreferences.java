@@ -82,6 +82,7 @@ public class DTLZUsingPreferences {
         System.out.println(algorithm);
         ArrayList<DoubleSolution> bag = new ArrayList<>();
         long averageTime = 0;
+        
         for (int i = 0; i < EXPERIMENT; i++) {
             algorithm = new NSGA_III<>(problem, (int) options.get("pop_size"), maxIterations, selectionOperator,
                     (CrossoverOperator<DoubleSolution>) options.get("crossover"),

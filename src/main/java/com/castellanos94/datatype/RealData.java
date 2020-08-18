@@ -9,7 +9,7 @@ import org.apache.commons.math3.util.Precision;
 public class RealData extends Data {
 
     private static final long serialVersionUID = 6987648766512291057L;
-    public static final double EPSILON = 10e-6;
+    public static final double EPSILON = 1e-6;
     public static final RealData ONE = new RealData(1.0);
     public static final RealData ZERO = new RealData(0.0);
 
@@ -74,7 +74,7 @@ public class RealData extends Data {
          * if (a > 1.0 || b > 1.0) return (a == b) ? 0 : (a > b) ? 1 : -1; double v =
          * Math.abs(a - b); return (v <= THRESHOLD) ? 0 : (a > b) ? 1 : -1;
          */
-        return Precision.compareTo(a, b, org.apache.commons.math3.util.Precision.EPSILON);
+        return Precision.compareTo(a, b, EPSILON);
 
     }
 

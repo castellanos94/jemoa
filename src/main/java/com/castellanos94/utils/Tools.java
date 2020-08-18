@@ -86,8 +86,6 @@ public class Tools {
         } else if (lowerBound.doubleValue() == upperBound.doubleValue()) {
             return lowerBound.doubleValue();
         }
-
-        // return random.nextDouble() * ((max - min) + 1) + min;
         return random.doubles(lowerBound.doubleValue(), upperBound.doubleValue()).findFirst().getAsDouble();
     }
 

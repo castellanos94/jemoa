@@ -7,6 +7,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.castellanos94.algorithms.multi.NSGA_III;
 import com.castellanos94.components.Ranking;
@@ -31,7 +33,7 @@ public class DTLZNsga3 {
     static final int EXPERIMENT = 50;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
-       Tools.setSeed(140895L);
+        Tools.setSeed(8435L);
 
         int numberProblem = 1;
         int numberOfObjectives = 3;
@@ -53,20 +55,27 @@ public class DTLZNsga3 {
         System.setOut(ps);
         System.out.println(problem);
         System.out.println(algorithm);
+        ArrayList<Integer> range = new ArrayList<>(IntStream.range(0, EXPERIMENT).boxed().collect(Collectors.toList()));
+        ArrayList<Long> time = new ArrayList<>();
+        range.stream().parallel().forEach(i -> {
+            NSGA_III<DoubleSolution> a = dtlzTestSuite(numberProblem, numberOfObjectives);
 
-        for (int i = 0; i < EXPERIMENT; i++) {
-            algorithm = dtlzTestSuite(numberProblem, numberOfObjectives);
-
-            algorithm.execute();
-            averageTime += algorithm.getComputeTime();
+            try {
+                a.execute();
+            } catch (CloneNotSupportedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            time.add(a.getComputeTime());
 
             System.setOut(console);
-            System.out.println(i + " time: " + algorithm.getComputeTime() + " ms.");
+            System.out.println(i + " time: " + a.getComputeTime() + " ms.");
             System.setOut(ps);
-            System.out.println(i + " time: " + algorithm.getComputeTime() + " ms.");
-            bag.addAll(algorithm.getSolutions());
-        }
+            System.out.println(i + " time: " + a.getComputeTime() + " ms.");
+            bag.addAll(a.getSolutions());
+        });
         System.setOut(console);
+        averageTime = time.stream().mapToLong(v -> v.longValue()).sum();
         System.out.println("Total time: " + averageTime);
         System.out.println("Average time : " + (double) averageTime / EXPERIMENT + " ms.");
         System.out.println("Solutions in the bag: " + bag.size());
@@ -116,6 +125,7 @@ public class DTLZNsga3 {
             System.out.println(table.summary());
         }
     }
+
     @SuppressWarnings("unchecked")
     private static NSGA_III<DoubleSolution> dtlzTestSuite(int p, int numberOfObjectives) {
 

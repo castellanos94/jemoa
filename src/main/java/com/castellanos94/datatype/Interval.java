@@ -112,7 +112,7 @@ public class Interval extends Data {
         } else {
             data = new Interval(value);
         }
-        return new Interval(lower - data.getUpper(), upper - data.getUpper());
+        return new Interval(lower - data.getUpper(), upper - data.getLower());
     }
 
     @Override

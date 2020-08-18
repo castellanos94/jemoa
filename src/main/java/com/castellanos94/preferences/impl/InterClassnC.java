@@ -53,6 +53,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
             if (!problem.getPreferenceModel(dm).isSupportsUtilityFunction()) {// Dm con modelo de outranking
                 int asc = asc_rule(x, dm);
                 int dsc = desc_rule(x, dm);
+                //System.out.println(asc+" "+dsc);
                 if (asc == dsc) {
                     if (asc < instance.getR2()[dm].length) {
                         if (isHighSat(x, dm)) {
@@ -73,25 +74,25 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
             } else { // DM UF
                 boolean bsat = isSatWithXUF(x, dm);
                 boolean bhsat = isHighSatWithXUF(x, dm);
-                boolean flag = false;
                 if (bhsat && bsat) {
                     hsat++;
                 } else if (!bhsat && bsat) {
                     sat++;
                 } else {
-                    flag = true;
+                    boolean bdis = isDisWithXUF(x, dm);
+                    boolean bhdis = isHighDisWithXUF(x, dm);
+                    if (bhdis && bdis) {
+                        hdis++;
+                    } else if (!bhdis && bdis) {
+                        dis++;
+                    } else {
+                        hdis++;
+                    }
                 }
-                boolean bdis = isDisWithXUF(x, dm);
-                boolean bhdis = isHighSatWithXUF(x, dm);
-                if (bhdis && bdis) {
-                    hdis++;
-                } else if (!bhdis && bdis) {
-                    dis++;
-                } else if (flag) {
-                    hdis++;
-                }
+              
 
             }
+           // System.out.println(problem.getPreferenceModel(dm).isSupportsUtilityFunction()+ " "+hsat+" "+sat+" "+dis+" "+hdis);
         }
         setPenalties(x, hsat, sat, dis, hdis);
 
@@ -101,7 +102,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
         Data penaltie = x.getPenalties();
         int violated = x.getNumberOfPenalties();
 
-        if (hsat < sat) {
+       /* if (hsat < sat) {
             penaltie = penaltie.plus((hsat - sat) / 3.0);
             violated++;
         } else if (hsat == sat) {
@@ -120,7 +121,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
             violated++;
         }
         x.setPenalties(penaltie);
-        x.setNumberOfPenalties(violated);
+        x.setNumberOfPenalties(violated);*/
         int[] iclass = new int[4];
         iclass[0] = hsat;
         iclass[1] = sat;
@@ -367,7 +368,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
      */
     public boolean isHighDisWithXUF(S x, int dm) {
         UF_ITHDM_Preference<S> pref = new UF_ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
-        Interval[][] r1 = instance.getR2()[dm];
+        Interval[][] r1 = instance.getR1()[dm];
         S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
         w.setNumberOfPenalties(0);
@@ -390,13 +391,19 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
         System.out.println(problem);
         BinarySolution[] solutions = new BinarySolution[20];
         Tools.setSeed(1L);
+        
+        Interval[][] solutionIntervals = (Interval[][]) ins.getParams().get("Solutions");
+        solutions = new BinarySolution[solutionIntervals.length+10];
         for (int i = 0; i < solutions.length; i++) {
+            if(i < solutionIntervals.length)
+            solutions[i] = problem.createFromString(solutionIntervals[i]);
+            else
             solutions[i] = problem.randomSolution();
             problem.evaluate(solutions[i]);
             problem.evaluateConstraint(solutions[i]);
-            // System.out.println(solutions[i]);
+            // System.out.println(solutions[i].getPenalties()+" "+solutions[i]);
         }
-        ITHDM_Preference<BinarySolution> preference = new ITHDM_Preference<>(problem, problem.getPreferenceModel(1));
+       ITHDM_Preference<BinarySolution> preference = new ITHDM_Preference<>(problem, problem.getPreferenceModel(1));
         System.out.println("Evaluando el sistema de preferencia del DM 1");
         int[][] matrix = new int[solutions.length][solutions.length];
 
@@ -423,10 +430,10 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
             classificator.classify(solutions[i]);
         }
         for (BinarySolution s : solutions) {
-            System.out.println(s.getPenalties() + ", " + s.getResources() + ", " + s.getResources() + " "
+           System.out.println(s.getPenalties() + ", " + s.getResources() + ", " + s.getResources() + " "
                     + Arrays.toString((int[]) s.getAttribute(classificator.getAttributeKey())));
-            // System.out.println(s);
-        }
+          //   System.out.println(s.getObjectives());
+        }        
 
     }
 }

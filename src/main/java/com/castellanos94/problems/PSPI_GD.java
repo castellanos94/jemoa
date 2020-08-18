@@ -82,7 +82,8 @@ public class PSPI_GD extends Problem<BinarySolution> {
     public void evaluateConstraint(BinarySolution solution) {
         Interval suma = new Interval(solution.getResources().get(0));
         RealData poss = this.getInstance().getBudget().possGreaterThanOrEq(suma);
-        if (poss.compareTo(getPreferenceModel(0).getChi()) < 0) {
+        if (poss.compareTo(0.72) < 0) {
+            System.out.println(poss+" "+0.72);
             Data tmp = getInstance().getBudget().minus(solution.getResources().get(0));
             solution.setPenalties(tmp);
             solution.setNumberOfPenalties(1);
@@ -91,7 +92,13 @@ public class PSPI_GD extends Problem<BinarySolution> {
             solution.setNumberOfPenalties(0);
         }
     }
-
+    public BinarySolution createFromString(Interval[] data){
+        BinarySolution sol = new BinarySolution(this);
+        for (int i = 0; i < data.length; i++) {
+            sol.getVariable(0).set(i, data[i].compareTo(1) == 0);
+        }
+        return sol;
+    }
     @Override
     public BinarySolution randomSolution() {
         BinarySolution sol = new BinarySolution(this);
@@ -103,7 +110,7 @@ public class PSPI_GD extends Problem<BinarySolution> {
         for (int i = 0; i < positions.size(); i++) {
             Interval suma = (Interval) projects[positions.get(i)][0].plus(current_budget);
             RealData possGreaterThanOrEq = budget.possGreaterThanOrEq(suma);
-            if (possGreaterThanOrEq.compareTo(getPreferenceModel(0).getChi()) >= 0) {
+            if (possGreaterThanOrEq.compareTo(0.72) >= 0) {
                 // sol.setVariables(positions.get(i), new IntegerData(1));
                 sol.getVariable(0).set(positions.get(i));
                 current_budget = suma;

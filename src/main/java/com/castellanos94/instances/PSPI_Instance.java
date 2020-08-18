@@ -33,7 +33,7 @@ public class PSPI_Instance extends Instance {
          * outranking RealData[][] chis_DMs; // umbral para restricciones RealData[]
          * alphas_DMs; // umbral de dominancia Interval[] lambdas_DMs; // umbral para la
          * mayoria
-         */
+         */ 
 
         Interval[][] projects;
 

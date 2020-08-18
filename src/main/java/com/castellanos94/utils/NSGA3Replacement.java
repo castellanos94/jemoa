@@ -47,12 +47,8 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
                     if (f == 0) // in the first objective we create the vector of conv_objs
                         setAttribute(s, new ArrayList<>());
                     Data tmp = s.getObjective(f).minus(minf);
-                  /*  if (tmp.compareTo(1e-3) < 0)
-                        try {
-                            tmp = (Data) ZERO_VALUE.clone();
-                        } catch (CloneNotSupportedException e) {
-                            e.printStackTrace();
-                        }*/
+                 //   if (tmp.compareTo(10e-6) < 0)
+                  //      tmp = ZERO_VALUE;
 
                     getAttribute(s).add(tmp);
                 }
@@ -186,7 +182,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
             for (S s : fronts.get(t)) {
                 for (int f = 0; f < number_of_objectives; f++) {
                     ArrayList<Data> conv_obj = getAttribute(s);
-                    if (intercepts.get(f).minus(ideal_point.get(f)).abs().compareTo(10e-10) > 0) {
+                    if (intercepts.get(f).minus(ideal_point.get(f)).abs().compareTo(10e-6) > 0) {
                         // if (Math.abs(intercepts.get(f) - ideal_point.get(f)) > 10e-10) {
                         conv_obj.set(f, conv_obj.get(f).div(intercepts.get(f).minus(ideal_point.get(f))));
                     } else {
