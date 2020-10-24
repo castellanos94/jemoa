@@ -33,9 +33,9 @@ public class DTLZNsga3 {
     static final int EXPERIMENT = 50;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
-        Tools.setSeed(8435L);
+        Tools.setSeed(1l);
 
-        int numberProblem = 1;
+        int numberProblem = 3;
         int numberOfObjectives = 3;
 
         ArrayList<DoubleSolution> bag = new ArrayList<>();

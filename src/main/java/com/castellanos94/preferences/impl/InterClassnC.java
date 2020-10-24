@@ -384,7 +384,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        PSPI_Instance ins = (PSPI_Instance) new PSPI_Instance("src/main/resources/instances/gd/GD_ITHDM-UFCA.txt")
+        PSPI_Instance ins = (PSPI_Instance) new PSPI_Instance("/home/thinkpad/Dropbox/GDM/GroupDecision_202001/_instances/GD_ITHDM-UFCC.txt")
                 .loadInstance();
         PSPI_GD problem = new PSPI_GD(ins);
         System.out.println(ins);

@@ -18,7 +18,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class BestCompromiseDTLZ {
-    protected int MAX_T = 1000;
+    protected int MAX_T = 5000;
     protected DTLZPreferences problem;
     protected ITHDM_Preference<DoubleSolution> preference;
 
