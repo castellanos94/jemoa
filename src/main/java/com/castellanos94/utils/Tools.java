@@ -1,5 +1,6 @@
 package com.castellanos94.utils;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -7,6 +8,11 @@ import java.util.List;
 import java.util.Random;
 
 import com.castellanos94.datatype.Interval;
+import com.castellanos94.solutions.Solution;
+
+import tech.tablesaw.api.DoubleColumn;
+import tech.tablesaw.api.StringColumn;
+import tech.tablesaw.api.Table;
 
 public class Tools {
     private static Random random = new Random();
@@ -96,5 +102,43 @@ public class Tools {
         BigDecimal bd = BigDecimal.valueOf(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static void SOLUTIONS_TO_FILE(String path, List<Solution> solutions) throws IOException {
+        Solution solution = solutions.get(0);
+        if (!path.contains(".csv"))
+            path += ".csv";
+        Table table = Table.create(solution.getProblem().getName());
+        for (int i = 0; i < solution.getProblem().getNumberOfDecisionVars(); i++) {
+            StringColumn column = StringColumn.create("Var-" + (i + 1));
+            for (Solution solution_ : solutions)
+                column.append(solution_.getVariable(i).toString());
+
+            table.addColumns(column);
+        }
+        for (int i = 0; i < solution.getProblem().getNumberOfObjectives(); i++) {
+            StringColumn column = StringColumn.create("F-" + (i + 1));
+            for (Solution solution_ : solutions)
+                column.append(solution_.getObjective(i).toString());
+            table.addColumns(column);
+        }
+        for (int i = 0; i < solution.getProblem().getNumberOfConstrains(); i++) {
+            StringColumn column = StringColumn.create("Res-" + (i + 1));
+            for (Solution solution_ : solutions)
+                column.append(solution_.getResource(i).toString());
+
+            table.addColumns(column);
+        }
+        DoubleColumn column = DoubleColumn.create("Penalties");
+        for (Solution solution_ : solutions)
+            column.append(solution_.getPenalties());
+
+        DoubleColumn column_rank = DoubleColumn.create("Rank");
+        for (Solution solution_ : solutions)
+            column_rank.append(solution_.getRank());
+
+        table.addColumns(column, column_rank);
+        table.write().csv(path);
     }
 }

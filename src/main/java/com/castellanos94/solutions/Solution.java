@@ -30,7 +30,6 @@ public abstract class Solution<T> implements Comparable<Solution<?>> {
     protected int numberOfResources;
     protected int numberOfVariables;
 
-    
     public Solution(Problem<?> problem) {
         this(problem.getNumberOfObjectives(), problem.getNumberOfDecisionVars(), problem.getNumberOfConstrains());
         this.problem = problem;
@@ -223,6 +222,10 @@ public abstract class Solution<T> implements Comparable<Solution<?>> {
         int result = 1;
         result = prime * result + ((variables == null) ? 0 : variables.hashCode());
         return result;
+    }
+
+    public Data getResource(int index) {
+        return this.resources.get(index);
     }
 
     @Override
