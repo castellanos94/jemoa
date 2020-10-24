@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Random;
 
 import com.castellanos94.datatype.Interval;
+import com.castellanos94.solutions.BinarySolution;
+import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 
 import tech.tablesaw.api.DoubleColumn;
@@ -104,8 +106,19 @@ public class Tools {
         return bd.doubleValue();
     }
 
+    public static void SOLUTIONS_TO_FILE(String path, ArrayList<DoubleSolution> solutions) throws IOException {
+        ArrayList<Solution> _s = new ArrayList<>();
+        solutions.forEach(_s::add);
+        SOLUTIONS_TO_FILE_(path, _s);
+    }
+    public static void SOLUTIONS_TO_FILE(String path, ArrayList<BinarySolution> solutions) throws IOException {
+        ArrayList<Solution> _s = new ArrayList<>();
+        solutions.forEach(_s::add);
+        SOLUTIONS_TO_FILE_(path, _s);
+    }
+
     @SuppressWarnings("rawtypes")
-    public static void SOLUTIONS_TO_FILE(String path, List<Solution> solutions) throws IOException {
+    private static void SOLUTIONS_TO_FILE_(String path, List<Solution> solutions) throws IOException {
         Solution solution = solutions.get(0);
         if (!path.contains(".csv"))
             path += ".csv";
