@@ -1,7 +1,6 @@
 package com.castellanos94.preferences.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.Interval;

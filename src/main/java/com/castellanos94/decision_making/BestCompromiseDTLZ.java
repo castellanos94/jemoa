@@ -8,6 +8,7 @@ import com.castellanos94.components.impl.CrowdingDistance;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
+import com.castellanos94.preferences.impl.ITHDMRanking;
 import com.castellanos94.preferences.impl.ITHDM_Preference;
 import com.castellanos94.problems.preferences.dtlz.*;
 import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
@@ -107,7 +108,8 @@ public class BestCompromiseDTLZ {
         // Tools.setSeed(8435L);
 
         String path = "src/main/resources/instances/dtlz/DTLZInstance.txt";
-        // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
+        path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
+        path = "/home/thinkpad/PycharmProjects/jMetalPy/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         System.out.println(instance);
 

@@ -44,7 +44,7 @@ public class ZDT1Nsga2Example {
                 algorithm.execute();
                 System.out.println(algorithm.getSolutions().size());
                 ArrayList<DoubleSolution> solutions = algorithm.getSolutions();
-                Tools.SOLUTIONS_TO_FILE("experiments/zdt1-nsgaii", solutions);
+                Tools.SOLUTIONS_TO_FILE_DOUBLE("experiments/zdt1-nsgaii", solutions);
                 System.out.println("Time: " + algorithm.getComputeTime() + " ms.");
                 Plotter plotter = new Scatter2D<DoubleSolution>(solutions, "experiments/zdt1-nsgaii");
                 plotter.plot();

@@ -106,12 +106,12 @@ public class Tools {
         return bd.doubleValue();
     }
 
-    public static void SOLUTIONS_TO_FILE(String path, ArrayList<DoubleSolution> solutions) throws IOException {
+    public static void SOLUTIONS_TO_FILE_DOUBLE(String path, ArrayList<DoubleSolution> solutions) throws IOException {
         ArrayList<Solution> _s = new ArrayList<>();
         solutions.forEach(_s::add);
         SOLUTIONS_TO_FILE_(path, _s);
     }
-    public static void SOLUTIONS_TO_FILE(String path, ArrayList<BinarySolution> solutions) throws IOException {
+    public static void SOLUTIONS_TO_FILE_BINARY(String path, ArrayList<BinarySolution> solutions) throws IOException {
         ArrayList<Solution> _s = new ArrayList<>();
         solutions.forEach(_s::add);
         SOLUTIONS_TO_FILE_(path, _s);

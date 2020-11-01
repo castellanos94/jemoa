@@ -27,15 +27,18 @@ import com.castellanos94.utils.Tools;
 
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.Table;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DTLZNsga3 {
+    private static final Logger logger = LogManager.getLogger(DTLZNsga3.class);
     static final String DIRECTORY = "experiments" + File.separator + "dtlz";
     static final int EXPERIMENT = 50;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         Tools.setSeed(1l);
 
-        int numberProblem = 3;
+        int numberProblem = 1;
         int numberOfObjectives = 3;
 
         ArrayList<DoubleSolution> bag = new ArrayList<>();
@@ -44,17 +47,9 @@ public class DTLZNsga3 {
         NSGA_III<DoubleSolution> algorithm = dtlzTestSuite(numberProblem, numberOfObjectives);
 
         DTLZ problem = (DTLZ) algorithm.getProblem();
-        PrintStream console = System.out;
-        PrintStream ps = new PrintStream(
-                DIRECTORY + File.separator + "resume_" + problem.getName() + "_" + problem.getNumberOfObjectives());
+        logger.info(problem);
+        logger.info(algorithm);
 
-        System.setOut(console);
-        System.out.println(problem);
-        System.out.println(algorithm);
-
-        System.setOut(ps);
-        System.out.println(problem);
-        System.out.println(algorithm);
         ArrayList<Integer> range = new ArrayList<>(IntStream.range(0, EXPERIMENT).boxed().collect(Collectors.toList()));
         ArrayList<Long> time = new ArrayList<>();
         range.stream().parallel().forEach(i -> {
@@ -63,38 +58,24 @@ public class DTLZNsga3 {
             try {
                 a.execute();
             } catch (CloneNotSupportedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                logger.error(e);
             }
             time.add(a.getComputeTime());
 
-            System.setOut(console);
-            System.out.println(i + " time: " + a.getComputeTime() + " ms.");
-            System.setOut(ps);
-            System.out.println(i + " time: " + a.getComputeTime() + " ms.");
+            logger.info(i + " time: " + a.getComputeTime() + " ms.");
             bag.addAll(a.getSolutions());
         });
-        System.setOut(console);
         averageTime = time.stream().mapToLong(v -> v.longValue()).sum();
-        System.out.println("Total time: " + averageTime);
-        System.out.println("Average time : " + (double) averageTime / EXPERIMENT + " ms.");
-        System.out.println("Solutions in the bag: " + bag.size());
+        logger.info("Total time: " + averageTime);
+        logger.info("Average time : " + (double) averageTime / EXPERIMENT + " ms.");
+        logger.info("Solutions in the bag: " + bag.size());
 
-        System.setOut(ps);
-        System.out.println("Total time: " + averageTime + " ms.");
-        System.out.println("Average time : " + (double) averageTime / EXPERIMENT + " ms.");
-        System.out.println("Solutions in the bag: " + bag.size());
 
         Ranking<DoubleSolution> compartor = new DominanceComparator<>();
         compartor.computeRanking(bag);
 
-        System.setOut(console);
-        System.out.println("Fronts : " + compartor.getNumberOfSubFronts());
-        System.out.println("Front 0: " + compartor.getSubFront(0).size());
-
-        System.setOut(ps);
-        System.out.println("Fronts : " + compartor.getNumberOfSubFronts());
-        System.out.println("Front 0: " + compartor.getSubFront(0).size());
+        logger.info("Fronts : " + compartor.getNumberOfSubFronts());
+        logger.info("Front 0: " + compartor.getSubFront(0).size());
 
         File f = new File(DIRECTORY);
         if (!f.exists())
@@ -122,7 +103,7 @@ public class DTLZNsga3 {
                 }
                 table.addColumns(column);
             }
-            System.out.println(table.summary());
+            logger.info(table.summary());
         }
     }
 
