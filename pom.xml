@@ -4,9 +4,10 @@
     <artifactId>jemoa</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
-        <maven.compiler.source>14</maven.compiler.source>
-        <maven.compiler.target>14</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <tech.tablesaw.version>0.38.1</tech.tablesaw.version>
     </properties>
     <dependencies>
         <dependency>
@@ -18,13 +19,13 @@
         <dependency>
             <groupId>tech.tablesaw</groupId>
             <artifactId>tablesaw-core</artifactId>
-            <version>LATEST</version>
+            <version>${tech.tablesaw.version}</version>
         </dependency>
 
         <dependency>
             <groupId>tech.tablesaw</groupId>
             <artifactId>tablesaw-jsplot</artifactId>
-            <version>LATEST</version>
+            <version>${tech.tablesaw.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <dependency>
