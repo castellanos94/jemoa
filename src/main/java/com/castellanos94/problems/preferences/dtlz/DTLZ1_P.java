@@ -45,6 +45,7 @@ public class DTLZ1_P extends DTLZPreferences {
         }
 
     }
+    
 
     public double[][] getParetoOptimal3Obj() throws FileNotFoundException {
 

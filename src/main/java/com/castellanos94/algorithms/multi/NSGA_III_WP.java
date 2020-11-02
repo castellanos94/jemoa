@@ -48,11 +48,14 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
             }
             if (!hs.isEmpty()) {
                 _fronts.add(hs);
-            } else if (!s.isEmpty()) {
+            } 
+            if (!s.isEmpty()) {
                 _fronts.add(s);
-            } else if (!d.isEmpty()) {
+            } 
+             if (!d.isEmpty()) {
                 _fronts.add(d);
-            } else if (!hd.isEmpty()) {
+            } 
+             if (!hd.isEmpty()) {
                 _fronts.add(hd);
             }
             for (int i = 1; i < ranking.getNumberOfSubFronts(); i++) {

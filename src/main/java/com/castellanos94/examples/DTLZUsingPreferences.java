@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
+import com.castellanos94.algorithms.multi.NSGA_III;
 import com.castellanos94.algorithms.multi.NSGA_III_WP;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.operators.SelectionOperator;
@@ -17,6 +18,7 @@ import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.impl.SBXCrossover;
 import com.castellanos94.problems.preferences.dtlz.*;
 import com.castellanos94.solutions.DoubleSolution;
+import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
 import com.castellanos94.utils.Scatter3D;
 import com.castellanos94.utils.Tools;
@@ -34,7 +36,7 @@ public class DTLZUsingPreferences {
     static final int EXPERIMENT = 50;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
-        Tools.setSeed(8435L);
+        Tools.setSeed(1L);
         String path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
         // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
@@ -83,7 +85,8 @@ public class DTLZUsingPreferences {
         logger.info("Total time: " + averageTime);
         logger.info("Average time : " + (double) averageTime / EXPERIMENT + " ms.");
         logger.info("Solutions in the bag: " + bag.size());
-
+        Solution.writSolutionsToFile(DIRECTORY + File.separator + "nsga_iii_bag_" + problem.getName() + "_F0_"
+                + problem.getNumberOfObjectives(), new ArrayList<>(bag));
         Ranking<DoubleSolution> compartor = new DominanceComparator<>();
         compartor.computeRanking(bag);
 
@@ -93,8 +96,8 @@ public class DTLZUsingPreferences {
         File f = new File(DIRECTORY);
         if (!f.exists())
             f.mkdirs();
-        f = new File(DIRECTORY + File.separator + "nsga_iii_wp_bag_" + problem.getName() + "_F0_"
-                + problem.getNumberOfObjectives());
+        f = new File(DIRECTORY + File.separator + "Class_F0" + problem.getName() + +problem.getNumberOfObjectives()
+                + ".out");
         InterClassnC<DoubleSolution> classifier = new InterClassnC<>(problem);
         ArrayList<DoubleSolution> front = new ArrayList<>();
         ArrayList<DoubleSolution> hs = new ArrayList<>();
@@ -116,11 +119,14 @@ public class DTLZUsingPreferences {
         }
         if (!hs.isEmpty()) {
             front.addAll(hs);
-        } else if (!s.isEmpty()) {
+        }
+        if (!s.isEmpty()) {
             front.addAll(s);
-        } else if (!d.isEmpty()) {
+        }
+        if (front.isEmpty() && !d.isEmpty()) {
             front.addAll(d);
-        } else if (!hd.isEmpty()) {
+        }
+        if (front.isEmpty() && !hd.isEmpty()) {
             front.addAll(hd);
         }
         logger.info(String.format("HSat : %3d, Sat : %3d, Dis : %3d, HDis : %3d", hs.size(), s.size(), d.size(),
@@ -128,13 +134,13 @@ public class DTLZUsingPreferences {
         logger.info("Front 0: " + front.size());
 
         ArrayList<String> strings = new ArrayList<>();
-        for (DoubleSolution solution :front)
+        for (DoubleSolution solution : front)
             strings.add(solution.toString());
 
         Files.write(f.toPath(), strings, Charset.defaultCharset());
         if (problem.getNumberOfObjectives() == 3) {
             Plotter plotter = new Scatter3D<DoubleSolution>(front,
-                    DIRECTORY + File.separator + problem.getName() + "_nsga3_WP");
+                    DIRECTORY + File.separator +"Class_F0"+ problem.getName() + "_nsga3_WP");
             plotter.plot();
             // new Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator +
             // problem.getName()).plot();
@@ -142,7 +148,7 @@ public class DTLZUsingPreferences {
             Table table = Table.create(problem.getName() + "_F0_WP_" + problem.getNumberOfObjectives());
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
                 DoubleColumn column = DoubleColumn.create("objective_" + j);
-                for (int k = 0; k < front.size() ;k++) {
+                for (int k = 0; k < front.size(); k++) {
                     column.append(front.get(k).getObjective(j).doubleValue());
                 }
                 table.addColumns(column);

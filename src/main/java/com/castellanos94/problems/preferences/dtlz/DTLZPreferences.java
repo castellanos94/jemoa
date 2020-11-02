@@ -9,16 +9,20 @@ import com.castellanos94.datatype.Interval;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.impl.GDProblem;
+import com.castellanos94.preferences.impl.InterClassnC;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.Tools;
 
 public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
+    protected InterClassnC<DoubleSolution> classifier;
 
     public DTLZPreferences(DTLZ_Instance instance) {
         this(instance.getNumObjectives(), instance.getNumDecisionVariables());
         this.instance = instance;
         this.preference_models = instance.getPreferenceModels();
+        this.numberOfConstrains = 0;
+        classifier = new InterClassnC<>(this);
     }
 
     @Override
@@ -112,9 +116,24 @@ public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
                 v += upperBound[i].doubleValue() - solution.getVariable(i).doubleValue();
             }
         }
+        
         solution.setPenalties(new RealData(v));
         solution.setNumberOfPenalties(cn);
-
+       /* classifier.classify(solution);
+        int[] iclass = (int[]) solution.getAttribute(classifier.getAttributeKey());
+        if (iclass[1] > 0) {
+            solution.setPenalties(solution.getPenalties().plus(-0.5 * iclass[1]));
+            solution.setNumberOfPenalties(solution.getNumberOfPenalties() + 1);
+        } else if (iclass[2] > 0) {
+            solution.setPenalties(solution.getPenalties().plus(-1.0 * iclass[2]));
+            solution.setNumberOfPenalties(solution.getNumberOfPenalties() + 1);
+        } else {
+            solution.setPenalties(solution.getPenalties().plus(-2.0 * iclass[3]));
+            solution.setNumberOfPenalties(solution.getNumberOfPenalties() + 1);
+        }
+        for (int i = 0; i < iclass.length; i++) {
+            solution.setResource(i, new RealData(iclass[i]));
+        }*/
     }
 
     public DTLZPreferences setK(int k) {

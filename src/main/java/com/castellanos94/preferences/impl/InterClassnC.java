@@ -136,7 +136,8 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
                 w.setObjective(j, r2[i][j]);
             }
-            if (pref.compare(w, x) <= -1) {
+            int v = pref.compare(w, x);
+            if (v <= -1 || v ==2) {
                 clase = i;
                 break;
             }
@@ -206,6 +207,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
             }
             if (pref.compare(x, w) <= -1) {
                 clase = i;
+                break;
             }
         }
         

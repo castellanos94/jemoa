@@ -47,8 +47,11 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
              * System.out.println(x.getObjectives()); System.out.println(y.getObjectives());
              * System.out.println(sigmaXY+" "+sigmaYX);
              */
-            if (dominance.compare(x, y) == -1)// x outranks y
+            int v= dominance.compare(x, y) ;
+            if (v == -1)// x outranks y
                 return -2;
+            if( v== 1)
+                return 2;
             if (sigmaXY.compareTo(model.getBeta()) >= 0 && model.getBeta().compareTo(sigmaYX) > 0)
                 return -1;
             if( sigmaXY.compareTo(model.getBeta())>= 0 && sigmaYX.compareTo(model.getBeta()) >=0)
