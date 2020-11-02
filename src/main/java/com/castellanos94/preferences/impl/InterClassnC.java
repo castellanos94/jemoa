@@ -25,10 +25,11 @@ import com.castellanos94.utils.Tools;
 
 public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
     protected GDProblem<S> problem;
+    protected S w;
 
     public InterClassnC(Problem<S> problem) {
         this.problem = (GDProblem<S>) problem;
-
+        this.w = problem.randomSolution();
     }
 
     /**
@@ -53,7 +54,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
                 int asc = asc_rule(x, dm);
                 int dsc = desc_rule(x, dm);
                 // System.out.println(asc+" "+dsc);
-                if (asc == dsc) {
+                if (asc == dsc && asc != -1) {
                     if (asc < problem.getR2()[dm].length) {
                         if (isHighSat(x, dm)) {
                             hsat++;
@@ -129,26 +130,27 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
         ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r2 = problem.getR2()[dm];
         int clase = -1;
-        S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
         w.setNumberOfPenalties(0);
-        for (int i = 0; i < r2.length && clase == -1; i++) {
+        for (int i = 0; i < r2.length; i++) {
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
                 w.setObjective(j, r2[i][j]);
             }
             if (pref.compare(w, x) <= -1) {
                 clase = i;
+                break;
             }
         }
         if (clase != -1)
             return clase;
         Interval[][] r1 = problem.getR1()[dm];
-        for (int i = 0; i < r1.length && clase == -1; i++) {
+        for (int i = 0; i < r1.length; i++) {
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
                 w.setObjective(j, r1[i][j]);
             }
             if (pref.compare(w, x) <= -1) {
                 clase = i;
+                break;
             }
         }
         return (clase == -1) ? clase : clase + r2.length;
@@ -167,22 +169,38 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
         ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r1 = problem.getR1()[dm];
         int clase = -1;
-        S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
         w.setNumberOfPenalties(0);
-        for (int i = r1.length - 1; i > 0 && clase == -1; i--) {
+       /* for (int i = r1.length - 1; i > 0; i--) {
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
                 w.setObjective(j, r1[i][j]);
             }
             if (pref.compare(x, w) <= -1) {
                 clase = i;
             }
+        }*/
+        for (int i =0; i < r1.length ;i++) {
+            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
+                w.setObjective(j, r1[i][j]);
+            }
+            if (pref.compare(x, w) <= -1) {
+                clase = i;
+                break;
+            }
         }
         if (clase != -1)
             clase = +r1.length;
 
         Interval[][] r2 = problem.getR2()[dm];
-        for (int i = r2.length - 1; i > 0 && clase == -1; i--) {
+        /*for (int i = r2.length - 1; i > 0; i--) {
+            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
+                w.setObjective(j, r2[i][j]);
+            }
+            if (pref.compare(x, w) <= -1) {
+                clase = i;
+            }
+        }*/
+        for (int i = 0; i < r2.length; i++) {
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
                 w.setObjective(j, r2[i][j]);
             }
@@ -190,6 +208,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
                 clase = i;
             }
         }
+        
         return clase;
     }
 

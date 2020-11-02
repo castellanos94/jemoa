@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import com.castellanos94.instances.DTLZ_Instance;
@@ -28,7 +29,7 @@ public class ReadSolution {
     private static final Logger logger = LogManager.getLogger(ReadSolution.class);
 
     public static void main(String[] args) throws IOException {
-        String solutionPath = "experiments/dtlz_preferences/nsga_iii_wp_bag_DTLZ1_P_f0_3";
+        String solutionPath = "experiments/dtlz_preferences/nsga_iii_wp_bag_DTLZ1_P_F0_3";
         String path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
         // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
@@ -73,31 +74,30 @@ public class ReadSolution {
         logger.info(String.format("HSat : %3d, Sat : %3d, Dis : %3d, HDis : %3d", hs.size(), s.size(), d.size(),
                 hd.size()));
         logger.info("Front 0: " + front.size());
-        File f = new File(DIRECTORY + File.separator + "nsga3" + problem.getName() + "_F0_WP"
-                + problem.getNumberOfObjectives());
-
-        ArrayList<String> strings = new ArrayList<>();
-        for (DoubleSolution solution : front)
-            strings.add(solution.toString());
-
-        Files.write(f.toPath(), strings, Charset.defaultCharset());
-        if (problem.getNumberOfObjectives() == 3) {
-            Plotter plotter = new Scatter3D<DoubleSolution>(front,
-                    DIRECTORY + File.separator + problem.getName() + "F0_WP_nsga3");
-            plotter.plot();
-            // new Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator +
-            // problem.getName()).plot();
-        } else {
-            Table table = Table.create(problem.getName() + "_F0_WP_" + problem.getNumberOfObjectives());
-            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
-                DoubleColumn column = DoubleColumn.create("objective_" + j);
-                for (int k = 0; k < front.size(); k++) {
-                    column.append(front.get(k).getObjective(j).doubleValue());
-                }
-                table.addColumns(column);
-            }
-            logger.info(table.summary());
+        for (DoubleSolution doubleSolution : front) {
+            System.out.println(Arrays.toString(((int[]) doubleSolution.getAttribute(classifier.getAttributeKey())))
+                    + " - " + doubleSolution.getObjectives());
         }
+        /*
+         * File f = new File(DIRECTORY + File.separator + "nsga3" + problem.getName() +
+         * "_F0_WP" + problem.getNumberOfObjectives());
+         * 
+         * ArrayList<String> strings = new ArrayList<>(); for (DoubleSolution solution :
+         * front) strings.add(solution.toString());
+         * 
+         * Files.write(f.toPath(), strings, Charset.defaultCharset()); if
+         * (problem.getNumberOfObjectives() == 3) { Plotter plotter = new
+         * Scatter3D<DoubleSolution>(front, DIRECTORY + File.separator +
+         * problem.getName() + "F0_WP_nsga3"); plotter.plot(); // new
+         * Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator + //
+         * problem.getName()).plot(); } else { Table table =
+         * Table.create(problem.getName() + "_F0_WP_" +
+         * problem.getNumberOfObjectives()); for (int j = 0; j <
+         * problem.getNumberOfObjectives(); j++) { DoubleColumn column =
+         * DoubleColumn.create("objective_" + j); for (int k = 0; k < front.size(); k++)
+         * { column.append(front.get(k).getObjective(j).doubleValue()); }
+         * table.addColumns(column); } logger.info(table.summary()); }
+         */
 
     }
 

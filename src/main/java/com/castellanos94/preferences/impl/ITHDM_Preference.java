@@ -43,19 +43,19 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
         try {
             sigmaXY = credibility_index(x, y);
             sigmaYX = credibility_index(y, x);
-            /*System.out.println(x.getObjectives());
-            System.out.println(y.getObjectives());
-            System.out.println(sigmaXY+" "+sigmaYX);*/
+            /*
+             * System.out.println(x.getObjectives()); System.out.println(y.getObjectives());
+             * System.out.println(sigmaXY+" "+sigmaYX);
+             */
             if (dominance.compare(x, y) == -1)// x outranks y
                 return -2;
-            int xy = sigmaXY.compareTo(model.getBeta());
-            int yx = sigmaYX.compareTo(model.getBeta());
-            if (xy >= 0 && yx < 0)
+            if (sigmaXY.compareTo(model.getBeta()) >= 0 && model.getBeta().compareTo(sigmaYX) > 0)
                 return -1;
-            if (xy >= 0 && yx >= 0)
+            if( sigmaXY.compareTo(model.getBeta())>= 0 && sigmaYX.compareTo(model.getBeta()) >=0)
                 return 0;
-            if (xy < 0 && yx < 0)
-                return 1;
+            if (sigmaXY.compareTo(model.getBeta()) < 0 && sigmaYX.compareTo(0) < 0)
+            return 1;
+            
 
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -75,7 +75,7 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
             omegas.add(compute_alpha_ij(x, y, i));
             dj[i] = compute_discordance_ij(x, y, i);
         }
-       
+
         for (int i = 0; i < p.getNumberOfObjectives(); i++) {
             RealData gamma = omegas.get(i);
             ci = this.concordance_index(gamma, omegas);
