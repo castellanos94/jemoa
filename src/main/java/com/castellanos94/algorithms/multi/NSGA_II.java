@@ -77,7 +77,7 @@ public class NSGA_II<S extends Solution<?>> extends AbstractEvolutionaryAlgorith
     }
 
     @Override
-    protected ArrayList<S> reproduction(ArrayList<S> parents) throws CloneNotSupportedException {
+    protected ArrayList<S> reproduction(ArrayList<S> parents) {
         ArrayList<S> offspring = new ArrayList<>();
         for (int i = 0; i < parents.size(); i++) {
             ArrayList<S> p = new ArrayList<>();

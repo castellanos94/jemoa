@@ -37,7 +37,7 @@ public abstract class Solution<T> implements Comparable<Solution<?>> {
     }
 
     public Solution(int numberOfObjectives, int numberOfVariables, int numberOfResources) {
-        this.variables = new ArrayList<>(numberOfObjectives);
+        this.variables = new ArrayList<>(numberOfVariables);
         this.objectives = new ArrayList<>(numberOfObjectives);
         this.resources = new ArrayList<>(numberOfResources);
 

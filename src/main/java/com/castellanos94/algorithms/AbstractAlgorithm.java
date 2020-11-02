@@ -15,7 +15,7 @@ public abstract class AbstractAlgorithm<S extends Solution<?>> {
         this.problem = problem;
     }
 
-    public abstract void execute() throws CloneNotSupportedException;
+    public abstract void execute();
 
     public ArrayList<S> getSolutions() {
         return solutions;

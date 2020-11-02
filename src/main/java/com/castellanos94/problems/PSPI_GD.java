@@ -10,6 +10,7 @@ import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.PSPI_Instance;
+import com.castellanos94.preferences.impl.GDProblem;
 import com.castellanos94.preferences.impl.OutrankingModel;
 import com.castellanos94.solutions.BinarySolution;
 import com.castellanos94.utils.Tools;
@@ -17,7 +18,7 @@ import com.castellanos94.utils.Tools;
 /**
  * Portafolio Social Problem for Group Decision
  */
-public class PSPI_GD extends Problem<BinarySolution> {
+public class PSPI_GD extends GDProblem<BinarySolution> {
     protected OutrankingModel[] preference_models;
     protected int dms;
     private List<Integer> positions;
@@ -83,7 +84,7 @@ public class PSPI_GD extends Problem<BinarySolution> {
         Interval suma = new Interval(solution.getResources().get(0));
         RealData poss = this.getInstance().getBudget().possGreaterThanOrEq(suma);
         if (poss.compareTo(0.72) < 0) {
-            System.out.println(poss+" "+0.72);
+            System.out.println(poss + " " + 0.72);
             Data tmp = getInstance().getBudget().minus(solution.getResources().get(0));
             solution.setPenalties(tmp);
             solution.setNumberOfPenalties(1);
@@ -92,13 +93,15 @@ public class PSPI_GD extends Problem<BinarySolution> {
             solution.setNumberOfPenalties(0);
         }
     }
-    public BinarySolution createFromString(Interval[] data){
+
+    public BinarySolution createFromString(Interval[] data) {
         BinarySolution sol = new BinarySolution(this);
         for (int i = 0; i < data.length; i++) {
             sol.getVariable(0).set(i, data[i].compareTo(1) == 0);
         }
         return sol;
     }
+
     @Override
     public BinarySolution randomSolution() {
         BinarySolution sol = new BinarySolution(this);
@@ -131,6 +134,21 @@ public class PSPI_GD extends Problem<BinarySolution> {
     @Override
     public PSPI_Instance getInstance() {
         return (PSPI_Instance) this.instance;
+    }
+
+    @Override
+    public Interval[][][] getR2() {
+        return getInstance().getR2();
+    }
+
+    @Override
+    public Interval[][][] getR1() {
+        return getInstance().getR1();
+    }
+
+    @Override
+    public int getNumDMs() {
+        return getInstance().getNumDMs();
     }
 
 }

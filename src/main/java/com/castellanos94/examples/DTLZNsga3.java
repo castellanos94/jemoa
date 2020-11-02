@@ -2,7 +2,6 @@ package com.castellanos94.examples;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -55,11 +54,7 @@ public class DTLZNsga3 {
         range.stream().parallel().forEach(i -> {
             NSGA_III<DoubleSolution> a = dtlzTestSuite(numberProblem, numberOfObjectives);
 
-            try {
-                a.execute();
-            } catch (CloneNotSupportedException e) {
-                logger.error(e);
-            }
+            a.execute();
             time.add(a.getComputeTime());
 
             logger.info(i + " time: " + a.getComputeTime() + " ms.");
@@ -69,7 +64,6 @@ public class DTLZNsga3 {
         logger.info("Total time: " + averageTime);
         logger.info("Average time : " + (double) averageTime / EXPERIMENT + " ms.");
         logger.info("Solutions in the bag: " + bag.size());
-
 
         Ranking<DoubleSolution> compartor = new DominanceComparator<>();
         compartor.computeRanking(bag);

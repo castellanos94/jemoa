@@ -25,7 +25,7 @@ public class GeneticAlgorithm<S extends Solution<?>> extends AbstractEvolutionar
     }
 
     @Override
-    protected ArrayList<S> reproduction(ArrayList<S> parents) throws CloneNotSupportedException {
+    protected ArrayList<S> reproduction(ArrayList<S> parents) {
         ArrayList<S> offspring = new ArrayList<>();
         for (int i = 0; i < parents.size(); i++) {
             ArrayList<S> p = new ArrayList<>();
