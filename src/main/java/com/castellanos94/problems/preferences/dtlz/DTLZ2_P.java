@@ -7,13 +7,12 @@ import java.util.Scanner;
 
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
-import com.castellanos94.preferences.Classifier;
 import com.castellanos94.solutions.DoubleSolution;
 
 public class DTLZ2_P extends DTLZPreferences {
 
-    public DTLZ2_P(DTLZ_Instance instance, Classifier<DoubleSolution> classifier) {
-        super(instance, classifier);
+    public DTLZ2_P(DTLZ_Instance instance) {
+        super(instance);
     }
 
     @Override

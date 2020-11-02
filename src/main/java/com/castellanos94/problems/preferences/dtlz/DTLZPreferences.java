@@ -8,34 +8,39 @@ import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
-import com.castellanos94.preferences.Classifier;
 import com.castellanos94.preferences.impl.GDProblem;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.Tools;
 
 public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
-    private Classifier<DoubleSolution> classifier;
 
-    public DTLZPreferences(DTLZ_Instance instance, Classifier<DoubleSolution> classifier) {
+    public DTLZPreferences(DTLZ_Instance instance) {
         this(instance.getNumObjectives(), instance.getNumDecisionVariables());
         this.instance = instance;
+        this.preference_models = instance.getPreferenceModels();
     }
+
     @Override
     public int getNumDMs() {
         return getInstance().getNumDMs();
     }
+
     @Override
     public Interval[][][] getR1() {
-        return getInstance().get
+        return getInstance().getR1();
     }
-    public Classifier<DoubleSolution> getClassifier() {
-        return classifier;
+
+    @Override
+    public Interval[][][] getR2() {
+        return getInstance().getR2();
     }
+
     @Override
     public DTLZ_Instance getInstance() {
         return (DTLZ_Instance) super.getInstance();
     }
+
     protected int k;
     protected final double THRESHOLD = 10e-3;
 
@@ -206,4 +211,17 @@ public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
         return new ArrayList<>(dominanceComparator.getSubFront(0).subList(0, size));
 
     }
+
+    @Override
+    public DoubleSolution generateFromVarString(String string) {
+        DoubleSolution solution = new DoubleSolution(this);
+        String split[] = string.trim().split(",");
+        for (int i = 0; i < this.numberOfDecisionVars; i++) {
+            solution.setVariable(i, Double.parseDouble(split[i]));
+        }
+        this.evaluate(solution);
+        this.evaluateConstraint(solution);
+        return solution;
+    }
+
 }

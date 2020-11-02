@@ -113,7 +113,7 @@ public class BestCompromiseDTLZ {
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         System.out.println(instance);
 
-        DTLZ1_P problem = new DTLZ1_P(instance, null);
+        DTLZ1_P problem = new DTLZ1_P(instance);
         System.out.println(problem);
         BestCompromiseDTLZ bestCompromiseDTLZ = new BestCompromiseDTLZ(problem);
         ArrayList<DoubleSolution> bag = new ArrayList<>();

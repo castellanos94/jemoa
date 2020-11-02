@@ -28,6 +28,10 @@ public abstract class Problem<S extends Solution<?>> {
 
     public abstract S randomSolution();
 
+    public S generateFromVarString(String string) {
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
     /**
      * @return the instance
      */

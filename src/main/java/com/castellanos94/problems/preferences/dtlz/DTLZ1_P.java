@@ -7,13 +7,12 @@ import java.util.Scanner;
 
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
-import com.castellanos94.preferences.Classifier;
 import com.castellanos94.solutions.DoubleSolution;
 
 public class DTLZ1_P extends DTLZPreferences {
 
-    public DTLZ1_P(DTLZ_Instance instance, Classifier<DoubleSolution> classifier) {
-        super(instance, classifier);
+    public DTLZ1_P(DTLZ_Instance instance) {
+        super(instance);
     }
 
     @Override
@@ -41,9 +40,9 @@ public class DTLZ1_P extends DTLZPreferences {
         }
 
         for (int i = 0; i < this.numberOfObjectives; i++) {
-            solution.setObjective(i, new RealData((f[i] < THRESHOLD)? 0: f[i]));
-         //   solution.setObjective(i, new RealData(f[i]));
-        }        
+            solution.setObjective(i, new RealData((f[i] < THRESHOLD) ? 0 : f[i]));
+            // solution.setObjective(i, new RealData(f[i]));
+        }
 
     }
 
@@ -69,5 +68,6 @@ public class DTLZ1_P extends DTLZPreferences {
         sc.close();
         return matrix;
     }
+
     
 }

@@ -26,14 +26,47 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
             Rt.add(r);
         }
         ranking.computeRanking(Rt);
+        InterClassnC<S> classifier = new InterClassnC<>(problem);
+        ArrayList<ArrayList<S>> _fronts = new ArrayList<>();
+        if (ranking.getNumberOfSubFronts() > 0) {
+            ArrayList<S> hs = new ArrayList<>();
+            ArrayList<S> s = new ArrayList<>();
+            ArrayList<S> d = new ArrayList<>();
+            ArrayList<S> hd = new ArrayList<>();
+            for (S x : ranking.getSubFront(0)) {
+                classifier.classify(x);
+                int[] iclass = (int[]) x.getAttribute(classifier.getAttributeKey());
+                if (iclass[0] > 0) {
+                    hs.add(x);
+                } else if (iclass[1] > 0) {
+                    s.add(x);
+                } else if (iclass[2] > 0) {
+                    d.add(x);
+                } else {
+                    hd.add(x);
+                }
+            }
+            if (!hs.isEmpty()) {
+                _fronts.add(hs);
+            } else if (!s.isEmpty()) {
+                _fronts.add(s);
+            } else if (!d.isEmpty()) {
+                _fronts.add(d);
+            } else if (!hd.isEmpty()) {
+                _fronts.add(hd);
+            }
+            for (int i = 1; i < ranking.getNumberOfSubFronts(); i++) {
+                _fronts.add(ranking.getSubFront(i));
+            }
+
+        }
         ArrayList<S> Pt = new ArrayList<>();
         int indexFront = 0;
         ArrayList<ArrayList<S>> fronts = new ArrayList<>();
-        InterClassnC<S> classicator = new InterClassnC<>(problem);
-        for (; indexFront < ranking.getNumberOfSubFronts(); indexFront++) {
-            fronts.add(ranking.getSubFront(indexFront));
-            if (Pt.size() + ranking.getSubFront(indexFront).size() <= populationSize) {
-                for (S solution : ranking.getSubFront(indexFront)) {
+        for (; indexFront < _fronts.size(); indexFront++) {
+            fronts.add(_fronts.get(indexFront));
+            if (Pt.size() + _fronts.get(indexFront).size() <= populationSize) {
+                for (S solution : _fronts.get(indexFront)) {
                     Pt.add((S) solution.copy());
                 }
             } else {
@@ -55,5 +88,4 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
         super(problem, populationSize, maxIterations, numberOfDivisions, selectionOperator, crossoverOperator,
                 mutationOperator);
     }
-
 }
