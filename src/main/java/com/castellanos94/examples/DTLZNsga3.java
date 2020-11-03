@@ -20,6 +20,7 @@ import com.castellanos94.operators.impl.SBXCrossover;
 import com.castellanos94.operators.impl.TournamentSelection;
 import com.castellanos94.problems.benchmarks.dtlz.*;
 import com.castellanos94.solutions.DoubleSolution;
+import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
 import com.castellanos94.utils.Scatter3D;
 import com.castellanos94.utils.Tools;
@@ -44,7 +45,7 @@ public class DTLZNsga3 {
         long averageTime = 0;
         // 1,3
         NSGA_III<DoubleSolution> algorithm = dtlzTestSuite(numberProblem, numberOfObjectives);
-
+        logger.info("Experimentation: DTLZ");
         DTLZ problem = (DTLZ) algorithm.getProblem();
         logger.info(problem);
         logger.info(algorithm);
@@ -56,7 +57,12 @@ public class DTLZNsga3 {
 
             a.execute();
             time.add(a.getComputeTime());
-
+            try {
+                Solution.writSolutionsToFile(DIRECTORY + File.separator + "execution_" + i,
+                        new ArrayList<>(a.getSolutions()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             logger.info(i + " time: " + a.getComputeTime() + " ms.");
             bag.addAll(a.getSolutions());
         });
@@ -74,7 +80,7 @@ public class DTLZNsga3 {
         File f = new File(DIRECTORY);
         if (!f.exists())
             f.mkdirs();
-        f = new File(DIRECTORY + File.separator + "nsga_iii_bag_" + problem.getName() + "_f0_"
+        f = new File(DIRECTORY + File.separator + "nsga_iii_bag_" + problem.getName() + "_F0_"
                 + problem.getNumberOfObjectives());
 
         ArrayList<String> strings = new ArrayList<>();
@@ -99,6 +105,7 @@ public class DTLZNsga3 {
             }
             logger.info(table.summary());
         }
+        logger.info("End Experimentation.");
     }
 
     @SuppressWarnings("unchecked")

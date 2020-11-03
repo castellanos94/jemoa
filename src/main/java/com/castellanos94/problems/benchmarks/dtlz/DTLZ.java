@@ -181,4 +181,15 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
         return new ArrayList<>(dominanceComparator.getSubFront(0).subList(0, size));
 
     }
+    @Override
+    public DoubleSolution generateFromVarString(String string) {
+        DoubleSolution solution = new DoubleSolution(this);
+        String split[] = string.trim().split(",");
+        for (int i = 0; i < this.numberOfDecisionVars; i++) {
+            solution.setVariable(i, Double.parseDouble(split[i]));
+        }
+        this.evaluate(solution);
+        this.evaluateConstraint(solution);
+        return solution;
+    }
 }

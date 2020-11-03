@@ -77,17 +77,20 @@ public class DTLZ_Instance extends Instance {
         }
 
         data = this.readNextDataLine(in);
-        if (!data[0].equals("TRUE")) {
+        if (!data[0].equalsIgnoreCase("TRUE")) {
             this.params.put("BestCompromises", (Object) null);
         } else {
+            boolean isObjective = false;
+            if(data.length > 1 && data[1].equalsIgnoreCase("true")){
+                isObjective = true;
+            }
             data = this.readNextDataLine(in);
             int n_solutions = Integer.parseInt(data[0]);
             RealData[][] solutions_DMs = new RealData[n_solutions][dv];
-            System.out.println(n_solutions);
             for (int i = 0; i < n_solutions; i++) {
                 data = this.readNextDataLine(in);
 
-                for (int j = 0; j < dv; j++) {
+                for (int j = 0; j < ((isObjective)? n:dv); j++) {
                     solutions_DMs[i][j] = new RealData(Double.parseDouble(data[j]));
                 }
             }
@@ -95,7 +98,6 @@ public class DTLZ_Instance extends Instance {
         }
 
         data = this.readNextDataLine(in);
-        System.out.println(Arrays.toString(data));
         if (data[0].equals("TRUE")) {
             // Read DMs Frontier for Csat Cdis, there are m Sets of Lines
             // each set begins with a line with: a single value ( or interval value) fi
@@ -156,7 +158,6 @@ public class DTLZ_Instance extends Instance {
             data = this.readNextDataLine(in);
             int n_solutions = Integer.parseInt(data[0]);
             RealData[][] initial_solutions = new RealData[n_solutions][dv];
-            System.out.println(n_solutions);
             for (int i = 0; i < n_solutions; i++) {
                 data = this.readNextDataLine(in);
 

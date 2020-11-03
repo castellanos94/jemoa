@@ -37,6 +37,8 @@ public class DTLZUsingPreferences {
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         Tools.setSeed(1L);
+        logger.info("Experimentation: DTLZ with preferences");
+
         String path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
         // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
@@ -76,7 +78,13 @@ public class DTLZUsingPreferences {
 
             algorithm.execute();
             averageTime += algorithm.getComputeTime();
-
+            try {
+                Solution.writSolutionsToFile(DIRECTORY + File.separator + "execution_" + i,
+                        new ArrayList<>(algorithm.getSolutions()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            
             logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
             // Solution.writSolutionsToFile(directory + File.separator + problem.getName() +
             // "_" + i, algorithm.getSolutions());
@@ -155,6 +163,6 @@ public class DTLZUsingPreferences {
             }
             logger.info(table.summary());
         }
-
+        logger.info("End Experimentation.");
     }
 }
