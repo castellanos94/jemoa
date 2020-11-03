@@ -78,10 +78,6 @@ public class RealData extends Data {
 
     }
 
-    @Override
-    public RealData clone() throws CloneNotSupportedException {
-        return (RealData) super.clone();
-    }
 
     @Override
     public String toString() {
@@ -116,6 +112,11 @@ public class RealData extends Data {
     @Override
     public Data unaryMinsu() {
         return new RealData(-1 * data);
+    }
+
+    @Override
+    public RealData copy() {
+        return new RealData(data);
     }
 
 }

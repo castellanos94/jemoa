@@ -30,22 +30,18 @@ public class CrowdingDistance<S extends Solution<?>> implements DensityEstimator
         Data MaxValue = maxValue(solutions.get(0));
         for (int i = 0; i < numOfObj; i++) {
             Collections.sort(solutions, new ObjectiveComparator(i));
-            try {
-                solutions.get(0).getAttributes().put(getAttributeKey(), (Data) MaxValue.clone());
-                solutions.get(solutions.size() - 1).getAttributes().put(getAttributeKey(), (Data) MaxValue.clone());
-                Data min = solutions.get(0).getObjectives().get(i);
-                Data max = solutions.get(solutions.size() - 1).getObjectives().get(i);
-                Data distance = Data.getZeroByType(min);
-                for (int j = 1; j < solutions.size() - 1; j++) {
-                    distance = solutions.get(j + 1).getObjectives().get(i)
-                            .minus(solutions.get(j - 1).getObjectives().get(i));
-                    distance = distance.div(max.minus(min));
-                    distance = distance.plus((Data) solutions.get(j).getAttributes().getOrDefault(getAttributeKey(),
-                            Data.getZeroByType(min)));
-                    solutions.get(j).getAttributes().put(getAttributeKey(), distance);
-                }
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
+            solutions.get(0).getAttributes().put(getAttributeKey(), MaxValue.copy());
+            solutions.get(solutions.size() - 1).getAttributes().put(getAttributeKey(), (Data) MaxValue.copy());
+            Data min = solutions.get(0).getObjectives().get(i);
+            Data max = solutions.get(solutions.size() - 1).getObjectives().get(i);
+            Data distance = Data.getZeroByType(min);
+            for (int j = 1; j < solutions.size() - 1; j++) {
+                distance = solutions.get(j + 1).getObjectives().get(i)
+                        .minus(solutions.get(j - 1).getObjectives().get(i));
+                distance = distance.div(max.minus(min));
+                distance = distance.plus((Data) solutions.get(j).getAttributes().getOrDefault(getAttributeKey(),
+                        Data.getZeroByType(min)));
+                solutions.get(j).getAttributes().put(getAttributeKey(), distance);
             }
         }
     }

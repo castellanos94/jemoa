@@ -40,33 +40,28 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
     @Override
     public int compare(S x, S y) {
 
-        try {
-            sigmaXY = credibility_index(x, y);
-            sigmaYX = credibility_index(y, x);
-            /*
-             * System.out.println(x.getObjectives()); System.out.println(y.getObjectives());
-             * System.out.println(sigmaXY+" "+sigmaYX);
-             */
-            int v= dominance.compare(x, y) ;
-            if (v == -1)// x outranks y
-                return -2;
-            if( v== 1)
-                return 2;
-            if (sigmaXY.compareTo(model.getBeta()) >= 0 && model.getBeta().compareTo(sigmaYX) > 0)
-                return -1;
-            if( sigmaXY.compareTo(model.getBeta())>= 0 && sigmaYX.compareTo(model.getBeta()) >=0)
-                return 0;
-            if (sigmaXY.compareTo(model.getBeta()) < 0 && sigmaYX.compareTo(0) < 0)
+        sigmaXY = credibility_index(x, y);
+        sigmaYX = credibility_index(y, x);
+        /*
+         * System.out.println(x.getObjectives()); System.out.println(y.getObjectives());
+         * System.out.println(sigmaXY+" "+sigmaYX);
+         */
+        int v = dominance.compare(x, y);
+        if (v == -1)// x outranks y
+            return -2;
+        if (v == 1)
+            return 2;
+        if (sigmaXY.compareTo(model.getBeta()) >= 0 && model.getBeta().compareTo(sigmaYX) > 0)
+            return -1;
+        if (sigmaXY.compareTo(model.getBeta()) >= 0 && sigmaYX.compareTo(model.getBeta()) >= 0)
+            return 0;
+        if (sigmaXY.compareTo(model.getBeta()) < 0 && sigmaYX.compareTo(0) < 0)
             return 1;
-            
 
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
         return 1;
     }
 
-    private RealData credibility_index(S x, S y) throws CloneNotSupportedException {
+    private RealData credibility_index(S x, S y)  {
         ArrayList<RealData> omegas = new ArrayList<>();
         RealData[] eta_gamma = new RealData[p.getNumberOfObjectives()];
         RealData max_discordance;
@@ -90,15 +85,15 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
                 }
             }
             non_discordance = (RealData) RealData.ONE.minus(max_discordance);
-            eta_gamma[i] = gamma.clone();
+            eta_gamma[i] = gamma.copy();
             if (eta_gamma[i].compareTo(poss) > 0) {
-                eta_gamma[i] = poss.clone();
+                eta_gamma[i] = poss.copy();
             }
             if (eta_gamma[i].compareTo(non_discordance) > 0) {
-                eta_gamma[i] = non_discordance.clone();
+                eta_gamma[i] = non_discordance.copy();
             }
             if (max_eta_gamma.compareTo(eta_gamma[i]) < 0) {
-                max_eta_gamma = eta_gamma[i].clone();
+                max_eta_gamma = eta_gamma[i].copy();
             }
         }
         return max_eta_gamma;

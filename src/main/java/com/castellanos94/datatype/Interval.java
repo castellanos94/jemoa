@@ -324,4 +324,9 @@ public class Interval extends Data {
         return new RealData(u - l);
     }
 
+    @Override
+    public Interval copy() {
+        return new Interval(lower, upper);
+    }
+
 }

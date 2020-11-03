@@ -79,8 +79,8 @@ public class IntegerData extends Data {
     }
 
     @Override
-    public Object clone() throws CloneNotSupportedException {
-        return (IntegerData) super.clone();
+    public IntegerData copy()  {
+        return new IntegerData(data);
     }
 
     @Override

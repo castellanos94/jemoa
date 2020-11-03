@@ -4,7 +4,7 @@ package com.castellanos94.datatype;
 *@author Castellanos Alvarez, Alejandro
 *@since 22/03/202
 */
-public abstract class Data extends Number implements Comparable<Number>, Cloneable {
+public abstract class Data extends Number implements Comparable<Number> {
 
     private static final long serialVersionUID = -7730849596544487990L;
 
@@ -30,11 +30,7 @@ public abstract class Data extends Number implements Comparable<Number>, Cloneab
 
         return this.compareTo(b);
     }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
+    public abstract Data copy();
 
     @Override
     public boolean equals(Object obj) {
