@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-
+import java.util.List;
 import java.util.Scanner;
 
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
+import com.castellanos94.datatype.Data;
+import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.impl.InterClassnC;
 import com.castellanos94.problems.Problem;
@@ -16,7 +18,9 @@ import com.castellanos94.problems.benchmarks.dtlz.DTLZ1;
 import com.castellanos94.problems.preferences.dtlz.DTLZ1_P;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
+import com.castellanos94.utils.Distance;
 
+import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 
@@ -113,6 +117,54 @@ public class ExperimentationDTLZPreferences {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("Calculate metrics DTLZ1");
+        calculate_metrics(result_dtlz1, roi_sat, dtlz1_P, dtlz1.getName());
+
+        System.out.println("Calculate metrics DTLZ1_P");
+        calculate_metrics(result_preferences, roi_sat, dtlz1_P, dtlz1_P.getName());
+    }
+
+    private static void calculate_metrics(ArrayList<ArrayList<DoubleSolution>> results,
+            ArrayList<DoubleSolution> roi_sat, DTLZ1_P problem, String label) {
+        // ArrayList<ArrayList<DoubleSolution>> result_sat = new ArrayList<>();
+        /*
+         * for (int i = 0; i < results.size(); i++) {
+         * result_sat.add(makeFrontHSatSat(problem, results.get(i))); }
+         */
+        Table table = Table.create(label + " to ROI Preferences.");
+        DoubleColumn corrida = DoubleColumn.create("corrida");
+        DoubleColumn euclidean = DoubleColumn.create("euclidean");
+        DoubleColumn chebyshev = DoubleColumn.create("chebyshev");
+        Distance<DoubleSolution> distance = new Distance<>(Distance.Metric.EUCLIDEAN_DISTANCE);
+        for (int i = 0; i < results.size(); i++) {
+            distance.setMetric(Distance.Metric.EUCLIDEAN_DISTANCE);
+            List<Data> distances_ = distance.evaluate(results.get(i), roi_sat);
+            RealData min = new RealData(Double.MAX_VALUE);
+            for (int j = 0; j < distances_.size(); j++) {
+                if (min.compareTo(distances_.get(j)) > 0) {
+                    min = (RealData) distances_.get(j).copy();
+                }
+            }
+            corrida.append(i);
+            euclidean.append(min.doubleValue());
+
+            distance.setMetric(Distance.Metric.CHEBYSHEV_DISTANCE);
+            distances_ = distance.evaluate(results.get(i), roi_sat);
+            min = new RealData(Double.MAX_VALUE);
+            for (int j = 0; j < distances_.size(); j++) {
+                if (min.compareTo(distances_.get(j)) > 0) {
+                    min = (RealData) distances_.get(j).copy();
+                }
+            }
+            chebyshev.append(min.doubleValue());
+        }
+        table.addColumns(corrida, euclidean, chebyshev);
+        try {
+            System.out.println(table.summary());
+            table.write().csv(DIRECTORY_DTLZ_PREFERENCES + File.separator + "resume_distances_" + label + ".csv");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @SuppressWarnings("rawtypes")
@@ -160,12 +212,14 @@ public class ExperimentationDTLZPreferences {
         if (!s.isEmpty()) {
             front.addAll(s);
         }
+
         if (front.isEmpty() && !d.isEmpty()) {
             front.addAll(d);
         }
         if (front.isEmpty() && !hd.isEmpty()) {
             front.addAll(hd);
         }
+
         System.out.println(String.format("HSat : %3d, Sat : %3d, Dis : %3d, HDis : %3d", hs.size(), s.size(), d.size(),
                 hd.size()));
         System.out.println("Front Preferences (HSAT + SAT): " + front.size());

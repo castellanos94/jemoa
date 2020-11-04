@@ -66,7 +66,8 @@ public class Distance<S extends Solution<?>> implements ExtraInformation {
     }
 
     /**
-     * The Chebyshev distance between two vectors or points x and y.
+     * The Chebyshev distance (or <bold>Tchebychev </bold>) between two vectors or
+     * points x and y.
      * <p>
      * DChebyshev(x,y) = max_i ( |x_i - y_i|)
      * <p>
