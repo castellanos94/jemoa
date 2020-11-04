@@ -4,8 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+
 import java.util.Scanner;
 
 import com.castellanos94.components.Ranking;
@@ -17,10 +16,7 @@ import com.castellanos94.problems.benchmarks.dtlz.DTLZ1;
 import com.castellanos94.problems.preferences.dtlz.DTLZ1_P;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
-import com.castellanos94.utils.Plotter;
-import com.castellanos94.utils.Scatter3D;
 
-import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 
@@ -119,6 +115,7 @@ public class ExperimentationDTLZPreferences {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     private static void EXPORT_OBJECTIVES_TO_CSV(ArrayList<DoubleSolution> front_preferences) throws IOException {
         Table table = Table.create("FRONT_PREFERENCES");
         for (int i = 0; i < front_preferences.get(0).getProblem().getNumberOfObjectives(); i++) {
@@ -174,19 +171,10 @@ public class ExperimentationDTLZPreferences {
         System.out.println("Front Preferences (HSAT + SAT): " + front.size());
         System.out.println("******* END *******");
         return front;
-        /*
-         * for (DoubleSolution doubleSolution : front) { int[] iclass = (int[])
-         * doubleSolution.getAttribute(classifier.getAttributeKey());
-         * 
-         * System.out.println(Arrays.toString(iclass) + " " +
-         * doubleSolution.getObjectives()); } if (problem.getNumberOfObjectives() == 3)
-         * { Plotter plotter = new Scatter3D<DoubleSolution>(front,
-         * DIRECTORY_DTLZ_PREFERENCES + File.separator + label + problem.getName());
-         * plotter.plot(); }
-         */
 
     }
 
+    @SuppressWarnings("rawtypes")
     private static ArrayList<DoubleSolution> readSolution(Problem problem, String path) throws FileNotFoundException {
         ArrayList<DoubleSolution> solutions = new ArrayList<>();
         Scanner sc = new Scanner(new File(path));

@@ -9,6 +9,7 @@ import com.castellanos94.solutions.Solution;
 /**
  * Performance the distance between solutions or two vector of points,
  * 
+ * @see com.castellanos94.utils.Distance.Metric
  * @since November, 2020.
  */
 public class Distance<S extends Solution<?>> implements ExtraInformation {
@@ -75,17 +76,15 @@ public class Distance<S extends Solution<?>> implements ExtraInformation {
      * @return chebyshev distance between x, y
      * @throws IllegalArgumentException If the vectors have different length
      */
-    public Data chebyshevDistance(List<Data> x, List<Data> y) {
+    public static Data chebyshevDistance(List<Data> x, List<Data> y) {
         if (x.size() != y.size()) {
             throw new IllegalArgumentException("The vectors must have the same length");
         }
         Data rs = Data.getZeroByType(x.get(0));
-        for (Data pData : x) {
-            for (Data oData : y) {
-                Data tmp = pData.minus(oData).abs();
-                if (rs.compareTo(tmp) < 0) {
-                    rs = tmp.copy();
-                }
+        for (int i = 0; i < x.size(); i++) {
+            Data tmp = x.get(i).minus(y.get(i)).abs();
+            if (rs.compareTo(tmp) < 0) {
+                rs = tmp.copy();
             }
         }
         return rs;
@@ -102,15 +101,16 @@ public class Distance<S extends Solution<?>> implements ExtraInformation {
      * @return canberra distance between x, y
      * @throws IllegalArgumentException If the vectors have different length
      */
-    public Data canberraDistance(List<Data> x, List<Data> y) {
+    public static Data canberraDistance(List<Data> x, List<Data> y) {
         if (x.size() != y.size()) {
             throw new IllegalArgumentException("The vectors must have the same length");
         }
         Data rs = Data.getZeroByType(x.get(0));
-        for (Data pData : x) {
-            for (Data oData : y) {
-                rs = rs.plus(pData.minus(oData).abs().div(pData.abs().plus(oData.abs())));
-            }
+        for (int i = 0; i < x.size(); i++) {
+            Data pData = x.get(i);
+            Data oData = y.get(i);
+            rs = rs.plus(pData.minus(oData).abs().div(pData.abs().plus(oData.abs())));
+
         }
         return rs;
     }
@@ -126,15 +126,13 @@ public class Distance<S extends Solution<?>> implements ExtraInformation {
      * @return Manhattan distance between x, y
      * @throws IllegalArgumentException If the vectors have different length
      */
-    public Data manhattanDistance(List<Data> x, List<Data> y) {
+    public static Data manhattanDistance(List<Data> x, List<Data> y) {
         if (x.size() != y.size()) {
             throw new IllegalArgumentException("The vectors must have the same length");
         }
         Data rs = Data.getZeroByType(x.get(0));
-        for (Data pData : x) {
-            for (Data oData : y) {
-                rs = rs.plus(pData.minus(oData).abs());
-            }
+        for (int i = 0; i < x.size(); i++) {
+            rs = rs.plus(x.get(i).minus(y.get(i)).abs());
         }
         return rs;
     }
@@ -150,17 +148,16 @@ public class Distance<S extends Solution<?>> implements ExtraInformation {
      * @return Euclidean distance between x, y
      * @throws IllegalArgumentException If the vectors have different length
      */
-    public Data euclideanDistance(List<Data> x, List<Data> y) {
+    public static Data euclideanDistance(List<Data> x, List<Data> y) {
         if (x.size() != y.size()) {
             throw new IllegalArgumentException("The vectors must have the same length");
         }
         Data rs = Data.getZeroByType(x.get(0));
-        for (Data pData : x) {
-            for (Data oData : y) {
-                rs = rs.plus(pData.minus(oData).pow(2));
-            }
+        for (int i = 0; i < x.size(); i++) {
+            rs = rs.plus(x.get(i).minus(y.get(i)).pow(2));
+
         }
-        return rs;
+        return rs.sqrt();
     }
 
     public Metric getMetric() {
