@@ -53,6 +53,7 @@ public class Scatter3D<S extends Solution<?>> implements Plotter {
                 DoubleColumn.create("f3", f3));
 
         System.out.println(table.summary());
+        
         Plot.show(Scatter3DPlot.create(plotTitle, table, "f1", "f2", "f3"), new File(plotTitle + ".html"));
     }
 

@@ -2,10 +2,14 @@ package com.castellanos94.experimentation;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
 
+import com.castellanos94.components.Ranking;
+import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.impl.InterClassnC;
 import com.castellanos94.problems.Problem;
@@ -17,11 +21,13 @@ import com.castellanos94.utils.Plotter;
 import com.castellanos94.utils.Scatter3D;
 
 import tech.tablesaw.api.DoubleColumn;
+import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 
 public class ExperimentationDTLZPreferences {
     static final String DIRECTORY_DTLZ = "experiments" + File.separator + "dtlz";
     static final String DIRECTORY_DTLZ_PREFERENCES = "experiments" + File.separator + "dtlz_preferences";
+    static final String OWNER = "FROM_PROBLEM";
 
     public static void main(String[] args) throws FileNotFoundException {
         DTLZ1 dtlz1 = new DTLZ1();
@@ -58,25 +64,80 @@ public class ExperimentationDTLZPreferences {
         ArrayList<DoubleSolution> roi = readSolution(dtlz1_P,
                 "/home/thinkpad/Documents/jemoa/bestCompromise_DTLZ1_P.out");
         System.out.println(roi.size());
-        /*
-         * if (dtlz1_P.getNumberOfObjectives() == 3) { Plotter plotter = new
-         * Scatter3D<DoubleSolution>(roi, DIRECTORY_DTLZ_PREFERENCES + File.separator
-         * +"ROI_"+ dtlz1_P.getName()); plotter.plot(); // new
-         * Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator + //
-         * problem.getName()).plot(); } else { Table table =
-         * Table.create(dtlz1_P.getName() + "ROI_" + dtlz1_P.getNumberOfObjectives());
-         * for (int j = 0; j < dtlz1_P.getNumberOfObjectives(); j++) { DoubleColumn
-         * column = DoubleColumn.create("objective_" + j); for (int k = 0; k <
-         * roi.size(); k++) { column.append(roi.get(k).getObjective(j).doubleValue()); }
-         * table.addColumns(column); } }
-         */
-        classification(dtlz1_P, roi, "ROI_HSAT_SAT_");
-        classification(dtlz1_P, result_dtlz1_front, "From_DTLZ1");
-        classification(dtlz1_P, result_preferences_front, "From_DTLZ1_Preferences");
+        System.out.println("Roi HSat Sat");
+        ArrayList<DoubleSolution> roi_sat = makeFrontHSatSat(dtlz1_P, roi);
 
+        System.out.println("Uniting fronts, seeking a global 0 front");
+        ArrayList<DoubleSolution> bag = new ArrayList<>();
+        bag.addAll(result_dtlz1_front);
+        bag.addAll(result_preferences_front);
+        System.out.println("All non-dominated solutions: " + bag.size());
+        Ranking<DoubleSolution> compartor = new DominanceComparator<>();
+        compartor.computeRanking(bag);
+        System.out.println("Front 0 from bag : " + compartor.getSubFront(0).size() + " "
+                + ((double) compartor.getSubFront(0).size() / bag.size()));
+
+        int c_solutions_standard = 0, c_solutions_preferences = 0;
+        for (DoubleSolution doubleSolution : compartor.getSubFront(0)) {
+            if (doubleSolution.getAttribute(OWNER).equals(dtlz1.getName())) {
+                c_solutions_standard++;
+            } else {
+                c_solutions_preferences++;
+            }
+        }
+        System.out.printf("Solutions %3d (%5.3f) form %s (%5.3f)\n", c_solutions_standard,
+                (double) c_solutions_standard / compartor.getSubFront(0).size(), dtlz1.getName(),
+                (double) c_solutions_standard / result_dtlz1_front.size());
+        System.out.printf("Solutions %3d (%5.3f) form %s (%5.3f)\n", c_solutions_preferences,
+                (double) c_solutions_preferences / compartor.getSubFront(0).size(), dtlz1_P.getName(),
+                (double) c_solutions_preferences / result_preferences_front.size());
+        ArrayList<DoubleSolution> front_preferences = makeFrontHSatSat(dtlz1_P, compartor.getSubFront(0));
+        c_solutions_standard = 0;
+        c_solutions_preferences = 0;
+        for (DoubleSolution doubleSolution : front_preferences) {
+            if (doubleSolution.getAttribute(OWNER).equals(dtlz1.getName())) {
+                c_solutions_standard++;
+            } else {
+                c_solutions_preferences++;
+            }
+        }
+        System.out.println("After classify the solutions on the preference front");
+        System.out.printf("Solutions HSat or Sat : %3d (%5.3f) form %s (%5.3f)\n", c_solutions_standard,
+                (double) c_solutions_standard / front_preferences.size(), dtlz1.getName(),
+                (double) c_solutions_standard / result_dtlz1_front.size());
+        System.out.printf("Solutions HSat or Sat : %3d (%5.3f) form %s (%5.3f)\n", c_solutions_preferences,
+                (double) c_solutions_preferences / front_preferences.size(), dtlz1_P.getName(),
+                (double) c_solutions_preferences / result_preferences_front.size());
+        try {
+            for (DoubleSolution doubleSolution : roi_sat) {
+                doubleSolution.setAttribute(OWNER, "ROI_PREFERENCES");
+            }
+            front_preferences.addAll(roi_sat);
+            EXPORT_OBJECTIVES_TO_CSV(front_preferences);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    private static void classification(DTLZ1_P problem, ArrayList<DoubleSolution> solutions, String label) {
+    private static void EXPORT_OBJECTIVES_TO_CSV(ArrayList<DoubleSolution> front_preferences) throws IOException {
+        Table table = Table.create("FRONT_PREFERENCES");
+        for (int i = 0; i < front_preferences.get(0).getProblem().getNumberOfObjectives(); i++) {
+            StringColumn column = StringColumn.create("F-" + (i + 1));
+            for (Solution solution_ : front_preferences)
+                column.append(solution_.getObjective(i).toString());
+            table.addColumns(column);
+        }
+        StringColumn column = StringColumn.create("Problem");
+        for (Solution solution_ : front_preferences)
+            column.append((String) solution_.getAttribute(OWNER));
+
+        table.addColumns(column);
+
+        table.write().csv(DIRECTORY_DTLZ_PREFERENCES + File.separator + "FRONT_PREFERENCES.csv");
+    }
+
+    private static ArrayList<DoubleSolution> makeFrontHSatSat(DTLZ1_P problem, ArrayList<DoubleSolution> solutions) {
+        System.out.println("******* Prefrences classification *******");
         InterClassnC<DoubleSolution> classifier = new InterClassnC<>(problem);
         ArrayList<DoubleSolution> front = new ArrayList<>();
         ArrayList<DoubleSolution> hs = new ArrayList<>();
@@ -111,16 +172,18 @@ public class ExperimentationDTLZPreferences {
         System.out.println(String.format("HSat : %3d, Sat : %3d, Dis : %3d, HDis : %3d", hs.size(), s.size(), d.size(),
                 hd.size()));
         System.out.println("Front Preferences (HSAT + SAT): " + front.size());
-        for (DoubleSolution doubleSolution : front) {
-            int[] iclass = (int[]) doubleSolution.getAttribute(classifier.getAttributeKey());
-
-            System.out.println(Arrays.toString(iclass) + " " + doubleSolution.getObjectives());
-        }
-        if (problem.getNumberOfObjectives() == 3) {
-            Plotter plotter = new Scatter3D<DoubleSolution>(front,
-                    DIRECTORY_DTLZ_PREFERENCES + File.separator + label + problem.getName());
-            plotter.plot();
-        }
+        System.out.println("******* END *******");
+        return front;
+        /*
+         * for (DoubleSolution doubleSolution : front) { int[] iclass = (int[])
+         * doubleSolution.getAttribute(classifier.getAttributeKey());
+         * 
+         * System.out.println(Arrays.toString(iclass) + " " +
+         * doubleSolution.getObjectives()); } if (problem.getNumberOfObjectives() == 3)
+         * { Plotter plotter = new Scatter3D<DoubleSolution>(front,
+         * DIRECTORY_DTLZ_PREFERENCES + File.separator + label + problem.getName());
+         * plotter.plot(); }
+         */
 
     }
 
@@ -130,6 +193,7 @@ public class ExperimentationDTLZPreferences {
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
             Solution tmp = problem.generateFromVarString(line.split("\\*")[0].trim());
+            tmp.setAttribute(OWNER, problem.getName());
             solutions.add((DoubleSolution) tmp);
         }
         sc.close();
