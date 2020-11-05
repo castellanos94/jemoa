@@ -43,7 +43,7 @@ public class DominanceComparator<S extends Solution<?>> implements Comparator<S>
         int a_dom = 0, b_dom = 0;
         for (int i = 0; i < a.getObjectives().size() && (a_dom != 1 || b_dom != 1); i++) {
             int value = a.getObjectives().get(i).compareTo(b.getObjectives().get(i));
-            if (problem.getObjectives_type()[i] == Problem.MAXIMIZATION) {
+            if (problem !=null && problem.getObjectives_type()[i] == Problem.MAXIMIZATION) {
                 value *= -1;
             }
             if (value == -1) {
@@ -99,5 +99,4 @@ public class DominanceComparator<S extends Solution<?>> implements Comparator<S>
     public int getNumberOfSubFronts() {
         return 2;
     }
-
 }

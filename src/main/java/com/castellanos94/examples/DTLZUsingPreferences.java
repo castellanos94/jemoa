@@ -28,7 +28,11 @@ import tech.tablesaw.api.Table;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+/**
+ * 8692ms dtlz2
+ * 39444.66ms dtlz3
+ * 34395.6ms dtlz4
+ */
 public class DTLZUsingPreferences {
     private static final Logger logger = LogManager.getLogger(DTLZUsingPreferences.class);
 
@@ -39,27 +43,18 @@ public class DTLZUsingPreferences {
         Tools.setSeed(1L);
         logger.info("Experimentation: DTLZ with preferences");
 
-        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
+        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ4_Instance.txt";
         // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         logger.info(instance);
 
-        DTLZ1_P problem = new DTLZ1_P(instance);
-        ArrayList<DoubleSolution> solutions = new ArrayList<>();
-        for (int i = 0; i < instance.getInitialSolutions().length; i++) {
-            DoubleSolution s = new DoubleSolution(problem);
-            for (int j = 0; j < problem.getNumberOfDecisionVars(); j++) {
-                s.setVariable(j, instance.getInitialSolutions()[i][j].doubleValue());
-            }
-            problem.evaluate(s);
-            problem.evaluateConstraint(s);
-            solutions.add(s);
-        }
+        DTLZ4_P problem = new DTLZ4_P(instance);
+        
         int popSize = 92;
         int numberOfDivision = 12;
         SBXCrossover crossover = new SBXCrossover(30, 1.0);
         PolynomialMutation mutation = new PolynomialMutation();
-        int maxIterations = 400;
+        int maxIterations = 1000;
 
         SelectionOperator<DoubleSolution> selectionOperator = new TournamentSelection<>(popSize,
                 new DominanceComparator<DoubleSolution>());

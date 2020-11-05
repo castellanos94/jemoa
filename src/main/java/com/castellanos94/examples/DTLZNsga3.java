@@ -29,7 +29,11 @@ import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.Table;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+/**
+ * 9064ms dtlz2
+ * 29665.48 ms dtlz3
+ * 21632.26 ms dtlz4
+ */
 public class DTLZNsga3 {
     private static final Logger logger = LogManager.getLogger(DTLZNsga3.class);
     static final String DIRECTORY = "experiments" + File.separator + "dtlz";
@@ -38,7 +42,7 @@ public class DTLZNsga3 {
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         Tools.setSeed(1l);
 
-        int numberProblem = 1;
+        int numberProblem = 4;
         int numberOfObjectives = 3;
 
         ArrayList<DoubleSolution> bag = new ArrayList<>();
@@ -52,7 +56,7 @@ public class DTLZNsga3 {
 
         ArrayList<Integer> range = new ArrayList<>(IntStream.range(0, EXPERIMENT).boxed().collect(Collectors.toList()));
         ArrayList<Long> time = new ArrayList<>();
-        range.stream().parallel().forEach(i -> {
+        range.stream().sequential().forEach(i -> {
             NSGA_III<DoubleSolution> a = dtlzTestSuite(numberProblem, numberOfObjectives);
 
             a.execute();

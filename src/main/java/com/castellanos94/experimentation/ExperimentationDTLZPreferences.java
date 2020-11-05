@@ -14,8 +14,16 @@ import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.impl.InterClassnC;
 import com.castellanos94.problems.Problem;
+import com.castellanos94.problems.benchmarks.dtlz.DTLZ;
 import com.castellanos94.problems.benchmarks.dtlz.DTLZ1;
+import com.castellanos94.problems.benchmarks.dtlz.DTLZ2;
+import com.castellanos94.problems.benchmarks.dtlz.DTLZ3;
+import com.castellanos94.problems.benchmarks.dtlz.DTLZ4;
 import com.castellanos94.problems.preferences.dtlz.DTLZ1_P;
+import com.castellanos94.problems.preferences.dtlz.DTLZ2_P;
+import com.castellanos94.problems.preferences.dtlz.DTLZ3_P;
+import com.castellanos94.problems.preferences.dtlz.DTLZ4_P;
+import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Distance;
@@ -25,12 +33,16 @@ import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 
 public class ExperimentationDTLZPreferences {
-    static final String DIRECTORY_DTLZ = "experiments" + File.separator + "dtlz";
-    static final String DIRECTORY_DTLZ_PREFERENCES = "experiments" + File.separator + "dtlz_preferences";
+    static String name = "dtlz4";
+    static final String DIRECTORY_EXPERIMENTS = "experiments";
+    static final String DIRECTORY_DTLZ = "experiments" + File.separator + "dtlz" + File.separator + name;
+    static final String DIRECTORY_DTLZ_PREFERENCES = "experiments" + File.separator + "dtlz_preferences"
+            + File.separator + name;
     static final String OWNER = "FROM_PROBLEM";
 
     public static void main(String[] args) throws FileNotFoundException {
-        DTLZ1 dtlz1 = new DTLZ1();
+        DTLZ4 dtlz1 = new DTLZ4();
+        System.out.println(dtlz1);
         System.out.println("Reading DTLZ standard");
         ArrayList<ArrayList<DoubleSolution>> result_dtlz1 = new ArrayList<>();
         ArrayList<DoubleSolution> result_dtlz1_front = new ArrayList<>();
@@ -44,11 +56,13 @@ public class ExperimentationDTLZPreferences {
         System.out.println(result_dtlz1.size());
         System.out.println(result_dtlz1_front.size());
         System.out.println("Reading DTLZ preferences");
-        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
-        // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
+        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ4_Instance.txt";
+        String path_roi = "/home/thinkpad/Documents/jemoa/bestCompromise_DTLZ4_P.out";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
 
-        DTLZ1_P dtlz1_P = new DTLZ1_P(instance);
+        DTLZ4_P dtlz1_P = new DTLZ4_P(instance);
+
+        System.out.println(dtlz1_P);
         ArrayList<ArrayList<DoubleSolution>> result_preferences = new ArrayList<>();
         ArrayList<DoubleSolution> result_preferences_front = new ArrayList<>();
         for (String name : new File(DIRECTORY_DTLZ_PREFERENCES).list()) {
@@ -61,8 +75,7 @@ public class ExperimentationDTLZPreferences {
         System.out.println(result_preferences.size());
         System.out.println(result_preferences_front.size());
         System.out.println("Reading ROI");
-        ArrayList<DoubleSolution> roi = readSolution(dtlz1_P,
-                "/home/thinkpad/Documents/jemoa/bestCompromise_DTLZ1_P.out");
+        ArrayList<DoubleSolution> roi = readSolution(dtlz1_P, path_roi);
         System.out.println(roi.size());
         System.out.println("Roi HSat Sat");
         ArrayList<DoubleSolution> roi_sat = makeFrontHSatSat(dtlz1_P, roi);
@@ -113,19 +126,109 @@ public class ExperimentationDTLZPreferences {
                 doubleSolution.setAttribute(OWNER, "ROI_PREFERENCES");
             }
             front_preferences.addAll(roi_sat);
-            EXPORT_OBJECTIVES_TO_CSV(front_preferences);
+            EXPORT_OBJECTIVES_TO_CSV(front_preferences, dtlz1_P.getName().trim());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("Calculate metrics DTLZ1");
-        calculate_metrics(result_dtlz1, roi_sat, dtlz1_P, dtlz1.getName());
+        System.out.println("Calculate metrics distance " + name);
+        calculate_metrics(result_dtlz1, roi_sat, dtlz1_P, name);
 
-        System.out.println("Calculate metrics DTLZ1_P");
-        calculate_metrics(result_preferences, roi_sat, dtlz1_P, dtlz1_P.getName());
+        System.out.println("Calculate metrics distance " + name + "_p");
+        calculate_metrics(result_preferences, roi_sat, dtlz1_P, name + "_p");
+
+        System.out.println("Calculate metrics dom " + name + "_p");
+        calculate_metrics_dom(result_dtlz1, result_preferences, roi_sat, dtlz1_P, dtlz1, name + "_p");
+
+    }
+
+    private static void calculate_metrics_dom(ArrayList<ArrayList<DoubleSolution>> result_dtlz,
+            ArrayList<ArrayList<DoubleSolution>> result_preferences, ArrayList<DoubleSolution> roi_sat,
+            DTLZPreferences problem_preferences, DTLZ problem_original, String name) {
+        Table table = Table.create(problem_original.getName() + " to ROI Preferences.");
+        DoubleColumn corrida = DoubleColumn.create("corrida");
+        DoubleColumn frente_zero = DoubleColumn.create("Frente Cero");
+        DoubleColumn dom = DoubleColumn.create("Dominancia " + problem_original.getName());
+        DoubleColumn dom_p = DoubleColumn.create("Dominancia " + problem_preferences.getName());
+        DoubleColumn hsat = DoubleColumn.create("HSAT " + problem_original.getName());
+        DoubleColumn sat = DoubleColumn.create("SAT " + problem_original.getName());
+        DoubleColumn hsat_p = DoubleColumn.create("HSAT " + problem_preferences.getName());
+        DoubleColumn sat_p = DoubleColumn.create("SAT " + problem_preferences.getName());
+        for (int i = 0; i < result_dtlz.size(); i++) {
+            ArrayList<DoubleSolution> bag = new ArrayList<>();
+            bag.addAll(result_dtlz.get(i));
+            bag.addAll(result_preferences.get(i));
+            Ranking<DoubleSolution> compartor = new DominanceComparator<>();
+            compartor.computeRanking(bag);
+
+            int c_solutions_standard = 0, c_solutions_preferences = 0;
+            for (DoubleSolution doubleSolution : compartor.getSubFront(0)) {
+                if (doubleSolution.getAttribute(OWNER).equals(problem_original.getName())) {
+                    c_solutions_standard++;
+                } else {
+                    c_solutions_preferences++;
+                }
+            }
+            // Classification
+            InterClassnC<DoubleSolution> classifier = new InterClassnC<>(problem_preferences);
+            ArrayList<DoubleSolution> hs = new ArrayList<>();
+            ArrayList<DoubleSolution> s = new ArrayList<>();
+            ArrayList<DoubleSolution> d = new ArrayList<>();
+            ArrayList<DoubleSolution> hd = new ArrayList<>();
+            for (DoubleSolution x : compartor.getSubFront(0)) {
+                classifier.classify(x);
+                int[] iclass = (int[]) x.getAttribute(classifier.getAttributeKey());
+                if (iclass[0] > 0) {
+                    hs.add(x);
+                } else if (iclass[1] > 0) {
+                    s.add(x);
+                } else if (iclass[2] > 0) {
+                    d.add(x);
+                } else {
+                    hd.add(x);
+                }
+            }
+
+            corrida.append(i);
+            frente_zero.append(compartor.getSubFront(0).size());
+            dom.append(c_solutions_standard);
+            dom_p.append(c_solutions_preferences);
+            // Verificar hsat en original y preferences
+            c_solutions_standard = 0;
+            c_solutions_preferences = 0;
+            for (DoubleSolution doubleSolution : hs) {
+                if (doubleSolution.getAttribute(OWNER).equals(problem_original.getName())) {
+                    c_solutions_standard++;
+                } else {
+                    c_solutions_preferences++;
+                }
+            }
+            hsat.append(c_solutions_standard);
+            hsat_p.append(c_solutions_preferences);
+            // Verificar sat en original y preferences
+            c_solutions_standard = 0;
+            c_solutions_preferences = 0;
+            for (DoubleSolution doubleSolution : s) {
+                if (doubleSolution.getAttribute(OWNER).equals(problem_original.getName())) {
+                    c_solutions_standard++;
+                } else {
+                    c_solutions_preferences++;
+                }
+            }
+
+            sat.append(c_solutions_standard);
+            sat_p.append(c_solutions_preferences);
+        }
+        table.addColumns(corrida, frente_zero, dom, dom_p, hsat, sat, hsat_p, sat_p);
+        try {
+            System.out.println(table.summary());
+            table.write().csv(DIRECTORY_EXPERIMENTS + File.separator + "resume_dominancia_" + name + ".csv");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void calculate_metrics(ArrayList<ArrayList<DoubleSolution>> results,
-            ArrayList<DoubleSolution> roi_sat, DTLZ1_P problem, String label) {
+            ArrayList<DoubleSolution> roi_sat, DTLZPreferences problem, String label) {
         // ArrayList<ArrayList<DoubleSolution>> result_sat = new ArrayList<>();
         /*
          * for (int i = 0; i < results.size(); i++) {
@@ -135,6 +238,7 @@ public class ExperimentationDTLZPreferences {
         DoubleColumn corrida = DoubleColumn.create("corrida");
         DoubleColumn euclidean = DoubleColumn.create("euclidean");
         DoubleColumn chebyshev = DoubleColumn.create("chebyshev");
+
         Distance<DoubleSolution> distance = new Distance<>(Distance.Metric.EUCLIDEAN_DISTANCE);
         for (int i = 0; i < results.size(); i++) {
             distance.setMetric(Distance.Metric.EUCLIDEAN_DISTANCE);
@@ -161,14 +265,15 @@ public class ExperimentationDTLZPreferences {
         table.addColumns(corrida, euclidean, chebyshev);
         try {
             System.out.println(table.summary());
-            table.write().csv(DIRECTORY_DTLZ_PREFERENCES + File.separator + "resume_distances_" + label + ".csv");
+            table.write().csv(DIRECTORY_EXPERIMENTS + File.separator + "resume_distances_" + label + ".csv");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @SuppressWarnings("rawtypes")
-    private static void EXPORT_OBJECTIVES_TO_CSV(ArrayList<DoubleSolution> front_preferences) throws IOException {
+    private static void EXPORT_OBJECTIVES_TO_CSV(ArrayList<DoubleSolution> front_preferences, String label)
+            throws IOException {
         Table table = Table.create("FRONT_PREFERENCES");
         for (int i = 0; i < front_preferences.get(0).getProblem().getNumberOfObjectives(); i++) {
             StringColumn column = StringColumn.create("F-" + (i + 1));
@@ -182,10 +287,11 @@ public class ExperimentationDTLZPreferences {
 
         table.addColumns(column);
 
-        table.write().csv(DIRECTORY_DTLZ_PREFERENCES + File.separator + "FRONT_PREFERENCES.csv");
+        table.write().csv(DIRECTORY_EXPERIMENTS + File.separator + "FRONT_PREFERENCES_" + label + ".csv");
     }
 
-    private static ArrayList<DoubleSolution> makeFrontHSatSat(DTLZ1_P problem, ArrayList<DoubleSolution> solutions) {
+    private static ArrayList<DoubleSolution> makeFrontHSatSat(DTLZPreferences problem,
+            ArrayList<DoubleSolution> solutions) {
         System.out.println("******* Prefrences classification *******");
         InterClassnC<DoubleSolution> classifier = new InterClassnC<>(problem);
         ArrayList<DoubleSolution> front = new ArrayList<>();
@@ -236,7 +342,7 @@ public class ExperimentationDTLZPreferences {
             String line = sc.nextLine();
             Solution tmp = problem.generateFromVarString(line.split("\\*")[0].trim());
             tmp.setAttribute(OWNER, problem.getName());
-            solutions.add((DoubleSolution) tmp);
+            solutions.add((DoubleSolution) tmp.copy());
         }
         sc.close();
         return solutions;

@@ -86,7 +86,7 @@ public class DTLZ_Instance extends Instance {
             }
             data = this.readNextDataLine(in);
             int n_solutions = Integer.parseInt(data[0]);
-            RealData[][] solutions_DMs = new RealData[n_solutions][dv];
+            RealData[][] solutions_DMs = new RealData[n_solutions][(isObjective)? n:dv];
             for (int i = 0; i < n_solutions; i++) {
                 data = this.readNextDataLine(in);
 

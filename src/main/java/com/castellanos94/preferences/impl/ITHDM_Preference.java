@@ -2,6 +2,7 @@ package com.castellanos94.preferences.impl;
 
 import java.util.ArrayList;
 
+import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.datatype.RealData;
@@ -16,7 +17,7 @@ import com.castellanos94.solutions.Solution;
  * https://doi.org/10.1016/j.omega.2019.05.001
  */
 public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
-    protected ITHDM_Dominance<S> dominance;
+    protected DominanceComparator<S> dominance;
     protected OutrankingModel model;
     protected Problem<?> p;
     private int[] coalition;
@@ -28,7 +29,12 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
         this.dominance = new ITHDM_Dominance<>((RealData) model.getAlpha());
         coalition = new int[p.getNumberOfObjectives()];
     }
-
+    public ITHDM_Preference(Problem<?> p, OutrankingModel model, DominanceComparator<S> dominanceComparator) {
+        this.model = model;
+        this.p = p;
+        this.dominance = dominanceComparator;
+        coalition = new int[p.getNumberOfObjectives()];
+    }
     /**
      * * Definition 3. Relatiopships: xS(δ,λ)y in [-2], xP(δ,λ)y in [-1], xI(δ,λ)y
      * in [0], xR(δ,λ)y in [1]
@@ -162,7 +168,7 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
         return sigmaYX;
     }
 
-    public ITHDM_Dominance<S> getDominance() {
+    public DominanceComparator<S> getDominance() {
         return dominance;
     }
 }

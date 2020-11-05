@@ -14,6 +14,7 @@ import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.ExtraInformation;
+import com.castellanos94.utils.Tools;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -22,7 +23,7 @@ public class BestCompromiseDTLZ implements ExtraInformation {
     protected int MAX_T = 5000;
     protected DTLZPreferences problem;
     protected ITHDM_Preference<DoubleSolution> preference;
-    private ITHDM_Dominance<DoubleSolution> dominance;
+    private DominanceComparator<DoubleSolution> dominance;
 
     public BestCompromiseDTLZ(DTLZPreferences problem) {
         this.problem = problem;
@@ -48,12 +49,11 @@ public class BestCompromiseDTLZ implements ExtraInformation {
         for (int i = 0; i < sample.size() - 1; i++) {
             RealData sigma_out = RealData.ZERO, sigma_in = RealData.ZERO;
             for (int j = 1; j < sample.size(); j++) {
-                int value = dominance.compare(sample.get(i), sample.get(j));
-                if (value == 0) {
-                    preference.compare(sample.get(i), sample.get(j));
-                    sigma_out = (RealData) sigma_out.plus(preference.getSigmaXY());
-                    sigma_in = (RealData) sigma_in.plus(preference.getSigmaYX());
-                }
+                // int value = dominance.compare(sample.get(i), sample.get(j));
+                preference.compare(sample.get(i), sample.get(j));
+                sigma_out = (RealData) sigma_out.plus(preference.getSigmaXY());
+                sigma_in = (RealData) sigma_in.plus(preference.getSigmaYX());
+
                 /*
                  * if (value == -2 && tmp.compareTo(bestPref) >= 0) { bestPref = tmp; c = new
                  * ImmutablePair<DoubleSolution, RealData>(sample.get(i), bestPref); if
@@ -81,8 +81,8 @@ public class BestCompromiseDTLZ implements ExtraInformation {
 
         ArrayList<DoubleSolution> solutions = new ArrayList<>();
         candidatos.forEach(c -> {
-            if (c.getRight().compareTo(0) > 0)
-                solutions.add(c.getLeft());
+            // if (c.getRight().compareTo(0) > 0)
+            solutions.add(c.getLeft());
         });
         /*
          * Iterator<DoubleSolution> iterator = solutions.iterator();
@@ -102,12 +102,11 @@ public class BestCompromiseDTLZ implements ExtraInformation {
         for (int i = 0; i < solutions.size() - 1; i++) {
             RealData sigma_out = RealData.ZERO, sigma_in = RealData.ZERO;
             for (int j = 1; j < solutions.size(); j++) {
-                int value = dominance.compare(solutions.get(i), solutions.get(j));
-                if (value == 0) {
-                    preference.compare(solutions.get(i), solutions.get(j));
-                    sigma_out = (RealData) sigma_out.plus(preference.getSigmaXY());
-                    sigma_in = (RealData) sigma_in.plus(preference.getSigmaYX());
-                }
+                // int value = dominance.compare(solutions.get(i), solutions.get(j));
+                preference.compare(solutions.get(i), solutions.get(j));
+                sigma_out = (RealData) sigma_out.plus(preference.getSigmaXY());
+                sigma_in = (RealData) sigma_in.plus(preference.getSigmaYX());
+
             }
             RealData net_score = (RealData) sigma_out.minus(sigma_in);
             if (best_compromise == null || net_score.compareTo(best) > 0) {
@@ -133,19 +132,23 @@ public class BestCompromiseDTLZ implements ExtraInformation {
     }
 
     public static void main(String[] args) throws IOException {
-        // Tools.setSeed(8435L);
-
-        String path = "src/main/resources/instances/dtlz/DTLZInstance.txt";
-        path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
-        path = "/home/thinkpad/PycharmProjects/jMetalPy/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
+        //Tools.setSeed(1L);
+        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ4_Instance.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         System.out.println(instance);
 
-        DTLZ1_P problem = new DTLZ1_P(instance);
+        DTLZ4_P problem = new DTLZ4_P(instance);
         System.out.println(problem);
         BestCompromiseDTLZ bestCompromiseDTLZ = new BestCompromiseDTLZ(problem);
         ArrayList<DoubleSolution> bag = new ArrayList<>();
-        for (int i = 0; i < 50; i++) {
+        /*
+         * double[][] paretoOptimal3Obj = problem.getParetoOptimal3Obj(); Solution tmp =
+         * problem.generate(); for (double[] point : paretoOptimal3Obj) { for (int i =
+         * 0; i < point.length; i++) { tmp.setObjective(i, new RealData(point[i])); }
+         * bag.add((DoubleSolution) tmp.copy()); }
+         * System.out.println("References point : "+bag.size());
+         */
+        for (int i = 0; i < 50 && bag.size() < 200; i++) {
             System.out.println("inteto " + (i + 1) + " bag: " + bag.size());
             ArrayList<DoubleSolution> candidatos = bestCompromiseDTLZ.execute();
             System.out.println("\tsize? " + candidatos.size());
