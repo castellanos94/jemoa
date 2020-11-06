@@ -33,7 +33,7 @@ import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 
 public class ExperimentationDTLZPreferences {
-    static String name = "dtlz4";
+    static String name = "dtlz1";
     static final String DIRECTORY_EXPERIMENTS = "experiments";
     static final String DIRECTORY_DTLZ = "experiments" + File.separator + "dtlz" + File.separator + name;
     static final String DIRECTORY_DTLZ_PREFERENCES = "experiments" + File.separator + "dtlz_preferences"
@@ -41,7 +41,7 @@ public class ExperimentationDTLZPreferences {
     static final String OWNER = "FROM_PROBLEM";
 
     public static void main(String[] args) throws FileNotFoundException {
-        DTLZ4 dtlz1 = new DTLZ4();
+        DTLZ1 dtlz1 = new DTLZ1();
         System.out.println(dtlz1);
         System.out.println("Reading DTLZ standard");
         ArrayList<ArrayList<DoubleSolution>> result_dtlz1 = new ArrayList<>();
@@ -56,11 +56,11 @@ public class ExperimentationDTLZPreferences {
         System.out.println(result_dtlz1.size());
         System.out.println(result_dtlz1_front.size());
         System.out.println("Reading DTLZ preferences");
-        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ4_Instance.txt";
-        String path_roi = "/home/thinkpad/Documents/jemoa/bestCompromise_DTLZ4_P.out";
+        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
+        String path_roi = "/home/thinkpad/Documents/jemoa/bestCompromise_DTLZ1_P.out";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
 
-        DTLZ4_P dtlz1_P = new DTLZ4_P(instance);
+        DTLZ1_P dtlz1_P = new DTLZ1_P(instance);
 
         System.out.println(dtlz1_P);
         ArrayList<ArrayList<DoubleSolution>> result_preferences = new ArrayList<>();
@@ -179,12 +179,16 @@ public class ExperimentationDTLZPreferences {
                 int[] iclass = (int[]) x.getAttribute(classifier.getAttributeKey());
                 if (iclass[0] > 0) {
                     hs.add(x);
+                    x.setAttribute("class", "HSAT");
                 } else if (iclass[1] > 0) {
                     s.add(x);
+                    x.setAttribute("class", "SAT");
                 } else if (iclass[2] > 0) {
                     d.add(x);
+                    x.setAttribute("class", "DIS");
                 } else {
                     hd.add(x);
+                    x.setAttribute("class", "HDIS");
                 }
             }
 
@@ -282,10 +286,13 @@ public class ExperimentationDTLZPreferences {
             table.addColumns(column);
         }
         StringColumn column = StringColumn.create("Problem");
-        for (Solution solution_ : front_preferences)
+        StringColumn category = StringColumn.create("Class");
+        for (Solution solution_ : front_preferences) {
             column.append((String) solution_.getAttribute(OWNER));
+            category.append((String) solution_.getAttribute("class"));
+        }
 
-        table.addColumns(column);
+        table.addColumns(column, category);
 
         table.write().csv(DIRECTORY_EXPERIMENTS + File.separator + "FRONT_PREFERENCES_" + label + ".csv");
     }
@@ -304,16 +311,21 @@ public class ExperimentationDTLZPreferences {
             int[] iclass = (int[]) x.getAttribute(classifier.getAttributeKey());
             if (iclass[0] > 0) {
                 hs.add(x);
+                x.setAttribute("class", "HSAT");
             } else if (iclass[1] > 0) {
                 s.add(x);
+                x.setAttribute("class", "SAT");
             } else if (iclass[2] > 0) {
                 d.add(x);
+                x.setAttribute("class", "DIS");
             } else {
                 hd.add(x);
+                x.setAttribute("class", "HDIS");
             }
         }
         if (!hs.isEmpty()) {
             front.addAll(hs);
+
         }
         if (!s.isEmpty()) {
             front.addAll(s);
