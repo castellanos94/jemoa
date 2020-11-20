@@ -47,7 +47,8 @@ public class DoubleSolution extends Solution<Double> {
             this.resources.set(i, doubleSolution.getResources().get(i));
         }
         this.problem = doubleSolution.getProblem();
-        this.attributes = (HashMap<String, Object>) doubleSolution.getAttributes().clone();
+        this.attributes = new HashMap<>();
+        doubleSolution.attributes.forEach((k, v) -> this.attributes.put(k, v));
         this.penalties = doubleSolution.getPenalties();
         this.numberOfPenalties = doubleSolution.getNumberOfPenalties();
 

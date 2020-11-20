@@ -59,9 +59,12 @@ public class ExperimentationDTLZPreferences {
     static DoubleColumn rate_hsat_p = DoubleColumn.create("HSAT % NSGA3P");// + problem_preferences.getName());
     static DoubleColumn rate_sat_p = DoubleColumn.create("SAT % NSGA3P");// + problem_preferences.getName());
 
-    static DoubleColumn euclidean = DoubleColumn.create("euclidean_nsga3");
+    static DoubleColumn euclidean = DoubleColumn.create("min_euclidean_nsga3");
     static DoubleColumn chebyshev = DoubleColumn.create("chebyshev_nsga3");
-    static DoubleColumn euclidean_p = DoubleColumn.create("euclidean_nsga3_p");
+    static DoubleColumn avg_euclidean = DoubleColumn.create("avg_euclidean_nsga3");
+    static DoubleColumn avg_euclidean_p = DoubleColumn.create("avg_euclidean_nsga3_p");
+
+    static DoubleColumn euclidean_p = DoubleColumn.create("min_euclidean_nsga3_p");
     static DoubleColumn chebyshev_p = DoubleColumn.create("chebyshev_nsga3_p");
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -99,7 +102,7 @@ public class ExperimentationDTLZPreferences {
             ArrayList<ArrayList<DoubleSolution>> result_dtlz1 = new ArrayList<>();
             ArrayList<DoubleSolution> result_dtlz1_front = new ArrayList<>();
             for (String name : new File(DIRECTORY_DTLZ + "" + i).list()) {
-                if (name.contains(".out") && !name.contains("bag")) {
+                if (!name.contains("old") && name.contains(".out") && !name.contains("bag")) {
                     result_dtlz1.add(readSolution(dtlz1, DIRECTORY_DTLZ + "" + i + File.separator + name));
                 } else if (name.contains("bag")) {
                     result_dtlz1_front = readSolution(dtlz1, DIRECTORY_DTLZ + "" + i + File.separator + name);
@@ -183,7 +186,8 @@ public class ExperimentationDTLZPreferences {
             calculate_metrics_dom(result_dtlz1, result_preferences, roi_sat, dtlz1_P, dtlz1, name + "" + i);
         }
         table.addColumns(corrida, frente_zero, dom, dom_p, rate_dom, rate_dom_p, hsat, hsat_p, sat, sat_p, rate_hsat,
-                rate_hsat_p, rate_sat, rate_sat_p, euclidean, euclidean_p, chebyshev, chebyshev_p);
+                rate_hsat_p, rate_sat, rate_sat_p, euclidean, euclidean_p, avg_euclidean, avg_euclidean_p, chebyshev,
+                chebyshev_p);
         try {
             System.out.println(table.summary());
             table.write().csv(DIRECTORY_EXPERIMENTS + File.separator + "metricas_dtlz.csv");
@@ -243,10 +247,10 @@ public class ExperimentationDTLZPreferences {
             corrida.append(name + "-" + (i + 1));
 
             frente_zero.append(compartor.getSubFront(0).size());
-            dom.append(-c_solutions_standard);
-            dom_p.append(-c_solutions_preferences);
-            rate_dom.append((double) -c_solutions_standard / result_dtlz.get(i).size());
-            rate_dom_p.append((double) -c_solutions_preferences / result_preferences.get(i).size());
+            dom.append(c_solutions_standard);
+            dom_p.append(c_solutions_preferences);
+            rate_dom.append((double) c_solutions_standard / result_dtlz.get(i).size());
+            rate_dom_p.append((double) c_solutions_preferences / result_preferences.get(i).size());
             // Verificar hsat en original y preferences
             c_solutions_standard = 0;
             c_solutions_preferences = 0;
@@ -257,11 +261,11 @@ public class ExperimentationDTLZPreferences {
                     c_solutions_preferences++;
                 }
             }
-            hsat.append(-c_solutions_standard);
-            hsat_p.append(-c_solutions_preferences);
+            hsat.append(c_solutions_standard);
+            hsat_p.append(c_solutions_preferences);
 
-            rate_hsat.append((double) -c_solutions_standard / result_dtlz.get(i).size());
-            rate_hsat_p.append((double) -c_solutions_preferences / result_preferences.get(i).size());
+            rate_hsat.append((double) c_solutions_standard / result_dtlz.get(i).size());
+            rate_hsat_p.append((double)c_solutions_preferences / result_preferences.get(i).size());
             // Verificar sat en original y preferences
             c_solutions_standard = 0;
             c_solutions_preferences = 0;
@@ -273,18 +277,35 @@ public class ExperimentationDTLZPreferences {
                 }
             }
 
-            sat.append(-c_solutions_standard);
-            sat_p.append(-c_solutions_preferences);
-            rate_sat.append((double) -c_solutions_standard / result_dtlz.get(i).size());
-            rate_sat_p.append((double) -c_solutions_preferences / result_preferences.get(i).size());
+            sat.append(c_solutions_standard);
+            sat_p.append(c_solutions_preferences);
+            rate_sat.append((double) c_solutions_standard / result_dtlz.get(i).size());
+            rate_sat_p.append((double) c_solutions_preferences / result_preferences.get(i).size());
             // distancia
             euclidean.append(getMinDistance(nsga3, roi_sat, Distance.Metric.EUCLIDEAN_DISTANCE));
             chebyshev.append(getMinDistance(nsga3, roi_sat, Distance.Metric.CHEBYSHEV_DISTANCE));
             euclidean_p.append(getMinDistance(nsga3_p, roi_sat, Distance.Metric.EUCLIDEAN_DISTANCE));
             chebyshev_p.append(getMinDistance(nsga3_p, roi_sat, Distance.Metric.CHEBYSHEV_DISTANCE));
+            avg_euclidean.append(getAvgDistance(nsga3, roi_sat, Distance.Metric.EUCLIDEAN_DISTANCE));
+            avg_euclidean_p.append(getAvgDistance(nsga3_p, roi_sat, Distance.Metric.EUCLIDEAN_DISTANCE));
 
         }
 
+    }
+
+    private static Double getAvgDistance(ArrayList<DoubleSolution> solutions, ArrayList<DoubleSolution> roi_sat,
+            Metric metric) {
+        if (solutions.isEmpty())
+            return Double.NaN;
+        Distance<DoubleSolution> distance = new Distance<>(metric);
+        List<Data> distances_ = distance.evaluate(solutions, roi_sat);
+        double av = 0;
+        for (int j = 0; j < distances_.size(); j++) {
+
+            av += distances_.get(j).doubleValue();
+        }
+
+        return av /= distances_.size();
     }
 
     private static Double getMinDistance(ArrayList<DoubleSolution> solutions, ArrayList<DoubleSolution> roi_sat,

@@ -35,8 +35,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
 
         for (int f = 0; f < number_of_objectives; f += 1) {
             Data minf = MAX_VALUE;
-            for (int i = 0; i < fronts.get(0).size(); i += 1) // min values must appear in the first front
-            {
+            for (int i = 0; i < fronts.get(0).size(); i += 1) {
                 if (minf.compareTo(fronts.get(0).get(i).getObjective(f)) > 0)
                     minf = fronts.get(0).get(i).getObjective(f);
             }
@@ -44,11 +43,9 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
 
             for (ArrayList<S> list : fronts) {
                 for (S s : list) {
-                    if (f == 0) // in the first objective we create the vector of conv_objs
+                    if (f == 0)
                         setAttribute(s, new ArrayList<>());
                     Data tmp = s.getObjective(f).minus(minf);
-                 //   if (tmp.compareTo(10e-6) < 0)
-                  //      tmp = ZERO_VALUE;
 
                     getAttribute(s).add(tmp);
                 }
@@ -67,12 +64,6 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
         s.setAttribute(OBJECTIVES_TRANSLATED, arrayList);
     }
 
-    // ----------------------------------------------------------------------
-    // ASF: Achivement Scalarization Function
-    // I implement here a effcient version of it, which only receives the index
-    // of the objective which uses 1.0; the rest will use 0.00001. This is
-    // different to the one impelemented in C++
-    // ----------------------------------------------------------------------
     private Data ASF(S s, int index) {
         Data max_ratio = MIN_VALUE;
         for (int i = 0; i < s.getObjectives().size(); i++) {
@@ -90,7 +81,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
         S min_indv = null;
         for (int f = 0; f < number_of_objectives; f += 1) {
             Data min_ASF = MAX_VALUE;
-            for (S s : fronts.get(0)) { // only consider the individuals in the first front
+            for (S s : fronts.get(0)) {
                 Data asf = ASF(s, f);
                 if (asf.compareTo(min_ASF) < 0) {
                     min_ASF = asf;
@@ -132,6 +123,13 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
         return x;
     }
 
+    /**
+     * Ref jmetal
+     * 
+     * @param population     pop
+     * @param extreme_points z
+     * @return
+     */
     public ArrayList<Data> constructHyperplane(ArrayList<S> population, ArrayList<S> extreme_points) {
         // Check whether there are duplicate extreme points.
         // This might happen but the original paper does not mention how to deal with
@@ -183,7 +181,6 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
                 for (int f = 0; f < number_of_objectives; f++) {
                     ArrayList<Data> conv_obj = getAttribute(s);
                     if (intercepts.get(f).minus(ideal_point.get(f)).abs().compareTo(10e-6) > 0) {
-                        // if (Math.abs(intercepts.get(f) - ideal_point.get(f)) > 10e-10) {
                         conv_obj.set(f, conv_obj.get(f).div(intercepts.get(f).minus(ideal_point.get(f))));
                     } else {
                         conv_obj.set(f, conv_obj.get(f).div(epsilon));
@@ -239,13 +236,10 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
     }
 
     int FindNicheReferencePoint() {
-        // find the minimal cluster size
         int min_size = Integer.MAX_VALUE;
         for (int i = 0; i < this.referencePoints.getNumberOfPoints(); i++)
-            // if (referencePoints.get(i).getPotentialMembers()> 0)
             min_size = Math.min(min_size, referencePoints.get(i).getPotentialMembers());
 
-        // find the reference points with the minimal cluster size Jmin
         ArrayList<Integer> min_rps = new ArrayList<>();
 
         for (int r = 0; r < this.referencePoints.getNumberOfPoints(); r += 1) {
@@ -259,14 +253,6 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
         return min_rps.get((min_rps.size() > 1) ? Tools.getRandom().nextInt(min_rps.size() - 1) : 0);
     }
 
-    // ----------------------------------------------------------------------
-    // SelectClusterMember():
-    //
-    // Select a potential member (an individual in the front Fl) and associate
-    // it with the reference point.
-    //
-    // Check the last two paragraphs in Section IV-E in the original paper.
-    // ----------------------------------------------------------------------
     S SelectClusterMember(int index) {
         S chosen = null;
         if (this.referencePoints.get(index).HasPotentialMember()) {
@@ -276,45 +262,28 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
                 chosen = this.referencePoints.get(index).RandomMember();
             }
         }
-        /*
-         * if (rp.HasPotentialMember()) { if (rp.MemberSize() == 0) // currently has no
-         * member { chosen = rp.FindClosestMember(); } else { chosen =
-         * rp.RandomMember(); } }
-         */
         return chosen;
     }
 
     @Override
-    /*
-     * This method performs the environmental Selection indicated in the paper
-     * describing NSGAIII
-     */
     public Void execute(ArrayList<S> source) {
-        // The comments show the C++ code
-
-        // ---------- Steps 9-10 in Algorithm 1 ----------
         if (source.size() == this.pop_size) {
             parents = source;
             return null;
         }
 
-        // ---------- Step 14 / Algorithm 2 ----------
-        // vector<double> ideal_point = TranslateObjectives(&cur, fronts);
         ArrayList<Data> ideal_point = translateObjectives(source);
         ArrayList<S> extreme_points = findExtremePoints(source);
         ArrayList<Data> intercepts = constructHyperplane(source, extreme_points);
 
         normalizeObjectives(source, intercepts, ideal_point);
-        // ---------- Step 15 / Algorithm 3, Step 16 ----------
         associate(source);
 
-        // ---------- Step 17 / Algorithm 4 ----------
         while (source.size() < this.pop_size && referencePoints.getNumberOfPoints() > 0) {
             int min_rp = FindNicheReferencePoint();
             if (min_rp != -1) {
                 S chosen = SelectClusterMember(min_rp);
-                if (chosen == null) // no potential member in Fl, disregard this reference point
-                {
+                if (chosen == null) {
                     this.referencePoints.remove(min_rp);
                 } else {
                     this.referencePoints.get(min_rp).incrementPotentialMembers();

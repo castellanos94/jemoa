@@ -30,9 +30,9 @@ import tech.tablesaw.api.Table;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 /**
- * 9064ms dtlz2
- * 29665.48 ms dtlz3
- * 21632.26 ms dtlz4
+ * 36126.16 dtlz2
+ * 34126.96 ms dtlz3
+ * 30877.86 ms dtlz4
  */
 public class DTLZNsga3 {
     private static final Logger logger = LogManager.getLogger(DTLZNsga3.class);
@@ -207,7 +207,7 @@ public class DTLZNsga3 {
 
         SelectionOperator<DoubleSolution> selectionOperator = new TournamentSelection<>((int) options.get("pop_size"),
                 new DominanceComparator<>());
-        return new NSGA_III<>(problem, (int) options.get("pop_size"), maxIterations, (int) options.get("partitions"),
+        return new NSGA_III<>(problem, (int) options.get("pop_size"), 1000, (int) options.get("partitions"),
                 selectionOperator, (CrossoverOperator<DoubleSolution>) options.get("crossover"),
                 (MutationOperator<DoubleSolution>) options.get("mutation"));
     }

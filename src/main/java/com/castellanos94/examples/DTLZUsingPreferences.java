@@ -29,9 +29,9 @@ import tech.tablesaw.api.Table;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 /**
- * 8692ms dtlz2
- * 39444.66ms dtlz3
- * 34395.6ms dtlz4
+ * 31105.84 ms  dtlz2
+ * 36910.32 ms dtlz3
+ * 48132.62 ms dtlz4
  */
 public class DTLZUsingPreferences {
     private static final Logger logger = LogManager.getLogger(DTLZUsingPreferences.class);
