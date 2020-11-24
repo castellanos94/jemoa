@@ -19,10 +19,16 @@ import com.castellanos94.problems.benchmarks.dtlz.DTLZ1;
 import com.castellanos94.problems.benchmarks.dtlz.DTLZ2;
 import com.castellanos94.problems.benchmarks.dtlz.DTLZ3;
 import com.castellanos94.problems.benchmarks.dtlz.DTLZ4;
+import com.castellanos94.problems.benchmarks.dtlz.DTLZ5;
+import com.castellanos94.problems.benchmarks.dtlz.DTLZ6;
+import com.castellanos94.problems.benchmarks.dtlz.DTLZ7;
 import com.castellanos94.problems.preferences.dtlz.DTLZ1_P;
 import com.castellanos94.problems.preferences.dtlz.DTLZ2_P;
 import com.castellanos94.problems.preferences.dtlz.DTLZ3_P;
 import com.castellanos94.problems.preferences.dtlz.DTLZ4_P;
+import com.castellanos94.problems.preferences.dtlz.DTLZ5_P;
+import com.castellanos94.problems.preferences.dtlz.DTLZ6_P;
+import com.castellanos94.problems.preferences.dtlz.DTLZ7_P;
 import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
@@ -60,17 +66,25 @@ public class ExperimentationDTLZPreferences {
     static DoubleColumn rate_sat_p = DoubleColumn.create("SAT % NSGA3P");// + problem_preferences.getName());
 
     static DoubleColumn euclidean = DoubleColumn.create("min_euclidean_nsga3");
-    static DoubleColumn chebyshev = DoubleColumn.create("chebyshev_nsga3");
-    static DoubleColumn avg_euclidean = DoubleColumn.create("avg_euclidean_nsga3");
-    static DoubleColumn avg_euclidean_p = DoubleColumn.create("avg_euclidean_nsga3_p");
+    static DoubleColumn euclidean_p = DoubleColumn.create("min_euclidean_nsga3p");
 
-    static DoubleColumn euclidean_p = DoubleColumn.create("min_euclidean_nsga3_p");
-    static DoubleColumn chebyshev_p = DoubleColumn.create("chebyshev_nsga3_p");
+    static DoubleColumn avg_euclidean = DoubleColumn.create("avg_euclidean_nsga3");
+    static DoubleColumn avg_euclidean_p = DoubleColumn.create("avg_euclidean_nsga3p");
+
+    static DoubleColumn max_euclidean = DoubleColumn.create("max_euclidean_nsga3");
+    static DoubleColumn max_euclidean_p = DoubleColumn.create("max_euclidean_nsga3p");
+
+    static DoubleColumn chebyshev = DoubleColumn.create("min_chebyshev_nsga3");
+    static DoubleColumn chebyshev_p = DoubleColumn.create("min_chebyshev_nsga3p");
+    static DoubleColumn avg_chebyshev = DoubleColumn.create("avg_chebyshev_nsga3");
+    static DoubleColumn avg_chebyshev_p = DoubleColumn.create("avg_chebyshev_nsga3p");
+    static DoubleColumn max_chebyshev = DoubleColumn.create("max_chebyshev_nsga3");
+    static DoubleColumn max_chebyshev_p = DoubleColumn.create("max_chebyshev_nsga3p");
 
     public static void main(String[] args) throws FileNotFoundException {
-        DTLZ dtlz1 = null;// = new DTLZ1();
+        DTLZ dtlz = null;// = new DTLZ1();
 
-        for (int i = 1; i <= 4; i++) {
+        for (int i = 1; i <= 7; i++) {
 
             String path = "src/main/resources/DTLZ_INSTANCES/DTLZ" + i + "_Instance.txt";
             String path_roi = "/home/thinkpad/Documents/jemoa/bestCompromise_DTLZ" + i + "_P.out";
@@ -78,24 +92,37 @@ public class ExperimentationDTLZPreferences {
             System.out.println("Reading DTLZ preferences");
             DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
 
-            DTLZPreferences dtlz1_P = null;
+            DTLZPreferences dtlzPreferences = null;
             switch (i) {
                 case 1:
-                    dtlz1 = new DTLZ1();
-                    dtlz1_P = new DTLZ1_P(instance);
+                    dtlz = new DTLZ1();
+                    dtlzPreferences = new DTLZ1_P(instance);
                     break;
                 case 2:
-                    dtlz1 = new DTLZ2();
-                    dtlz1_P = new DTLZ2_P(instance);
+                    dtlz = new DTLZ2();
+                    dtlzPreferences = new DTLZ2_P(instance);
                     break;
                 case 3:
-                    dtlz1 = new DTLZ3();
-                    dtlz1_P = new DTLZ3_P(instance);
+                    dtlz = new DTLZ3();
+                    dtlzPreferences = new DTLZ3_P(instance);
                     break;
                 case 4:
-                    dtlz1 = new DTLZ4();
-                    dtlz1_P = new DTLZ4_P(instance);
+                    dtlz = new DTLZ4();
+                    dtlzPreferences = new DTLZ4_P(instance);
                     break;
+                case 5:
+                    dtlzPreferences = new DTLZ5_P(instance);
+                    dtlz = new DTLZ5();
+                    break;
+                case 6:
+                    dtlzPreferences = new DTLZ6_P(instance);
+                    dtlz = new DTLZ6();
+                    break;
+                case 7:
+                    dtlzPreferences = new DTLZ7_P(instance);
+                    dtlz = new DTLZ7();
+                    break;
+
             }
 
             System.out.println("Reading DTLZ standard");
@@ -103,33 +130,33 @@ public class ExperimentationDTLZPreferences {
             ArrayList<DoubleSolution> result_dtlz1_front = new ArrayList<>();
             for (String name : new File(DIRECTORY_DTLZ + "" + i).list()) {
                 if (!name.contains("old") && name.contains(".out") && !name.contains("bag")) {
-                    result_dtlz1.add(readSolution(dtlz1, DIRECTORY_DTLZ + "" + i + File.separator + name));
+                    result_dtlz1.add(readSolution(dtlz, DIRECTORY_DTLZ + "" + i + File.separator + name));
                 } else if (name.contains("bag")) {
-                    result_dtlz1_front = readSolution(dtlz1, DIRECTORY_DTLZ + "" + i + File.separator + name);
+                    result_dtlz1_front = readSolution(dtlz, DIRECTORY_DTLZ + "" + i + File.separator + name);
                 }
             }
             System.out.println(result_dtlz1.size());
             System.out.println(result_dtlz1_front.size());
 
-            System.out.println(dtlz1_P);
+            System.out.println(dtlzPreferences);
             ArrayList<ArrayList<DoubleSolution>> result_preferences = new ArrayList<>();
             ArrayList<DoubleSolution> result_preferences_front = new ArrayList<>();
             for (String name : new File(DIRECTORY_DTLZ_PREFERENCES + "" + i).list()) {
                 if (name.contains(".out") && !name.contains("bag") && !name.contains("Class")) {
-                    result_preferences
-                            .add(readSolution(dtlz1_P, DIRECTORY_DTLZ_PREFERENCES + "" + i + File.separator + name));
+                    result_preferences.add(
+                            readSolution(dtlzPreferences, DIRECTORY_DTLZ_PREFERENCES + "" + i + File.separator + name));
                 } else if (name.contains("Class") && name.contains(".out")) {
-                    result_preferences_front = readSolution(dtlz1_P,
+                    result_preferences_front = readSolution(dtlzPreferences,
                             DIRECTORY_DTLZ_PREFERENCES + "" + i + File.separator + name);
                 }
             }
             System.out.println(result_preferences.size());
             System.out.println(result_preferences_front.size());
             System.out.println("Reading ROI");
-            ArrayList<DoubleSolution> roi = readSolution(dtlz1_P, path_roi);
+            ArrayList<DoubleSolution> roi = readSolution(dtlzPreferences, path_roi);
             System.out.println(roi.size());
             System.out.println("Roi HSat Sat");
-            ArrayList<DoubleSolution> roi_sat = makeFrontHSatSat(dtlz1_P, roi);
+            ArrayList<DoubleSolution> roi_sat = makeFrontHSatSat(dtlzPreferences, roi);
 
             System.out.println("Uniting fronts, seeking a global 0 front");
             ArrayList<DoubleSolution> bag = new ArrayList<>();
@@ -143,23 +170,23 @@ public class ExperimentationDTLZPreferences {
 
             int c_solutions_standard = 0, c_solutions_preferences = 0;
             for (DoubleSolution doubleSolution : compartor.getSubFront(0)) {
-                if (doubleSolution.getAttribute(OWNER).equals(dtlz1.getName())) {
+                if (doubleSolution.getAttribute(OWNER).equals(dtlz.getName())) {
                     c_solutions_standard++;
                 } else {
                     c_solutions_preferences++;
                 }
             }
             System.out.printf("Solutions %3d (%5.3f) form %s (%5.3f)\n", c_solutions_standard,
-                    (double) c_solutions_standard / compartor.getSubFront(0).size(), dtlz1.getName(),
+                    (double) c_solutions_standard / compartor.getSubFront(0).size(), dtlz.getName(),
                     (double) c_solutions_standard / result_dtlz1_front.size());
             System.out.printf("Solutions %3d (%5.3f) form %s (%5.3f)\n", c_solutions_preferences,
-                    (double) c_solutions_preferences / compartor.getSubFront(0).size(), dtlz1_P.getName(),
+                    (double) c_solutions_preferences / compartor.getSubFront(0).size(), dtlzPreferences.getName(),
                     (double) c_solutions_preferences / result_preferences_front.size());
-            ArrayList<DoubleSolution> front_preferences = makeFrontHSatSat(dtlz1_P, compartor.getSubFront(0));
+            ArrayList<DoubleSolution> front_preferences = makeFrontHSatSat(dtlzPreferences, compartor.getSubFront(0));
             c_solutions_standard = 0;
             c_solutions_preferences = 0;
             for (DoubleSolution doubleSolution : front_preferences) {
-                if (doubleSolution.getAttribute(OWNER).equals(dtlz1.getName())) {
+                if (doubleSolution.getAttribute(OWNER).equals(dtlz.getName())) {
                     c_solutions_standard++;
                 } else {
                     c_solutions_preferences++;
@@ -167,27 +194,28 @@ public class ExperimentationDTLZPreferences {
             }
             System.out.println("After classify the solutions on the preference front");
             System.out.printf("Solutions HSat or Sat : %3d (%5.3f) form %s (%5.3f)\n", c_solutions_standard,
-                    (double) c_solutions_standard / front_preferences.size(), dtlz1.getName(),
+                    (double) c_solutions_standard / front_preferences.size(), dtlz.getName(),
                     (double) c_solutions_standard / result_dtlz1_front.size());
             System.out.printf("Solutions HSat or Sat : %3d (%5.3f) form %s (%5.3f)\n", c_solutions_preferences,
-                    (double) c_solutions_preferences / front_preferences.size(), dtlz1_P.getName(),
+                    (double) c_solutions_preferences / front_preferences.size(), dtlzPreferences.getName(),
                     (double) c_solutions_preferences / result_preferences_front.size());
             try {
                 for (DoubleSolution doubleSolution : roi_sat) {
                     doubleSolution.setAttribute(OWNER, "ROI_PREFERENCES");
                 }
                 front_preferences.addAll(roi_sat);
-                EXPORT_OBJECTIVES_TO_CSV(front_preferences, dtlz1_P.getName().trim());
+                EXPORT_OBJECTIVES_TO_CSV(front_preferences, dtlzPreferences.getName().trim());
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             System.out.println("Calculate metrics");
-            calculate_metrics_dom(result_dtlz1, result_preferences, roi_sat, dtlz1_P, dtlz1, name + "" + i);
+            calculate_metrics_dom(result_dtlz1, result_preferences, roi_sat, dtlzPreferences, dtlz, name + "" + i);
         }
         table.addColumns(corrida, frente_zero, dom, dom_p, rate_dom, rate_dom_p, hsat, hsat_p, sat, sat_p, rate_hsat,
-                rate_hsat_p, rate_sat, rate_sat_p, euclidean, euclidean_p, avg_euclidean, avg_euclidean_p, chebyshev,
-                chebyshev_p);
+                rate_hsat_p, rate_sat, rate_sat_p, euclidean, euclidean_p, avg_euclidean, avg_euclidean_p,
+                max_euclidean, max_euclidean_p, chebyshev, chebyshev_p, avg_chebyshev, avg_chebyshev_p, max_chebyshev,
+                max_chebyshev_p);
         try {
             System.out.println(table.summary());
             table.write().csv(DIRECTORY_EXPERIMENTS + File.separator + "metricas_dtlz.csv");
@@ -265,7 +293,7 @@ public class ExperimentationDTLZPreferences {
             hsat_p.append(c_solutions_preferences);
 
             rate_hsat.append((double) c_solutions_standard / result_dtlz.get(i).size());
-            rate_hsat_p.append((double)c_solutions_preferences / result_preferences.get(i).size());
+            rate_hsat_p.append((double) c_solutions_preferences / result_preferences.get(i).size());
             // Verificar sat en original y preferences
             c_solutions_standard = 0;
             c_solutions_preferences = 0;
@@ -283,11 +311,20 @@ public class ExperimentationDTLZPreferences {
             rate_sat_p.append((double) c_solutions_preferences / result_preferences.get(i).size());
             // distancia
             euclidean.append(getMinDistance(nsga3, roi_sat, Distance.Metric.EUCLIDEAN_DISTANCE));
-            chebyshev.append(getMinDistance(nsga3, roi_sat, Distance.Metric.CHEBYSHEV_DISTANCE));
             euclidean_p.append(getMinDistance(nsga3_p, roi_sat, Distance.Metric.EUCLIDEAN_DISTANCE));
+            chebyshev.append(getMinDistance(nsga3, roi_sat, Distance.Metric.CHEBYSHEV_DISTANCE));
             chebyshev_p.append(getMinDistance(nsga3_p, roi_sat, Distance.Metric.CHEBYSHEV_DISTANCE));
+
             avg_euclidean.append(getAvgDistance(nsga3, roi_sat, Distance.Metric.EUCLIDEAN_DISTANCE));
             avg_euclidean_p.append(getAvgDistance(nsga3_p, roi_sat, Distance.Metric.EUCLIDEAN_DISTANCE));
+
+            avg_chebyshev.append(getAvgDistance(nsga3, roi_sat, Distance.Metric.CHEBYSHEV_DISTANCE));
+            avg_chebyshev_p.append(getAvgDistance(nsga3_p, roi_sat, Distance.Metric.CHEBYSHEV_DISTANCE));
+
+            max_euclidean.append(getMaxDistance(nsga3, roi_sat, Distance.Metric.EUCLIDEAN_DISTANCE));
+            max_euclidean_p.append(getMaxDistance(nsga3_p, roi_sat, Distance.Metric.EUCLIDEAN_DISTANCE));
+            max_chebyshev.append(getMaxDistance(nsga3, roi_sat, Distance.Metric.CHEBYSHEV_DISTANCE));
+            max_chebyshev_p.append(getMaxDistance(nsga3_p, roi_sat, Distance.Metric.CHEBYSHEV_DISTANCE));
 
         }
 
@@ -321,6 +358,21 @@ public class ExperimentationDTLZPreferences {
         }
 
         return av;
+    }
+
+    private static Double getMaxDistance(ArrayList<DoubleSolution> solutions, ArrayList<DoubleSolution> roi_sat,
+            Metric metric) {
+        if (solutions.isEmpty())
+            return Double.NaN;
+        Distance<DoubleSolution> distance = new Distance<>(metric);
+        List<Data> distances_ = distance.evaluate(solutions, roi_sat);
+        double max = Double.MIN_VALUE;
+        for (int j = 0; j < distances_.size(); j++) {
+            if (max < distances_.get(j).doubleValue())
+                max = distances_.get(j).doubleValue();
+        }
+
+        return max;
     }
 
     private static void calculate_metrics(ArrayList<ArrayList<DoubleSolution>> results,

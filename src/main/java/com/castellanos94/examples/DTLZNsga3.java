@@ -34,7 +34,7 @@ import org.apache.logging.log4j.Logger;
  * 34126.96 ms dtlz3
  * 30877.86 ms dtlz4
  * 34637.68 ms dtlz5
- * 40800.28 ms dtlz6
+ * 25228.0 ms dtlz6
  * 33271.8 ms dtlz7
  */
 public class DTLZNsga3 {

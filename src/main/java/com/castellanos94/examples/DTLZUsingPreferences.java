@@ -32,6 +32,9 @@ import org.apache.logging.log4j.Logger;
  * 31105.84 ms  dtlz2
  * 36910.32 ms dtlz3
  * 48132.62 ms dtlz4
+ * 28587.02 ms dtlz5
+ * 23557.02 ms dtlz6
+ * 27430.4 ms dtlz7
  */
 public class DTLZUsingPreferences {
     private static final Logger logger = LogManager.getLogger(DTLZUsingPreferences.class);
@@ -43,12 +46,12 @@ public class DTLZUsingPreferences {
         Tools.setSeed(1L);
         logger.info("Experimentation: DTLZ with preferences");
 
-        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ4_Instance.txt";
+        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ7_Instance.txt";
         // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         logger.info(instance);
 
-        DTLZ4_P problem = new DTLZ4_P(instance);
+        DTLZ7_P problem = new DTLZ7_P(instance);
         
         int popSize = 92;
         int numberOfDivision = 12;
@@ -85,6 +88,7 @@ public class DTLZUsingPreferences {
             // "_" + i, algorithm.getSolutions());
             bag.addAll(algorithm.getSolutions());
         }
+        logger.info("Resume "+problem.getName());
         logger.info("Total time: " + averageTime);
         logger.info("Average time : " + (double) averageTime / EXPERIMENT + " ms.");
         logger.info("Solutions in the bag: " + bag.size());

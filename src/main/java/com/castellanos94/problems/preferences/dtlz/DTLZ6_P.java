@@ -54,7 +54,7 @@ public class DTLZ6_P extends DTLZPreferences {
         }
 
         for (int i = 0; i < numberOfObjectives; i++) {
-            solution.setObjective(i, new RealData((f[i] < THRESHOLD) ? 0 : f[i]));
+            solution.setObjective(i, new RealData((f[i] )));
         }
     }
 

@@ -133,11 +133,11 @@ public class BestCompromiseDTLZ implements ExtraInformation {
 
     public static void main(String[] args) throws IOException {
         //Tools.setSeed(1L);
-        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ4_Instance.txt";
+        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ7_Instance.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         System.out.println(instance);
 
-        DTLZ4_P problem = new DTLZ4_P(instance);
+        DTLZ7_P problem = new DTLZ7_P(instance);
         System.out.println(problem);
         BestCompromiseDTLZ bestCompromiseDTLZ = new BestCompromiseDTLZ(problem);
         ArrayList<DoubleSolution> bag = new ArrayList<>();
