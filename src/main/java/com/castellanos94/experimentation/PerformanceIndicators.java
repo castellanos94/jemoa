@@ -143,7 +143,6 @@ public class PerformanceIndicators {
                 wilcoxon_technical.append(wilcoxon.toString());
                 StringColumn indicator = StringColumn.create("Metric");
                 indicator.append(metric);
-                Table copy = apply.addColumns(name, wilcoxon_, wilcoxon_technical, indicator).copy();
-                return copy;
+                return apply.addColumns(name, wilcoxon_, wilcoxon_technical, indicator).copy();
         }
 }
