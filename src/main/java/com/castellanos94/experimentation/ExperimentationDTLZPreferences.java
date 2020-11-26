@@ -47,6 +47,8 @@ public class ExperimentationDTLZPreferences {
             + File.separator + name;
     static final String OWNER = "FROM_PROBLEM";
     static Table table = Table.create("DTLZ");
+    static StringColumn IndexColumn = StringColumn.create("Index");
+
     static StringColumn corrida = StringColumn.create("Problema");
     static DoubleColumn frente_zero = DoubleColumn.create("Frente Cero");
     static DoubleColumn dom = DoubleColumn.create("Dominancia NSGA3");
@@ -212,17 +214,20 @@ public class ExperimentationDTLZPreferences {
             System.out.println("Calculate metrics");
             calculate_metrics_dom(result_dtlz1, result_preferences, roi_sat, dtlzPreferences, dtlz, name + "" + i);
         }
-        table.addColumns(corrida, frente_zero, dom, dom_p, rate_dom, rate_dom_p, hsat, hsat_p, sat, sat_p, rate_hsat,
-                rate_hsat_p, rate_sat, rate_sat_p, euclidean, euclidean_p, avg_euclidean, avg_euclidean_p,
+        table.addColumns(IndexColumn, corrida, frente_zero, dom, dom_p, rate_dom, rate_dom_p, hsat, hsat_p, sat, sat_p,
+                rate_hsat, rate_hsat_p, rate_sat, rate_sat_p, euclidean, euclidean_p, avg_euclidean, avg_euclidean_p,
                 max_euclidean, max_euclidean_p, chebyshev, chebyshev_p, avg_chebyshev, avg_chebyshev_p, max_chebyshev,
                 max_chebyshev_p);
         try {
             System.out.println(table.summary());
             table.write().csv(DIRECTORY_EXPERIMENTS + File.separator + "metricas_dtlz.csv");
+            // Performance summary
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+   
 
     private static void calculate_metrics_dom(ArrayList<ArrayList<DoubleSolution>> result_dtlz,
             ArrayList<ArrayList<DoubleSolution>> result_preferences, ArrayList<DoubleSolution> roi_sat,
@@ -272,8 +277,8 @@ public class ExperimentationDTLZPreferences {
                 }
             }
 
-            corrida.append(name + "-" + (i + 1));
-
+            IndexColumn.append(name + "-" + (i + 1));
+            corrida.append(name);
             frente_zero.append(compartor.getSubFront(0).size());
             dom.append(c_solutions_standard);
             dom_p.append(c_solutions_preferences);
