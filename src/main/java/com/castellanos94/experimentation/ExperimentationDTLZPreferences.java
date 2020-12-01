@@ -178,10 +178,10 @@ public class ExperimentationDTLZPreferences {
                     c_solutions_preferences++;
                 }
             }
-            System.out.printf("Solutions %3d (%5.3f) form %s (%5.3f)\n", c_solutions_standard,
+            System.out.printf("Solutions %3d (%5.3f) from %s (%5.3f)\n", c_solutions_standard,
                     (double) c_solutions_standard / compartor.getSubFront(0).size(), dtlz.getName(),
                     (double) c_solutions_standard / result_dtlz1_front.size());
-            System.out.printf("Solutions %3d (%5.3f) form %s (%5.3f)\n", c_solutions_preferences,
+            System.out.printf("Solutions %3d (%5.3f) from %s (%5.3f)\n", c_solutions_preferences,
                     (double) c_solutions_preferences / compartor.getSubFront(0).size(), dtlzPreferences.getName(),
                     (double) c_solutions_preferences / result_preferences_front.size());
             ArrayList<DoubleSolution> front_preferences = makeFrontHSatSat(dtlzPreferences, compartor.getSubFront(0));
@@ -213,6 +213,36 @@ public class ExperimentationDTLZPreferences {
 
             System.out.println("Calculate metrics");
             calculate_metrics_dom(result_dtlz1, result_preferences, roi_sat, dtlzPreferences, dtlz, name + "" + i);
+            // check dominance
+            System.out.println("Checking dominance between bag and roi");
+            compartor = new DominanceComparator<>();
+            compartor.computeRanking(bag);
+            System.out.println("Front 0 from bag : " + compartor.getSubFront(0).size() + " "
+                    + ((double) compartor.getSubFront(0).size() / bag.size()));
+
+            c_solutions_standard = 0;
+            c_solutions_preferences = 0;
+            int roi_solutions = 0;
+            for (DoubleSolution doubleSolution : compartor.getSubFront(0)) {
+                if (doubleSolution.getAttribute(OWNER).equals(dtlz.getName())) {
+                    c_solutions_standard++;
+                } else if (doubleSolution.getAttribute(OWNER).equals("ROI_PREFERENCES")) {
+                    roi_solutions++;
+                } else {
+                    c_solutions_preferences++;
+                }
+            }
+
+            System.out.printf("NSGA3 : Solutions %3d (%5.3f) from %s (%5.3f)\n", c_solutions_standard,
+                    (double) c_solutions_standard / compartor.getSubFront(0).size(), dtlz.getName(),
+                    (double) c_solutions_standard / result_dtlz1_front.size());
+            System.out.printf("NSGA3P : Solutions %3d (%5.3f) from %s (%5.3f)\n", c_solutions_preferences,
+                    (double) c_solutions_preferences / compartor.getSubFront(0).size(), dtlzPreferences.getName(),
+                    (double) c_solutions_preferences / result_preferences_front.size());
+            System.out.printf("ROI : Solutions %3d (%5.3f) from %s (%5.3f)\n", roi_solutions,
+                    (double) roi_solutions / compartor.getSubFront(0).size(), "ROI_PREFERENCES",
+                    (double) roi_solutions / roi_sat.size());
+
         }
         table.addColumns(IndexColumn, corrida, frente_zero, dom, dom_p, rate_dom, rate_dom_p, hsat, hsat_p, sat, sat_p,
                 rate_hsat, rate_hsat_p, rate_sat, rate_sat_p, euclidean, euclidean_p, avg_euclidean, avg_euclidean_p,
@@ -225,9 +255,8 @@ public class ExperimentationDTLZPreferences {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
 
-   
+    }
 
     private static void calculate_metrics_dom(ArrayList<ArrayList<DoubleSolution>> result_dtlz,
             ArrayList<ArrayList<DoubleSolution>> result_preferences, ArrayList<DoubleSolution> roi_sat,
@@ -380,50 +409,6 @@ public class ExperimentationDTLZPreferences {
         return max;
     }
 
-    private static void calculate_metrics(ArrayList<ArrayList<DoubleSolution>> results,
-            ArrayList<DoubleSolution> roi_sat, DTLZPreferences problem, String label) {
-        // ArrayList<ArrayList<DoubleSolution>> result_sat = new ArrayList<>();
-        /*
-         * for (int i = 0; i < results.size(); i++) {
-         * result_sat.add(makeFrontHSatSat(problem, results.get(i))); }
-         */
-        Table table = Table.create(label + " to ROI Preferences.");
-        DoubleColumn corrida = DoubleColumn.create("corrida");
-        DoubleColumn euclidean = DoubleColumn.create("euclidean");
-        DoubleColumn chebyshev = DoubleColumn.create("chebyshev");
-
-        Distance<DoubleSolution> distance = new Distance<>(Distance.Metric.EUCLIDEAN_DISTANCE);
-        for (int i = 0; i < results.size(); i++) {
-            distance.setMetric(Distance.Metric.EUCLIDEAN_DISTANCE);
-            List<Data> distances_ = distance.evaluate(results.get(i), roi_sat);
-            RealData min = new RealData(Double.MAX_VALUE);
-            for (int j = 0; j < distances_.size(); j++) {
-                if (min.compareTo(distances_.get(j)) > 0) {
-                    min = (RealData) distances_.get(j).copy();
-                }
-            }
-            corrida.append(i);
-            euclidean.append(min.doubleValue());
-
-            distance.setMetric(Distance.Metric.CHEBYSHEV_DISTANCE);
-            distances_ = distance.evaluate(results.get(i), roi_sat);
-            min = new RealData(Double.MAX_VALUE);
-            for (int j = 0; j < distances_.size(); j++) {
-                if (min.compareTo(distances_.get(j)) > 0) {
-                    min = (RealData) distances_.get(j).copy();
-                }
-            }
-            chebyshev.append(min.doubleValue());
-        }
-        table.addColumns(corrida, euclidean, chebyshev);
-        try {
-            System.out.println(table.summary());
-            table.write().csv(DIRECTORY_EXPERIMENTS + File.separator + "resume_distances_" + label + ".csv");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @SuppressWarnings("rawtypes")
     private static void EXPORT_OBJECTIVES_TO_CSV(ArrayList<DoubleSolution> front_preferences, String label)
             throws IOException {
@@ -448,7 +433,6 @@ public class ExperimentationDTLZPreferences {
 
     private static ArrayList<DoubleSolution> makeFrontHSatSat(DTLZPreferences problem,
             ArrayList<DoubleSolution> solutions) {
-        System.out.println("******* Prefrences classification *******");
         InterClassnC<DoubleSolution> classifier = new InterClassnC<>(problem);
         ArrayList<DoubleSolution> front = new ArrayList<>();
         ArrayList<DoubleSolution> hs = new ArrayList<>();
@@ -490,7 +474,6 @@ public class ExperimentationDTLZPreferences {
         System.out.println(String.format("HSat : %3d, Sat : %3d, Dis : %3d, HDis : %3d", hs.size(), s.size(), d.size(),
                 hd.size()));
         System.out.println("Front Preferences (HSAT + SAT): " + front.size());
-        System.out.println("******* END *******");
         return front;
 
     }

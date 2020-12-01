@@ -43,15 +43,15 @@ public class DTLZUsingPreferences {
     static final int EXPERIMENT = 50;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
-        Tools.setSeed(1L);
+        Tools.setSeed(8435L);
         logger.info("Experimentation: DTLZ with preferences");
 
-        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ7_Instance.txt";
+        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ3_Instance.txt";
         // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         logger.info(instance);
 
-        DTLZ7_P problem = new DTLZ7_P(instance);
+        DTLZ3_P problem = new DTLZ3_P(instance);
         
         int popSize = 92;
         int numberOfDivision = 12;
