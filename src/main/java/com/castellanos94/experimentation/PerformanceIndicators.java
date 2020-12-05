@@ -11,6 +11,7 @@ import tech.tablesaw.aggregate.AggregateFunctions;
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
+import tech.tablesaw.columns.Column;
 
 public class PerformanceIndicators {
         public static void main(String[] args) throws IOException {
@@ -23,7 +24,11 @@ public class PerformanceIndicators {
 
                 List<String> group_by = (List<String>) table.column(key).unique().asList();
                 Table resume = null;
-                DoubleColumn min, minp, max, maxp, avg, avgp, dom, domp, hsat, hsatp, sat, satp;
+                DoubleColumn min, minp, max, maxp, avg, avgp, dom, domp;
+                Column<?> satp;
+                Column<?> sat;
+                Column<?> hsat;
+                Column<?> hsatp;
                 for (String labelString : group_by) {
                         Table result = table.where(t -> t.stringColumn(key).isEqualTo(labelString));
                         min = result.doubleColumn(ExperimentationDTLZPreferences.euclidean.name()).setName("NSGA-III");
@@ -68,13 +73,14 @@ public class PerformanceIndicators {
                                         .setName("NSGA-III-P");
                         resume.addRow(doSummary(table, dom, domp, labelString, "dominance").row(0));
 
-                        hsat = result.doubleColumn(ExperimentationDTLZPreferences.rate_hsat.name()).setName("NSGA-III");
-                        hsatp = result.doubleColumn(ExperimentationDTLZPreferences.rate_hsat_p.name())
+                        hsat =  result.numberColumn(ExperimentationDTLZPreferences.rate_hsat.name())
+                                        .setName("NSGA-III");
+                        hsatp = result.numberColumn(ExperimentationDTLZPreferences.rate_hsat_p.name())
                                         .setName("NSGA-III-P");
                         resume.addRow(doSummary(table, hsat, hsatp, labelString, "hsat").row(0));
 
-                        sat = result.doubleColumn(ExperimentationDTLZPreferences.rate_sat.name()).setName("NSGA-III");
-                        satp = result.doubleColumn(ExperimentationDTLZPreferences.rate_sat_p.name())
+                        sat = result.numberColumn(ExperimentationDTLZPreferences.rate_sat.name()).setName("NSGA-III");
+                        satp = result.numberColumn(ExperimentationDTLZPreferences.rate_sat_p.name())
                                         .setName("NSGA-III-P");
                         resume.addRow(doSummary(table, sat, satp, labelString, "sat").row(0));
 
@@ -110,27 +116,27 @@ public class PerformanceIndicators {
                 domp = table.doubleColumn(ExperimentationDTLZPreferences.rate_dom_p.name()).setName("NSGA-III-P");
                 resume.addRow(doSummary(table, dom, domp, "dtlz", "dominance").row(0));
 
-                hsat = table.doubleColumn(ExperimentationDTLZPreferences.rate_hsat.name()).setName("NSGA-III");
-                hsatp = table.doubleColumn(ExperimentationDTLZPreferences.rate_hsat_p.name()).setName("NSGA-III-P");
+                hsat = table.numberColumn(ExperimentationDTLZPreferences.rate_hsat.name()).setName("NSGA-III");
+                hsatp = table.numberColumn(ExperimentationDTLZPreferences.rate_hsat_p.name()).setName("NSGA-III-P");
                 resume.addRow(doSummary(table, hsat, hsatp, "dtlz", "hsat").row(0));
 
-                sat = table.doubleColumn(ExperimentationDTLZPreferences.rate_sat.name()).setName("NSGA-III");
-                satp = table.doubleColumn(ExperimentationDTLZPreferences.rate_sat_p.name()).setName("NSGA-III-P");
+                sat = table.numberColumn(ExperimentationDTLZPreferences.rate_sat.name()).setName("NSGA-III");
+                satp = table.numberColumn(ExperimentationDTLZPreferences.rate_sat_p.name()).setName("NSGA-III-P");
                 resume.addRow(doSummary(table, sat, satp, "dtlz", "sat").row(0));
                 resume.write().csv(
                                 ExperimentationDTLZPreferences.DIRECTORY_EXPERIMENTS + File.separator + "resume.csv");
 
         }
 
-        private static Table doSummary(Table table, DoubleColumn a, DoubleColumn b, String key, String metric)
+        private static Table doSummary(Table table, Column<?> hsat, Column<?> hsatp, String key, String metric)
                         throws IOException {
-                Table apply = table.summarize(a, b, AggregateFunctions.count, AggregateFunctions.min,
+                Table apply = table.summarize(hsat, hsatp, AggregateFunctions.count, AggregateFunctions.min,
                                 AggregateFunctions.mean, AggregateFunctions.max, AggregateFunctions.stdDev).apply();
 
                 StringColumn name = StringColumn.create("Problem");
                 name.append(key);
 
-                Table tmpTable = Table.create(a, b);
+                Table tmpTable = Table.create(hsat, hsatp);
                 File file = File.createTempFile("data", ".csv");
                 file.deleteOnExit();
                 tmpTable.write().csv(file);

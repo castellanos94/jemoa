@@ -1,5 +1,6 @@
 package com.castellanos94.decision_making;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -132,7 +133,7 @@ public class BestCompromiseDTLZ implements ExtraInformation {
     }
 
     public static void main(String[] args) throws IOException {
-        //Tools.setSeed(1L);
+        // Tools.setSeed(1L);
         String path = "src/main/resources/DTLZ_INSTANCES/DTLZ7_Instance.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         System.out.println(instance);
@@ -140,14 +141,7 @@ public class BestCompromiseDTLZ implements ExtraInformation {
         DTLZ7_P problem = new DTLZ7_P(instance);
         System.out.println(problem);
         BestCompromiseDTLZ bestCompromiseDTLZ = new BestCompromiseDTLZ(problem);
-        ArrayList<DoubleSolution> bag = new ArrayList<>();
-        /*
-         * double[][] paretoOptimal3Obj = problem.getParetoOptimal3Obj(); Solution tmp =
-         * problem.generate(); for (double[] point : paretoOptimal3Obj) { for (int i =
-         * 0; i < point.length; i++) { tmp.setObjective(i, new RealData(point[i])); }
-         * bag.add((DoubleSolution) tmp.copy()); }
-         * System.out.println("References point : "+bag.size());
-         */
+        ArrayList<DoubleSolution> bag = new ArrayList<>();       
         for (int i = 0; i < 50 && bag.size() < 200; i++) {
             System.out.println("inteto " + (i + 1) + " bag: " + bag.size());
             ArrayList<DoubleSolution> candidatos = bestCompromiseDTLZ.execute();
@@ -202,7 +196,8 @@ public class BestCompromiseDTLZ implements ExtraInformation {
          * solution.getAttribute(distance.getAttributeKey())); }
          * System.out.println("Candidatos : " + bag.size());
          */
-        Solution.writSolutionsToFile("bestCompromise_" + problem.getName(), new ArrayList<>(bag));
+        Solution.writSolutionsToFile("bestCompromise" + File.separator + "bestCompromise_" + problem.getName(),
+                new ArrayList<>(bag));
     }
 
     @Override

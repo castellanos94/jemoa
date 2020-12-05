@@ -12,6 +12,9 @@ import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.NSGA3Replacement;
 
 public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
+    private boolean csatPlus;
+    private int resetAt;
+    private int n = 5;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -48,20 +51,20 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
             }
             if (!hs.isEmpty()) {
                 _fronts.add(hs);
-            } 
+            }
             if (!s.isEmpty()) {
                 _fronts.add(s);
-            } 
-             if (!d.isEmpty()) {
+            }
+            if (!d.isEmpty()) {
                 _fronts.add(d);
-            } 
-             if (!hd.isEmpty()) {
+            }
+            if (!hd.isEmpty()) {
                 _fronts.add(hd);
             }
             for (int i = 1; i < ranking.getNumberOfSubFronts(); i++) {
                 _fronts.add(ranking.getSubFront(i));
             }
-
+            csatPlus = hs.size() + s.size() <= this.populationSize / 10;
         }
         ArrayList<S> Pt = new ArrayList<>();
         int indexFront = 0;
@@ -82,7 +85,20 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
         NSGA3Replacement<S> selection = new NSGA3Replacement<>(fronts, referenceHyperplane.copy(),
                 problem.getNumberOfObjectives(), populationSize);
         selection.execute(Pt);
-        return selection.getParents();
+        ArrayList<S> parents = selection.getParents();
+        // if (this.currenIteration > 0 && this.currenIteration % resetAt == 0) {
+        if (csatPlus) {
+           // System.out.printf("\tCurrent iteration %4d - reset at %3d  n %3d \n", this.currenIteration,
+            //        parents.size() - n * this.populationSize / 10, n * this.populationSize / 10);
+            for (int i = parents.size() - n * this.populationSize / 10; i < parents.size(); i++) {
+                S randomSolution = this.problem.randomSolution();
+                this.problem.evaluate(randomSolution);
+                this.problem.evaluateConstraint(randomSolution);
+                parents.set(i, randomSolution);
+            }
+        }
+        return parents;
+
     }
 
     public NSGA_III_WP(Problem<S> problem, int populationSize, int maxIterations, int numberOfDivisions,
@@ -90,5 +106,6 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
             MutationOperator<S> mutationOperator) {
         super(problem, populationSize, maxIterations, numberOfDivisions, selectionOperator, crossoverOperator,
                 mutationOperator);
+        this.resetAt = this.maxIterations / 10;
     }
 }

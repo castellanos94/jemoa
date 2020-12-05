@@ -86,10 +86,10 @@ public class ExperimentationDTLZPreferences {
     public static void main(String[] args) throws FileNotFoundException {
         DTLZ dtlz = null;// = new DTLZ1();
 
-        for (int i = 1; i <= 7; i++) {
+        for (int i = 3; i <= 3; i++) {
 
             String path = "src/main/resources/DTLZ_INSTANCES/DTLZ" + i + "_Instance.txt";
-            String path_roi = "/home/thinkpad/Documents/jemoa/bestCompromise_DTLZ" + i + "_P.out";
+            String path_roi = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ" + i + "_P.out";
 
             System.out.println("Reading DTLZ preferences");
             DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
