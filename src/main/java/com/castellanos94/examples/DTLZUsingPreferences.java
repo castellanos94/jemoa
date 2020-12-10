@@ -28,13 +28,11 @@ import tech.tablesaw.api.Table;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 /**
- * 31105.84 ms  dtlz2
- * 36910.32 ms dtlz3
- * 48132.62 ms dtlz4
- * 28587.02 ms dtlz5
- * 23557.02 ms dtlz6
- * 27430.4 ms dtlz7
+ * 31105.84 ms dtlz2 36910.32 ms dtlz3 48132.62 ms dtlz4 28587.02 ms dtlz5
+ * 23557.02 ms dtlz6 27430.4 ms dtlz7
+ * dtlz6 rework
  */
 public class DTLZUsingPreferences {
     private static final Logger logger = LogManager.getLogger(DTLZUsingPreferences.class);
@@ -43,16 +41,19 @@ public class DTLZUsingPreferences {
     static final int EXPERIMENT = 50;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
-        Tools.setSeed(8435L);
+        Tools.setSeed(1L);
         logger.info("Experimentation: DTLZ with preferences");
 
-        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ3_Instance.txt";
+        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ6_Instance.txt";
         // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         logger.info(instance);
 
-        DTLZ3_P problem = new DTLZ3_P(instance);
-        
+        DTLZPreferences problem = new DTLZ6_P(instance);
+        String subDir = problem.getName().trim();
+        if (!new File(DIRECTORY + File.separator + subDir).exists()) {
+            new File(DIRECTORY + File.separator + subDir).mkdir();
+        }
         int popSize = 92;
         int numberOfDivision = 12;
         SBXCrossover crossover = new SBXCrossover(30, 1.0);
@@ -77,23 +78,23 @@ public class DTLZUsingPreferences {
             algorithm.execute();
             averageTime += algorithm.getComputeTime();
             try {
-                Solution.writSolutionsToFile(DIRECTORY + File.separator + "execution_" + i,
+                Solution.writSolutionsToFile(DIRECTORY + File.separator + subDir + File.separator + "execution_" + i,
                         new ArrayList<>(algorithm.getSolutions()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            
+
             logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
             // Solution.writSolutionsToFile(directory + File.separator + problem.getName() +
             // "_" + i, algorithm.getSolutions());
             bag.addAll(algorithm.getSolutions());
         }
-        logger.info("Resume "+problem.getName());
+        logger.info("Resume " + problem.getName());
         logger.info("Total time: " + averageTime);
         logger.info("Average time : " + (double) averageTime / EXPERIMENT + " ms.");
         logger.info("Solutions in the bag: " + bag.size());
-        Solution.writSolutionsToFile(DIRECTORY + File.separator + "nsga_iii_bag_" + problem.getName() + "_F0_"
-                + problem.getNumberOfObjectives(), new ArrayList<>(bag));
+        Solution.writSolutionsToFile(DIRECTORY + File.separator + subDir + File.separator + "nsga_iii_bag_"
+                + problem.getName() + "_F0_" + problem.getNumberOfObjectives(), new ArrayList<>(bag));
         Ranking<DoubleSolution> compartor = new DominanceComparator<>();
         compartor.computeRanking(bag);
 
@@ -103,8 +104,8 @@ public class DTLZUsingPreferences {
         File f = new File(DIRECTORY);
         if (!f.exists())
             f.mkdirs();
-        f = new File(DIRECTORY + File.separator + "Class_F0" + problem.getName() + +problem.getNumberOfObjectives()
-                + ".out");
+        f = new File(DIRECTORY + File.separator + subDir + File.separator + "Class_F0" + problem.getName()
+                + +problem.getNumberOfObjectives() + ".out");
         InterClassnC<DoubleSolution> classifier = new InterClassnC<>(problem);
         ArrayList<DoubleSolution> front = new ArrayList<>();
         ArrayList<DoubleSolution> hs = new ArrayList<>();
@@ -146,8 +147,8 @@ public class DTLZUsingPreferences {
 
         Files.write(f.toPath(), strings, Charset.defaultCharset());
         if (problem.getNumberOfObjectives() == 3) {
-            Plotter plotter = new Scatter3D<DoubleSolution>(front,
-                    DIRECTORY + File.separator +"Class_F0"+ problem.getName() + "_nsga3_WP");
+            Plotter plotter = new Scatter3D<DoubleSolution>(front, DIRECTORY + File.separator + subDir + File.separator
+                    + "Class_F0" + problem.getName() + "_nsga3_WP");
             plotter.plot();
             // new Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator +
             // problem.getName()).plot();

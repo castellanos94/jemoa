@@ -43,8 +43,7 @@ public class ExperimentationDTLZPreferences {
     static String name = "dtlz";
     static final String DIRECTORY_EXPERIMENTS = "experiments";
     static final String DIRECTORY_DTLZ = "experiments" + File.separator + "dtlz" + File.separator + name;
-    static final String DIRECTORY_DTLZ_PREFERENCES = "experiments" + File.separator + "dtlz_preferences"
-            + File.separator + name;
+    static final String DIRECTORY_DTLZ_PREFERENCES = "experiments" + File.separator + "dtlz_preferences";
     static final String OWNER = "FROM_PROBLEM";
     static Table table = Table.create("DTLZ");
     static StringColumn IndexColumn = StringColumn.create("Index");
@@ -86,7 +85,7 @@ public class ExperimentationDTLZPreferences {
     public static void main(String[] args) throws FileNotFoundException {
         DTLZ dtlz = null;// = new DTLZ1();
 
-        for (int i = 3; i <= 3; i++) {
+        for (int i = 1; i <= 7; i++) {
 
             String path = "src/main/resources/DTLZ_INSTANCES/DTLZ" + i + "_Instance.txt";
             String path_roi = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ" + i + "_P.out";
@@ -143,13 +142,14 @@ public class ExperimentationDTLZPreferences {
             System.out.println(dtlzPreferences);
             ArrayList<ArrayList<DoubleSolution>> result_preferences = new ArrayList<>();
             ArrayList<DoubleSolution> result_preferences_front = new ArrayList<>();
-            for (String name : new File(DIRECTORY_DTLZ_PREFERENCES + "" + i).list()) {
+            for (String name : new File(DIRECTORY_DTLZ_PREFERENCES + File.separator + dtlzPreferences.getName().trim())
+                    .list()) {
                 if (name.contains(".out") && !name.contains("bag") && !name.contains("Class")) {
-                    result_preferences.add(
-                            readSolution(dtlzPreferences, DIRECTORY_DTLZ_PREFERENCES + "" + i + File.separator + name));
+                    result_preferences.add(readSolution(dtlzPreferences, DIRECTORY_DTLZ_PREFERENCES + File.separator
+                            + dtlzPreferences.getName().trim() + File.separator + name));
                 } else if (name.contains("Class") && name.contains(".out")) {
-                    result_preferences_front = readSolution(dtlzPreferences,
-                            DIRECTORY_DTLZ_PREFERENCES + "" + i + File.separator + name);
+                    result_preferences_front = readSolution(dtlzPreferences, DIRECTORY_DTLZ_PREFERENCES + File.separator
+                            + dtlzPreferences.getName().trim() + File.separator + name);
                 }
             }
             System.out.println(result_preferences.size());
@@ -189,9 +189,11 @@ public class ExperimentationDTLZPreferences {
             c_solutions_preferences = 0;
             for (DoubleSolution doubleSolution : front_preferences) {
                 if (doubleSolution.getAttribute(OWNER).equals(dtlz.getName())) {
-                    c_solutions_standard++;
+                    if (!doubleSolution.getAttribute("class").equals("HDIS|DIS"))
+                        c_solutions_standard++;
                 } else {
-                    c_solutions_preferences++;
+                    if (!doubleSolution.getAttribute("class").equals("HDIS|DIS"))
+                        c_solutions_preferences++;
                 }
             }
             System.out.println("After classify the solutions on the preference front");

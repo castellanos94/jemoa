@@ -134,15 +134,15 @@ public class BestCompromiseDTLZ implements ExtraInformation {
 
     public static void main(String[] args) throws IOException {
         // Tools.setSeed(1L);
-        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ7_Instance.txt";
+        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ6_Instance.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         System.out.println(instance);
 
-        DTLZ7_P problem = new DTLZ7_P(instance);
+        DTLZPreferences problem = new DTLZ6_P(instance);
         System.out.println(problem);
         BestCompromiseDTLZ bestCompromiseDTLZ = new BestCompromiseDTLZ(problem);
         ArrayList<DoubleSolution> bag = new ArrayList<>();       
-        for (int i = 0; i < 50 && bag.size() < 200; i++) {
+        for (int i = 0; i < 300 && bag.size() < 500; i++) {
             System.out.println("inteto " + (i + 1) + " bag: " + bag.size());
             ArrayList<DoubleSolution> candidatos = bestCompromiseDTLZ.execute();
             System.out.println("\tsize? " + candidatos.size());
@@ -171,6 +171,8 @@ public class BestCompromiseDTLZ implements ExtraInformation {
             if (bag.size() > 500) {
                 break;
             }
+            Solution.writSolutionsToFile("bestCompromise" + File.separator + "bestCompromise_" + problem.getName(),
+                new ArrayList<>(bag));
         }
         // Looking for best comprimise
         System.out.println("Best compromise");

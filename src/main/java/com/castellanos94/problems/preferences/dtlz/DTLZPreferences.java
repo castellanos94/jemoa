@@ -116,24 +116,21 @@ public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
                 v += upperBound[i].doubleValue() - solution.getVariable(i).doubleValue();
             }
         }
-        
+
         solution.setPenalties(new RealData(v));
         solution.setNumberOfPenalties(cn);
-       /* classifier.classify(solution);
-        int[] iclass = (int[]) solution.getAttribute(classifier.getAttributeKey());
-        if (iclass[1] > 0) {
-            solution.setPenalties(solution.getPenalties().plus(-0.5 * iclass[1]));
-            solution.setNumberOfPenalties(solution.getNumberOfPenalties() + 1);
-        } else if (iclass[2] > 0) {
-            solution.setPenalties(solution.getPenalties().plus(-1.0 * iclass[2]));
-            solution.setNumberOfPenalties(solution.getNumberOfPenalties() + 1);
-        } else {
-            solution.setPenalties(solution.getPenalties().plus(-2.0 * iclass[3]));
-            solution.setNumberOfPenalties(solution.getNumberOfPenalties() + 1);
-        }
-        for (int i = 0; i < iclass.length; i++) {
-            solution.setResource(i, new RealData(iclass[i]));
-        }*/
+        /*
+         * classifier.classify(solution); int[] iclass = (int[])
+         * solution.getAttribute(classifier.getAttributeKey()); if (iclass[1] > 0) {
+         * solution.setPenalties(solution.getPenalties().plus(-0.5 * iclass[1]));
+         * solution.setNumberOfPenalties(solution.getNumberOfPenalties() + 1); } else if
+         * (iclass[2] > 0) { solution.setPenalties(solution.getPenalties().plus(-1.0 *
+         * iclass[2])); solution.setNumberOfPenalties(solution.getNumberOfPenalties() +
+         * 1); } else { solution.setPenalties(solution.getPenalties().plus(-2.0 *
+         * iclass[3])); solution.setNumberOfPenalties(solution.getNumberOfPenalties() +
+         * 1); } for (int i = 0; i < iclass.length; i++) { solution.setResource(i, new
+         * RealData(iclass[i])); }
+         */
     }
 
     public DTLZPreferences setK(int k) {
@@ -171,13 +168,59 @@ public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
         }
 
         for (int i = numberOfObjectives - 1; i < numberOfDecisionVars; i++) {
-            solution.setVariable(i, 0.5);
+            if (this instanceof DTLZ6_P || this instanceof DTLZ7_P) {
+                solution.setVariable(i, 0.0);
+            } else {
+                solution.setVariable(i, 0.5);
+            }
         }
 
         evaluate(solution);
 
         solution.setNumberOfPenalties(0);
         solution.setPenalties(RealData.ZERO);
+        Double sum = null;
+
+        if (this instanceof DTLZ5_P  || this instanceof DTLZ2_P || this instanceof DTLZ3_P
+                || this instanceof DTLZ4_P) {
+            do {
+
+                sum = 0.;
+                for (int i = 0; i < solution.getObjectives().size(); i++) {
+                    double f = solution.getObjective(i).doubleValue();
+                    sum += f * f;
+                }
+                if (Math.abs(sum - 1) > 0.000006) {
+                    for (int i = 0; i < numberOfObjectives - 1; i++) {
+                        solution.setVariable(i, Tools.getRandom().nextDouble());
+                    }
+                    evaluate(solution);
+                }
+                // Math.abs(sum - 1) > 0.000006
+            } while (Math.abs(sum - 1) > 0.000006);
+            return solution;
+        } else if (this instanceof DTLZ1_P) {
+            // sum = solution.getObjectives().stream().mapToDouble(f ->
+            // f.doubleValue()).sum();
+            do {
+                sum = 0.;
+                for (int i = 0; i < solution.getObjectives().size(); i++) {
+                    sum += solution.getObjective(i).doubleValue();
+                }
+                if (sum != 0.5) {
+                    for (int i = 0; i < numberOfObjectives - 1; i++) {
+                        solution.setVariable(i, Tools.getRandom().nextDouble());
+                    }
+                    evaluate(solution);
+                }
+            } while (sum != 0.5);
+            return solution;
+        }
+
+        /*
+         * if (this instanceof DTLZ2_P && sum != 1.0) { return this.generate(); }
+         */
+
         return solution;
     }
 
@@ -207,7 +250,11 @@ public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
             }
 
             for (int ii = numberOfObjectives - 1; ii < numberOfDecisionVars; ii++) {
-                solution.setVariable(ii, 0.5);
+                if (this instanceof DTLZ6_P || this instanceof DTLZ7_P) {
+                    solution.setVariable(ii, 0.0);
+                } else {
+                    solution.setVariable(ii, 0.5);
+                }
             }
             evaluate(solution);
             // evaluateConstraint(solution);

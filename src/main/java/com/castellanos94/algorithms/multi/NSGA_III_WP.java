@@ -14,7 +14,7 @@ import com.castellanos94.utils.NSGA3Replacement;
 public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
     private boolean csatPlus;
     private int resetAt;
-    private int n = 5;
+    private int n = 1;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -86,8 +86,8 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
                 problem.getNumberOfObjectives(), populationSize);
         selection.execute(Pt);
         ArrayList<S> parents = selection.getParents();
-        // if (this.currenIteration > 0 && this.currenIteration % resetAt == 0) {
-        if (csatPlus) {
+        if (this.currenIteration > 0 && this.currenIteration % resetAt == 0) {
+        //if (csatPlus) {
            // System.out.printf("\tCurrent iteration %4d - reset at %3d  n %3d \n", this.currenIteration,
             //        parents.size() - n * this.populationSize / 10, n * this.populationSize / 10);
             for (int i = parents.size() - n * this.populationSize / 10; i < parents.size(); i++) {

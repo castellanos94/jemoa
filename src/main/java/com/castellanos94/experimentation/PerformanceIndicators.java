@@ -73,8 +73,7 @@ public class PerformanceIndicators {
                                         .setName("NSGA-III-P");
                         resume.addRow(doSummary(table, dom, domp, labelString, "dominance").row(0));
 
-                        hsat =  result.numberColumn(ExperimentationDTLZPreferences.rate_hsat.name())
-                                        .setName("NSGA-III");
+                        hsat = result.numberColumn(ExperimentationDTLZPreferences.rate_hsat.name()).setName("NSGA-III");
                         hsatp = result.numberColumn(ExperimentationDTLZPreferences.rate_hsat_p.name())
                                         .setName("NSGA-III-P");
                         resume.addRow(doSummary(table, hsat, hsatp, labelString, "hsat").row(0));
@@ -140,13 +139,25 @@ public class PerformanceIndicators {
                 File file = File.createTempFile("data", ".csv");
                 file.deleteOnExit();
                 tmpTable.write().csv(file);
+                
                 Map<String, Object> wilcoxon = StacClient.WILCOXON(file.getAbsolutePath(), 0.05);
-                Double rs = Double.parseDouble(wilcoxon.get("result").toString());
+                Object st = wilcoxon.get("result");
+                Double rs;
+                if (st != null)
+                        rs = Double.parseDouble(st.toString());
+                else
+                        rs = Double.NaN;
                 StringColumn wilcoxon_ = StringColumn.create("Wilcoxon test");
-                wilcoxon_.append((rs == 1) ? "H0 is rejected" : "H0 is accepted");
+                if (!Double.isNaN(rs))
+                        wilcoxon_.append((rs == 1) ? "H0 is rejected" : "H0 is accepted");
+                else
+                        wilcoxon_.append("NaN");
 
                 StringColumn wilcoxon_technical = StringColumn.create("Wilcoxon technical");
-                wilcoxon_technical.append(wilcoxon.toString());
+                if (!Double.isNaN(rs))
+                        wilcoxon_technical.append(wilcoxon.toString());
+                else
+                        wilcoxon_technical.append("Error with data or server error");
                 StringColumn indicator = StringColumn.create("Metric");
                 indicator.append(metric);
                 return apply.addColumns(name, wilcoxon_, wilcoxon_technical, indicator).copy();
