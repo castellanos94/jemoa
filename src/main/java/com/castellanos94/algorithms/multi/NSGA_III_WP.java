@@ -11,6 +11,9 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.NSGA3Replacement;
 
+/**
+ * Explorar entre 5 20 50 aplicar clasificador
+ */
 public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
     private boolean csatPlus;
     private int resetAt;

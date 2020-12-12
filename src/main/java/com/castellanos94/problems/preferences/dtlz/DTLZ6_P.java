@@ -17,6 +17,8 @@ public class DTLZ6_P extends DTLZPreferences {
 
     @Override
     public void evaluate(DoubleSolution solution) {
+        // reparamos primero las variables
+        
         int numberOfVariables = getNumberOfDecisionVars();
         int numberOfObjectives = getNumberOfObjectives();
         double[] theta = new double[numberOfObjectives - 1];
@@ -54,7 +56,7 @@ public class DTLZ6_P extends DTLZPreferences {
         }
 
         for (int i = 0; i < numberOfObjectives; i++) {
-            solution.setObjective(i, new RealData((f[i] )));
+            solution.setObjective(i, new RealData((f[i])));
         }
     }
 

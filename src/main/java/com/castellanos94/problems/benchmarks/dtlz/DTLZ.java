@@ -103,6 +103,14 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
         return solution;
     }
 
+    public void repairSolution(DoubleSolution solution) {
+        for (int i = 0; i < getNumberOfDecisionVars(); i++) {
+            if (solution.getVariable(i) < 6 * Math.pow(10, -15)) {
+                solution.setVariable(i, 0.);
+            }
+        }
+    }
+
     @Override
     public String toString() {
         return String.format("%s, number_of_variables = %d, number_of_objectives = %d, k = %d", name,
@@ -181,6 +189,7 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
         return new ArrayList<>(dominanceComparator.getSubFront(0).subList(0, size));
 
     }
+
     @Override
     public DoubleSolution generateFromVarString(String string) {
         DoubleSolution solution = new DoubleSolution(this);

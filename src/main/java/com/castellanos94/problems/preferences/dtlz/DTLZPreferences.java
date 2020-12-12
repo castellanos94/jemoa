@@ -181,8 +181,7 @@ public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
         solution.setPenalties(RealData.ZERO);
         Double sum = null;
 
-        if (this instanceof DTLZ5_P  || this instanceof DTLZ2_P || this instanceof DTLZ3_P
-                || this instanceof DTLZ4_P) {
+        if (this instanceof DTLZ5_P || this instanceof DTLZ2_P || this instanceof DTLZ3_P || this instanceof DTLZ4_P) {
             do {
 
                 sum = 0.;
@@ -276,6 +275,14 @@ public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
         }
         return new ArrayList<>(dominanceComparator.getSubFront(0).subList(0, size));
 
+    }
+
+    public void repairSolution(DoubleSolution solution) {
+        for (int i = 0; i < getNumberOfDecisionVars(); i++) {
+            if (solution.getVariable(i) < 6 * Math.pow(10, -15)) {
+                solution.setVariable(i, 0.);
+            }
+        }
     }
 
     @Override

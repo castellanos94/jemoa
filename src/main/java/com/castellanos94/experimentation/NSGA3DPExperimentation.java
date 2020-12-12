@@ -1,13 +1,11 @@
-package com.castellanos94.examples;
+package com.castellanos94.experimentation;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
-
-import com.castellanos94.algorithms.multi.NSGA_III;
-import com.castellanos94.algorithms.multi.NSGA_III_WP;
+import com.castellanos94.algorithms.multi.NSGA_III_DP;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.operators.impl.PolynomialMutation;
@@ -29,28 +27,21 @@ import tech.tablesaw.api.Table;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * 31105.84 ms dtlz2 36910.32 ms dtlz3 48132.62 ms dtlz4 28587.02 ms dtlz5
- * 23557.02 ms dtlz6 27430.4 ms dtlz7
- * dtlz6 rework
- */
-public class DTLZUsingPreferences {
-    private static final Logger logger = LogManager.getLogger(DTLZUsingPreferences.class);
+public class NSGA3DPExperimentation {
+    private static final Logger logger = LogManager.getLogger(NSGA3DPExperimentation.class);
 
-    static final String DIRECTORY = "experiments" + File.separator + "dtlz_preferences";
+    static final String DIRECTORY = "experiments" + File.separator + "nsga3dp";
     static final int EXPERIMENT = 3;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         Tools.setSeed(1L);
         logger.info("Experimentation: DTLZ with preferences");
 
-        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ6_Instance.txt";
-        // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
+        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         logger.info(instance);
 
-
-        DTLZPreferences problem = new DTLZ6_P(instance);
+        DTLZPreferences problem = new DTLZ1_P(instance);
         String subDir = problem.getName().trim();
         if (!new File(DIRECTORY + File.separator + subDir).exists()) {
             new File(DIRECTORY + File.separator + subDir).mkdir();
@@ -63,7 +54,7 @@ public class DTLZUsingPreferences {
 
         SelectionOperator<DoubleSolution> selectionOperator = new TournamentSelection<>(popSize,
                 new DominanceComparator<DoubleSolution>());
-        NSGA_III_WP<DoubleSolution> algorithm = new NSGA_III_WP<>(problem, popSize, maxIterations, numberOfDivision,
+        NSGA_III_DP<DoubleSolution> algorithm = new NSGA_III_DP<>(problem, popSize, maxIterations, numberOfDivision,
                 selectionOperator, crossover, mutation);
         logger.info(problem);
         logger.info(algorithm);
@@ -72,22 +63,20 @@ public class DTLZUsingPreferences {
         long averageTime = 0;
 
         for (int i = 0; i < EXPERIMENT; i++) {
-            algorithm = new NSGA_III_WP<>(problem, popSize, maxIterations, numberOfDivision, selectionOperator,
-                    crossover, mutation);// algorithm.setReferenceHyperplane(referenceHyperplane);
-            // referenceHyperplane.resetCount();
+            algorithm = new NSGA_III_DP<>(problem, popSize, maxIterations, numberOfDivision, selectionOperator,
+                    crossover, mutation);
 
             algorithm.execute();
             averageTime += algorithm.getComputeTime();
             try {
                 Solution.writSolutionsToFile(DIRECTORY + File.separator + subDir + File.separator + "execution_" + i,
                         new ArrayList<>(algorithm.getSolutions()));
+                algorithm.exportReport(DIRECTORY + File.separator + subDir + File.separator + "execution_report_" + i);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
-            // Solution.writSolutionsToFile(directory + File.separator + problem.getName() +
-            // "_" + i, algorithm.getSolutions());
             bag.addAll(algorithm.getSolutions());
         }
         logger.info("Resume " + problem.getName());
@@ -149,12 +138,12 @@ public class DTLZUsingPreferences {
         Files.write(f.toPath(), strings, Charset.defaultCharset());
         if (problem.getNumberOfObjectives() == 3) {
             Plotter plotter = new Scatter3D<DoubleSolution>(front, DIRECTORY + File.separator + subDir + File.separator
-                    + "Class_F0" + problem.getName() + "_nsga3_WP");
+                    + "Class_F0" + problem.getName() + "_nsga3_DP");
             plotter.plot();
             // new Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator +
             // problem.getName()).plot();
         } else {
-            Table table = Table.create(problem.getName() + "_F0_WP_" + problem.getNumberOfObjectives());
+            Table table = Table.create(problem.getName() + "_F0_DP_" + problem.getNumberOfObjectives());
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
                 DoubleColumn column = DoubleColumn.create("objective_" + j);
                 for (int k = 0; k < front.size(); k++) {
