@@ -40,12 +40,12 @@ import org.apache.logging.log4j.Logger;
 public class DTLZNsga3 {
     private static final Logger logger = LogManager.getLogger(DTLZNsga3.class);
     static final String DIRECTORY = "experiments" + File.separator + "dtlz";
-    static final int EXPERIMENT = 50;
+    static final int EXPERIMENT = 3;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
-        Tools.setSeed(8435l);
+       // Tools.setSeed(8435l);
 
-        int numberProblem = 3;
+        int numberProblem = 6;
         int numberOfObjectives = 3;
 
         ArrayList<DoubleSolution> bag = new ArrayList<>();

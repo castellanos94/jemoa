@@ -22,7 +22,7 @@ public class DTLZ6 extends DTLZ {
     public DTLZ6(int numberOfObjectives, int numberOfVariables) {
         super(numberOfObjectives, numberOfVariables);
     }
- 
+
     @Override
     public void evaluate(DoubleSolution solution) {
         int numberOfVariables = getNumberOfDecisionVars();
@@ -62,7 +62,7 @@ public class DTLZ6 extends DTLZ {
         }
 
         for (int i = 0; i < numberOfObjectives; i++) {
-            solution.setObjective(i, new RealData((f[i] )));
+            solution.setObjective(i, new RealData((f[i])));
         }
 
     }

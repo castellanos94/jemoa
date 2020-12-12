@@ -38,16 +38,17 @@ public class DTLZUsingPreferences {
     private static final Logger logger = LogManager.getLogger(DTLZUsingPreferences.class);
 
     static final String DIRECTORY = "experiments" + File.separator + "dtlz_preferences";
-    static final int EXPERIMENT = 50;
+    static final int EXPERIMENT = 3;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
-        Tools.setSeed(1L);
+       // Tools.setSeed(1L);
         logger.info("Experimentation: DTLZ with preferences");
 
         String path = "src/main/resources/DTLZ_INSTANCES/DTLZ6_Instance.txt";
         // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         logger.info(instance);
+
 
         DTLZPreferences problem = new DTLZ6_P(instance);
         String subDir = problem.getName().trim();

@@ -130,7 +130,7 @@ public class ExperimentationDTLZPreferences {
             ArrayList<ArrayList<DoubleSolution>> result_dtlz1 = new ArrayList<>();
             ArrayList<DoubleSolution> result_dtlz1_front = new ArrayList<>();
             for (String name : new File(DIRECTORY_DTLZ + "" + i).list()) {
-                if (!name.contains("old") && name.contains(".out") && !name.contains("bag")) {
+                if (!name.contains("old") && name.contains(".out") && !name.contains("bag") && !name.contains("Class")) {
                     result_dtlz1.add(readSolution(dtlz, DIRECTORY_DTLZ + "" + i + File.separator + name));
                 } else if (name.contains("bag")) {
                     result_dtlz1_front = readSolution(dtlz, DIRECTORY_DTLZ + "" + i + File.separator + name);
