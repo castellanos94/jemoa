@@ -1,5 +1,6 @@
 package com.castellanos94.algorithms.multi;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -11,6 +12,9 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.NSGA3Replacement;
 
+import tech.tablesaw.api.DoubleColumn;
+import tech.tablesaw.api.Table;
+
 /**
  * Explorar entre 5 20 50 aplicar clasificador
  */
@@ -18,6 +22,11 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
     private boolean csatPlus;
     private int resetAt;
     private int n = 1;
+    private Table table;
+    private DoubleColumn iterColumn;
+    private DoubleColumn nFrontColumn;
+    private DoubleColumn hsatColumn;
+    private DoubleColumn satColumn;
 
     public NSGA_III_WP(Problem<S> problem, int populationSize, int maxIterations, int numberOfDivisions,
             SelectionOperator<S> selectionOperator, CrossoverOperator<S> crossoverOperator,
@@ -25,6 +34,11 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
         super(problem, populationSize, maxIterations, numberOfDivisions, selectionOperator, crossoverOperator,
                 mutationOperator);
         this.resetAt = this.maxIterations / 10;
+        table = Table.create("Report");
+        iterColumn = DoubleColumn.create("Iteration");
+        nFrontColumn = DoubleColumn.create("N-Front");
+        hsatColumn = DoubleColumn.create("HSat");
+        satColumn = DoubleColumn.create("Sat");
     }
 
     @SuppressWarnings("unchecked")
@@ -42,6 +56,8 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
         ranking.computeRanking(Rt);
         InterClassnC<S> classifier = new InterClassnC<>(problem);
         ArrayList<ArrayList<S>> _fronts = new ArrayList<>();
+        report();
+
         if (ranking.getNumberOfSubFronts() > 0) {
             ArrayList<S> hs = new ArrayList<>();
             ArrayList<S> s = new ArrayList<>();
@@ -111,6 +127,39 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
         }
         return parents;
 
+    }
+
+    private void report() {
+        InterClassnC<S> classifier = new InterClassnC<>(problem);
+        ArrayList<S> hs = new ArrayList<>();
+        ArrayList<S> s = new ArrayList<>();
+        ArrayList<S> d = new ArrayList<>();
+        ArrayList<S> hd = new ArrayList<>();
+        for (S x : ranking.getSubFront(0)) {
+            classifier.classify(x);
+            int[] iclass = (int[]) x.getAttribute(classifier.getAttributeKey());
+            if (iclass[0] > 0) {
+                hs.add(x);
+            } else if (iclass[1] > 0) {
+                s.add(x);
+            } else if (iclass[2] > 0) {
+                d.add(x);
+            } else {
+                hd.add(x);
+            }
+        }
+        iterColumn.append(this.currenIteration);
+        nFrontColumn.append(ranking.getNumberOfSubFronts());
+        hsatColumn.append(hs.size());
+        satColumn.append(s.size());
+
+    }
+
+    public void exportReport(String outPath) throws IOException {
+        if (!outPath.endsWith(".csv"))
+            outPath = outPath + ".csv";
+        table.addColumns(iterColumn, nFrontColumn, hsatColumn, satColumn);
+        table.write().csv(outPath);
     }
 
 }

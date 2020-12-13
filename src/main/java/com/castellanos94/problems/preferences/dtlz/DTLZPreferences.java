@@ -276,15 +276,7 @@ public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
         return new ArrayList<>(dominanceComparator.getSubFront(0).subList(0, size));
 
     }
-
-    public void repairSolution(DoubleSolution solution) {
-        for (int i = 0; i < getNumberOfDecisionVars(); i++) {
-            if (solution.getVariable(i) < 6 * Math.pow(10, -15)) {
-                solution.setVariable(i, 0.);
-            }
-        }
-    }
-
+  
     @Override
     public DoubleSolution generateFromVarString(String string) {
         DoubleSolution solution = new DoubleSolution(this);

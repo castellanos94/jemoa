@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.List;
+
 import com.castellanos94.algorithms.multi.NSGA_III_DP;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.operators.SelectionOperator;
@@ -30,129 +32,185 @@ import org.apache.logging.log4j.Logger;
 public class NSGA3DPExperimentation {
     private static final Logger logger = LogManager.getLogger(NSGA3DPExperimentation.class);
 
-    static final String DIRECTORY = "experiments" + File.separator + "nsga3dp";
-    static final int EXPERIMENT = 3;
+    static final int N = 0;
+    static final int EXPERIMENT = 50;
+    static final String DIRECTORY = "experiments" + File.separator + "nsga3dp" + File.separator + N;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
-        Tools.setSeed(1L);
         logger.info("Experimentation: DTLZ with preferences");
-
-        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
-        DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-        logger.info(instance);
-
-        DTLZPreferences problem = new DTLZ1_P(instance);
-        String subDir = problem.getName().trim();
-        if (!new File(DIRECTORY + File.separator + subDir).exists()) {
-            new File(DIRECTORY + File.separator + subDir).mkdir();
+        long initialTime = System.currentTimeMillis();
+        if (!new File(DIRECTORY).exists()) {
+            new File(DIRECTORY).mkdirs();
         }
-        int popSize = 92;
-        int numberOfDivision = 12;
-        SBXCrossover crossover = new SBXCrossover(30, 1.0);
-        PolynomialMutation mutation = new PolynomialMutation();
-        int maxIterations = 1000;
+        for (int p = 1; p <= 7; p++) {
+            Tools.setSeed(1L);
 
-        SelectionOperator<DoubleSolution> selectionOperator = new TournamentSelection<>(popSize,
-                new DominanceComparator<DoubleSolution>());
-        NSGA_III_DP<DoubleSolution> algorithm = new NSGA_III_DP<>(problem, popSize, maxIterations, numberOfDivision,
-                selectionOperator, crossover, mutation);
-        logger.info(problem);
-        logger.info(algorithm);
-
-        ArrayList<DoubleSolution> bag = new ArrayList<>();
-        long averageTime = 0;
-
-        for (int i = 0; i < EXPERIMENT; i++) {
-            algorithm = new NSGA_III_DP<>(problem, popSize, maxIterations, numberOfDivision, selectionOperator,
-                    crossover, mutation);
-
-            algorithm.execute();
-            averageTime += algorithm.getComputeTime();
-            try {
-                Solution.writSolutionsToFile(DIRECTORY + File.separator + subDir + File.separator + "execution_" + i,
-                        new ArrayList<>(algorithm.getSolutions()));
-                algorithm.exportReport(DIRECTORY + File.separator + subDir + File.separator + "execution_report_" + i);
-            } catch (IOException e) {
-                e.printStackTrace();
+            logger.info("Experimentation with problem : " + p);
+            String path = "src/main/resources/DTLZ_INSTANCES/DTLZ" + p + "_Instance.txt";
+            DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
+            logger.info(instance);
+            DTLZPreferences problem = null;
+            switch (p) {
+                case 1:
+                    problem = new DTLZ1_P(instance);
+                    break;
+                case 2:
+                    problem = new DTLZ2_P(instance);
+                    break;
+                case 3:
+                    problem = new DTLZ3_P(instance);
+                    break;
+                case 4:
+                    problem = new DTLZ4_P(instance);
+                    break;
+                case 5:
+                    problem = new DTLZ5_P(instance);
+                    break;
+                case 6:
+                    problem = new DTLZ6_P(instance);
+                    break;
+                case 7:
+                    problem = new DTLZ7_P(instance);
+                    break;
+            }
+            String subDir = problem.getName().trim();
+            if (!new File(DIRECTORY + File.separator + subDir).exists()) {
+                new File(DIRECTORY + File.separator + subDir).mkdir();
             }
 
-            logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
-            bag.addAll(algorithm.getSolutions());
-        }
-        logger.info("Resume " + problem.getName());
-        logger.info("Total time: " + averageTime);
-        logger.info("Average time : " + (double) averageTime / EXPERIMENT + " ms.");
-        logger.info("Solutions in the bag: " + bag.size());
-        Solution.writSolutionsToFile(DIRECTORY + File.separator + subDir + File.separator + "nsga_iii_bag_"
-                + problem.getName() + "_F0_" + problem.getNumberOfObjectives(), new ArrayList<>(bag));
-        Ranking<DoubleSolution> compartor = new DominanceComparator<>();
-        compartor.computeRanking(bag);
+            ArrayList<DoubleSolution> bag = new ArrayList<>();
+            long averageTime = 0;
+            int popSize = 92;
+            int numberOfDivision = 12;
+            SBXCrossover crossover = new SBXCrossover(30, 1.0);
+            PolynomialMutation mutation = new PolynomialMutation();
+            int maxIterations = 1000;
 
-        logger.info("Fronts : " + compartor.getNumberOfSubFronts());
-        logger.info("Front 0 - Original: " + compartor.getSubFront(0).size());
-
-        File f = new File(DIRECTORY);
-        if (!f.exists())
-            f.mkdirs();
-        f = new File(DIRECTORY + File.separator + subDir + File.separator + "Class_F0" + problem.getName()
-                + +problem.getNumberOfObjectives() + ".out");
-        InterClassnC<DoubleSolution> classifier = new InterClassnC<>(problem);
-        ArrayList<DoubleSolution> front = new ArrayList<>();
-        ArrayList<DoubleSolution> hs = new ArrayList<>();
-        ArrayList<DoubleSolution> s = new ArrayList<>();
-        ArrayList<DoubleSolution> d = new ArrayList<>();
-        ArrayList<DoubleSolution> hd = new ArrayList<>();
-        for (DoubleSolution x : compartor.getSubFront(0)) {
-            classifier.classify(x);
-            int[] iclass = (int[]) x.getAttribute(classifier.getAttributeKey());
-            if (iclass[0] > 0) {
-                hs.add(x);
-            } else if (iclass[1] > 0) {
-                s.add(x);
-            } else if (iclass[2] > 0) {
-                d.add(x);
-            } else {
-                hd.add(x);
-            }
-        }
-        if (!hs.isEmpty()) {
-            front.addAll(hs);
-        }
-        if (!s.isEmpty()) {
-            front.addAll(s);
-        }
-        if (front.isEmpty() && !d.isEmpty()) {
-            front.addAll(d);
-        }
-        if (front.isEmpty() && !hd.isEmpty()) {
-            front.addAll(hd);
-        }
-        logger.info(String.format("HSat : %3d, Sat : %3d, Dis : %3d, HDis : %3d", hs.size(), s.size(), d.size(),
-                hd.size()));
-        logger.info("Front 0: " + front.size());
-
-        ArrayList<String> strings = new ArrayList<>();
-        for (DoubleSolution solution : front)
-            strings.add(solution.toString());
-
-        Files.write(f.toPath(), strings, Charset.defaultCharset());
-        if (problem.getNumberOfObjectives() == 3) {
-            Plotter plotter = new Scatter3D<DoubleSolution>(front, DIRECTORY + File.separator + subDir + File.separator
-                    + "Class_F0" + problem.getName() + "_nsga3_DP");
-            plotter.plot();
-            // new Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator +
-            // problem.getName()).plot();
-        } else {
-            Table table = Table.create(problem.getName() + "_F0_DP_" + problem.getNumberOfObjectives());
-            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
-                DoubleColumn column = DoubleColumn.create("objective_" + j);
-                for (int k = 0; k < front.size(); k++) {
-                    column.append(front.get(k).getObjective(j).doubleValue());
+            SelectionOperator<DoubleSolution> selectionOperator = new TournamentSelection<>(popSize,
+                    new DominanceComparator<DoubleSolution>());
+            NSGA_III_DP<DoubleSolution> algorithm = new NSGA_III_DP<>(problem, popSize, maxIterations, numberOfDivision,
+                    selectionOperator, crossover, mutation);
+            algorithm.setN(N);
+            logger.info(problem);
+            logger.info(algorithm);
+            for (int i = 0; i < EXPERIMENT; i++) {
+                algorithm = new NSGA_III_DP<>(problem, popSize, maxIterations, numberOfDivision, selectionOperator,
+                        crossover, mutation);
+                        algorithm.setN(N);
+                algorithm.execute();
+                averageTime += algorithm.getComputeTime();
+                try {
+                    Solution.writSolutionsToFile(
+                            DIRECTORY + File.separator + subDir + File.separator + "execution_" + i,
+                            new ArrayList<>(algorithm.getSolutions()));
+                    algorithm.exportReport(
+                            DIRECTORY + File.separator + subDir + File.separator + "execution_report_" + i);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                table.addColumns(column);
+
+                logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
+                bag.addAll(algorithm.getSolutions());
             }
-            logger.info(table.summary());
+            reportResume(subDir);
+            logger.info("Resume " + problem.getName());
+            logger.info("Total time: " + averageTime);
+            logger.info("Average time : " + (double) averageTime / EXPERIMENT + " ms.");
+            logger.info("Solutions in the bag: " + bag.size());
+            Solution.writSolutionsToFile(DIRECTORY + File.separator + subDir + File.separator + "nsga_iii_bag_"
+                    + problem.getName() + "_F0_" + problem.getNumberOfObjectives(), new ArrayList<>(bag));
+            Ranking<DoubleSolution> compartor = new DominanceComparator<>();
+            compartor.computeRanking(bag);
+
+            logger.info("Fronts : " + compartor.getNumberOfSubFronts());
+            logger.info("Front 0 - Original: " + compartor.getSubFront(0).size());
+
+            File f = new File(DIRECTORY);
+            if (!f.exists())
+                f.mkdirs();
+            f = new File(DIRECTORY + File.separator + subDir + File.separator + "Class_F0" + problem.getName()
+                    + +problem.getNumberOfObjectives() + ".out");
+            InterClassnC<DoubleSolution> classifier = new InterClassnC<>(problem);
+            ArrayList<DoubleSolution> front = new ArrayList<>();
+            ArrayList<DoubleSolution> hs = new ArrayList<>();
+            ArrayList<DoubleSolution> s = new ArrayList<>();
+            ArrayList<DoubleSolution> d = new ArrayList<>();
+            ArrayList<DoubleSolution> hd = new ArrayList<>();
+            for (DoubleSolution x : compartor.getSubFront(0)) {
+                classifier.classify(x);
+                int[] iclass = (int[]) x.getAttribute(classifier.getAttributeKey());
+                if (iclass[0] > 0) {
+                    hs.add(x);
+                } else if (iclass[1] > 0) {
+                    s.add(x);
+                } else if (iclass[2] > 0) {
+                    d.add(x);
+                } else {
+                    hd.add(x);
+                }
+            }
+            if (!hs.isEmpty()) {
+                front.addAll(hs);
+            }
+            if (!s.isEmpty()) {
+                front.addAll(s);
+            }
+            if (front.isEmpty() && !d.isEmpty()) {
+                front.addAll(d);
+            }
+            if (front.isEmpty() && !hd.isEmpty()) {
+                front.addAll(hd);
+            }
+            logger.info(String.format("HSat : %3d, Sat : %3d, Dis : %3d, HDis : %3d", hs.size(), s.size(), d.size(),
+                    hd.size()));
+            logger.info("Front 0: " + front.size());
+
+            ArrayList<String> strings = new ArrayList<>();
+            for (DoubleSolution solution : front)
+                strings.add(solution.toString());
+
+            Files.write(f.toPath(), strings, Charset.defaultCharset());
+            if (problem.getNumberOfObjectives() == 3) {
+                Plotter plotter = new Scatter3D<DoubleSolution>(front, DIRECTORY + File.separator + subDir
+                        + File.separator + "Class_F0" + problem.getName() + "_nsga3_DP");
+                plotter.plot();
+            } else {
+                Table table = Table.create(problem.getName() + "_F0_DP_" + problem.getNumberOfObjectives());
+                for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
+                    DoubleColumn column = DoubleColumn.create("objective_" + j);
+                    for (int k = 0; k < front.size(); k++) {
+                        column.append(front.get(k).getObjective(j).doubleValue());
+                    }
+                    table.addColumns(column);
+                }
+                logger.info(table.summary());
+            }
+            logger.info("End Experimentation.");
         }
-        logger.info("End Experimentation.");
+        logger.info("Experimentation time: " + (initialTime - System.currentTimeMillis()) + " ms.");
+    }
+
+    public static void reportResume(String subDir) throws IOException {
+        Table table = null;
+
+        List<String> names = null;
+        for (int i = 0; i < EXPERIMENT; i++) {
+            String path = DIRECTORY + File.separator + subDir + File.separator + "execution_report_" + i + ".csv";
+            if (table == null) {
+                table = Table.read().csv(path);
+                names = table.columnNames();
+            } else {
+                Table tmp = Table.read().csv(path);
+                for (String name : names) {
+                    DoubleColumn add = table.numberColumn(name).add(tmp.numberColumn(name));
+                    add.setName(name);
+                    table.replaceColumn(name, add);
+                }
+            }
+        }
+        for (String string : names) {
+            table.replaceColumn(string, table.numberColumn(string).divide(EXPERIMENT));
+        }
+        table.write().csv(DIRECTORY + File.separator + subDir + File.separator + "report.csv");
     }
 }

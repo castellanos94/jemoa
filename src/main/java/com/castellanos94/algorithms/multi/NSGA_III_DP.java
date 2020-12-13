@@ -24,7 +24,7 @@ import tech.tablesaw.api.Table;
  */
 public class NSGA_III_DP<S extends Solution<?>> extends NSGA_III<S> {
     private int resetAt;
-    private int n = 0;
+    private int n = 5;
     private Table table;
     private DoubleColumn iterColumn;
     private DoubleColumn nFrontColumn;
@@ -44,6 +44,14 @@ public class NSGA_III_DP<S extends Solution<?>> extends NSGA_III<S> {
         satColumn = DoubleColumn.create("Sat");
     }
 
+    public void setN(int n) {
+        this.n = n;
+        this.resetAt = (int) (n / 100.0 * this.maxIterations);
+        if (this.n >= 100) {
+            this.resetAt = 1;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     protected ArrayList<S> replacement(ArrayList<S> population, ArrayList<S> offspring) {
@@ -58,7 +66,7 @@ public class NSGA_III_DP<S extends Solution<?>> extends NSGA_III<S> {
         }
         ranking.computeRanking(Rt);
         ArrayList<ArrayList<S>> _fronts = new ArrayList<>();
-        report(ranking.getNumberOfSubFronts(), ranking.getSubFront(0));
+        report();
         if (this.currenIteration > 0 && resetAt != 0 && this.currenIteration % resetAt == 0) {
             InterClassnC<S> classifier = new InterClassnC<>(problem);
             if (ranking.getNumberOfSubFronts() > 0) {
@@ -124,7 +132,7 @@ public class NSGA_III_DP<S extends Solution<?>> extends NSGA_III<S> {
 
     }
 
-    private void report(int fronts, ArrayList<S> arrayList) {
+    private void report() {
         InterClassnC<S> classifier = new InterClassnC<>(problem);
         ArrayList<S> hs = new ArrayList<>();
         ArrayList<S> s = new ArrayList<>();
@@ -144,7 +152,7 @@ public class NSGA_III_DP<S extends Solution<?>> extends NSGA_III<S> {
             }
         }
         iterColumn.append(this.currenIteration);
-        nFrontColumn.append(fronts);
+        nFrontColumn.append(ranking.getNumberOfSubFronts());
         hsatColumn.append(hs.size());
         satColumn.append(s.size());
 
@@ -156,4 +164,10 @@ public class NSGA_III_DP<S extends Solution<?>> extends NSGA_III<S> {
         table.addColumns(iterColumn, nFrontColumn, hsatColumn, satColumn);
         table.write().csv(outPath);
     }
+
+    @Override
+    public String toString() {
+        return "NSGA_III_DP [n=" + n + ", resetAt=" + resetAt + "]";
+    }
+
 }
