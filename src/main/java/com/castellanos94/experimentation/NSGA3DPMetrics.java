@@ -152,7 +152,7 @@ public class NSGA3DPMetrics {
                 grouped.forEach((__name, _solutions) -> {
                     for (DoubleColumn doubleColumn : zColumns) {
                         if (doubleColumn.name().equals("A-" + __name + "-F-0")) {
-                            doubleColumn.append(_solutions.size());
+                            doubleColumn.append(-_solutions.size());
                             break;
                         }
                     }
@@ -173,13 +173,13 @@ public class NSGA3DPMetrics {
 
                     for (DoubleColumn doubleColumn : hsColumns) {
                         if (doubleColumn.name().equals("A-" + __name + "-HSat")) {
-                            doubleColumn.append(hsat);
+                            doubleColumn.append(-hsat);
                             break;
                         }
                     }
                     for (DoubleColumn doubleColumn : sColumns) {
                         if (doubleColumn.name().equals("A-" + __name + "-Sat")) {
-                            doubleColumn.append(sat);
+                            doubleColumn.append(-sat);
                             break;
                         }
                     }
@@ -205,6 +205,13 @@ public class NSGA3DPMetrics {
         // System.out.println(table.summary());
         table.write().csv(DIRECTORY + "metrics.csv");
         // Reset
+        globalMetric(globalSolutionNDByProblem, roi, _names_algorithm);
+
+    }
+
+    private static void globalMetric(
+            HashMap<DTLZPreferences, ArrayList<ArrayList<DoubleSolution>>> globalSolutionNDByProblem,
+            HashMap<String, ArrayList<DoubleSolution>> roi, String[] _names_algorithm) throws IOException {
         StringColumn _nameG = StringColumn.create("problem");
         DoubleColumn allG = DoubleColumn.create("solutions");
         DoubleColumn frontZeroG = DoubleColumn.create("F-0");
@@ -233,7 +240,7 @@ public class NSGA3DPMetrics {
             groupByAlgorithm.forEach((__name, _solutions) -> {
                 for (DoubleColumn doubleColumn : zColumnsG) {
                     if (doubleColumn.name().equals("A-" + __name + "-F-0")) {
-                        doubleColumn.append(_solutions.size());
+                        doubleColumn.append(-_solutions.size());
                         break;
                     }
                 }
@@ -252,13 +259,13 @@ public class NSGA3DPMetrics {
 
                 for (DoubleColumn doubleColumn : hsColumnsG) {
                     if (doubleColumn.name().equals("A-" + __name + "-HSat")) {
-                        doubleColumn.append(hsat);
+                        doubleColumn.append(-hsat);
                         break;
                     }
                 }
                 for (DoubleColumn doubleColumn : sColumnsG) {
                     if (doubleColumn.name().equals("A-" + __name + "-Sat")) {
-                        doubleColumn.append(sat);
+                        doubleColumn.append(-sat);
                         break;
                     }
                 }
@@ -300,20 +307,22 @@ public class NSGA3DPMetrics {
                 column.append(solution_.getObjective(i).toString());
             table.addColumns(column);
         }
-        StringColumn column = StringColumn.create("Problem");
+        StringColumn column = StringColumn.create("Algorithm");
         StringColumn category = StringColumn.create("Class");
         for (DoubleSolution solution_ : front_preferences) {
             String owner = ((String) solution_.getAttribute(OWNER));
             if (owner.contains(":")) {
-                owner = owner.split(":")[1];
+                owner = "NSGA3-DP" + owner.split(":")[0];
             }
             column.append(owner);
             category.append((String) solution_.getAttribute("class"));
         }
 
         table.addColumns(column, category);
-
-        table.write().csv(DIRECTORY + File.separator + "FRONT_PREFERENCES_" + label + ".csv");
+        if(!new File(DIRECTORY + File.separator+ "FRONT_PREFERENCES").exists()){
+            new File(DIRECTORY + File.separator+ "FRONT_PREFERENCES").mkdirs();
+        }
+        table.write().csv(DIRECTORY + File.separator+ "FRONT_PREFERENCES"+File.separator  + label + ".csv");
     }
 
     private static HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm(ArrayList<DoubleSolution> front,
