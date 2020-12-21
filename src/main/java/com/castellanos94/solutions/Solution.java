@@ -249,11 +249,15 @@ public abstract class Solution<T> implements Comparable<Solution<?>> {
     public static void writSolutionsToFile(String string, List<Solution> solutions) throws IOException {
         List<String> strings = new ArrayList<>();
         File f = new File(string + ".out");
-        
+
         for (Solution solution : solutions)
             strings.add(solution.toString());
 
         Files.write(f.toPath(), strings, Charset.defaultCharset());
+    }
+
+    public static boolean compareByObjective(DoubleSolution a, DoubleSolution b) {
+        return a.getObjectives().containsAll(b.getObjectives());
     }
 
 }

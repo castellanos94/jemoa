@@ -12,6 +12,7 @@ import com.castellanos94.preferences.impl.GDProblem;
 import com.castellanos94.preferences.impl.InterClassnC;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
+import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
 public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
@@ -228,7 +229,19 @@ public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
     public ArrayList<DoubleSolution> generateRandomSample(int size) {
         ArrayList<DoubleSolution> solutions = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            solutions.add(generate());
+            DoubleSolution generate;// = generate();
+            boolean contains;
+            do {
+                contains = false;
+                generate = generate();
+                for (DoubleSolution doubleSolution : solutions) {
+                    if (Solution.compareByObjective(generate, doubleSolution)) {
+                        contains = true;
+                        break;
+                    }
+                }
+            } while (contains);
+            solutions.add(generate);
         }
         return solutions;
     }
@@ -278,7 +291,22 @@ public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
         while (dominanceComparator.getSubFront(0).size() < size) {
             System.out.println("F0' : " + dominanceComparator.getSubFront(0).size());
             bag = dominanceComparator.getSubFront(0);
-            bag.addAll(generateRandomSample((bag.size() > size / 2) ? size / 4 : size / 2));
+            ArrayList<DoubleSolution> generateRandomSample = generateRandomSample(
+                    (bag.size() > size / 2) ? size / 4 : size / 2);
+            ArrayList<DoubleSolution> toAdd = new ArrayList<>();
+            for (DoubleSolution gSolution : generateRandomSample) {
+                boolean contains = false;
+                for (DoubleSolution ndSolution : bag) {
+                    if (Solution.compareByObjective(gSolution, ndSolution)) {
+                        contains = true;
+                        break;
+                    }
+                }
+                if (!contains)
+                    toAdd.add(gSolution);
+            }
+            System.out.println("Bag to add : "+toAdd.size());
+            bag.addAll(toAdd);
         }
         return new ArrayList<>(dominanceComparator.getSubFront(0).subList(0, size));
 
