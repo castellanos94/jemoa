@@ -10,16 +10,17 @@ import tech.tablesaw.io.csv.CsvReadOptions;
 
 public class Testing {
     public static void main(String[] args) throws IOException {
-        String algorithmName = "nsga3dp";
-        algorithmName = "nsga3-10";
+        String algorithmName = "nsga3wp";
+        //algorithmName = "nsga3-10";
         String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
-        DIRECTORY = "experiments" + File.separator + "dtlz_preferences" + File.separator;
+        //DIRECTORY = "experiments" + File.separator + "dtlz_preferences" + File.separator;
         Table table = null;
         StringColumn algorithm = null;
         StringColumn problem = null;
         ColumnType[] columnTypes = { ColumnType.INTEGER, ColumnType.DOUBLE, ColumnType.DOUBLE, ColumnType.DOUBLE };
         for (File f : new File(DIRECTORY).listFiles()) {
             if (f.isDirectory()) {
+                System.out.println(f.getName());
                 for (File _file : f.listFiles()) {
                     if (_file.isDirectory()) {
                         File report = new File(_file.getAbsolutePath() + File.separator + "report.csv");

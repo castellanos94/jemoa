@@ -22,7 +22,7 @@ import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 
 public class NSGA3DPMetrics {
-    private static String algorithmName = "nsga3dp";
+    private static String algorithmName = "nsga3";
     private static final String OWNER = "FROM_PROBLEM";
     private static String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
 
@@ -233,6 +233,9 @@ public class NSGA3DPMetrics {
             DominanceComparator<DoubleSolution> comparator = new DominanceComparator<>();
             comparator.computeRanking(bag);
             ArrayList<DoubleSolution> front = comparator.getSubFront(0);
+            System.out.println(
+                    String.format("Problem : %s, bag : %6d, F0 : %6d", _p.getName(), bags.size(), front.size()));
+
             _nameG.append(_p.getName());
             allG.append(bag.size());
             frontZeroG.append(front.size());
@@ -312,17 +315,17 @@ public class NSGA3DPMetrics {
         for (DoubleSolution solution_ : front_preferences) {
             String owner = ((String) solution_.getAttribute(OWNER));
             if (owner.contains(":")) {
-                owner = "NSGA3-DP" + owner.split(":")[0];
+                owner = owner.split(":")[0];
             }
             column.append(owner);
             category.append((String) solution_.getAttribute("class"));
         }
 
         table.addColumns(column, category);
-        if(!new File(DIRECTORY + File.separator+ "FRONT_PREFERENCES").exists()){
-            new File(DIRECTORY + File.separator+ "FRONT_PREFERENCES").mkdirs();
+        if (!new File(DIRECTORY + File.separator + "FRONT_PREFERENCES").exists()) {
+            new File(DIRECTORY + File.separator + "FRONT_PREFERENCES").mkdirs();
         }
-        table.write().csv(DIRECTORY + File.separator+ "FRONT_PREFERENCES"+File.separator  + label + ".csv");
+        table.write().csv(DIRECTORY + File.separator + "FRONT_PREFERENCES" + File.separator + label + ".csv");
     }
 
     private static HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm(ArrayList<DoubleSolution> front,
@@ -383,7 +386,7 @@ public class NSGA3DPMetrics {
             front.addAll(hd);
         }
         if (show)
-            System.out.println(String.format("HSat : %3d, Sat : %3d, Dis : %3d, HDis : %3d", hs.size(), s.size(),
+            System.out.println(String.format("\tHSat : %3d, Sat : %3d, Dis : %3d, HDis : %3d", hs.size(), s.size(),
                     d.size(), hd.size()));
         return front;
     }

@@ -19,7 +19,6 @@ import tech.tablesaw.api.Table;
  * Explorar entre 5 20 50 aplicar clasificador
  */
 public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
-    private boolean csatPlus;
     private int resetAt;
     private int n = 1;
     private Table table;
@@ -33,12 +32,22 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
             MutationOperator<S> mutationOperator) {
         super(problem, populationSize, maxIterations, numberOfDivisions, selectionOperator, crossoverOperator,
                 mutationOperator);
-        this.resetAt = this.maxIterations / 10;
+        this.resetAt = (int) (5 / 100.0 * this.maxIterations);
         table = Table.create("Report");
         iterColumn = DoubleColumn.create("Iteration");
         nFrontColumn = DoubleColumn.create("N-Front");
         hsatColumn = DoubleColumn.create("HSat");
         satColumn = DoubleColumn.create("Sat");
+        n = (int) ((10 / 100.0) * this.populationSize);
+    }
+
+    public void setN(int n) {
+        this.n = (int) ((n / 100.0) * this.populationSize);
+    }
+
+    public void setResetAt(int resetAt) {
+        this.resetAt = (int) (resetAt / 100.0 * this.maxIterations);
+        ;
     }
 
     @SuppressWarnings("unchecked")
@@ -58,7 +67,7 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
         ArrayList<ArrayList<S>> _fronts = new ArrayList<>();
         report();
 
-        if (ranking.getNumberOfSubFronts() > 0) {
+        if (ranking.getNumberOfSubFronts() > 0 && this.currenIteration > 0 && this.currenIteration % resetAt == 0) {
             ArrayList<S> hs = new ArrayList<>();
             ArrayList<S> s = new ArrayList<>();
             ArrayList<S> d = new ArrayList<>();
@@ -91,7 +100,10 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
             for (int i = 1; i < ranking.getNumberOfSubFronts(); i++) {
                 _fronts.add(ranking.getSubFront(i));
             }
-            csatPlus = hs.size() + s.size() <= this.populationSize / 10;
+        } else {
+            for (int i = 0; i < ranking.getNumberOfSubFronts(); i++) {
+                _fronts.add(ranking.getSubFront(i));
+            }
         }
         ArrayList<S> Pt = new ArrayList<>();
         int indexFront = 0;
@@ -118,7 +130,7 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
             // System.out.printf("\tCurrent iteration %4d - reset at %3d n %3d \n",
             // this.currenIteration,
             // parents.size() - n * this.populationSize / 10, n * this.populationSize / 10);
-            for (int i = parents.size() - n * this.populationSize / 10; i < parents.size(); i++) {
+            for (int i = parents.size() - n; i < parents.size(); i++) {
                 S randomSolution = this.problem.randomSolution();
                 this.problem.evaluate(randomSolution);
                 this.problem.evaluateConstraint(randomSolution);
@@ -160,6 +172,11 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
             outPath = outPath + ".csv";
         table.addColumns(iterColumn, nFrontColumn, hsatColumn, satColumn);
         table.write().csv(outPath);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("NSGA-III-WP Classification at %3d, reset %3d", resetAt, n);
     }
 
 }

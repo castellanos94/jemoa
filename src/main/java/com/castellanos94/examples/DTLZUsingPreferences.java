@@ -36,11 +36,14 @@ import org.apache.logging.log4j.Logger;
  */
 public class DTLZUsingPreferences {
     private static final Logger logger = LogManager.getLogger(DTLZUsingPreferences.class);
-
-    static final String DIRECTORY = "experiments" + File.separator + "dtlz_preferences";
+    private static final int CLASSAT = 10; // Classification F0 each 3%
+    private static final int elementResetRate = 5; // 5 % of population
+    static final String DIRECTORY = "experiments" + File.separator + "dtlz_preferences" + File.separator + "I" + CLASSAT
+            + "R" + elementResetRate;
     static final int EXPERIMENT = 50;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
+        new File(DIRECTORY).mkdirs();
         for (int p = 1; p <= 7; p++) {
 
             Tools.setSeed(1L);
@@ -87,6 +90,8 @@ public class DTLZUsingPreferences {
                     new DominanceComparator<DoubleSolution>());
             NSGA_III_WP<DoubleSolution> algorithm = new NSGA_III_WP<>(problem, popSize, maxIterations, numberOfDivision,
                     selectionOperator, crossover, mutation);
+            algorithm.setResetAt(CLASSAT);
+            algorithm.setN(elementResetRate);
             logger.info(problem);
             logger.info(algorithm);
 
@@ -97,7 +102,8 @@ public class DTLZUsingPreferences {
                 algorithm = new NSGA_III_WP<>(problem, popSize, maxIterations, numberOfDivision, selectionOperator,
                         crossover, mutation);// algorithm.setReferenceHyperplane(referenceHyperplane);
                 // referenceHyperplane.resetCount();
-
+                algorithm.setResetAt(CLASSAT);
+                algorithm.setN(elementResetRate);
                 algorithm.execute();
                 averageTime += algorithm.getComputeTime();
                 try {
@@ -194,6 +200,7 @@ public class DTLZUsingPreferences {
             logger.info("End Experimentation.");
         }
     }
+
     public static void reportResume(String subDir) throws IOException {
         Table table = null;
 

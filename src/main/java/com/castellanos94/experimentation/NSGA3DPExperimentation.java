@@ -32,7 +32,7 @@ import org.apache.logging.log4j.Logger;
 public class NSGA3DPExperimentation {
     private static final Logger logger = LogManager.getLogger(NSGA3DPExperimentation.class);
 
-    static final int N = 0;
+    static final int N = 3;
     static final int EXPERIMENT = 50;
     static final String DIRECTORY = "experiments" + File.separator + "nsga3dp" + File.separator + N;
 
