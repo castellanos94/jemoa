@@ -189,14 +189,16 @@ public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
                     double f = solution.getObjective(i).doubleValue();
                     sum += f * f;
                 }
-                if (Math.abs(sum - 1) > 0.000006) {
+                // if (Math.abs(sum - 1) > 0.000006) {
+                if (sum != 1.0) {
                     for (int i = 0; i < numberOfObjectives - 1; i++) {
                         solution.setVariable(i, Tools.getRandom().nextDouble());
                     }
                     evaluate(solution);
                 }
                 // Math.abs(sum - 1) > 0.000006
-            } while (Math.abs(sum - 1) > 0.000006);
+                // } while (Math.abs(sum - 1) > 0.000006);
+            } while (sum != 1);
             return solution;
         } else if (this instanceof DTLZ1_P) {
             // sum = solution.getObjectives().stream().mapToDouble(f ->
@@ -266,17 +268,22 @@ public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
     }
 
     public ArrayList<DoubleSolution> generateSampleNonDominated(int size) {
-        ArrayList<DoubleSolution> bag = generateSample(size);
+        System.out.println("Size " + size);
+        ArrayList<DoubleSolution> bag = generateRandomSample(size / 10);
+        System.out.println("Initial sample : " + bag.size());
         DominanceComparator<DoubleSolution> dominanceComparator = new DominanceComparator<>();
         dominanceComparator.computeRanking(bag);
+        System.out.println("Bag : " + bag.size());
+        System.out.println("F0 : " + dominanceComparator.getSubFront(0).size());
         while (dominanceComparator.getSubFront(0).size() < size) {
+            System.out.println("F0' : " + dominanceComparator.getSubFront(0).size());
             bag = dominanceComparator.getSubFront(0);
-            bag.addAll(generateSample((bag.size() > size / 2) ? size / 4 : size / 2));
+            bag.addAll(generateRandomSample((bag.size() > size / 2) ? size / 4 : size / 2));
         }
         return new ArrayList<>(dominanceComparator.getSubFront(0).subList(0, size));
 
     }
-  
+
     @Override
     public DoubleSolution generateFromVarString(String string) {
         DoubleSolution solution = new DoubleSolution(this);

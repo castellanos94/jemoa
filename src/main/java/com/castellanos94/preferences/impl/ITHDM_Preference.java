@@ -171,4 +171,7 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
     public DominanceComparator<S> getDominance() {
         return dominance;
     }
+    public OutrankingModel getModel() {
+        return model;
+    }
 }

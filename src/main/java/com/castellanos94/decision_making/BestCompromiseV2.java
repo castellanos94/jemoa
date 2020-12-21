@@ -1,0 +1,110 @@
+package com.castellanos94.decision_making;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import com.castellanos94.datatype.RealData;
+import com.castellanos94.instances.DTLZ_Instance;
+import com.castellanos94.preferences.impl.ITHDM_Preference;
+import com.castellanos94.problems.preferences.dtlz.DTLZ1_P;
+import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
+import com.castellanos94.solutions.DoubleSolution;
+import com.castellanos94.solutions.Solution;
+
+public class BestCompromiseV2 {
+    private static final String NETSCORE_KEY = "FLUJO_NETO";
+    private static final String WEAKNESS_kEY = "DEBILIDAD_FUERZA";
+    protected int MAX_T = 50 * 1000;
+    protected DTLZPreferences problem;
+    protected ITHDM_Preference<DoubleSolution> preference;
+
+    public BestCompromiseV2(DTLZPreferences problem) {
+        this.problem = problem;
+        this.preference = new ITHDM_Preference<>(problem, problem.getInstance().getPreferenceModel(0));
+    }
+
+    /**
+     * Weakness strength sigma(y,x) > beta count_s_i + =1 BestCompromise
+     * min(count_s)
+     * 
+     * @return
+     */
+    public ArrayList<DoubleSolution> execute() {
+        ArrayList<DoubleSolution> sample = problem.generateSampleNonDominated(MAX_T);
+        DoubleSolution best_compromise = null;
+        System.out.println("Executing ...");
+        for (int i = 0; i < sample.size(); i++) {
+            double step = sample.size() / 10.0;
+            if (i != 0 && i % step== 0) {
+                System.out.printf("Iteration (%5.3f) %6d of %6d ...\n", 1.0 * i / sample.size(), i, sample.size());
+            }
+            RealData sigma_out = RealData.ZERO, sigma_in = RealData.ZERO;
+            int sigmaYXGreaterThanBeta = 0;
+            for (int j = 0; j < sample.size(); j++) {
+                // int value = dominance.compare(sample.get(i), sample.get(j));
+                if (i != j) {
+                    preference.compare(sample.get(i), sample.get(j));
+                    sigma_out = (RealData) sigma_out.plus(preference.getSigmaXY());
+                    sigma_in = (RealData) sigma_in.plus(preference.getSigmaYX());
+                    if (preference.getSigmaYX().compareTo(preference.getModel().getBeta()) > 0) {
+                        sigmaYXGreaterThanBeta++;
+                    }
+                }
+            }
+            RealData net_score = (RealData) sigma_out.minus(sigma_in);
+            sample.get(i).setAttribute(NETSCORE_KEY, net_score);
+            sample.get(i).setAttribute(WEAKNESS_kEY, sigmaYXGreaterThanBeta);
+        }
+        RealData bestNetScore = (RealData) sample.get(0).getAttribute(NETSCORE_KEY);
+        int indexBestNetScore = 0, indexWeakness = -1;
+        for (int i = 0; i < sample.size(); i++) {
+            DoubleSolution solution = sample.get(i);
+            if (((RealData) solution.getAttribute(NETSCORE_KEY)).compareTo(bestNetScore) > 0) {
+                bestNetScore = (RealData) solution.getAttribute(NETSCORE_KEY);
+                indexBestNetScore = i;
+            }
+            if (((int) solution.getAttribute(WEAKNESS_kEY)) == 0) {
+                indexWeakness = i;
+            }
+        }
+        if (indexWeakness != -1) {
+            System.out.println("Best Compromise : " + sample.get(indexWeakness));
+            best_compromise = sample.get(indexWeakness);
+        } else {
+            System.out.println("Best Compromise by netscore " + bestNetScore + " : " + sample.get(indexBestNetScore));
+            best_compromise = sample.get(indexBestNetScore);
+        }
+        ArrayList<DoubleSolution> roi = new ArrayList<>();
+        roi.add(best_compromise);
+        for (int i = 0; i < sample.size(); i++) {
+            if (preference.getSigmaXY().compareTo(preference.getModel().getBeta()) >= 0
+                    || ((int) sample.get(i).getAttribute(WEAKNESS_kEY)) <= 1) {
+                if (!roi.contains(sample.get(i)))
+                    roi.add(sample.get(i));
+            }
+        }
+        System.out.println("ROI : " + roi.size());
+        
+        return roi;
+    }
+
+    public void setMAX_T(int mAX_T) {
+        MAX_T = mAX_T;
+    }
+
+    public static void main(String[] args) throws IOException {
+        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
+        DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
+        System.out.println(instance);
+
+        DTLZPreferences problem = new DTLZ1_P(instance);
+        System.out.println(problem);
+        BestCompromiseV2 compromiseV2 = new BestCompromiseV2(problem);
+        // compromiseV2.setMAX_T(1000);
+        ArrayList<DoubleSolution> roi = compromiseV2.execute();
+        Solution.writSolutionsToFile("bestCompromise" + File.separator + "bestCompromiseV2_" + problem.getName(),
+                new ArrayList<>(roi));
+    }
+}
