@@ -1,7 +1,6 @@
 package com.castellanos94.decision_making;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -9,13 +8,7 @@ import java.util.Random;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.impl.ITHDM_Preference;
-import com.castellanos94.problems.preferences.dtlz.DTLZ1_P;
-import com.castellanos94.problems.preferences.dtlz.DTLZ2_P;
-import com.castellanos94.problems.preferences.dtlz.DTLZ3_P;
-import com.castellanos94.problems.preferences.dtlz.DTLZ4_P;
-import com.castellanos94.problems.preferences.dtlz.DTLZ5_P;
-import com.castellanos94.problems.preferences.dtlz.DTLZ6_P;
-import com.castellanos94.problems.preferences.dtlz.DTLZ7_P;
+import com.castellanos94.problems.preferences.dtlz.*;
 import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
@@ -24,7 +17,7 @@ import com.castellanos94.utils.Tools;
 public class BestCompromiseV2 {
     private static final String NETSCORE_KEY = "FLUJO_NETO";
     private static final String WEAKNESS_kEY = "DEBILIDAD_FUERZA";
-    protected int MAX_T = 5 * 1000;
+    protected int MAX_T = 60 * 1000;
     protected DTLZPreferences problem;
     protected ITHDM_Preference<DoubleSolution> preference;
 
@@ -56,8 +49,8 @@ public class BestCompromiseV2 {
                     preference.compare(sample.get(i), sample.get(j));
                     sigma_out = (RealData) sigma_out.plus(preference.getSigmaXY());
                     sigma_in = (RealData) sigma_in.plus(preference.getSigmaYX());
-                    //if (preference.getSigmaYX().compareTo(preference.getModel().getBeta()) > 0) {
-                    if(preference.getModel().getBeta().compareTo(sigma_out) < 0 && sigma_in.compareTo(0.5) < 0){
+                     //if (preference.getSigmaYX().compareTo(preference.getModel().getBeta()) >= 0) {
+                    if (preference.getModel().getBeta().compareTo(sigma_in) < 0 && sigma_out.compareTo(0.5) < 0) {
                         sigmaYXGreaterThanBeta++;
                     }
                 }
@@ -85,7 +78,7 @@ public class BestCompromiseV2 {
         } else if (indexCandidatos.size() > 1) {
 
             for (Integer index : indexCandidatos) {
-                RealData tmp = (RealData) sample.get(indexCandidatos.get(index)).getAttribute(NETSCORE_KEY);
+                RealData tmp = (RealData) sample.get(index).getAttribute(NETSCORE_KEY);
                 if (best == null || best.compareTo(tmp) >= 0) {
                     best = tmp;
                     indexBestNetScore = index;
@@ -95,10 +88,13 @@ public class BestCompromiseV2 {
         if (indexWeakness != -1) {
             System.out.println("Best Compromise : " + sample.get(indexWeakness));
             best_compromise = sample.get(indexWeakness);
+            best = (RealData) best_compromise.getAttribute(NETSCORE_KEY);
         } else {
             System.out.println("Best Compromise by netscore " + bestNetScore + " : " + sample.get(indexBestNetScore));
             best_compromise = sample.get(indexBestNetScore);
+            best = bestNetScore;
         }
+
         ArrayList<DoubleSolution> roi = new ArrayList<>();
         roi.add(best_compromise);
 
@@ -109,14 +105,14 @@ public class BestCompromiseV2 {
                         roi.add(sample.get(i));
                 }
             } else {
-                if (((RealData) sample.get(i).getAttribute(NETSCORE_KEY)).compareTo(best) > 0) {
+                if (((RealData) sample.get(i).getAttribute(NETSCORE_KEY)).compareTo(best) >= 0) {
                     if (!roi.contains(sample.get(i)))
                         roi.add(sample.get(i));
                 }
             }
         }
         System.out.println("ROI : " + roi.size());
-        if (roi.size() == 1) {
+        if (roi.size() < 3) {
             int count = 0;
             while (count < 4) {
                 int index = Tools.getRandom().nextInt(sample.size());
@@ -142,9 +138,9 @@ public class BestCompromiseV2 {
         DTLZPreferences problem = new DTLZ1_P(instance);
         System.out.println(problem);
         BestCompromiseV2 compromiseV2 = new BestCompromiseV2(problem);
-        
+
         ArrayList<DoubleSolution> roi = compromiseV2.execute();
-        Solution.writSolutionsToFile("bestCompromise" + File.separator + "bestCompromiseV3_" + problem.getName(),
+        Solution.writSolutionsToFile("bestCompromise" + File.separator + "bestCompromise_" + problem.getName(),
                 new ArrayList<>(roi));
     }
 }
