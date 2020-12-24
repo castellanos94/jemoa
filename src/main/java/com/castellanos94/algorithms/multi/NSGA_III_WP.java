@@ -43,11 +43,14 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
 
     public void setN(int n) {
         this.n = (int) ((n / 100.0) * this.populationSize);
+        
     }
 
     public void setResetAt(int resetAt) {
-        this.resetAt = (int) (resetAt / 100.0 * this.maxIterations);
-        ;
+        this.resetAt = (int) (resetAt / 100.0 * this.maxIterations);        
+        if(resetAt >=100){
+            this.resetAt = 1;
+        }
     }
 
     @SuppressWarnings("unchecked")

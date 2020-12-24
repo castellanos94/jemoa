@@ -36,19 +36,19 @@ import org.apache.logging.log4j.Logger;
  */
 public class DTLZUsingPreferences {
     private static final Logger logger = LogManager.getLogger(DTLZUsingPreferences.class);
-    private static final int CLASSAT = 10; // Classification F0 each 3%
-    private static final int elementResetRate = 5; // 5 % of population
-    static final String DIRECTORY = "experiments" + File.separator + "dtlz_preferences" + File.separator + "I" + CLASSAT
+    private static final int CLASSAT = 100; // Classification F0 each 3%
+    private static final int elementResetRate = 0; // 5 % of population
+    static final String DIRECTORY = "experiments" + File.separator + "nsga3WP-V2" + File.separator + "I" + CLASSAT
             + "R" + elementResetRate;
     static final int EXPERIMENT = 50;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         new File(DIRECTORY).mkdirs();
-        for (int p = 1; p <= 7; p++) {
+        for (int p = 1; p <= 1; p++) {
 
             Tools.setSeed(1L);
             logger.info("Experimentation: DTLZ with preferences");
-            String path = "src/main/resources/DTLZ_INSTANCES/DTLZ" + p + "_Instance.txt";
+            String path = "src/main/resources/DTLZ_INSTANCES/DTLZ" + p + "_InstanceV2.txt";
             DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
             logger.info(instance);
             DTLZPreferences problem = null;

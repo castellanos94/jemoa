@@ -257,7 +257,24 @@ public abstract class Solution<T> implements Comparable<Solution<?>> {
     }
 
     public static boolean compareByObjective(DoubleSolution a, DoubleSolution b) {
-        return a.getObjectives().containsAll(b.getObjectives());
+        if (a.getNumberOfObjectives() != b.getNumberOfObjectives()) {
+            throw new IllegalArgumentException("Solutions must be equal number of objectives.");
+        }
+        int count = 0;
+        for (Data data : b.getObjectives()) {
+            boolean flag = false;
+            for (Data c : a.getObjectives()) {
+                if (c.compareTo(data) == 0) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag) {
+                count++;
+            }            
+        }
+        
+        return count == 0;
     }
 
 }

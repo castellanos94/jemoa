@@ -22,7 +22,7 @@ import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 
 public class NSGA3DPMetrics {
-    private static String algorithmName = "nsga3";
+    private static String algorithmName = "nsga3WP-V2";
     private static final String OWNER = "FROM_PROBLEM";
     private static String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
 
@@ -206,7 +206,7 @@ public class NSGA3DPMetrics {
         table.write().csv(DIRECTORY + "metrics.csv");
         // Reset
         globalMetric(globalSolutionNDByProblem, roi, _names_algorithm);
-
+        
     }
 
     private static void globalMetric(
@@ -282,7 +282,18 @@ public class NSGA3DPMetrics {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+           /* System.out.println("Check domin with roi, F0 "+front.size());
+            front.addAll(roi.get(_p.getName()));
+            System.out.println("After add roi "+front.size());
+            comparator = new DominanceComparator<>();
+            comparator.computeRanking(front);
+            ArrayList<DoubleSolution> fzero = comparator.getSubFront(0);
+            System.out.println("F0 : "+fzero.size());
 
+            HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm2 = groupByAlgorithm(fzero, _names_algorithm);
+            groupByAlgorithm2.forEach((k,v)->{
+                System.out.println(k+" -> "+v.size());
+            });*/
         });
         Table global = Table.create("global");
         global.addColumns(_nameG, allG, frontZeroG);
@@ -395,7 +406,8 @@ public class NSGA3DPMetrics {
         String path = null;
         switch (name) {
             case "DTLZ1_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ1_P.out";
+                //path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ1_P.out";
+                path = "/home/thinkpad/Documents/jemoa/bestCompromise/bestCompromise_DTLZ1_P.out";
                 break;
             case "DTLZ2_P":
                 path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ2_P.out";

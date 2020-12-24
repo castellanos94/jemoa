@@ -78,10 +78,9 @@ public class RealData extends Data {
 
     }
 
-
     @Override
     public String toString() {
-        return String.format("%f", data);
+        return data.toString();
     }
 
     @Override

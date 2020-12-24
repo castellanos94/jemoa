@@ -307,6 +307,7 @@ public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
             }
             System.out.println("Bag to add : "+toAdd.size());
             bag.addAll(toAdd);
+            dominanceComparator.computeRanking(bag);
         }
         return new ArrayList<>(dominanceComparator.getSubFront(0).subList(0, size));
 

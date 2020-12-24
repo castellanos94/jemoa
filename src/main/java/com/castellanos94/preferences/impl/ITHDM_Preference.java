@@ -29,12 +29,14 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
         this.dominance = new ITHDM_Dominance<>((RealData) model.getAlpha());
         coalition = new int[p.getNumberOfObjectives()];
     }
+
     public ITHDM_Preference(Problem<?> p, OutrankingModel model, DominanceComparator<S> dominanceComparator) {
         this.model = model;
         this.p = p;
         this.dominance = dominanceComparator;
         coalition = new int[p.getNumberOfObjectives()];
     }
+
     /**
      * * Definition 3. Relatiopships: xS(δ,λ)y in [-2], xP(δ,λ)y in [-1], xI(δ,λ)y
      * in [0], xR(δ,λ)y in [1]
@@ -67,7 +69,7 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
         return 1;
     }
 
-    private RealData credibility_index(S x, S y)  {
+    private RealData credibility_index(S x, S y) {
         ArrayList<RealData> omegas = new ArrayList<>();
         RealData[] eta_gamma = new RealData[p.getNumberOfObjectives()];
         RealData max_discordance;
@@ -139,10 +141,11 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
         RealData res;
         Interval value_x = x.getObjective(criteria).toInterval();
         Interval value_y = y.getObjective(criteria).toInterval();
+
         if (p.getObjectives_type()[criteria] == Problem.MAXIMIZATION) {
             res = value_y.possGreaterThanOrEq((Interval) value_x.plus(veto));
         } else {
-            res = value_y.possSmallerThanOrEq((Interval) value_x.plus(veto));
+            res = value_y.possSmallerThanOrEq((Interval) value_x.minus(veto));
         }
 
         return res;
@@ -152,10 +155,18 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
         RealData res;
         Interval value_x = x.getObjective(criteria).toInterval();
         Interval value_y = y.getObjective(criteria).toInterval();
-        if (p.getObjectives_type()[criteria] == Problem.MAXIMIZATION) {
-            res = value_x.possGreaterThanOrEq(value_y);
+        if (value_x.getLower().compareTo(value_x.getUpper()) == 0) {
+            if (p.getObjectives_type()[criteria] == Problem.MAXIMIZATION) {
+                res = (value_x.getLower() >= value_y.getLower()) ? new RealData(1) : new RealData(0);
+            } else {
+                res = (value_x.getLower() <= value_y.getLower()) ? new RealData(1) : new RealData(0);
+            }
         } else {
-            res = value_x.possSmallerThanOrEq(value_y);
+            if (p.getObjectives_type()[criteria] == Problem.MAXIMIZATION) {
+                res = value_x.possGreaterThanOrEq(value_y);
+            } else {
+                res = value_x.possSmallerThanOrEq(value_y);
+            }
         }
         return res;
     }
@@ -171,6 +182,7 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
     public DominanceComparator<S> getDominance() {
         return dominance;
     }
+
     public OutrankingModel getModel() {
         return model;
     }
