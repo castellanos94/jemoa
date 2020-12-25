@@ -1,4 +1,4 @@
-package com.castellanos94.examples;
+package com.castellanos94.experimentation;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,21 +34,21 @@ import org.apache.logging.log4j.Logger;
  * 31105.84 ms dtlz2 36910.32 ms dtlz3 48132.62 ms dtlz4 28587.02 ms dtlz5
  * 23557.02 ms dtlz6 27430.4 ms dtlz7 dtlz6 rework
  */
-public class DTLZUsingPreferences {
-    private static final Logger logger = LogManager.getLogger(DTLZUsingPreferences.class);
-    private static final int CLASSAT = 100; // Classification F0 each 3%
-    private static final int elementResetRate = 0; // 5 % of population
-    static final String DIRECTORY = "experiments" + File.separator + "nsga3WP-V2" + File.separator + "I" + CLASSAT
-            + "R" + elementResetRate;
+public class NSGA3WPExperimentation {
+    private static final Logger logger = LogManager.getLogger(NSGA3WPExperimentation.class);
+    private static final int CLASSIFY_EVERY_ITERATION = 0; // Classification F0 each 3%
+    private static final int ELEMENTS_TO_REPLACE = 0; // 5 % of population
+    static final String DIRECTORY = "experiments" + File.separator + "NSGA3" + File.separator + "C"
+            + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
     static final int EXPERIMENT = 50;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         new File(DIRECTORY).mkdirs();
-        for (int p = 1; p <= 1; p++) {
+        for (int p = 1; p <= 7; p++) {
 
             Tools.setSeed(1L);
             logger.info("Experimentation: DTLZ with preferences");
-            String path = "src/main/resources/DTLZ_INSTANCES/DTLZ" + p + "_InstanceV2.txt";
+            String path = "src/main/resources/DTLZ_INSTANCES/DTLZ" + p + "_Instance.txt";
             DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
             logger.info(instance);
             DTLZPreferences problem = null;
@@ -90,8 +90,8 @@ public class DTLZUsingPreferences {
                     new DominanceComparator<DoubleSolution>());
             NSGA_III_WP<DoubleSolution> algorithm = new NSGA_III_WP<>(problem, popSize, maxIterations, numberOfDivision,
                     selectionOperator, crossover, mutation);
-            algorithm.setResetAt(CLASSAT);
-            algorithm.setN(elementResetRate);
+            algorithm.setClassifyEveryIteration(CLASSIFY_EVERY_ITERATION);
+            algorithm.setNElementsToReplace(ELEMENTS_TO_REPLACE);
             logger.info(problem);
             logger.info(algorithm);
 
@@ -102,8 +102,8 @@ public class DTLZUsingPreferences {
                 algorithm = new NSGA_III_WP<>(problem, popSize, maxIterations, numberOfDivision, selectionOperator,
                         crossover, mutation);// algorithm.setReferenceHyperplane(referenceHyperplane);
                 // referenceHyperplane.resetCount();
-                algorithm.setResetAt(CLASSAT);
-                algorithm.setN(elementResetRate);
+                algorithm.setClassifyEveryIteration(CLASSIFY_EVERY_ITERATION);
+                algorithm.setNElementsToReplace(ELEMENTS_TO_REPLACE);
                 algorithm.execute();
                 averageTime += algorithm.getComputeTime();
                 try {

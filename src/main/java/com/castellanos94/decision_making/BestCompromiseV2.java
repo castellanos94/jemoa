@@ -130,12 +130,12 @@ public class BestCompromiseV2 {
     }
 
     public static void main(String[] args) throws IOException {
-        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
+        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ7_Instance.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         Tools.setSeed(8435L);
         System.out.println(instance);
 
-        DTLZPreferences problem = new DTLZ1_P(instance);
+        DTLZPreferences problem = new DTLZ7_P(instance);
         System.out.println(problem);
         BestCompromiseV2 compromiseV2 = new BestCompromiseV2(problem);
 

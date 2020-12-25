@@ -19,8 +19,8 @@ import tech.tablesaw.api.Table;
  * Explorar entre 5 20 50 aplicar clasificador
  */
 public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
-    private int resetAt;
-    private int n = 1;
+    private int classifyEveryIteration;
+    private int nElementsToReplace = 1;
     private Table table;
     private DoubleColumn iterColumn;
     private DoubleColumn nFrontColumn;
@@ -32,24 +32,24 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
             MutationOperator<S> mutationOperator) {
         super(problem, populationSize, maxIterations, numberOfDivisions, selectionOperator, crossoverOperator,
                 mutationOperator);
-        this.resetAt = (int) (5 / 100.0 * this.maxIterations);
+        this.classifyEveryIteration = (int) (5 / 100.0 * this.maxIterations);
         table = Table.create("Report");
         iterColumn = DoubleColumn.create("Iteration");
         nFrontColumn = DoubleColumn.create("N-Front");
         hsatColumn = DoubleColumn.create("HSat");
         satColumn = DoubleColumn.create("Sat");
-        n = (int) ((10 / 100.0) * this.populationSize);
+        nElementsToReplace = (int) ((10 / 100.0) * this.populationSize);
     }
 
-    public void setN(int n) {
-        this.n = (int) ((n / 100.0) * this.populationSize);
-        
+    public void setNElementsToReplace(int nElementsToReplace) {
+        this.nElementsToReplace = (int) ((nElementsToReplace / 100.0) * this.populationSize);
+
     }
 
-    public void setResetAt(int resetAt) {
-        this.resetAt = (int) (resetAt / 100.0 * this.maxIterations);        
-        if(resetAt >=100){
-            this.resetAt = 1;
+    public void setClassifyEveryIteration(int classifyEveryIteration) {
+        this.classifyEveryIteration = (int) (classifyEveryIteration / 100.0 * this.maxIterations);
+        if (classifyEveryIteration >= 100) {
+            this.classifyEveryIteration = 1;
         }
     }
 
@@ -69,8 +69,7 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
         InterClassnC<S> classifier = new InterClassnC<>(problem);
         ArrayList<ArrayList<S>> _fronts = new ArrayList<>();
         report();
-
-        if (ranking.getNumberOfSubFronts() > 0 && this.currenIteration > 0 && this.currenIteration % resetAt == 0) {
+        if (ranking.getNumberOfSubFronts() > 0 &&  classifyEveryIteration != 0 && this.currenIteration > 0 && this.currenIteration % classifyEveryIteration == 0) {
             ArrayList<S> hs = new ArrayList<>();
             ArrayList<S> s = new ArrayList<>();
             ArrayList<S> d = new ArrayList<>();
@@ -108,6 +107,8 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
                 _fronts.add(ranking.getSubFront(i));
             }
         }
+        // REPORT : N-Fronts
+        nFrontColumn.append(_fronts.size());
         ArrayList<S> Pt = new ArrayList<>();
         int indexFront = 0;
         ArrayList<ArrayList<S>> fronts = new ArrayList<>();
@@ -128,12 +129,12 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
                 problem.getNumberOfObjectives(), populationSize);
         selection.execute(Pt);
         ArrayList<S> parents = selection.getParents();
-        if (this.currenIteration > 0 && this.currenIteration % resetAt == 0) {
+        if (this.currenIteration > 0 && classifyEveryIteration!=0 && this.currenIteration % classifyEveryIteration == 0) {
             // if (csatPlus) {
             // System.out.printf("\tCurrent iteration %4d - reset at %3d n %3d \n",
             // this.currenIteration,
             // parents.size() - n * this.populationSize / 10, n * this.populationSize / 10);
-            for (int i = parents.size() - n; i < parents.size(); i++) {
+            for (int i = parents.size() - this.nElementsToReplace; i < parents.size(); i++) {
                 S randomSolution = this.problem.randomSolution();
                 this.problem.evaluate(randomSolution);
                 this.problem.evaluateConstraint(randomSolution);
@@ -164,7 +165,7 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
             }
         }
         iterColumn.append(this.currenIteration);
-        nFrontColumn.append(ranking.getNumberOfSubFronts());
+        // nFrontColumn.append(ranking.getNumberOfSubFronts());
         hsatColumn.append(hs.size());
         satColumn.append(s.size());
 
@@ -179,7 +180,7 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
 
     @Override
     public String toString() {
-        return String.format("NSGA-III-WP Classification at %3d, reset %3d", resetAt, n);
+        return String.format("NSGA-III-WP Classify every %3d iteration, %3d elements to replace", classifyEveryIteration, nElementsToReplace);
     }
 
 }
