@@ -16,6 +16,7 @@ import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.Table;
 
 /**
+ * NSGA3 Classsify ever % iteration, without replacing
  * Explorar entre 0 5 20 50 aplicar clasificador, ver movimiento de frentes y
  * hsat sat // Reportar el numero de frentes y Cardinalidad de los conjuntos
  * hsat + sat (poblacion no dominada) v0 clasficacion total v1 clasficacion

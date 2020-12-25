@@ -21,7 +21,7 @@ import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 
-public class NSGA3DPMetrics {
+public class NSGA3WPExperimentationMetrics {
     private static String algorithmName = "nsga3WP-V2";
     private static final String OWNER = "FROM_PROBLEM";
     private static String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;

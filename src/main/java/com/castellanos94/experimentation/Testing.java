@@ -7,7 +7,9 @@ import tech.tablesaw.api.ColumnType;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.io.csv.CsvReadOptions;
-
+/**
+ * Test global report of Csat front of every execution. 
+ */
 public class Testing {
     public static void main(String[] args) throws IOException {
         String algorithmName = "nsga3wp";
