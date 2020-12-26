@@ -12,7 +12,7 @@ import tech.tablesaw.io.csv.CsvReadOptions;
  */
 public class Testing {
     public static void main(String[] args) throws IOException {
-        String algorithmName = "nsga3wp";
+        String algorithmName = "NSGA3";
         //algorithmName = "nsga3-10";
         String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
         //DIRECTORY = "experiments" + File.separator + "dtlz_preferences" + File.separator;

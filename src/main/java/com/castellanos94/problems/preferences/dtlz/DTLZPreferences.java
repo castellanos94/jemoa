@@ -180,9 +180,13 @@ public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
 
         solution.setNumberOfPenalties(0);
         solution.setPenalties(RealData.ZERO);
-        Double sum = null;
 
-        if (this instanceof DTLZ5_P || this instanceof DTLZ2_P || this instanceof DTLZ3_P || this instanceof DTLZ4_P) {
+        if (this instanceof DTLZ7_P) {
+            return solution;
+        }
+
+        Double sum = null;
+        if (this instanceof DTLZ6_P || this instanceof DTLZ5_P || this instanceof DTLZ2_P || this instanceof DTLZ3_P || this instanceof DTLZ4_P) {
             do {
 
                 sum = 0.;
@@ -305,7 +309,7 @@ public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
                 if (!contains)
                     toAdd.add(gSolution);
             }
-            System.out.println("Bag to add : "+toAdd.size());
+            System.out.println("Bag to add : " + toAdd.size());
             bag.addAll(toAdd);
             dominanceComparator.computeRanking(bag);
         }

@@ -22,7 +22,7 @@ import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 
 public class NSGA3WPExperimentationMetrics {
-    private static String algorithmName = "nsga3WP-V2";
+    private static String algorithmName = "NSGA3";
     private static final String OWNER = "FROM_PROBLEM";
     private static String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
 
@@ -148,7 +148,8 @@ public class NSGA3WPExperimentationMetrics {
             }
             for (ArrayList<DoubleSolution> solutions : globalSolutionNDByProblem.get(dtlz)) {
                 frontZero.append(solutions.size());
-                HashMap<String, ArrayList<DoubleSolution>> grouped = groupByAlgorithm(solutions, _names_algorithm);
+                HashMap<String, ArrayList<DoubleSolution>> grouped = groupByAlgorithm(solutions, _names_algorithm,
+                        false);
                 grouped.forEach((__name, _solutions) -> {
                     for (DoubleColumn doubleColumn : zColumns) {
                         if (doubleColumn.name().equals("A-" + __name + "-F-0")) {
@@ -160,7 +161,8 @@ public class NSGA3WPExperimentationMetrics {
 
             }
             for (ArrayList<DoubleSolution> solutions : globalCSat.get(dtlz)) {
-                HashMap<String, ArrayList<DoubleSolution>> grouped = groupByAlgorithm(solutions, _names_algorithm);
+                HashMap<String, ArrayList<DoubleSolution>> grouped = groupByAlgorithm(solutions, _names_algorithm,
+                        false);
                 grouped.forEach((__name, _solutions) -> {
                     int hsat = 0, sat = 0;
                     for (DoubleSolution s : _solutions) {
@@ -206,7 +208,7 @@ public class NSGA3WPExperimentationMetrics {
         table.write().csv(DIRECTORY + "metrics.csv");
         // Reset
         globalMetric(globalSolutionNDByProblem, roi, _names_algorithm);
-        
+
     }
 
     private static void globalMetric(
@@ -239,7 +241,8 @@ public class NSGA3WPExperimentationMetrics {
             _nameG.append(_p.getName());
             allG.append(bag.size());
             frontZeroG.append(front.size());
-            HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm = groupByAlgorithm(front, _names_algorithm);
+            HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm = groupByAlgorithm(front, _names_algorithm,
+                    false);
             groupByAlgorithm.forEach((__name, _solutions) -> {
                 for (DoubleColumn doubleColumn : zColumnsG) {
                     if (doubleColumn.name().equals("A-" + __name + "-F-0")) {
@@ -249,7 +252,8 @@ public class NSGA3WPExperimentationMetrics {
                 }
             });
             ArrayList<DoubleSolution> csatSolutions = makeCSat(_p, front, true);
-            HashMap<String, ArrayList<DoubleSolution>> grouped = groupByAlgorithm(csatSolutions, _names_algorithm);
+            HashMap<String, ArrayList<DoubleSolution>> grouped = groupByAlgorithm(csatSolutions, _names_algorithm,
+                    false);
             grouped.forEach((__name, _solutions) -> {
                 int hsat = 0, sat = 0;
                 for (DoubleSolution s : _solutions) {
@@ -282,18 +286,19 @@ public class NSGA3WPExperimentationMetrics {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-           /* System.out.println("Check domin with roi, F0 "+front.size());
+            System.out.println("Check domin with roi, F0 " + front.size());
             front.addAll(roi.get(_p.getName()));
-            System.out.println("After add roi "+front.size());
+            System.out.println("After add roi " + front.size());
             comparator = new DominanceComparator<>();
             comparator.computeRanking(front);
             ArrayList<DoubleSolution> fzero = comparator.getSubFront(0);
-            System.out.println("F0 : "+fzero.size());
+            System.out.println("F0 : " + fzero.size());
 
-            HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm2 = groupByAlgorithm(fzero, _names_algorithm);
-            groupByAlgorithm2.forEach((k,v)->{
-                System.out.println(k+" -> "+v.size());
-            });*/
+            HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm2 = groupByAlgorithm(fzero, _names_algorithm,
+                    true);
+            groupByAlgorithm2.forEach((k, v) -> {
+                System.out.println(k + " -> " + v.size());
+            });
         });
         Table global = Table.create("global");
         global.addColumns(_nameG, allG, frontZeroG);
@@ -340,17 +345,29 @@ public class NSGA3WPExperimentationMetrics {
     }
 
     private static HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm(ArrayList<DoubleSolution> front,
-            String[] algorithmName) {
+            String[] algorithmName, boolean groupAll) {
         HashMap<String, ArrayList<DoubleSolution>> map = new HashMap<>();
 
         for (int i = 0; i < algorithmName.length; i++) {
             map.put(algorithmName[i], new ArrayList<>());
         }
+
         for (DoubleSolution s : front) {
+            boolean wasAdded = false;
+            String owner = s.getAttribute(OWNER).toString().split(":")[0];
             for (int j = 0; j < algorithmName.length; j++) {
-                String owner = s.getAttribute(OWNER).toString().split(":")[0];
                 if (owner.equals(algorithmName[j])) {
                     map.get(algorithmName[j]).add(s);
+                    wasAdded = true;
+                }
+            }
+            if (!wasAdded && groupAll) {
+                if (map.containsKey(owner)) {
+                    map.get(owner).add(s);
+                } else {
+                    ArrayList<DoubleSolution> tmp = new ArrayList<>();
+                    tmp.add(s);
+                    map.put(owner, tmp);
                 }
             }
         }
@@ -406,27 +423,26 @@ public class NSGA3WPExperimentationMetrics {
         String path = null;
         switch (name) {
             case "DTLZ1_P":
-                //path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ1_P.out";
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/bestCompromise_DTLZ1_P.out";
+                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ1_P.out";
                 break;
             case "DTLZ2_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ2_P.out";
+                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ2_P.out";
                 break;
             case "DTLZ3_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ3_P.out";
+                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ3_P.out";
                 break;
             case "DTLZ4_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ4_P.out";
+                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ4_P.out";
                 break;
             case "DTLZ5_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ5_P.out";
+                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ5_P.out";
                 break;
             case "DTLZ6_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ6_P.out";
+                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ6_P.out";
 
                 break;
             case "DTLZ7_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ7_P.out";
+                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ7_P.out";
                 break;
 
         }

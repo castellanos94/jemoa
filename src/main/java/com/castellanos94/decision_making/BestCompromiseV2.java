@@ -3,7 +3,6 @@ package com.castellanos94.decision_making;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
 
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
@@ -17,7 +16,7 @@ import com.castellanos94.utils.Tools;
 public class BestCompromiseV2 {
     private static final String NETSCORE_KEY = "FLUJO_NETO";
     private static final String WEAKNESS_kEY = "DEBILIDAD_FUERZA";
-    protected int MAX_T = 60 * 1000;
+    protected int MAX_T = 100 * 1000;
     protected DTLZPreferences problem;
     protected ITHDM_Preference<DoubleSolution> preference;
 
@@ -130,12 +129,12 @@ public class BestCompromiseV2 {
     }
 
     public static void main(String[] args) throws IOException {
-        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ7_Instance.txt";
+        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ6_Instance.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-        Tools.setSeed(8435L);
+        //Tools.setSeed(8435L);
         System.out.println(instance);
 
-        DTLZPreferences problem = new DTLZ7_P(instance);
+        DTLZPreferences problem = new DTLZ6_P(instance);
         System.out.println(problem);
         BestCompromiseV2 compromiseV2 = new BestCompromiseV2(problem);
 
