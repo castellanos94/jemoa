@@ -44,7 +44,7 @@ public class NSGA3WPExperimentation {
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         new File(DIRECTORY).mkdirs();
-        for (int p = 7; p <= 7; p++) {
+        for (int p = 6; p <= 6; p++) {
 
             Tools.setSeed(1L);
             logger.info("Experimentation: DTLZ with preferences");

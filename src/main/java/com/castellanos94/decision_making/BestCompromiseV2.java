@@ -16,7 +16,7 @@ import com.castellanos94.utils.Tools;
 public class BestCompromiseV2 {
     private static final String NETSCORE_KEY = "FLUJO_NETO";
     private static final String WEAKNESS_kEY = "DEBILIDAD_FUERZA";
-    protected int MAX_T = 100 * 1000;
+    protected int MAX_T = 50 * 1000;
     protected DTLZPreferences problem;
     protected ITHDM_Preference<DoubleSolution> preference;
 

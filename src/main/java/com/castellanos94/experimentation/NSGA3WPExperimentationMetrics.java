@@ -75,7 +75,7 @@ public class NSGA3WPExperimentationMetrics {
         while (problem_Iterator.hasNext()) {
             String key = problem_Iterator.next();
             System.out.print(key + " ");
-            roi.put(key, makeCSat(problems.get(key), roi.get(key), true));
+            roi.put(key, classifySolutions(problems.get(key), roi.get(key), true, true));
             if (algorithmStrings == null) {
                 algorithmStrings = globalSolutionByProblem.get(problems.get(key)).keySet()
                         .toArray(new String[globalSolutionByProblem.get(problems.get(key)).keySet().size()]);
@@ -116,7 +116,7 @@ public class NSGA3WPExperimentationMetrics {
                 comparator.computeRanking(currentBag.get(i));
                 noDomiList.add(comparator.getSubFront(0));
                 // CSat Only F0
-                _csat.add(makeCSat(_problem, noDomiList.get(i), false));
+                _csat.add(classifySolutions(_problem, noDomiList.get(i), false, true));
             }
 
             globalSolutionNDByProblem.put(_problem, noDomiList);
@@ -251,7 +251,7 @@ public class NSGA3WPExperimentationMetrics {
                     }
                 }
             });
-            ArrayList<DoubleSolution> csatSolutions = makeCSat(_p, front, true);
+            ArrayList<DoubleSolution> csatSolutions = classifySolutions(_p, front, true, true);
             HashMap<String, ArrayList<DoubleSolution>> grouped = groupByAlgorithm(csatSolutions, _names_algorithm,
                     false);
             grouped.forEach((__name, _solutions) -> {
@@ -282,22 +282,24 @@ public class NSGA3WPExperimentationMetrics {
             csatSolutions.addAll(roi.get(_p.getName()));
 
             try {
+                System.out.println("\tExport all solutions wit class");
                 EXPORT_OBJECTIVES_TO_CSV(csatSolutions, _p.getName());
+                EXPORT_OBJECTIVES_TO_CSV(front, _p.getName() + "_ALL");
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("Check domin with roi, F0 " + front.size());
+            System.out.println("\tCheck domin with roi, F0 " + front.size());
             front.addAll(roi.get(_p.getName()));
-            System.out.println("After add roi " + front.size());
+            System.out.println("\tAfter add roi " + front.size());
             comparator = new DominanceComparator<>();
             comparator.computeRanking(front);
             ArrayList<DoubleSolution> fzero = comparator.getSubFront(0);
-            System.out.println("F0 : " + fzero.size());
+            System.out.println("\tF0 : " + fzero.size());
 
             HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm2 = groupByAlgorithm(fzero, _names_algorithm,
                     true);
             groupByAlgorithm2.forEach((k, v) -> {
-                System.out.println(k + " -> " + v.size());
+                System.out.println("\t" + k + " -> " + v.size());
             });
         });
         Table global = Table.create("global");
@@ -374,8 +376,8 @@ public class NSGA3WPExperimentationMetrics {
         return map;
     }
 
-    private static ArrayList<DoubleSolution> makeCSat(DTLZPreferences dtlzPreferences,
-            ArrayList<DoubleSolution> solutions, boolean show) {
+    private static ArrayList<DoubleSolution> classifySolutions(DTLZPreferences dtlzPreferences,
+            ArrayList<DoubleSolution> solutions, boolean show, boolean isOnlyCSat) {
         InterClassnC<DoubleSolution> classifier = new InterClassnC<>(dtlzPreferences);
         ArrayList<DoubleSolution> front = new ArrayList<>();
         ArrayList<DoubleSolution> hs = new ArrayList<>();
@@ -407,11 +409,13 @@ public class NSGA3WPExperimentationMetrics {
             front.addAll(s);
         }
 
-        if (front.isEmpty() && !d.isEmpty()) {
-            front.addAll(d);
+        if (!d.isEmpty()) {
+            if (!isOnlyCSat || front.isEmpty())
+                front.addAll(d);
         }
-        if (front.isEmpty() && !hd.isEmpty()) {
-            front.addAll(hd);
+        if (!hd.isEmpty()) {
+            if (!isOnlyCSat || front.isEmpty())
+                front.addAll(hd);
         }
         if (show)
             System.out.println(String.format("\tHSat : %3d, Sat : %3d, Dis : %3d, HDis : %3d", hs.size(), s.size(),
