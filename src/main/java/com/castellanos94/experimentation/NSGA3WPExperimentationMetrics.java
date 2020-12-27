@@ -251,7 +251,7 @@ public class NSGA3WPExperimentationMetrics {
                     }
                 }
             });
-            ArrayList<DoubleSolution> csatSolutions = classifySolutions(_p, front, true, true);
+            ArrayList<DoubleSolution> csatSolutions = classifySolutions(_p, front, true, false);
             HashMap<String, ArrayList<DoubleSolution>> grouped = groupByAlgorithm(csatSolutions, _names_algorithm,
                     false);
             grouped.forEach((__name, _solutions) -> {
@@ -282,9 +282,8 @@ public class NSGA3WPExperimentationMetrics {
             csatSolutions.addAll(roi.get(_p.getName()));
 
             try {
-                System.out.println("\tExport all solutions wit class");
-                EXPORT_OBJECTIVES_TO_CSV(csatSolutions, _p.getName());
-                EXPORT_OBJECTIVES_TO_CSV(front, _p.getName() + "_ALL");
+                System.out.println("\tExport all solutions with class");
+                EXPORT_OBJECTIVES_TO_CSV(csatSolutions, _p.getName() + "_ALL");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -316,7 +315,7 @@ public class NSGA3WPExperimentationMetrics {
         for (DoubleColumn doubleColumn : sColumnsG) {
             global.addColumns(doubleColumn);
         }
-        global.write().csv(DIRECTORY + "metrics-global.csv");
+        global.write().csv(DIRECTORY + "global-metrics.csv");
     }
 
     private static void EXPORT_OBJECTIVES_TO_CSV(ArrayList<DoubleSolution> front_preferences, String label)
