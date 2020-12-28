@@ -26,7 +26,7 @@ public class Testing {
 
     public static void main(String[] args) throws IOException {
         //generateReportFront();
-        String path_roi = "experiments/roi_generator/roi.txt";
+        String path_roi = "bestCompromise/roi_generator/roi.txt";
         String instance_path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(instance_path).loadInstance();
         DTLZPreferences problem = new DTLZ1_P(instance);

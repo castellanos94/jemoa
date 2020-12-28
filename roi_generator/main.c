@@ -88,7 +88,7 @@ int main(int argc, char const *argv[])
             }
         }
         count = 0;
-        int remplaced = 0;
+        int replaced = 0;
         for (int i = 0; i < k; i++)
         {
             if (dominate_me[i] == 0)
@@ -99,23 +99,14 @@ int main(int argc, char const *argv[])
             else
             {
                 struct Solution *tmp = generateAnalyticalSolution(problem, numberOfVariables, numberOfObjectives);
-                int value;
-                /*do
-                {
-                    tmp = generateAnalyticalSolution(problem, numberOfVariables, numberOfObjectives);
-                    value = dominance(numberOfObjectives, tmp->objective, sample[i]->objective);
-                } while (value != -1);*/
-                //destroy_solution(&sample[i]);
-                //printObjectives(i, sample[i], tmp);
+                int value;              
                 memcpy(sample[i]->variable, tmp->variable, numberOfVariables * sizeof(double));
                 memcpy(sample[i]->objective, tmp->objective, numberOfObjectives * sizeof(double));
                 destroy_solution(tmp);
-                //memmove(sample[i], tmp, sizeof(tmp));
-                remplaced++;
-                // memcpy(sample[i], tmp, sizeof(tmp));
+                replaced++;
             }
         }
-        printf("Size of F0 %4d, replace %3d\n", count, remplaced);
+        printf("Size of F0 %4d, replaced %3d\n", count, replaced);
     }
     FILE *f = fopen("roi.txt", "w");
     if (f == NULL)
