@@ -328,5 +328,19 @@ public class Interval extends Data {
     public Interval copy() {
         return new Interval(lower, upper);
     }
+/*
+    public static void main(String[] args) {
+        Interval a = new Interval(3, 4);
+        Interval b = new Interval(4, 5);
+        System.out.println(a.times(b));
+        System.out.println(a);
+        System.out.println(a.plus(b));
+        System.out.println(a.minus(b));
+        System.out.println(a.div(b));
+        System.out.println("A compare to B : " + a.compareTo(b));
+        System.out.println("A possibility to B : " + a.possibility(b));
+        System.out.println("A possibility greather that to B : " + a.possGreaterThanOrEq(b));
+        System.out.println("A possibility smaller that to B : " + a.possSmallerThanOrEq(b));
 
+    }*/
 }
