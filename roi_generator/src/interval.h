@@ -1,4 +1,3 @@
-#include "solution.h"
 #include <stdio.h>
 #ifndef INTERVAL_H
 #define INTERVAL_H

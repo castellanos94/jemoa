@@ -53,7 +53,7 @@ void printInstance(struct Instance instance)
     printf("Weigth\n");
     for (int j = 0; j < instance.numberOfDM; j++)
     {
-        printf("DM %3d : ", j);
+        printf("\t");
         for (int i = 0; i < instance.numberOfObjectives; i++)
         {
             if (i < instance.numberOfObjectives - 1)
@@ -66,6 +66,7 @@ void printInstance(struct Instance instance)
     printf("Veto\n");
     for (int j = 0; j < instance.numberOfDM; j++)
     {
+        printf("\t");
         for (int i = 0; i < instance.numberOfObjectives; i++)
         {
             if (i < instance.numberOfObjectives - 1)
@@ -78,27 +79,20 @@ void printInstance(struct Instance instance)
     printf("Beta\n");
     for (int i = 0; i < instance.numberOfDM; i++)
     {
-        if (i < instance.numberOfObjectives - 1)
-            printf("%s, ", toString(instance.beta[i]));
-        else
-            printf("%s\n", toString(instance.beta[i]));
+        printf("\t%s\n", toString(instance.beta[i]));
     }
     printf("Lamda\n");
     for (int i = 0; i < instance.numberOfDM; i++)
     {
-        
-        if (i < instance.numberOfObjectives - 1)
-            printf("%s, ", toString(instance.lambda[i]));
-        else
-            printf("%s\n", toString(instance.lambda[i]));
+        printf("\t%s\n", toString(instance.lambda[i]));
     }
     printf("Alpha\n");
     for (int i = 0; i < instance.numberOfDM; i++)
     {
-        printf("%f\n", instance.alpha[i]);
+        printf("\t%f\n", instance.alpha[i]);
     }
 }
-struct Instance readInstance(char *path)
+struct Instance readInstance(const char *path)
 {
     /* Open file */
     FILE *file = fopen(path, "r");
@@ -173,7 +167,7 @@ struct Instance readInstance(char *path)
             token = strtok(NULL, ",");
         }
     }
-  
+
     //printf("Number of objectives %d, number of variables %d, number of dm %d\n", numberOfObjectives, numberOfVariables, numberOfDM);
     /* Close file */
     if (fclose(file))
@@ -224,7 +218,6 @@ struct Instance readInstance(char *path)
     {
         instance.alpha[i] = 1;
     }
-    printf("before return\n");
     return instance;
 }
 

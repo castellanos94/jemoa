@@ -15,6 +15,6 @@ struct Instance
 };
 typedef struct Instance instance;
 void printInstance(struct Instance instance);
-struct Instance readInstance(char *path);
+struct Instance readInstance(const char *path);
 void destroy_instance(struct Instance instance);
 #endif // TYPES_H

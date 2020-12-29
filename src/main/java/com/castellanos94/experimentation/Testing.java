@@ -37,7 +37,7 @@ public class Testing {
         System.out.println("F0 "+dominanceComparator.getSubFront(0).size());
     }
     @SuppressWarnings("rawtypes")
-    private static ArrayList<DoubleSolution> loadSolutions(DTLZPreferences problem, File file)
+    public static ArrayList<DoubleSolution> loadSolutions(DTLZPreferences problem, File file)
             throws FileNotFoundException {
         ArrayList<DoubleSolution> solutions = new ArrayList<>();
         Scanner sc = new Scanner(file);
