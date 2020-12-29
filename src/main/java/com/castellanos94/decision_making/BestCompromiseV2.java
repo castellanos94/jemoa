@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.experimentation.Testing;
 import com.castellanos94.instances.DTLZ_Instance;
@@ -35,7 +36,10 @@ public class BestCompromiseV2 {
      * @throws FileNotFoundException
      */
     public ArrayList<DoubleSolution> execute() throws FileNotFoundException {
-        ArrayList<DoubleSolution> sample  = Testing.loadSolutions(this.problem, new File("/home/thinkpad/Documents/jemoa/roi_generator/roi.txt"));//= problem.generateSampleNonDominated(MAX_T);
+        ArrayList<DoubleSolution> sample  = Testing.loadSolutions(this.problem, new File("/home/thinkpad/Documents/jemoa/roi_generator/ROI_DTLZ1_V7_O3.txt"));//= problem.generateSampleNonDominated(MAX_T);
+        DominanceComparator<DoubleSolution> dominanceComparator = new DominanceComparator<>();
+        dominanceComparator.computeRanking(sample);
+        System.out.println("F0 "+dominanceComparator.getSubFront(0).size());
         DoubleSolution best_compromise = null;
         System.out.println("Executing ... "+sample.size());        
         for (int i = 0; i < sample.size(); i++) {

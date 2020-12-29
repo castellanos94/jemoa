@@ -1,0 +1,199 @@
+Command: Problem  1, sample 5000, seed 8435
+Reading instance
+NumberOfVariables   7, NumberOfObjectives   3, DMs   1
+Weigth
+	0.313000 0.313000, 0.316000 0.316000, 0.371000 0.371000
+Veto
+	249.702530 288.528380, 263.828110 282.653470, 278.651050 299.408780
+Beta
+	0.510000 0.750000
+Lamda
+	0.510000 0.670000
+Alpha
+	1.000000
+Sample size  5000
+Generating sample ...
+	Check dominance   0... ... size of F0 5000
+Saving ROI File... ROI_DTLZ1_V7_O3.txt
+Looking best compromise ...
+Iteration (0.10)    500 of   5000 ...
+Iteration (0.20)   1000 of   5000 ...
+Iteration (0.30)   1500 of   5000 ...
+Iteration (0.40)   2000 of   5000 ...
+Iteration (0.50)   2500 of   5000 ...
+Iteration (0.60)   3000 of   5000 ...
+Iteration (0.70)   3500 of   5000 ...
+Iteration (0.80)   4000 of   5000 ...
+Iteration (0.90)   4500 of   5000 ...
+Best NetScore 4799.306250
+Best compromise by netscore 4799.306250 ...
+0.983764, 0.999826, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000 * 0.491796, 0.000086, 0.008118 *   0
+Saving ROI-P File... ROI_P_DTLZ1_V7_O3.txt
+	Best old netscore 4755.343750
+	Best old netscore 4300.912500
+	Best old netscore 4253.237500
+	Best old netscore 3667.950000
+ROI preferential lenght   4
+Command: Problem  2, sample 5000, seed 8435
+Reading instance
+NumberOfVariables  12, NumberOfObjectives   3, DMs   1
+Weigth
+	0.313000 0.313000, 0.316000 0.316000, 0.371000 0.371000
+Veto
+	249.702530 288.528380, 263.828110 282.653470, 278.651050 299.408780
+Beta
+	0.510000 0.750000
+Lamda
+	0.510000 0.670000
+Alpha
+	1.000000
+Sample size  5000
+Generating sample ...
+	Check dominance   0... ... size of F0 5000
+Saving ROI File... ROI_DTLZ2_V12_O3.txt
+Looking best compromise ...
+Iteration (0.10)    500 of   5000 ...
+Iteration (0.20)   1000 of   5000 ...
+Iteration (0.30)   1500 of   5000 ...
+Iteration (0.40)   2000 of   5000 ...
+Iteration (0.50)   2500 of   5000 ...
+Iteration (0.60)   3000 of   5000 ...
+Iteration (0.70)   3500 of   5000 ...
+Iteration (0.80)   4000 of   5000 ...
+Iteration (0.90)   4500 of   5000 ...
+Best NetScore 4780.675000
+Best compromise by netscore 4780.675000 ...
+0.003655, 0.004307, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000 * 0.999961, 0.006765, 0.005741 *   0
+Saving ROI-P File... ROI_P_DTLZ2_V12_O3.txt
+	Best old netscore 4569.537500
+	Best old netscore 4342.793750
+	Best old netscore 4156.831250
+	Best old netscore 3054.775000
+ROI preferential lenght   4
+Command: Problem  3, sample 5000, seed 8435
+Reading instance
+NumberOfVariables  12, NumberOfObjectives   3, DMs   1
+Weigth
+	0.333000 0.333000, 0.333000 0.333000, 0.334000 0.334000
+Veto
+	0.249925 0.292028, 0.221534 0.282840, 0.238867 0.287402
+Beta
+	0.510000 0.750000
+Lamda
+	0.510000 0.670000
+Alpha
+	1.000000
+Sample size  5000
+Generating sample ...
+	Check dominance   0... ... size of F0 5000
+Saving ROI File... ROI_DTLZ3_V12_O3.txt
+Looking best compromise ...
+Iteration (0.10)    500 of   5000 ...
+Iteration (0.20)   1000 of   5000 ...
+Iteration (0.30)   1500 of   5000 ...
+Iteration (0.40)   2000 of   5000 ...
+Iteration (0.50)   2500 of   5000 ...
+Iteration (0.60)   3000 of   5000 ...
+Iteration (0.70)   3500 of   5000 ...
+Iteration (0.80)   4000 of   5000 ...
+Iteration (0.90)   4500 of   5000 ...
+Best NetScore 0.000000
+Best compromise by netscore 0.000000 ...
+0.309219, 0.585679, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000 * 0.535763, 0.703572, 0.466845 *   0
+Saving ROI-P File... ROI_P_DTLZ3_V12_O3.txt
+ROI preferential lenght   0
+Command: Problem  4, sample 5000, seed 8435
+Reading instance
+NumberOfVariables  12, NumberOfObjectives   3, DMs   1
+Weigth
+	0.296200 0.296200, 0.329800 0.329800, 0.374000 0.374000
+Veto
+	0.491990 0.532690, 0.438350 0.562990, 0.496660 0.572610
+Beta
+	0.510000 0.750000
+Lamda
+	0.510000 0.670000
+Alpha
+	1.000000
+Sample size  5000
+Generating sample ...
+	Check dominance   0... ... size of F0 1219
+	Check dominance   1... ... size of F0 2085
+	Check dominance   2... ... size of F0 2735
+	Check dominance   3... ... size of F0 3274
+	Check dominance   4... ... size of F0 3661
+	Check dominance   5... ... size of F0 3957
+	Check dominance   6... ... size of F0 4185
+	Check dominance   7... ... size of F0 4351
+	Check dominance   8... ... size of F0 4488
+	Check dominance   9... ... size of F0 4596
+	Check dominance  10... ... size of F0 4671
+	Check dominance  11... ... size of F0 4747
+	Check dominance  12... ... size of F0 4810
+	Check dominance  13... ... size of F0 4865
+	Check dominance  14... ... size of F0 4903
+	Check dominance  15... ... size of F0 4928
+	Check dominance  16... ... size of F0 4939
+	Check dominance  17... ... size of F0 4950
+	Check dominance  18... ... size of F0 4961
+	Check dominance  19... ... size of F0 4967
+	Check dominance  20... ... size of F0 4976
+	Check dominance  21... ... size of F0 4984
+	Check dominance  22... ... size of F0 4986
+	Check dominance  23... ... size of F0 4987
+	Check dominance  24... ... size of F0 4990
+	Check dominance  25... ... size of F0 4993
+	Check dominance  26... ... size of F0 4994
+	Check dominance  27... ... size of F0 4997
+	Check dominance  28... ... size of F0 4999
+	Check dominance  29... ... size of F0 5000
+Saving ROI File... ROI_DTLZ4_V12_O3.txt
+Looking best compromise ...
+Iteration (0.10)    500 of   5000 ...
+Iteration (0.20)   1000 of   5000 ...
+Iteration (0.30)   1500 of   5000 ...
+Iteration (0.40)   2000 of   5000 ...
+Iteration (0.50)   2500 of   5000 ...
+Iteration (0.60)   3000 of   5000 ...
+Iteration (0.70)   3500 of   5000 ...
+Iteration (0.80)   4000 of   5000 ...
+Iteration (0.90)   4500 of   5000 ...
+Best NetScore 0.000000
+Best compromise by netscore 0.000000 ...
+0.919546, 0.598015, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000 * 1.000000, 0.000000, 0.000358 *   0
+Saving ROI-P File... ROI_P_DTLZ4_V12_O3.txt
+	Best old netscore -1.450000
+ROI preferential lenght   1
+Command: Problem  5, sample 5000, seed 8435
+Reading instance
+NumberOfVariables  12, NumberOfObjectives   3, DMs   1
+Weigth
+	0.333000 0.333000, 0.333000 0.333000, 0.334000 0.334000
+Veto
+	0.249925 0.292028, 0.221534 0.282840, 0.238867 0.287402
+Beta
+	0.510000 0.670000
+Lamda
+	0.510000 0.670000
+Alpha
+	1.000000
+Sample size  5000
+Generating sample ...
+	Check dominance   0... ... size of F0 5000
+Saving ROI File... ROI_DTLZ5_V12_O3.txt
+Looking best compromise ...
+Iteration (0.10)    500 of   5000 ...
+Iteration (0.20)   1000 of   5000 ...
+Iteration (0.30)   1500 of   5000 ...
+Iteration (0.40)   2000 of   5000 ...
+Iteration (0.50)   2500 of   5000 ...
+Iteration (0.60)   3000 of   5000 ...
+Iteration (0.70)   3500 of   5000 ...
+Iteration (0.80)   4000 of   5000 ...
+Iteration (0.90)   4500 of   5000 ...
+Best NetScore 0.000000
+Best compromise by netscore 0.000000 ...
+0.505800, 0.125020, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000 * 0.495424, 0.495424, 0.713519 *   0
+Saving ROI-P File... ROI_P_DTLZ5_V12_O3.txt
+	Best old netscore -0.839144
+ROI preferential lenght   1
