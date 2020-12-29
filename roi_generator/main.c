@@ -38,6 +38,24 @@ void sortNetScore(int size, int index[], double netScore[])
         }
     }
 }
+void solutionToFile(FILE *file, struct Solution *solution)
+{
+    for (int i = 0; i < solution->numberOfVariables; i++)
+    {
+        if (i < solution->numberOfVariables - 1)
+            fprintf(file, "%18.16f, ", solution->variable[i]);
+        else
+            fprintf(file, "%18.16f * ", solution->variable[i]);
+    }
+    for (int i = 0; i < solution->numberOfObjectives; i++)
+    {
+        if (i < solution->numberOfObjectives - 1)
+            fprintf(file, "%18.16f, ", solution->objective[i]);
+        else
+            fprintf(file, "%18.16f * ", solution->objective[i]);
+    }
+    fprintf(file, "%3d\n", solution->rank);
+}
 
 int main(int argc, char const *argv[])
 {
@@ -139,28 +157,17 @@ int main(int argc, char const *argv[])
     // Export and destroy
     for (int j = 0; j < k; j++)
     {
-        for (int i = 0; i < sample[j]->numberOfVariables; i++)
-        {
-            if (i < sample[j]->numberOfVariables - 1)
-                fprintf(f, "%18.16f, ", sample[j]->variable[i]);
-            else
-                fprintf(f, "%18.16f * ", sample[j]->variable[i]);
-        }
-        for (int i = 0; i < sample[j]->numberOfObjectives; i++)
-        {
-            if (i < sample[j]->numberOfObjectives - 1)
-                fprintf(f, "%18.16f, ", sample[j]->objective[i]);
-            else
-                fprintf(f, "%18.16f * ", sample[j]->objective[i]);
-        }
-        fprintf(f, "%3d\n", sample[j]->rank);
+        solutionToFile(f, sample[j]);
     }
     printf(". %s\n", fileNameRoi);
     fclose(f);
     int weakness[k];
-    memset(weakness, 0, k);
     double net_score[k];
-    memset(net_score, 0, k);
+    for (int i = 0; i < k; i++)
+    {
+        weakness[i] = 0;
+        net_score[i] = 0;
+    }
 
     printf("Looking best compromise ...\n");
     for (int i = 0; i < k; i++)
@@ -192,7 +199,7 @@ int main(int argc, char const *argv[])
                 struct Interval sigin = {sigma_in, sigma_in};
                 if (compareTo(instance.beta[dm], sigin) < 0 && sigma_out < 0.5)
                 {
-                    weakness[i]++;
+                    weakness[i] += 1;
                 }
 
                 free(result);
@@ -218,11 +225,24 @@ int main(int argc, char const *argv[])
             bestNetScore = net_score[i];
             indexBestNetScore = i;
         }
+        else if (old_best[update_old] == -1)
+        {
+            old_best[update_old--] = i;
+            if (update_old == -1)
+            {
+                update_old = 3;
+            }
+        }else if(net_score[old_best[update_old]] < net_score[i]){
+            old_best[update_old--] = i;
+            if(update_old ==-1){
+                update_old = 3;
+            }
+        }
         if (weakness[i] == 0)
         {
             candidatos_length++;
         }
-        //printf("%3d : Weakness %3d, NetScore = %f\n", i, weakness[i], net_score[i]);
+        printf("%3d : Weakness %3d, NetScore = %f\n", i, weakness[i], net_score[i]);
     }
 
     printf("Best NetScore %f\n", bestNetScore);
@@ -277,23 +297,7 @@ int main(int argc, char const *argv[])
         printf("Error opening file!\n");
         exit(1);
     }
-    // Export and destroy
-
-    for (int i = 0; i < sample[indexBest]->numberOfVariables; i++)
-    {
-        if (i < sample[indexBest]->numberOfVariables - 1)
-            fprintf(roip, "%18.16f, ", sample[indexBest]->variable[i]);
-        else
-            fprintf(roip, "%18.16f * ", sample[indexBest]->variable[i]);
-    }
-    for (int i = 0; i < sample[indexBest]->numberOfObjectives; i++)
-    {
-        if (i < sample[indexBest]->numberOfObjectives - 1)
-            fprintf(roip, "%18.16f, ", sample[indexBest]->objective[i]);
-        else
-            fprintf(roip, "%18.16f * ", sample[indexBest]->objective[i]);
-    }
-    fprintf(roip, "%3d\n", sample[indexBest]->rank);
+    solutionToFile(roip, sample[indexBest]);
     // looking equal or best
     int roip_length = 0;
     for (int j = 0; j < k; j++)
@@ -315,22 +319,8 @@ int main(int argc, char const *argv[])
         }
         if (isValid == 1 && indexBest != j)
         {
+            solutionToFile(roip, sample[j]);
             roip_length++;
-            for (int i = 0; i < sample[j]->numberOfVariables; i++)
-            {
-                if (i < sample[j]->numberOfVariables - 1)
-                    fprintf(f, "%18.16f, ", sample[j]->variable[i]);
-                else
-                    fprintf(f, "%18.16f * ", sample[j]->variable[i]);
-            }
-            for (int i = 0; i < sample[j]->numberOfObjectives; i++)
-            {
-                if (i < sample[j]->numberOfObjectives - 1)
-                    fprintf(f, "%18.16f, ", sample[j]->objective[i]);
-                else
-                    fprintf(f, "%18.16f * ", sample[j]->objective[i]);
-            }
-            fprintf(f, "%3d\n", sample[j]->rank);
         }
     }
 
@@ -344,22 +334,8 @@ int main(int argc, char const *argv[])
                 if (old_best[l] == j && indexBest != j)
                 {
                     printf("\tBest old netscore %f\n", net_score[j]);
+                    solutionToFile(roip, sample[j]);
                     roip_length++;
-                    for (int i = 0; i < sample[j]->numberOfVariables; i++)
-                    {
-                        if (i < sample[j]->numberOfVariables - 1)
-                            fprintf(f, "%18.16f, ", sample[j]->variable[i]);
-                        else
-                            fprintf(f, "%18.16f * ", sample[j]->variable[i]);
-                    }
-                    for (int i = 0; i < sample[j]->numberOfObjectives; i++)
-                    {
-                        if (i < sample[j]->numberOfObjectives - 1)
-                            fprintf(f, "%18.16f, ", sample[j]->objective[i]);
-                        else
-                            fprintf(f, "%18.16f * ", sample[j]->objective[i]);
-                    }
-                    fprintf(f, "%3d\n", sample[j]->rank);
                     break;
                 }
             }
