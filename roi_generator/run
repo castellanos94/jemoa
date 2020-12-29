@@ -1,0 +1,16 @@
+#!/bin/bash
+#run.sh
+echo "Making executable ..."
+gcc -o main main.c src/*.c -lm
+KSample=$1
+Seed=$2
+echo "Size sample $KSample, Seed $Seed"
+if mkdir logs; then
+	echo "Log dir created"
+fi
+for N in `seq 7`
+do
+	echo "Executing DTLZ$N..."
+	varInstance="/home/thinkpad/Documents/jemoa/src/main/resources/DTLZ_INSTANCES/DTLZ$N""_Instance.txt"
+	(time ./main $N $KSample $varInstance $Seed) &> logs/log$N.txt
+done
