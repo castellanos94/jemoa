@@ -2,9 +2,9 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
-#include "dominance.h"
-#include "solution.h"
-#include "dtlz.h"
+#include "src/dominance.h"
+#include "src/solution.h"
+#include "src/dtlz.h"
 
 void printObjectives(int index, struct Solution *old, struct Solution *new)
 {
@@ -23,7 +23,11 @@ void printObjectives(int index, struct Solution *old, struct Solution *new)
 
 int main(int argc, char const *argv[])
 {
-
+    if(argc == 1){
+        printf("Error arguments not passed, required :\n");
+        printf("\tint : sample size\nOptional:\n\tlong : seed\n");
+        exit(128);
+    }
     int sample_size = atoi(argv[1]);
     int seed = -1;
     if (argc == 3)
@@ -44,20 +48,13 @@ int main(int argc, char const *argv[])
     const int numberOfVariables = 7;
     printf("Problem %2d, number of variables %3d, number of objectives %3d\n", problem, numberOfVariables, numberOfObjectives);
     printf("Sample size %5d\n", k);
-    /* struct Solution *sample = generateAnalyticalSolution(problem, numberOfVariables, numberOfObjectives);
-    printSolution(sample);
-    destroy_solution(sample);
-    sample = generateAnalyticalSolution(problem, numberOfVariables, numberOfObjectives);
-    printSolution(sample);
-    destroy_solution(sample);
-    //printSolution(sample);*/
+    
 
     struct Solution *sample[k]; //= (Solution*)malloc(k*sizeof(Solution));
     printf("Generating sample ...");
     for (int i = 0; i < k; i++)
     {
         sample[i] = generateAnalyticalSolution(problem, numberOfVariables, numberOfObjectives);
-        //memcpy(sample[i],generateAnalyticalSolution(problem, numberOfVariables, numberOfObjectives),)
     }
 
     int count = 0;

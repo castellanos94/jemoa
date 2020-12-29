@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.preferences.impl.OutrankingModel;

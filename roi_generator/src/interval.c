@@ -1,5 +1,6 @@
 #include "interval.h"
 #include <math.h>
+#include <stdlib.h>
 
 struct Interval plus(struct Interval a, struct Interval b)
 {
@@ -89,4 +90,9 @@ double possGreaterThanOrEq(struct Interval a, struct Interval b)
 double possSmallerThanOrEq(struct Interval a, struct Interval b)
 {
     return 1.0 - possGreaterThanOrEq(a, b);
+}
+char* toString(struct Interval number){
+    char *str = malloc(sizeof(char)*50);
+    sprintf(str,"%f %f", number.lower, number.upper);
+    return str;
 }

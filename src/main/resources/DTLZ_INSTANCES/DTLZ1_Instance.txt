@@ -17,3 +17,4 @@ TRUE TRUE// frontiers generates with 2
 0.24318 0.24318, 0.93856 0.93856, 0.16620 0.16620
 0.24318 0.24318, 1.01125 1.01125, 0.16620 0.16620
 FALSE // initial solutions se usara como conjunto de referencia
+que pedo.
