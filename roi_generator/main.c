@@ -242,7 +242,7 @@ int main(int argc, char const *argv[])
         {
             candidatos_length++;
         }
-        printf("%3d : Weakness %3d, NetScore = %f\n", i, weakness[i], net_score[i]);
+        //printf("%3d : Weakness %3d, NetScore = %f\n", i, weakness[i], net_score[i]);
     }
 
     printf("Best NetScore %f\n", bestNetScore);
