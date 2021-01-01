@@ -16,7 +16,7 @@ struct Solution init_solution(int numberOfVariables, int numberOfObjectives)
     {
         solution.variable[i] = 0;
     }
-    
+
     //memcpy(solution, &init, sizeof *solution);
     //solution.objective =
     //solution.variable = (double *)malloc(sizeof(double) * numberOfVariables);
@@ -43,9 +43,20 @@ void printSolution(struct Solution *solutionToPrint)
     for (int i = 0; i < solutionToPrint->numberOfVariables; i++)
     {
         if (i < solutionToPrint->numberOfVariables - 1)
-            printf("%f, ", solutionToPrint->variable[i]);
+        {
+            if (solutionToPrint->variable[i] == 0.5 || solutionToPrint->variable[i] == 0)
+                printf("%.2f, ", solutionToPrint->variable[i]);
+            else
+                printf("%.16f, ", solutionToPrint->variable[i]);
+        }
+
         else
-            printf("%f * ", solutionToPrint->variable[i]);
+        {
+            if (solutionToPrint->variable[i] == 0.5 || solutionToPrint->variable[i] == 0)
+                printf("%.2f * ", solutionToPrint->variable[i]);
+            else
+                printf("%.16f * ", solutionToPrint->variable[i]);
+        }
     }
     for (int i = 0; i < solutionToPrint->numberOfObjectives; i++)
     {

@@ -38,14 +38,23 @@ void sortNetScore(int size, int index[], double netScore[])
         }
     }
 }
+
 void solutionToFile(FILE *file, struct Solution *solution)
 {
     for (int i = 0; i < solution->numberOfVariables; i++)
     {
         if (i < solution->numberOfVariables - 1)
-            fprintf(file, "%18.16f, ", solution->variable[i]);
+            if (solution->variable[i] == 0.5 || solution->variable[i] == 0)
+                fprintf(file, "%.1f, ", solution->variable[i]);
+            else
+                fprintf(file, "%18.16f, ", solution->variable[i]);
         else
-            fprintf(file, "%18.16f * ", solution->variable[i]);
+        {
+            if (solution->variable[i] == 0.5 || solution->variable[i] == 0)
+                fprintf(file, "%.1f * ", solution->variable[i]);
+            else
+                fprintf(file, "%18.16f * ", solution->variable[i]);
+        }
     }
     for (int i = 0; i < solution->numberOfObjectives; i++)
     {
@@ -56,7 +65,77 @@ void solutionToFile(FILE *file, struct Solution *solution)
     }
     fprintf(file, "%3d\n", solution->rank);
 }
+void printInstanceWithCompromise(char *fileName, struct Instance instance, struct Solution *solutions[], int indexBestCompromise, int indexCandidate[])
+{
+    //printf("NumberOfVariables %3d, NumberOfObjectives %3d, DMs %3d\n", instance.numberOfVariables, instance.numberOfObjectives, instance.numberOfDM);
+    FILE *file = fopen(fileName, "w");
+    if (file == NULL)
+    {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+    fprintf(file, "%d //Objectives\n%d //Vars\n%d //DMS\n", instance.numberOfObjectives, instance.numberOfVariables, instance.numberOfDM);
+    // printf("Weigth\n");
+    for (int j = 0; j < instance.numberOfDM; j++)
+    {
+        // printf("\t");
+        for (int i = 0; i < instance.numberOfObjectives; i++)
+        {
+            if (i < instance.numberOfObjectives - 1)
+                fprintf(file, "%s, ", toString(instance.weight[j][i]));
+            else
+                fprintf(file, "%s // Weight\n", toString(instance.weight[j][i]));
+        }
+    }
 
+    //printf("Veto\n");
+    for (int j = 0; j < instance.numberOfDM; j++)
+    {
+        // printf("\t");
+        for (int i = 0; i < instance.numberOfObjectives; i++)
+        {
+            if (i < instance.numberOfObjectives - 1)
+                fprintf(file, "%s, ", toString(instance.veto[j][i]));
+            else
+                fprintf(file, "%s //Veto\n", toString(instance.veto[j][i]));
+        }
+    }
+
+    //printf("Beta\n");
+    for (int i = 0; i < instance.numberOfDM; i++)
+    {
+        fprintf(file, "%s //Beta %d\n", toString(instance.beta[i]), i);
+    }
+    // printf("Lamda\n");
+    for (int i = 0; i < instance.numberOfDM; i++)
+    {
+        fprintf(file, "%s //Lambda %d\n", toString(instance.lambda[i]), i);
+    }
+    /* printf("Alpha\n");
+    for (int i = 0; i < instance.numberOfDM; i++)
+    {
+        printf("%f\n", instance.alpha[i]);
+    }*/
+    fprintf(file, "TRUE FALSE //Best compromise \n1\n");
+    solutionToFile(file, solutions[indexBestCompromise]);
+    fprintf(file, "TRUE FALSE //Frontiers \n2\n");
+    for (int i = 0; i < 2; i++)
+    {
+        for (int j = 0; j < instance.numberOfObjectives; j++)
+        {
+            if (j < instance.numberOfObjectives - 1)
+            {
+                fprintf(file, "%.16f, ", solutions[indexCandidate[i]]->objective[j]);
+            }
+            else
+            {
+                fprintf(file, "%.16f\n", solutions[indexCandidate[i]]->objective[j]);
+            }
+        }
+    }
+    fprintf(file, "FALSE //Initial solutions \n2\n");
+    fclose(file);
+}
 int main(int argc, char const *argv[])
 {
     if (argc == 1)
@@ -144,7 +223,7 @@ int main(int argc, char const *argv[])
         printf("... size of F0 %4d\n", count);
     }
     char fileNameRoi[128];
-    snprintf(fileNameRoi, 128, "ROI_DTLZ%d_V%d_O%d.txt", problem, numberOfVariables, numberOfObjectives);
+    /*snprintf(fileNameRoi, 128, "ROI_DTLZ%d_V%d_O%d.txt", problem, numberOfVariables, numberOfObjectives);
 
     printf("Saving ROI File..");
 
@@ -161,6 +240,7 @@ int main(int argc, char const *argv[])
     }
     printf(". %s\n", fileNameRoi);
     fclose(f);
+    */
     int weakness[k];
     double net_score[k];
     for (int i = 0; i < k; i++)
@@ -232,9 +312,12 @@ int main(int argc, char const *argv[])
             {
                 update_old = 3;
             }
-        }else if(net_score[old_best[update_old]] < net_score[i]){
+        }
+        else if (net_score[old_best[update_old]] < net_score[i])
+        {
             old_best[update_old--] = i;
-            if(update_old ==-1){
+            if (update_old == -1)
+            {
                 update_old = 3;
             }
         }
@@ -343,6 +426,9 @@ int main(int argc, char const *argv[])
     }
     fclose(roip);
     printf("ROI preferential lenght %3d\n", roip_length);
+    printf("Making instance\n");
+    snprintf(fileNameRoi, 128, "DTLZ%d_Instance.txt", problem);
+    printInstanceWithCompromise(fileNameRoi, instance, sample, indexBest, old_best);
     for (int i = 0; i < k; i++)
     {
         destroy_solution(sample[i]);

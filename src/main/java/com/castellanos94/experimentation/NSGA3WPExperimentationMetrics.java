@@ -42,7 +42,7 @@ public class NSGA3WPExperimentationMetrics {
                             currentProblem = loadProblem(_file.getName());
                             problems.put(_file.getName(), currentProblem);
                             roi.put(currentProblem.getName(),
-                                    loadSolutions(currentProblem, loadPathRoi(_file.getName())));
+                                    loadSolutions(currentProblem, loadPathRoi(currentProblem)));
 
                             for (DoubleSolution s : roi.get(currentProblem.getName())) {
                                 s.setAttribute(OWNER, "ROI");
@@ -422,34 +422,32 @@ public class NSGA3WPExperimentationMetrics {
         return front;
     }
 
-    private static File loadPathRoi(String name) {
-        String path = null;
-        switch (name) {
-            case "DTLZ1_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ1_P.out";
-                break;
-            case "DTLZ2_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ2_P.out";
-                break;
-            case "DTLZ3_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ3_P.out";
-                break;
-            case "DTLZ4_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ4_P.out";
-                break;
-            case "DTLZ5_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ5_P.out";
-                break;
-            case "DTLZ6_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ6_P.out";
+    private static File loadPathRoi(DTLZPreferences problem) {
 
-                break;
-            case "DTLZ7_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ7_P.out";
-                break;
-
-        }
-        return new File(path);
+        String name = String.format("ROI_P_%s_V%d_O%d.txt", problem.getName().trim().replace("_P", ""), problem.getNumberOfDecisionVars(),
+                problem.getNumberOfObjectives());
+        /*
+         * switch (name) { case "DTLZ1_P": //path =
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ1_P.out";
+         * path = "/home/thinkpad/Documents/jemoa/roi_generator/ROI_P_DTLZ1_V7_O3.txt";
+         * break; case "DTLZ2_P": path =
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ2_P.out";
+         * break; case "DTLZ3_P": path =
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ3_P.out";
+         * break; case "DTLZ4_P": path =
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ4_P.out";
+         * break; case "DTLZ5_P": path =
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ5_P.out";
+         * break; case "DTLZ6_P": path =
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ6_P.out";
+         * 
+         * break; case "DTLZ7_P": path =
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ7_P.out";
+         * break;
+         * 
+         * }
+         */
+        return new File("/home/thinkpad/Documents/jemoa/roi_generator/" + name);
     }
 
     private static DTLZPreferences loadProblem(String name) throws FileNotFoundException {
