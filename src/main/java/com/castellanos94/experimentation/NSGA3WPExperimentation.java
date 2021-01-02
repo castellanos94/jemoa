@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.castellanos94.algorithms.multi.NSGA_III;
 import com.castellanos94.algorithms.multi.NSGA_III_WP;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.operators.SelectionOperator;
@@ -31,12 +30,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * 31105.84 ms dtlz2 36910.32 ms dtlz3 48132.62 ms dtlz4 28587.02 ms dtlz5
- * 23557.02 ms dtlz6 27430.4 ms dtlz7 dtlz6 rework
+ * Current Algorithm Experimentation used. 
  */
 public class NSGA3WPExperimentation {
     private static final Logger logger = LogManager.getLogger(NSGA3WPExperimentation.class);
-    private static final int CLASSIFY_EVERY_ITERATION = 100; // Classification F0 each 3%
+    private static final int CLASSIFY_EVERY_ITERATION = 0; // Classification F0 each 3%
     private static final int ELEMENTS_TO_REPLACE = 0; // 5 % of population
     static final String DIRECTORY = "experiments" + File.separator + "NSGA3" + File.separator + "C"
             + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
