@@ -274,16 +274,16 @@ public class NSGA3WPExperimentationMetrics {
 
             }
 
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, zColumns, "Dominance");
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, hsColumns, "HSat");
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, sColumns, "Sat");
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, euclideanMin, "Euclidean Min");
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, euclideanAVG, "Euclidean AVG");
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, euclideanMax, "Euclidean Max");
+            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, zColumns, "Dominance");
+            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, hsColumns, "HSat");
+            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, sColumns, "Sat");
+            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, euclideanMin, "Euclidean Min");
+            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, euclideanAVG, "Euclidean AVG");
+            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, euclideanMax, "Euclidean Max");
 
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, chebyshevMin, "Chebyshev Min");
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, chebyshevAVG, "Chebyshev AVG");
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, chebyshevMax, "Chebyshev Max");
+            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, chebyshevMin, "Chebyshev Min");
+            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, chebyshevAVG, "Chebyshev AVG");
+            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, chebyshevMax, "Chebyshev Max");
         }
 
         table.addColumns(_name, all, frontZero);
@@ -328,9 +328,11 @@ public class NSGA3WPExperimentationMetrics {
 
     }
 
-    private static void doStatisticTest(String nameProblem, int startRow, int rowEnd,
+    private static void doStatisticTest(String nameProblem, int startRow, int rowEnd, StringColumn problemColumn,
             ArrayList<DoubleColumn> targetColumn, String metricName) throws IOException {
         Table tmpTable = Table.create("data");
+        tmpTable.addColumns(problemColumn);
+
         for (DoubleColumn column : targetColumn) {
             tmpTable.addColumns(column);
         }
@@ -338,22 +340,22 @@ public class NSGA3WPExperimentationMetrics {
         File file = File.createTempFile("data", ".csv");
         file.deleteOnExit();
         tmpTable.write().csv(file);
-
+        System.out.println(file.getAbsolutePath());
         Map<String, Object> friedman = StacClient.FRIEDMAN_ALIGNED_RANK(file.getAbsolutePath(), 0.05, POST_HOC.FINNER);
-        Object st = friedman.get("result");
-        Double rs;
+        Map<String, Object> st = (Map<String, Object>) friedman.get("ranking");
+        boolean rs;
         nameColumn.append(nameProblem);
         metricNameColumn.append(metricName);
         if (st != null)
-            rs = Double.parseDouble(st.toString());
+            rs = st.get("result").toString().contains("true");
         else
-            rs = Double.NaN;
-        if (!Double.isNaN(rs))
-            resultColumn.append((rs == 1) ? "H0 is rejected" : "H0 is accepted");
+            rs = false;
+        if (st != null)
+            resultColumn.append((rs) ? "H0 is rejected" : "H0 is accepted");
         else
             resultColumn.append("NaN");
 
-        if (!Double.isNaN(rs))
+        if (st != null)
             techicalColumn.append(friedman.toString());
         else
             techicalColumn.append("Error with data or server error");
@@ -550,16 +552,16 @@ public class NSGA3WPExperimentationMetrics {
         global.write().csv(DIRECTORY + "global-metrics.csv");
         // Performance statistic Tests
 
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), zColumnsG, "Dominance");
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), hsColumnsG, "HSat");
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), sColumnsG, "Sat");
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), euclideanMin, "Euclidean Min");
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), euclideanAVG, "Euclidean AVG");
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), euclideanMax, "Euclidean Max");
+        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, zColumnsG, "Dominance");
+        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, hsColumnsG, "HSat");
+        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, sColumnsG, "Sat");
+        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, euclideanMin, "Euclidean Min");
+        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, euclideanAVG, "Euclidean AVG");
+        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, euclideanMax, "Euclidean Max");
 
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), chebyshevMin, "Chebyshev Min");
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), chebyshevAVG, "Chebyshev AVG");
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), chebyshevMax, "Chebyshev Max");
+        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, chebyshevMin, "Chebyshev Min");
+        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, chebyshevAVG, "Chebyshev AVG");
+        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, chebyshevMax, "Chebyshev Max");
 
     }
 
