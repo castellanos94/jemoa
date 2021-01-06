@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.RealData;
-import com.castellanos94.experimentation.Testing;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.impl.ITHDM_Preference;
 import com.castellanos94.problems.preferences.dtlz.*;
@@ -15,7 +14,10 @@ import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
-
+/**
+ * Implementacion difiere de la version de C al incorporar soluciones aleatorias a la roi. 
+ * Esta version es aproximadamente 3x veces mas lente que la de C.
+ */
 public class BestCompromiseV2 {
     private static final String NETSCORE_KEY = "FLUJO_NETO";
     private static final String WEAKNESS_kEY = "DEBILIDAD_FUERZA";
@@ -36,12 +38,14 @@ public class BestCompromiseV2 {
      * @throws FileNotFoundException
      */
     public ArrayList<DoubleSolution> execute() throws FileNotFoundException {
-        ArrayList<DoubleSolution> sample  = Testing.loadSolutions(this.problem, new File("/home/thinkpad/Documents/jemoa/roi_generator/ROI_DTLZ1_V7_O3.txt"));//= problem.generateSampleNonDominated(MAX_T);
+        ArrayList<DoubleSolution> sample; // Testing.loadSolutions(this.problem, new
+                                          // File("/home/thinkpad/Documents/jemoa/roi_generator/ROI_DTLZ1_V7_O3.txt"));
+        sample = problem.generateSampleNonDominated(MAX_T);
         DominanceComparator<DoubleSolution> dominanceComparator = new DominanceComparator<>();
         dominanceComparator.computeRanking(sample);
-        System.out.println("F0 "+dominanceComparator.getSubFront(0).size());
+        System.out.println("F0 " + dominanceComparator.getSubFront(0).size());
         DoubleSolution best_compromise = null;
-        System.out.println("Executing ... "+sample.size());        
+        System.out.println("Executing ... " + sample.size());
         for (int i = 0; i < sample.size(); i++) {
             double step = sample.size() / 10.0;
             if (i != 0 && i % step == 0) {
@@ -55,7 +59,8 @@ public class BestCompromiseV2 {
                     preference.compare(sample.get(i), sample.get(j));
                     sigma_out = (RealData) sigma_out.plus(preference.getSigmaXY());
                     sigma_in = (RealData) sigma_in.plus(preference.getSigmaYX());
-                     //if (preference.getSigmaYX().compareTo(preference.getModel().getBeta()) >= 0) {
+                    // if (preference.getSigmaYX().compareTo(preference.getModel().getBeta()) >= 0)
+                    // {
                     if (preference.getModel().getBeta().compareTo(sigma_in) < 0 && sigma_out.compareTo(0.5) < 0) {
                         sigmaYXGreaterThanBeta++;
                     }
@@ -138,7 +143,7 @@ public class BestCompromiseV2 {
     public static void main(String[] args) throws IOException {
         String path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-        //Tools.setSeed(8435L);
+        // Tools.setSeed(8435L);
         System.out.println(instance);
 
         DTLZPreferences problem = new DTLZ1_P(instance);

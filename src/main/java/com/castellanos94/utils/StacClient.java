@@ -231,6 +231,7 @@ public class StacClient {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private static String transform_to_json(String path_csv_file) throws IOException {
         Table table = Table.read().csv(path_csv_file);
+        
         HashMap<String, ArrayList> data = new HashMap<>();
         for (Column c : table.columns()) {
             data.put(c.name(), new ArrayList(c.asList()));
@@ -248,7 +249,7 @@ public class StacClient {
             request.addHeader("content-type", "application/json");
             request.setEntity(params);
 
-            HttpResponse response = httpClient.execute(request);
+            HttpResponse response = httpClient.execute(request);            
             return (Map<String, Object>) gson.fromJson(EntityUtils.toString(response.getEntity()), Object.class);
 
         } catch (IOException e) {

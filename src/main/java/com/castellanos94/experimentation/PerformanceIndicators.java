@@ -12,7 +12,9 @@ import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;
-
+/**
+ * Version anterior para comparar las soluciones de un algoritmo NSGA3 vs alguna variante, emplea Wilcoxon para la prueba estadistica. 
+ */
 public class PerformanceIndicators {
         public static void main(String[] args) throws IOException {
                 String path = "experiments/metricas_dtlz.csv";

@@ -28,10 +28,13 @@ import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
 
 /**
+ * Aplica Metricas para los resultados de ejecucion de {@link NSGA3DPExperimentation}, la prueba estadisitca empleada es Friedman Aligned rank.
  * Actual usando ROI Generator and NSGA3WPExperimentation.
+ * 
+ * Invoca para la generacion de reportes del movimiento de frentes {@link ReportFront} 
  */
 public class NSGA3WPExperimentationMetrics {
-    private static String algorithmName = "NSGA3_old";
+    private static String algorithmName = "NSGA3";
     private static final String OWNER = "FROM_PROBLEM";
     private static String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
     private static Table stats = Table.create("statistic");
@@ -325,13 +328,13 @@ public class NSGA3WPExperimentationMetrics {
         globalMetric(globalSolutionNDByProblem, roi, _names_algorithm);
         stats.addColumns(nameColumn, metricNameColumn, resultColumn, techicalColumn);
         stats.write().csv(DIRECTORY + "stac.csv");
-
+        ReportFront.generateReportFront(algorithmName, DIRECTORY);
     }
-
+    @SuppressWarnings("unchecked")
     private static void doStatisticTest(String nameProblem, int startRow, int rowEnd, StringColumn problemColumn,
             ArrayList<DoubleColumn> targetColumn, String metricName) throws IOException {
         Table tmpTable = Table.create("data");
-        tmpTable.addColumns(problemColumn);
+        // tmpTable.addColumns(problemColumn);
 
         for (DoubleColumn column : targetColumn) {
             tmpTable.addColumns(column);
@@ -340,7 +343,6 @@ public class NSGA3WPExperimentationMetrics {
         File file = File.createTempFile("data", ".csv");
         file.deleteOnExit();
         tmpTable.write().csv(file);
-        System.out.println(file.getAbsolutePath());
         Map<String, Object> friedman = StacClient.FRIEDMAN_ALIGNED_RANK(file.getAbsolutePath(), 0.05, POST_HOC.FINNER);
         Map<String, Object> st = (Map<String, Object>) friedman.get("ranking");
         boolean rs;
@@ -351,12 +353,20 @@ public class NSGA3WPExperimentationMetrics {
         else
             rs = false;
         if (st != null)
-            resultColumn.append((rs) ? "H0 is rejected" : "H0 is accepted");
+            resultColumn.append(((rs) ? "H0 is rejected" : "H0 is accepted") + ", statistic : "+st.get("statistic").toString());
         else
             resultColumn.append("NaN");
+        String data = "";
+        if (st != null) {
+            ArrayList<Object> names_ = (ArrayList<Object>) st.get("names");
+            ArrayList<Object> values_ = (ArrayList<Object>) st.get("rankings");
+            for (int i = 0; i < names_.size(); i++) {
+                data += String.format("%s , %s; ",  values_.get(i).toString(), names_.get(i).toString());
+            }
 
+        }
         if (st != null)
-            techicalColumn.append(friedman.toString());
+            techicalColumn.append(data.trim());
         else
             techicalColumn.append("Error with data or server error");
 

@@ -6,9 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import com.castellanos94.components.impl.DominanceComparator;
-import com.castellanos94.instances.DTLZ_Instance;
-import com.castellanos94.problems.preferences.dtlz.DTLZ1_P;
 import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
@@ -21,21 +18,9 @@ import tech.tablesaw.io.csv.CsvReadOptions;
 /**
  * Test global report of Csat front of every execution.
  */
-public class Testing {
+public class ReportFront {
     private static final String OWNER = "FROM_PROBLEM";
 
-    public static void main(String[] args) throws IOException {
-        generateReportFront();
-        /*String path_roi = "bestCompromise/roi_generator/roi.txt";
-        String instance_path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
-        DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(instance_path).loadInstance();
-        DTLZPreferences problem = new DTLZ1_P(instance);
-        ArrayList<DoubleSolution> solutions = loadSolutions(problem,new File(path_roi));
-        System.out.println("Load solutions "+solutions.size());
-        DominanceComparator<DoubleSolution> dominanceComparator = new DominanceComparator<>();
-        dominanceComparator.computeRanking(solutions);
-        System.out.println("F0 "+dominanceComparator.getSubFront(0).size());*/
-    }
     @SuppressWarnings("rawtypes")
     public static ArrayList<DoubleSolution> loadSolutions(DTLZPreferences problem, File file)
             throws FileNotFoundException {
@@ -51,10 +36,9 @@ public class Testing {
         return solutions;
     }
 
-    private static void generateReportFront() throws IOException {
-        String algorithmName = "NSGA3";
+    public static void generateReportFront(String algorithmName, String DIRECTORY) throws IOException {
+        //String algorithmName = "NSGA3";
         // algorithmName = "nsga3-10";
-        String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
         // DIRECTORY = "experiments" + File.separator + "dtlz_preferences" +
         // File.separator;
         Table table = null;
