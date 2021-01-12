@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -24,24 +25,39 @@ import com.castellanos94.utils.StacClient;
 import com.castellanos94.utils.Distance.Metric;
 
 import tech.tablesaw.api.DoubleColumn;
+import tech.tablesaw.api.NumericColumn;
 import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
+import tech.tablesaw.columns.Column;
 
 /**
- * Aplica Metricas para los resultados de ejecucion de {@link NSGA3DPExperimentation}, la prueba estadisitca empleada es Friedman Aligned rank.
- * Actual usando ROI Generator and NSGA3WPExperimentation.
+ * Aplica Metricas para los resultados de ejecucion de
+ * {@link NSGA3DPExperimentation}, la prueba estadisitca empleada es Friedman
+ * Aligned rank. Actual usando ROI Generator and NSGA3WPExperimentation.
  * 
- * Invoca para la generacion de reportes del movimiento de frentes {@link ReportFront} 
+ * Invoca para la generacion de reportes del movimiento de frentes
+ * {@link ReportFront}
  */
 public class NSGA3WPExperimentationMetrics {
-    private static String algorithmName = "NSGA3";
+    private static String algorithmName = "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
     private static String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
     private static Table stats = Table.create("statistic");
     private static StringColumn nameColumn = StringColumn.create("Problem");
     private static StringColumn metricNameColumn = StringColumn.create("Metric Name");
     private static StringColumn resultColumn = StringColumn.create("Friedman Aligned Ranks 0.05");
+    private static StringColumn rankingColumn = StringColumn.create("Ranking Finner");
     private static StringColumn techicalColumn = StringColumn.create("Technical");
+    private static StringColumn meanColumn = StringColumn.create("Mean");
+    private static StringColumn problemColumn = StringColumn.create("Problema");
+    private static StringColumn confColumn = StringColumn.create("Configuracion");
+
+    private static StringColumn domColumn = StringColumn.create("Dominancia");
+    private static StringColumn chsatColumn = StringColumn.create("CHSat");
+    private static StringColumn csatColumn = StringColumn.create("CSat");
+    private static StringColumn dMinColumn = StringColumn.create("Min");
+    private static StringColumn dAvgColumn = StringColumn.create("Avg");
+    private static StringColumn dMaxColumn = StringColumn.create("Max");
 
     public static void main(String[] args) throws IOException {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();
@@ -157,17 +173,17 @@ public class NSGA3WPExperimentationMetrics {
         ArrayList<DoubleColumn> chebyshevMax = new ArrayList<>();
 
         for (int i = 0; i < _names_algorithm.length; i++) {
-            DoubleColumn _f0 = DoubleColumn.create("A-" + _names_algorithm[i] + "-F-0");
-            DoubleColumn _hsat = DoubleColumn.create("A-" + _names_algorithm[i] + "-HSat");
-            DoubleColumn _sat = DoubleColumn.create("A-" + _names_algorithm[i] + "-Sat");
+            DoubleColumn _f0 = DoubleColumn.create(_names_algorithm[i] + "-F-0");
+            DoubleColumn _hsat = DoubleColumn.create(_names_algorithm[i] + "-HSat");
+            DoubleColumn _sat = DoubleColumn.create(_names_algorithm[i] + "-Sat");
 
-            DoubleColumn _eMin = DoubleColumn.create("A-" + _names_algorithm[i] + "-Eulidean-Min");
-            DoubleColumn _eAVG = DoubleColumn.create("A-" + _names_algorithm[i] + "-Eulidean-AVG");
-            DoubleColumn _eMax = DoubleColumn.create("A-" + _names_algorithm[i] + "-Eulidean-Max");
+            DoubleColumn _eMin = DoubleColumn.create(_names_algorithm[i] + "-Eulidean-Min");
+            DoubleColumn _eAVG = DoubleColumn.create(_names_algorithm[i] + "-Eulidean-AVG");
+            DoubleColumn _eMax = DoubleColumn.create(_names_algorithm[i] + "-Eulidean-Max");
 
-            DoubleColumn _cMin = DoubleColumn.create("A-" + _names_algorithm[i] + "-Chebyshev-Min");
-            DoubleColumn _cAVG = DoubleColumn.create("A-" + _names_algorithm[i] + "-Chebyshev-AVG");
-            DoubleColumn _cMax = DoubleColumn.create("A-" + _names_algorithm[i] + "-Chebyshev-Max");
+            DoubleColumn _cMin = DoubleColumn.create(_names_algorithm[i] + "-Chebyshev-Min");
+            DoubleColumn _cAVG = DoubleColumn.create(_names_algorithm[i] + "-Chebyshev-AVG");
+            DoubleColumn _cMax = DoubleColumn.create(_names_algorithm[i] + "-Chebyshev-Max");
             euclideanMin.add(_eMin);
             euclideanAVG.add(_eAVG);
             euclideanMax.add(_eMax);
@@ -197,7 +213,7 @@ public class NSGA3WPExperimentationMetrics {
                 grouped.forEach((__name, _solutions) -> {
                     // Dominance
                     for (DoubleColumn doubleColumn : zColumns) {
-                        if (doubleColumn.name().equals("A-" + __name + "-F-0")) {
+                        if (doubleColumn.name().equals(__name + "-F-0")) {
                             doubleColumn.append(-_solutions.size());
                             break;
                         }
@@ -206,19 +222,19 @@ public class NSGA3WPExperimentationMetrics {
                     double[] euclidean = calculateDistances(_solutions, roi.get(dtlz.getName()),
                             Metric.EUCLIDEAN_DISTANCE);
                     for (DoubleColumn column : euclideanMin) {
-                        if (column.name().equals("A-" + __name + "-Eulidean-Min")) {
+                        if (column.name().equals(__name + "-Eulidean-Min")) {
                             column.append(euclidean[0]);
                             break;
                         }
                     }
                     for (DoubleColumn column : euclideanAVG) {
-                        if (column.name().equals("A-" + __name + "-Eulidean-AVG")) {
+                        if (column.name().equals(__name + "-Eulidean-AVG")) {
                             column.append(euclidean[1]);
                             break;
                         }
                     }
                     for (DoubleColumn column : euclideanMax) {
-                        if (column.name().equals("A-" + __name + "-Eulidean-Max")) {
+                        if (column.name().equals(__name + "-Eulidean-Max")) {
                             column.append(euclidean[2]);
                             break;
                         }
@@ -228,19 +244,19 @@ public class NSGA3WPExperimentationMetrics {
                             Metric.CHEBYSHEV_DISTANCE);
 
                     for (DoubleColumn column : chebyshevMin) {
-                        if (column.name().equals("A-" + __name + "-Chebyshev-Min")) {
+                        if (column.name().equals(__name + "-Chebyshev-Min")) {
                             column.append(chebyshev[0]);
                             break;
                         }
                     }
                     for (DoubleColumn column : chebyshevAVG) {
-                        if (column.name().equals("A-" + __name + "-Chebyshev-AVG")) {
+                        if (column.name().equals(__name + "-Chebyshev-AVG")) {
                             column.append(chebyshev[1]);
                             break;
                         }
                     }
                     for (DoubleColumn column : chebyshevMax) {
-                        if (column.name().equals("A-" + __name + "-Chebyshev-Max")) {
+                        if (column.name().equals(__name + "-Chebyshev-Max")) {
                             column.append(chebyshev[2]);
                             break;
                         }
@@ -261,13 +277,13 @@ public class NSGA3WPExperimentationMetrics {
                     }
 
                     for (DoubleColumn doubleColumn : hsColumns) {
-                        if (doubleColumn.name().equals("A-" + __name + "-HSat")) {
+                        if (doubleColumn.name().equals(__name + "-HSat")) {
                             doubleColumn.append(-hsat);
                             break;
                         }
                     }
                     for (DoubleColumn doubleColumn : sColumns) {
-                        if (doubleColumn.name().equals("A-" + __name + "-Sat")) {
+                        if (doubleColumn.name().equals(__name + "-Sat")) {
                             doubleColumn.append(-sat);
                             break;
                         }
@@ -277,16 +293,38 @@ public class NSGA3WPExperimentationMetrics {
 
             }
 
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, zColumns, "Dominance");
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, hsColumns, "HSat");
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, sColumns, "Sat");
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, euclideanMin, "Euclidean Min");
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, euclideanAVG, "Euclidean AVG");
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, euclideanMax, "Euclidean Max");
-
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, chebyshevMin, "Chebyshev Min");
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, chebyshevAVG, "Chebyshev AVG");
-            doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, chebyshevMax, "Chebyshev Max");
+            HashMap<String, String> mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, zColumns,
+                    "Dominance");
+            String[] orderNameConfiguration = mapTest.keySet().toArray(new String[mapTest.size()]);
+            Arrays.sort(orderNameConfiguration);
+            for (String key : orderNameConfiguration) {
+                problemColumn.append(dtlz.getName());
+                confColumn.append(key);
+                domColumn.append(mapTest.get(key));
+            }
+            mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, hsColumns, "HSat");
+            for (String key : orderNameConfiguration) {
+                chsatColumn.append(mapTest.get(key));
+            }
+            mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, sColumns, "Sat");
+            for (String key : orderNameConfiguration) {
+                csatColumn.append(mapTest.get(key));
+            }
+            mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, euclideanMin, "Euclidean Min");
+            for (String key : orderNameConfiguration) {
+                dMinColumn.append(mapTest.get(key));
+            }
+            mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, euclideanAVG, "Euclidean AVG");
+            for (String key : orderNameConfiguration) {
+                dAvgColumn.append(mapTest.get(key));
+            }
+            mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, euclideanMax, "Euclidean Max");
+            for (String key : orderNameConfiguration) {
+                dMaxColumn.append(mapTest.get(key));
+            }
+            mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, chebyshevMin, "Chebyshev Min");
+            mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, chebyshevAVG, "Chebyshev AVG");
+            mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, chebyshevMax, "Chebyshev Max");
         }
 
         table.addColumns(_name, all, frontZero);
@@ -326,20 +364,56 @@ public class NSGA3WPExperimentationMetrics {
         table.write().csv(DIRECTORY + "metrics.csv");
         // Reset
         globalMetric(globalSolutionNDByProblem, roi, _names_algorithm);
-        stats.addColumns(nameColumn, metricNameColumn, resultColumn, techicalColumn);
+        stats.addColumns(nameColumn, metricNameColumn, resultColumn, rankingColumn, meanColumn, techicalColumn);
         stats.write().csv(DIRECTORY + "stac.csv");
+        Table reportLatex = Table.create("latex");
+        reportLatex.addColumns(problemColumn, confColumn, domColumn, chsatColumn, csatColumn, dMinColumn, dAvgColumn,
+                dMaxColumn);
+        reportLatex.write().csv(DIRECTORY+"latex_report.csv");
         ReportFront.generateReportFront(algorithmName, DIRECTORY);
     }
+
     @SuppressWarnings("unchecked")
-    private static void doStatisticTest(String nameProblem, int startRow, int rowEnd, StringColumn problemColumn,
-            ArrayList<DoubleColumn> targetColumn, String metricName) throws IOException {
+    private static HashMap<String, String> doStatisticTest(String nameProblem, int startRow, int rowEnd,
+            StringColumn problemColumn, ArrayList<DoubleColumn> targetColumn, String metricName) throws IOException {
         Table tmpTable = Table.create("data");
         // tmpTable.addColumns(problemColumn);
 
         for (DoubleColumn column : targetColumn) {
             tmpTable.addColumns(column);
         }
-        tmpTable = tmpTable.inRange(startRow, rowEnd);
+        String regex = "-F-0|-HSat|-Sat|-Eulidean-Min|-Eulidean-AVG|-Eulidean-Max|-Chebyshev-Min|-Chebyshev-AVG|-Chebyshev-Max";
+
+        tmpTable = tmpTable.inRange(startRow, rowEnd).copy();
+        for (Column<?> column : tmpTable.columns()) {
+            String newName = column.name().toString().replaceAll(regex, "");
+            column.setName(newName);
+        }
+        HashMap<String, Double> summaryMean = new HashMap<>();
+        HashMap<String, Double> summarySTD = new HashMap<>();
+        double acum = 0, acumSTD = 0;
+        for (Column<?> c : tmpTable.columns()) {
+            NumericColumn column = (NumericColumn) c;
+            double mean = column.mean();
+            acum += mean;
+            double std = column.standardDeviation();
+            acumSTD += std;
+            summaryMean.put(c.name(), mean);
+            summarySTD.put(c.name(), std);
+        }
+        Iterator<String> iterator = summaryMean.keySet().iterator();
+        if (metricName.equalsIgnoreCase("Dominance") || metricName.equalsIgnoreCase("hsat")
+                || metricName.equalsIgnoreCase("sat")) {
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                if (acum != 0)
+                    summaryMean.put(key, Math.abs(summaryMean.get(key) / acum) * 100.0);
+                if (acumSTD != 0)
+                    summarySTD.put(key, Math.abs(summarySTD.get(key) / acumSTD));
+
+            }
+        }
+
         File file = File.createTempFile("data", ".csv");
         file.deleteOnExit();
         tmpTable.write().csv(file);
@@ -353,22 +427,53 @@ public class NSGA3WPExperimentationMetrics {
         else
             rs = false;
         if (st != null)
-            resultColumn.append(((rs) ? "H0 is rejected" : "H0 is accepted") + ", statistic : "+st.get("statistic").toString());
+            resultColumn.append(
+                    ((rs) ? "H0 is rejected" : "H0 is accepted") + ", statistic : " + st.get("statistic").toString());
         else
             resultColumn.append("NaN");
         String data = "";
+        String ranking_ = "";
+        // String toReplace[] = {"-F-0","-Hsat", "-Sat","-Eulidean-Min","-Eulidean-AVG",
+        // "-Eulidean-Max","-Chebyshev-Min","-Chebyshev-AVG", "-Chebyshev-Max"};
+
+        iterator = summaryMean.keySet().iterator();
+        String summary = "";
+        HashMap<String, String> sumMap = new HashMap<>();
         if (st != null) {
             ArrayList<Object> names_ = (ArrayList<Object>) st.get("names");
             ArrayList<Object> values_ = (ArrayList<Object>) st.get("rankings");
             for (int i = 0; i < names_.size(); i++) {
-                data += String.format("%s , %s; ",  values_.get(i).toString(), names_.get(i).toString());
+                String name__ = names_.get(i).toString().replaceAll(regex, "");
+                if (i < names_.size() - 1)
+                    ranking_ += String.format("%s, ", name__);
+                else
+                    ranking_ += String.format("%s", name__);
+                data += String.format("%s , %s; ", values_.get(i).toString(), name__);
+
+                summary += String.format(" $%f_{%f}^%d$ %s,", summaryMean.get(name__), summarySTD.get(name__), i + 1,
+                        name__);
+                if (metricName.equalsIgnoreCase("Dominance") || metricName.equalsIgnoreCase("hsat")
+                        || metricName.equalsIgnoreCase("sat")) {
+                    sumMap.put(name__, String.format("%s$%5.3f_{%.3f}^%d$", (rs) ? "\\cellcolor[HTML]{FFFF00}" : "",
+                            summaryMean.get(name__), summarySTD.get(name__), i + 1));
+                } else {
+                    sumMap.put(name__, String.format("%s$%f_{%.3f}^%d$", (rs) ? "\\cellcolor[HTML]{FFFF00}" : "",
+                            summaryMean.get(name__), summarySTD.get(name__), i + 1));
+                }
+
             }
 
         }
-        if (st != null)
+        meanColumn.append(summary.trim() + " " + acum);
+
+        if (st != null) {
             techicalColumn.append(data.trim());
-        else
+            rankingColumn.append(ranking_.trim());
+        } else {
             techicalColumn.append("Error with data or server error");
+            rankingColumn.append("Error with data or server");
+        }
+        return sumMap;
 
     }
 
@@ -390,16 +495,16 @@ public class NSGA3WPExperimentationMetrics {
         ArrayList<DoubleColumn> chebyshevAVG = new ArrayList<>();
         ArrayList<DoubleColumn> chebyshevMax = new ArrayList<>();
         for (int i = 0; i < _names_algorithm.length; i++) {
-            DoubleColumn _f0 = DoubleColumn.create("A-" + _names_algorithm[i] + "-F-0");
-            DoubleColumn _hsat = DoubleColumn.create("A-" + _names_algorithm[i] + "-HSat");
-            DoubleColumn _sat = DoubleColumn.create("A-" + _names_algorithm[i] + "-Sat");
-            DoubleColumn _eMin = DoubleColumn.create("A-" + _names_algorithm[i] + "-Eulidean-Min");
-            DoubleColumn _eAVG = DoubleColumn.create("A-" + _names_algorithm[i] + "-Eulidean-AVG");
-            DoubleColumn _eMax = DoubleColumn.create("A-" + _names_algorithm[i] + "-Eulidean-Max");
+            DoubleColumn _f0 = DoubleColumn.create(_names_algorithm[i] + "-F-0");
+            DoubleColumn _hsat = DoubleColumn.create(_names_algorithm[i] + "-HSat");
+            DoubleColumn _sat = DoubleColumn.create(_names_algorithm[i] + "-Sat");
+            DoubleColumn _eMin = DoubleColumn.create(_names_algorithm[i] + "-Eulidean-Min");
+            DoubleColumn _eAVG = DoubleColumn.create(_names_algorithm[i] + "-Eulidean-AVG");
+            DoubleColumn _eMax = DoubleColumn.create(_names_algorithm[i] + "-Eulidean-Max");
 
-            DoubleColumn _cMin = DoubleColumn.create("A-" + _names_algorithm[i] + "-Chebyshev-Min");
-            DoubleColumn _cAVG = DoubleColumn.create("A-" + _names_algorithm[i] + "-Chebyshev-AVG");
-            DoubleColumn _cMax = DoubleColumn.create("A-" + _names_algorithm[i] + "-Chebyshev-Max");
+            DoubleColumn _cMin = DoubleColumn.create(_names_algorithm[i] + "-Chebyshev-Min");
+            DoubleColumn _cAVG = DoubleColumn.create(_names_algorithm[i] + "-Chebyshev-AVG");
+            DoubleColumn _cMax = DoubleColumn.create(_names_algorithm[i] + "-Chebyshev-Max");
             euclideanMin.add(_eMin);
             euclideanAVG.add(_eAVG);
             euclideanMax.add(_eMax);
@@ -428,7 +533,7 @@ public class NSGA3WPExperimentationMetrics {
             groupByAlgorithm.forEach((__name, _solutions) -> {
                 // Dominance
                 for (DoubleColumn doubleColumn : zColumnsG) {
-                    if (doubleColumn.name().equals("A-" + __name + "-F-0")) {
+                    if (doubleColumn.name().equals(__name + "-F-0")) {
                         doubleColumn.append(-_solutions.size());
                         break;
                     }
@@ -436,19 +541,19 @@ public class NSGA3WPExperimentationMetrics {
                 // Make Distance
                 double[] euclidean = calculateDistances(_solutions, roi.get(_p.getName()), Metric.EUCLIDEAN_DISTANCE);
                 for (DoubleColumn column : euclideanMin) {
-                    if (column.name().equals("A-" + __name + "-Eulidean-Min")) {
+                    if (column.name().equals(__name + "-Eulidean-Min")) {
                         column.append(euclidean[0]);
                         break;
                     }
                 }
                 for (DoubleColumn column : euclideanAVG) {
-                    if (column.name().equals("A-" + __name + "-Eulidean-AVG")) {
+                    if (column.name().equals(__name + "-Eulidean-AVG")) {
                         column.append(euclidean[1]);
                         break;
                     }
                 }
                 for (DoubleColumn column : euclideanMax) {
-                    if (column.name().equals("A-" + __name + "-Eulidean-Max")) {
+                    if (column.name().equals(__name + "-Eulidean-Max")) {
                         column.append(euclidean[2]);
                         break;
                     }
@@ -457,19 +562,19 @@ public class NSGA3WPExperimentationMetrics {
                 double[] chebyshev = calculateDistances(_solutions, roi.get(_p.getName()), Metric.CHEBYSHEV_DISTANCE);
 
                 for (DoubleColumn column : chebyshevMin) {
-                    if (column.name().equals("A-" + __name + "-Chebyshev-Min")) {
+                    if (column.name().equals(__name + "-Chebyshev-Min")) {
                         column.append(chebyshev[0]);
                         break;
                     }
                 }
                 for (DoubleColumn column : chebyshevAVG) {
-                    if (column.name().equals("A-" + __name + "-Chebyshev-AVG")) {
+                    if (column.name().equals(__name + "-Chebyshev-AVG")) {
                         column.append(chebyshev[1]);
                         break;
                     }
                 }
                 for (DoubleColumn column : chebyshevMax) {
-                    if (column.name().equals("A-" + __name + "-Chebyshev-Max")) {
+                    if (column.name().equals(__name + "-Chebyshev-Max")) {
                         column.append(chebyshev[2]);
                         break;
                     }
@@ -490,13 +595,13 @@ public class NSGA3WPExperimentationMetrics {
                 }
 
                 for (DoubleColumn doubleColumn : hsColumnsG) {
-                    if (doubleColumn.name().equals("A-" + __name + "-HSat")) {
+                    if (doubleColumn.name().equals(__name + "-HSat")) {
                         doubleColumn.append(-hsat);
                         break;
                     }
                 }
                 for (DoubleColumn doubleColumn : sColumnsG) {
-                    if (doubleColumn.name().equals("A-" + __name + "-Sat")) {
+                    if (doubleColumn.name().equals(__name + "-Sat")) {
                         doubleColumn.append(-sat);
                         break;
                     }
@@ -562,12 +667,35 @@ public class NSGA3WPExperimentationMetrics {
         global.write().csv(DIRECTORY + "global-metrics.csv");
         // Performance statistic Tests
 
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, zColumnsG, "Dominance");
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, hsColumnsG, "HSat");
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, sColumnsG, "Sat");
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, euclideanMin, "Euclidean Min");
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, euclideanAVG, "Euclidean AVG");
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, euclideanMax, "Euclidean Max");
+        HashMap<String, String> mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, zColumnsG,
+                "Dominance");
+        String[] orderNameConfiguration = mapTest.keySet().toArray(new String[mapTest.size()]);
+        Arrays.sort(orderNameConfiguration);
+        for (String key : orderNameConfiguration) {
+            problemColumn.append("DTLZ");
+            confColumn.append(key);
+            domColumn.append(mapTest.get(key));
+        }
+        mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, hsColumnsG, "HSat");
+        for (String key : orderNameConfiguration) {
+            chsatColumn.append(mapTest.get(key));
+        }
+        mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, sColumnsG, "Sat");
+        for (String key : orderNameConfiguration) {
+            csatColumn.append(mapTest.get(key));
+        }
+        mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, euclideanMin, "Euclidean Min");
+        for (String key : orderNameConfiguration) {
+            dMinColumn.append(mapTest.get(key));
+        }
+        mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, euclideanAVG, "Euclidean AVG");
+        for (String key : orderNameConfiguration) {
+            dAvgColumn.append(mapTest.get(key));
+        }
+        mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, euclideanMax, "Euclidean Max");
+        for (String key : orderNameConfiguration) {
+            dMaxColumn.append(mapTest.get(key));
+        }
 
         doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, chebyshevMin, "Chebyshev Min");
         doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, chebyshevAVG, "Chebyshev AVG");
@@ -602,6 +730,7 @@ public class NSGA3WPExperimentationMetrics {
                 distances[2] = tmp;
             }
         }
+        distances[1] /= (1.0) * distances_.size();
 
         return distances;
     }
@@ -714,26 +843,26 @@ public class NSGA3WPExperimentationMetrics {
 
         String name = String.format("ROI_P_%s_V%d_O%d.txt", problem.getName().trim().replace("_P", ""),
                 problem.getNumberOfDecisionVars(), problem.getNumberOfObjectives());
+
         /*
-         * switch (name) { case "DTLZ1_P": //path =
-         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ1_P.out";
-         * path = "/home/thinkpad/Documents/jemoa/roi_generator/ROI_P_DTLZ1_V7_O3.txt";
+         * String path = ""; switch (problem.getName()) { case "DTLZ1_P": path =
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ1_P.out";
          * break; case "DTLZ2_P": path =
-         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ2_P.out";
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ2_P.out";
          * break; case "DTLZ3_P": path =
-         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ3_P.out";
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ3_P.out";
          * break; case "DTLZ4_P": path =
-         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ4_P.out";
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ4_P.out";
          * break; case "DTLZ5_P": path =
-         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ5_P.out";
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ5_P.out";
          * break; case "DTLZ6_P": path =
-         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ6_P.out";
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ6_P.out";
          * 
          * break; case "DTLZ7_P": path =
-         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlzV3/3/bestCompromise_DTLZ7_P.out";
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz/3/bestCompromise_DTLZ7_P.out";
          * break;
          * 
-         * }
+         * } return new File(path);
          */
         return new File("/home/thinkpad/Documents/jemoa/roi_generator/" + name);
     }
@@ -744,37 +873,37 @@ public class NSGA3WPExperimentationMetrics {
         String path = null;
         switch (name) {
             case "DTLZ1_P":
-                path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES_bc_last/DTLZ1_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ1_P(instance);
                 break;
             case "DTLZ2_P":
-                path = "src/main/resources/DTLZ_INSTANCES/DTLZ2_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES_bc_last/DTLZ2_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ2_P(instance);
                 break;
             case "DTLZ3_P":
-                path = "src/main/resources/DTLZ_INSTANCES/DTLZ3_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES_bc_last/DTLZ3_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ3_P(instance);
                 break;
             case "DTLZ4_P":
-                path = "src/main/resources/DTLZ_INSTANCES/DTLZ4_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES_bc_last/DTLZ4_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ4_P(instance);
                 break;
             case "DTLZ5_P":
-                path = "src/main/resources/DTLZ_INSTANCES/DTLZ5_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES_bc_last/DTLZ5_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ5_P(instance);
                 break;
             case "DTLZ6_P":
-                path = "src/main/resources/DTLZ_INSTANCES/DTLZ6_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES_bc_last/DTLZ6_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ6_P(instance);
                 break;
             case "DTLZ7_P":
-                path = "src/main/resources/DTLZ_INSTANCES/DTLZ7_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES_bc_last/DTLZ7_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ7_P(instance);
                 break;

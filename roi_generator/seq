@@ -1,0 +1,30 @@
+#!/bin/bash
+KSample=$1
+N=1
+echo "DTLZ$N"
+varInstance="/home/thinkpad/Documents/jemoa/src/main/resources/DTLZ_INSTANCES/DTLZ$N""_Instance.txt"
+./main $N $KSample $varInstance
+N=2
+echo "DTLZ$N"
+varInstance="/home/thinkpad/Documents/jemoa/src/main/resources/DTLZ_INSTANCES/DTLZ$N""_Instance.txt"
+./main $N $KSample $varInstance
+N=3
+echo "DTLZ$N"
+varInstance="/home/thinkpad/Documents/jemoa/src/main/resources/DTLZ_INSTANCES/DTLZ$N""_Instance.txt"
+./main $N $KSample $varInstance
+N=4
+echo "DTLZ$N"
+varInstance="/home/thinkpad/Documents/jemoa/src/main/resources/DTLZ_INSTANCES/DTLZ$N""_Instance.txt"
+./main $N $KSample $varInstance
+N=5
+echo "DTLZ$N"
+varInstance="/home/thinkpad/Documents/jemoa/src/main/resources/DTLZ_INSTANCES/DTLZ$N""_Instance.txt"
+./main $N $KSample $varInstance
+N=6
+echo "DTLZ$N"
+varInstance="/home/thinkpad/Documents/jemoa/src/main/resources/DTLZ_INSTANCES/DTLZ$N""_Instance.txt"
+./main $N $KSample $varInstance
+N=7
+echo "DTLZ$N"
+varInstance="/home/thinkpad/Documents/jemoa/src/main/resources/DTLZ_INSTANCES/DTLZ$N""_Instance.txt"
+./main $N $KSample $varInstance

@@ -3,12 +3,16 @@
 echo "Making executable ..."
 gcc -o main main.c src/*.c -lm
 KSample=$1
+startProblem=1
+endProblem=7
 Seed=$2
-echo "Size sample $KSample, Seed $Seed"
+echo "Size sample $KSample, Seed $Seed, from $startProblem to $endProblem"
+
 if mkdir logs; then
 	echo "Log dir created"
 fi
-for N in `seq 7`
+echo `seq $startProblem $endProblem`
+for N in `seq $startProblem $endProblem`
 do
 	echo "Executing DTLZ$N..."
 	varInstance="/home/thinkpad/Documents/jemoa/src/main/resources/DTLZ_INSTANCES/DTLZ$N""_Instance.txt"

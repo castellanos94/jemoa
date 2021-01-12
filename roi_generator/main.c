@@ -65,7 +65,7 @@ void solutionToFile(FILE *file, struct Solution *solution)
     }
     fprintf(file, "%3d\n", solution->rank);
 }
-void printInstanceWithCompromise(char *fileName, struct Instance instance, struct Solution *solutions[], int indexBestCompromise, int indexCandidate[])
+void printInstanceWithCompromise(char *fileName, struct Instance instance, struct Solution *solutions[], int indexBestCompromise, int indexCandidate[], int sizeCandidate)
 {
     //printf("NumberOfVariables %3d, NumberOfObjectives %3d, DMs %3d\n", instance.numberOfVariables, instance.numberOfObjectives, instance.numberOfDM);
     FILE *file = fopen(fileName, "w");
@@ -119,7 +119,9 @@ void printInstanceWithCompromise(char *fileName, struct Instance instance, struc
     fprintf(file, "TRUE FALSE //Best compromise \n1\n");
     solutionToFile(file, solutions[indexBestCompromise]);
     fprintf(file, "TRUE FALSE //Frontiers \n2\n");
-    for (int i = 0; i < 2; i++)
+    int startIndex = (sizeCandidate - 2 > 0) ? sizeCandidate - 2 : 0;
+    printf("from %d to %d\n", startIndex, sizeCandidate);
+    for (int i = startIndex; i < sizeCandidate; i++)
     {
         for (int j = 0; j < instance.numberOfObjectives; j++)
         {
@@ -287,12 +289,21 @@ int main(int argc, char const *argv[])
         }
         net_score[i] = sigma_out - sigma_in;
     }
+    printf("Check netscore ...\n");
+
     double bestNetScore = net_score[0];
     int indexBestNetScore = 0;
     int indexWeakNess = -1;
     int candidatos_length = 0;
-    int old_best[] = {-1, -1, -1, -1};
-    int update_old = 3;
+    int nOld = (sample_size > 50) ? 50 : sample_size;
+
+    int old_best[nOld];
+    for (int i = 0; i < nOld; i++)
+    {
+        old_best[i] = -1;
+    }
+
+    int update_old = nOld - 1;
     for (int i = 0; i < k; i++)
     {
         if (net_score[i] > bestNetScore)
@@ -300,7 +311,7 @@ int main(int argc, char const *argv[])
             old_best[update_old--] = indexBestNetScore;
             if (update_old == -1)
             {
-                update_old = 3;
+                update_old = nOld - 1;
             }
             bestNetScore = net_score[i];
             indexBestNetScore = i;
@@ -310,7 +321,7 @@ int main(int argc, char const *argv[])
             old_best[update_old--] = i;
             if (update_old == -1)
             {
-                update_old = 3;
+                update_old = nOld - 1;
             }
         }
         else if (net_score[old_best[update_old]] < net_score[i])
@@ -318,7 +329,7 @@ int main(int argc, char const *argv[])
             old_best[update_old--] = i;
             if (update_old == -1)
             {
-                update_old = 3;
+                update_old = nOld - 1;
             }
         }
         if (weakness[i] == 0)
@@ -409,18 +420,14 @@ int main(int argc, char const *argv[])
 
     if (roip_length == 0)
     {
-        sortNetScore(4, old_best, net_score);
-        for (int l = 0; l < 4; l++)
+        sortNetScore(nOld, old_best, net_score);
+        for (int l = 0; l < nOld; l++)
         {
-            for (int j = 0; j < k; j++)
+            if (old_best[l] != -1 && indexBest != old_best[l])
             {
-                if (old_best[l] == j && indexBest != j)
-                {
-                    printf("\tBest old netscore %f\n", net_score[j]);
-                    solutionToFile(roip, sample[j]);
-                    roip_length++;
-                    break;
-                }
+                printf("\tBest old netscore %f\n", net_score[old_best[l]]);
+                solutionToFile(roip, sample[old_best[l]]);
+                roip_length++;
             }
         }
     }
@@ -428,7 +435,7 @@ int main(int argc, char const *argv[])
     printf("ROI preferential lenght %3d\n", roip_length);
     printf("Making instance\n");
     snprintf(fileNameRoi, 128, "DTLZ%d_Instance.txt", problem);
-    printInstanceWithCompromise(fileNameRoi, instance, sample, indexBest, old_best);
+    printInstanceWithCompromise(fileNameRoi, instance, sample, indexBest, old_best, nOld);
     for (int i = 0; i < k; i++)
     {
         destroy_solution(sample[i]);
