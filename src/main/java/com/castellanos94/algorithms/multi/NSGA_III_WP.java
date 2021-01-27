@@ -69,7 +69,8 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
         InterClassnC<S> classifier = new InterClassnC<>(problem);
         ArrayList<ArrayList<S>> _fronts = new ArrayList<>();
         report();
-        if (ranking.getNumberOfSubFronts() > 0 &&  classifyEveryIteration != 0 && this.currenIteration > 0 && this.currenIteration % classifyEveryIteration == 0) {
+        if (ranking.getNumberOfSubFronts() > 0 && classifyEveryIteration != 0 && this.currenIteration > 0
+                && this.currenIteration % classifyEveryIteration == 0) {
             ArrayList<S> hs = new ArrayList<>();
             ArrayList<S> s = new ArrayList<>();
             ArrayList<S> d = new ArrayList<>();
@@ -122,27 +123,29 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
                 break;
             }
         }
-        if (Pt.size() == populationSize)
+        if (Pt.size() != populationSize) {
+            diversityStrategy(Pt);
             return Pt;
-
+        }
         NSGA3Replacement<S> selection = new NSGA3Replacement<>(fronts, referenceHyperplane.copy(),
                 problem.getNumberOfObjectives(), populationSize);
         selection.execute(Pt);
         ArrayList<S> parents = selection.getParents();
-        if (this.currenIteration > 0 && classifyEveryIteration!=0 && this.currenIteration % classifyEveryIteration == 0) {
-            // if (csatPlus) {
-            // System.out.printf("\tCurrent iteration %4d - reset at %3d n %3d \n",
-            // this.currenIteration,
-            // parents.size() - n * this.populationSize / 10, n * this.populationSize / 10);
-            for (int i = parents.size() - this.nElementsToReplace; i < parents.size(); i++) {
+        diversityStrategy(parents);
+        return parents;
+
+    }
+
+    private void diversityStrategy(ArrayList<S> pt) {
+        if (this.currenIteration > 0 && classifyEveryIteration != 0
+                && this.currenIteration % classifyEveryIteration == 0) {
+            for (int i = pt.size() - this.nElementsToReplace; i < pt.size(); i++) {
                 S randomSolution = this.problem.randomSolution();
                 this.problem.evaluate(randomSolution);
                 this.problem.evaluateConstraint(randomSolution);
-                parents.set(i, randomSolution);
+                pt.set(i, randomSolution);
             }
         }
-        return parents;
-
     }
 
     private void report() {
@@ -180,7 +183,8 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
 
     @Override
     public String toString() {
-        return String.format("NSGA-III-WP Classify every %3d iteration, %3d elements to replace", classifyEveryIteration, nElementsToReplace);
+        return String.format("NSGA-III-WP Classify every %3d iteration, %3d elements to replace",
+                classifyEveryIteration, nElementsToReplace);
     }
 
 }

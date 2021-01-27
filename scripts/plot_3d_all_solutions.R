@@ -1,9 +1,9 @@
 #install.packages("scatterplot3d") # Install
 library("scatterplot3d") # load
 library(readr)
-n <- 7
+n <- 3
 problem <- paste("DTLZ",n, sep ="")
-baseDir = "/home/thinkpad/Documents/jemoa/experiments/NSGA3/FRONT_PREFERENCES/"
+baseDir = "/home/thinkpad/Documents/jemoa/experiments/NSGA3_old_bc23/FRONT_PREFERENCES/"
 FRONT_PREFERENCES  <- read_csv(paste(baseDir,problem,"_P_ALL.csv",sep=""), col_types = cols(Class = col_factor(levels = c("HSAT", 
                                                                                                                           "SAT", "DIS", "HDIS"))))
 FRONT_PREFERENCES$Algorithm <- as.factor(FRONT_PREFERENCES$Algorithm)
