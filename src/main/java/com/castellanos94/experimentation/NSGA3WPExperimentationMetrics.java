@@ -844,7 +844,7 @@ public class NSGA3WPExperimentationMetrics {
         String name = String.format("ROI_P_%s_V%d_O%d.txt", problem.getName().trim().replace("_P", ""),
                 problem.getNumberOfDecisionVars(), problem.getNumberOfObjectives());
 
-        String path = "";
+        /*String path = "";
         switch (problem.getName()) {
             case "DTLZ1_P":
                 path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ1_P.out";
@@ -870,9 +870,9 @@ public class NSGA3WPExperimentationMetrics {
                 break;
 
         }
-        return new File(path);
+        return new File(path);*/
 
-        // return new File("/home/thinkpad/Documents/jemoa/roi_generator/" + name);
+        return new File("/home/thinkpad/Documents/jemoa/roi_generator/" + name);
     }
 
     private static DTLZPreferences loadProblem(String name) throws FileNotFoundException {
@@ -881,37 +881,37 @@ public class NSGA3WPExperimentationMetrics {
         String path = null;
         switch (name) {
             case "DTLZ1_P":
-                path = "src/main/resources/DTLZ_INSTANCES_bc23/DTLZ1_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ1_P(instance);
                 break;
             case "DTLZ2_P":
-                path = "src/main/resources/DTLZ_INSTANCES_bc23/DTLZ2_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/DTLZ2_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ2_P(instance);
                 break;
             case "DTLZ3_P":
-                path = "src/main/resources/DTLZ_INSTANCES_bc23/DTLZ3_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/DTLZ3_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ3_P(instance);
                 break;
             case "DTLZ4_P":
-                path = "src/main/resources/DTLZ_INSTANCES_bc23/DTLZ4_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/DTLZ4_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ4_P(instance);
                 break;
             case "DTLZ5_P":
-                path = "src/main/resources/DTLZ_INSTANCES_bc23/DTLZ5_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/DTLZ5_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ5_P(instance);
                 break;
             case "DTLZ6_P":
-                path = "src/main/resources/DTLZ_INSTANCES_bc23/DTLZ6_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/DTLZ6_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ6_P(instance);
                 break;
             case "DTLZ7_P":
-                path = "src/main/resources/DTLZ_INSTANCES_bc23/DTLZ7_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/DTLZ7_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ7_P(instance);
                 break;
