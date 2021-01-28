@@ -471,14 +471,14 @@ public class NSGA3WPExperimentationMetrics {
                     ranking_ += String.format("%s", name__);
                 data += String.format("%s , %s; ", values_.get(i).toString(), name__);
 
-                summary += String.format(" $%f_{%f}^{%.2f}$ %s,", summaryMean.get(name__), summarySTD.get(name__),
+                summary += String.format(" $%f_{%f}^{%.1f}$ %s,", summaryMean.get(name__), summarySTD.get(name__),
                         rankingBorderMap.get(name__), name__);
                 if (metricName.equalsIgnoreCase("Dominance") || metricName.equalsIgnoreCase("hsat")
                         || metricName.equalsIgnoreCase("sat")) {
-                    sumMap.put(name__, String.format("%s$%5.3f_{%.3f}^{%.2f}$", (rs) ? "\\cellcolor[HTML]{FFFF00}" : "",
+                    sumMap.put(name__, String.format("%s$%5.3f_{%.3f}^{%.1f}$", (rs) ? "\\cellcolor[HTML]{FFFF00}" : "",
                             summaryMean.get(name__), summarySTD.get(name__), rankingBorderMap.get(name__)));
                 } else {
-                    sumMap.put(name__, String.format("%s$%f_{%.3f}^{%.2f}$", (rs) ? "\\cellcolor[HTML]{FFFF00}" : "",
+                    sumMap.put(name__, String.format("%s$%f_{%.3f}^{%.1f}$", (rs) ? "\\cellcolor[HTML]{FFFF00}" : "",
                             summaryMean.get(name__), summarySTD.get(name__), rankingBorderMap.get(name__)));
                 }
 
