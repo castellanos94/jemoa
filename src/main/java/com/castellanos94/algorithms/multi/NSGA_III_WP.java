@@ -123,7 +123,7 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
                 break;
             }
         }
-        if (Pt.size() != populationSize) {
+        if (Pt.size() == populationSize) {
             diversityStrategy(Pt);
             return Pt;
         }

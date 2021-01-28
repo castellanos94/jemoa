@@ -39,7 +39,7 @@ import tech.tablesaw.columns.Column;
  * {@link ReportFront}
  */
 public class NSGA3WPExperimentationMetrics {
-    private static String algorithmName = "NSGA3_old_bc23";
+    private static String algorithmName = "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
     private static String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
     private static Table stats = Table.create("statistic");
@@ -55,6 +55,7 @@ public class NSGA3WPExperimentationMetrics {
     private static StringColumn domColumn = StringColumn.create("Dominancia");
     private static StringColumn chsatColumn = StringColumn.create("CHSat");
     private static StringColumn csatColumn = StringColumn.create("CSat");
+    private static StringColumn cdisColumn = StringColumn.create("CDis");
     private static StringColumn dMinColumn = StringColumn.create("Min");
     private static StringColumn dAvgColumn = StringColumn.create("Avg");
     private static StringColumn dMaxColumn = StringColumn.create("Max");
@@ -162,6 +163,7 @@ public class NSGA3WPExperimentationMetrics {
         DoubleColumn frontZero = DoubleColumn.create("F-0");
         ArrayList<DoubleColumn> hsColumns = new ArrayList<>();
         ArrayList<DoubleColumn> sColumns = new ArrayList<>();
+        ArrayList<DoubleColumn> disColumns = new ArrayList<>();
         ArrayList<DoubleColumn> zColumns = new ArrayList<>();
 
         ArrayList<DoubleColumn> euclideanMin = new ArrayList<>();
@@ -176,6 +178,7 @@ public class NSGA3WPExperimentationMetrics {
             DoubleColumn _f0 = DoubleColumn.create(_names_algorithm[i] + "-F-0");
             DoubleColumn _hsat = DoubleColumn.create(_names_algorithm[i] + "-HSat");
             DoubleColumn _sat = DoubleColumn.create(_names_algorithm[i] + "-Sat");
+            DoubleColumn _dis = DoubleColumn.create(_names_algorithm[i] + "-Dis");
 
             DoubleColumn _eMin = DoubleColumn.create(_names_algorithm[i] + "-Eulidean-Min");
             DoubleColumn _eAVG = DoubleColumn.create(_names_algorithm[i] + "-Eulidean-AVG");
@@ -194,6 +197,7 @@ public class NSGA3WPExperimentationMetrics {
             zColumns.add(_f0);
             hsColumns.add(_hsat);
             sColumns.add(_sat);
+            disColumns.add(_dis);
         }
         Iterator<String> iterator = problems.keySet().iterator();
         while (iterator.hasNext()) {
@@ -218,6 +222,43 @@ public class NSGA3WPExperimentationMetrics {
                             break;
                         }
                     }
+                });
+            }
+            for (int index = 0; index < globalCSat.get(dtlz).size(); index++) {
+                ArrayList<DoubleSolution> solutions = globalCSat.get(dtlz).get(index);
+                HashMap<String, ArrayList<DoubleSolution>> grouped = groupByAlgorithm(solutions, _names_algorithm,
+                        false);
+                int sizeOfFrontZero = globalSolutionNDByProblem.get(dtlz).get(index).size();
+                grouped.forEach((__name, _solutions) -> {
+                    double hsat = 0, sat = 0;
+                    // CSat Sat
+                    for (DoubleSolution s : _solutions) {
+                        if (s.getAttribute("class").toString().equalsIgnoreCase("hsat")) {
+                            hsat += 1;
+                        } else if (s.getAttribute("class").toString().equalsIgnoreCase("sat")) {
+                            sat += 1;
+                        }
+                    }
+
+                    for (DoubleColumn doubleColumn : hsColumns) {
+                        if (doubleColumn.name().equals(__name + "-HSat")) {
+                            doubleColumn.append(-hsat / sizeOfFrontZero);
+                            break;
+                        }
+                    }
+                    for (DoubleColumn doubleColumn : sColumns) {
+                        if (doubleColumn.name().equals(__name + "-Sat")) {
+                            doubleColumn.append(-sat / sizeOfFrontZero);
+                            break;
+                        }
+                    }
+                    for (DoubleColumn doubleColumn : disColumns) {
+                        if (doubleColumn.name().equals(__name + "-Dis")) {
+                            doubleColumn.append(-(sizeOfFrontZero - (hsat + sat)) / sizeOfFrontZero);
+                            break;
+                        }
+                    }
+
                     // Make Distance
                     double[] euclidean = calculateDistances(_solutions, roi.get(dtlz.getName()),
                             Metric.EUCLIDEAN_DISTANCE);
@@ -261,33 +302,6 @@ public class NSGA3WPExperimentationMetrics {
                             break;
                         }
                     }
-                });
-            }
-            for (ArrayList<DoubleSolution> solutions : globalCSat.get(dtlz)) {
-                HashMap<String, ArrayList<DoubleSolution>> grouped = groupByAlgorithm(solutions, _names_algorithm,
-                        false);
-                grouped.forEach((__name, _solutions) -> {
-                    int hsat = 0, sat = 0;
-                    for (DoubleSolution s : _solutions) {
-                        if (s.getAttribute("class").toString().equalsIgnoreCase("hsat")) {
-                            hsat++;
-                        } else if (s.getAttribute("class").toString().equalsIgnoreCase("sat")) {
-                            sat++;
-                        }
-                    }
-
-                    for (DoubleColumn doubleColumn : hsColumns) {
-                        if (doubleColumn.name().equals(__name + "-HSat")) {
-                            doubleColumn.append(-hsat);
-                            break;
-                        }
-                    }
-                    for (DoubleColumn doubleColumn : sColumns) {
-                        if (doubleColumn.name().equals(__name + "-Sat")) {
-                            doubleColumn.append(-sat);
-                            break;
-                        }
-                    }
 
                 });
 
@@ -309,6 +323,10 @@ public class NSGA3WPExperimentationMetrics {
             mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, sColumns, "Sat");
             for (String key : orderNameConfiguration) {
                 csatColumn.append(mapTest.get(key));
+            }
+            mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, sColumns, "Dis");
+            for (String key : orderNameConfiguration) {
+                cdisColumn.append(mapTest.get(key));
             }
             mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, euclideanMin, "Euclidean Min");
             for (String key : orderNameConfiguration) {
@@ -340,6 +358,10 @@ public class NSGA3WPExperimentationMetrics {
         for (DoubleColumn doubleColumn : sColumns) {
             table.addColumns(doubleColumn);
         }
+        // Dis column
+        for (DoubleColumn doubleColumn : disColumns) {
+            table.addColumns(doubleColumn);
+        }
 
         // Distances
         for (DoubleColumn doubleColumn : euclideanMin) {
@@ -367,8 +389,8 @@ public class NSGA3WPExperimentationMetrics {
         stats.addColumns(nameColumn, metricNameColumn, resultColumn, rankingColumn, meanColumn, techicalColumn);
         stats.write().csv(DIRECTORY + "stac.csv");
         Table reportLatex = Table.create("latex");
-        reportLatex.addColumns(problemColumn, confColumn, domColumn, chsatColumn, csatColumn, dMinColumn, dAvgColumn,
-                dMaxColumn);
+        reportLatex.addColumns(problemColumn, confColumn, domColumn, chsatColumn, csatColumn, cdisColumn, dMinColumn,
+                dAvgColumn, dMaxColumn);
         reportLatex.write().csv(DIRECTORY + "latex_report.csv");
         ReportFront.generateReportFront(algorithmName, DIRECTORY);
     }
@@ -382,7 +404,7 @@ public class NSGA3WPExperimentationMetrics {
         for (DoubleColumn column : targetColumn) {
             tmpTable.addColumns(column);
         }
-        String regex = "-F-0|-HSat|-Sat|-Eulidean-Min|-Eulidean-AVG|-Eulidean-Max|-Chebyshev-Min|-Chebyshev-AVG|-Chebyshev-Max";
+        String regex = "-F-0|-HSat|-Sat|-Dis|-Eulidean-Min|-Eulidean-AVG|-Eulidean-Max|-Chebyshev-Min|-Chebyshev-AVG|-Chebyshev-Max";
 
         tmpTable = tmpTable.inRange(startRow, rowEnd).copy();
         for (Column<?> column : tmpTable.columns()) {
@@ -403,11 +425,11 @@ public class NSGA3WPExperimentationMetrics {
         }
         Iterator<String> iterator = summaryMean.keySet().iterator();
         if (metricName.equalsIgnoreCase("Dominance") || metricName.equalsIgnoreCase("hsat")
-                || metricName.equalsIgnoreCase("sat")) {
+                || metricName.equalsIgnoreCase("sat") || metricName.equalsIgnoreCase("dis")) {
             while (iterator.hasNext()) {
                 String key = iterator.next();
                 if (acum != 0)
-                    summaryMean.put(key, Math.abs(summaryMean.get(key) / acum) * 100.0);
+                    summaryMean.put(key, Math.abs(summaryMean.get(key)/acum) * 100.0);
                 if (acumSTD != 0)
                     summarySTD.put(key, Math.abs(summarySTD.get(key) / acumSTD));
 
@@ -485,6 +507,7 @@ public class NSGA3WPExperimentationMetrics {
         DoubleColumn frontZeroG = DoubleColumn.create("F-0");
         ArrayList<DoubleColumn> hsColumnsG = new ArrayList<>();
         ArrayList<DoubleColumn> sColumnsG = new ArrayList<>();
+        ArrayList<DoubleColumn> disColumnsG = new ArrayList<>();
         ArrayList<DoubleColumn> zColumnsG = new ArrayList<>();
 
         ArrayList<DoubleColumn> euclideanMin = new ArrayList<>();
@@ -498,6 +521,7 @@ public class NSGA3WPExperimentationMetrics {
             DoubleColumn _f0 = DoubleColumn.create(_names_algorithm[i] + "-F-0");
             DoubleColumn _hsat = DoubleColumn.create(_names_algorithm[i] + "-HSat");
             DoubleColumn _sat = DoubleColumn.create(_names_algorithm[i] + "-Sat");
+            DoubleColumn _dis = DoubleColumn.create(_names_algorithm[i] + "-Dis");
             DoubleColumn _eMin = DoubleColumn.create(_names_algorithm[i] + "-Eulidean-Min");
             DoubleColumn _eAVG = DoubleColumn.create(_names_algorithm[i] + "-Eulidean-AVG");
             DoubleColumn _eMax = DoubleColumn.create(_names_algorithm[i] + "-Eulidean-Max");
@@ -514,6 +538,7 @@ public class NSGA3WPExperimentationMetrics {
             zColumnsG.add(_f0);
             hsColumnsG.add(_hsat);
             sColumnsG.add(_sat);
+            disColumnsG.add(_dis);
         }
         // Global
         globalSolutionNDByProblem.forEach((_p, bags) -> {
@@ -521,20 +546,54 @@ public class NSGA3WPExperimentationMetrics {
             bags.forEach(b -> bag.addAll(b));
             DominanceComparator<DoubleSolution> comparator = new DominanceComparator<>();
             comparator.computeRanking(bag);
-            ArrayList<DoubleSolution> front = comparator.getSubFront(0);
+            ArrayList<DoubleSolution> frontZero = comparator.getSubFront(0);
             System.out.println(
-                    String.format("Problem : %s, bag : %6d, F0 : %6d", _p.getName(), bags.size(), front.size()));
+                    String.format("Problem : %s, bag : %6d, F0 : %6d", _p.getName(), bags.size(), frontZero.size()));
 
             _nameG.append(_p.getName());
             allG.append(bag.size());
-            frontZeroG.append(front.size());
-            HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm = groupByAlgorithm(front, _names_algorithm,
+            frontZeroG.append(frontZero.size());
+            HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm = groupByAlgorithm(frontZero, _names_algorithm,
                     false);
             groupByAlgorithm.forEach((__name, _solutions) -> {
                 // Dominance
                 for (DoubleColumn doubleColumn : zColumnsG) {
                     if (doubleColumn.name().equals(__name + "-F-0")) {
                         doubleColumn.append(-_solutions.size());
+                        break;
+                    }
+                }
+
+            });
+
+            ArrayList<DoubleSolution> csatSolutions = classifySolutions(_p, frontZero, true, false);
+            HashMap<String, ArrayList<DoubleSolution>> grouped = groupByAlgorithm(csatSolutions, _names_algorithm,
+                    false);
+            grouped.forEach((__name, _solutions) -> {
+                double hsat = 0, sat = 0;
+                for (DoubleSolution s : _solutions) {
+                    if (s.getAttribute("class").toString().equalsIgnoreCase("hsat")) {
+                        hsat += 1;
+                    } else if (s.getAttribute("class").toString().equalsIgnoreCase("sat")) {
+                        sat += 1;
+                    }
+                }
+
+                for (DoubleColumn doubleColumn : hsColumnsG) {
+                    if (doubleColumn.name().equals(__name + "-HSat")) {
+                        doubleColumn.append(-hsat / frontZero.size());
+                        break;
+                    }
+                }
+                for (DoubleColumn doubleColumn : sColumnsG) {
+                    if (doubleColumn.name().equals(__name + "-Sat")) {
+                        doubleColumn.append(-sat / frontZero.size());
+                        break;
+                    }
+                }
+                for (DoubleColumn doubleColumn : disColumnsG) {
+                    if (doubleColumn.name().equals(__name + "-Dis")) {
+                        doubleColumn.append(-(frontZero.size() - (hsat + sat)) / frontZero.size());
                         break;
                     }
                 }
@@ -579,33 +638,6 @@ public class NSGA3WPExperimentationMetrics {
                         break;
                     }
                 }
-            });
-
-            ArrayList<DoubleSolution> csatSolutions = classifySolutions(_p, front, true, false);
-            HashMap<String, ArrayList<DoubleSolution>> grouped = groupByAlgorithm(csatSolutions, _names_algorithm,
-                    false);
-            grouped.forEach((__name, _solutions) -> {
-                int hsat = 0, sat = 0;
-                for (DoubleSolution s : _solutions) {
-                    if (s.getAttribute("class").toString().equalsIgnoreCase("hsat")) {
-                        hsat++;
-                    } else if (s.getAttribute("class").toString().equalsIgnoreCase("sat")) {
-                        sat++;
-                    }
-                }
-
-                for (DoubleColumn doubleColumn : hsColumnsG) {
-                    if (doubleColumn.name().equals(__name + "-HSat")) {
-                        doubleColumn.append(-hsat);
-                        break;
-                    }
-                }
-                for (DoubleColumn doubleColumn : sColumnsG) {
-                    if (doubleColumn.name().equals(__name + "-Sat")) {
-                        doubleColumn.append(-sat);
-                        break;
-                    }
-                }
 
             });
 
@@ -617,11 +649,11 @@ public class NSGA3WPExperimentationMetrics {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("\tCheck domin with roi, F0 " + front.size());
-            front.addAll(roi.get(_p.getName()));
-            System.out.println("\tAfter add roi " + front.size());
+            System.out.println("\tCheck domin with roi, F0 " + frontZero.size());
+            frontZero.addAll(roi.get(_p.getName()));
+            System.out.println("\tAfter add roi " + frontZero.size());
             comparator = new DominanceComparator<>();
-            comparator.computeRanking(front);
+            comparator.computeRanking(frontZero);
             ArrayList<DoubleSolution> fzero = comparator.getSubFront(0);
             System.out.println("\tF0 : " + fzero.size());
 
@@ -643,6 +675,9 @@ public class NSGA3WPExperimentationMetrics {
         }
 
         for (DoubleColumn doubleColumn : sColumnsG) {
+            global.addColumns(doubleColumn);
+        }
+        for (DoubleColumn doubleColumn : disColumnsG) {
             global.addColumns(doubleColumn);
         }
         // Distances
@@ -683,6 +718,10 @@ public class NSGA3WPExperimentationMetrics {
         mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, sColumnsG, "Sat");
         for (String key : orderNameConfiguration) {
             csatColumn.append(mapTest.get(key));
+        }
+        mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, sColumnsG, "Dis");
+        for (String key : orderNameConfiguration) {
+            cdisColumn.append(mapTest.get(key));
         }
         mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, euclideanMin, "Euclidean Min");
         for (String key : orderNameConfiguration) {
@@ -844,33 +883,26 @@ public class NSGA3WPExperimentationMetrics {
         String name = String.format("ROI_P_%s_V%d_O%d.txt", problem.getName().trim().replace("_P", ""),
                 problem.getNumberOfDecisionVars(), problem.getNumberOfObjectives());
 
-        /*String path = "";
-        switch (problem.getName()) {
-            case "DTLZ1_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ1_P.out";
-                break;
-            case "DTLZ2_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ2_P.out";
-                break;
-            case "DTLZ3_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ3_P.out";
-                break;
-            case "DTLZ4_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ4_P.out";
-                break;
-            case "DTLZ5_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ5_P.out";
-                break;
-            case "DTLZ6_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ6_P.out";
-
-                break;
-            case "DTLZ7_P":
-                path = "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ7_P.out";
-                break;
-
-        }
-        return new File(path);*/
+        /*
+         * String path = ""; switch (problem.getName()) { case "DTLZ1_P": path =
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ1_P.out";
+         * break; case "DTLZ2_P": path =
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ2_P.out";
+         * break; case "DTLZ3_P": path =
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ3_P.out";
+         * break; case "DTLZ4_P": path =
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ4_P.out";
+         * break; case "DTLZ5_P": path =
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ5_P.out";
+         * break; case "DTLZ6_P": path =
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ6_P.out";
+         * 
+         * break; case "DTLZ7_P": path =
+         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ7_P.out";
+         * break;
+         * 
+         * } return new File(path);
+         */
 
         return new File("/home/thinkpad/Documents/jemoa/roi_generator/" + name);
     }
