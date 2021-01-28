@@ -19,6 +19,7 @@ import com.castellanos94.problems.preferences.dtlz.*;
 import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
+import com.castellanos94.utils.BorderRanking;
 import com.castellanos94.utils.Distance;
 import com.castellanos94.utils.POST_HOC;
 import com.castellanos94.utils.StacClient;
@@ -324,7 +325,7 @@ public class NSGA3WPExperimentationMetrics {
             for (String key : orderNameConfiguration) {
                 csatColumn.append(mapTest.get(key));
             }
-            mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, sColumns, "Dis");
+            mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, disColumns, "Dis");
             for (String key : orderNameConfiguration) {
                 cdisColumn.append(mapTest.get(key));
             }
@@ -429,7 +430,7 @@ public class NSGA3WPExperimentationMetrics {
             while (iterator.hasNext()) {
                 String key = iterator.next();
                 if (acum != 0)
-                    summaryMean.put(key, Math.abs(summaryMean.get(key)/acum) * 100.0);
+                    summaryMean.put(key, Math.abs(summaryMean.get(key) / acum) * 100.0);
                 if (acumSTD != 0)
                     summarySTD.put(key, Math.abs(summarySTD.get(key) / acumSTD));
 
@@ -455,9 +456,7 @@ public class NSGA3WPExperimentationMetrics {
             resultColumn.append("NaN");
         String data = "";
         String ranking_ = "";
-        // String toReplace[] = {"-F-0","-Hsat", "-Sat","-Eulidean-Min","-Eulidean-AVG",
-        // "-Eulidean-Max","-Chebyshev-Min","-Chebyshev-AVG", "-Chebyshev-Max"};
-
+        HashMap<String, Double> rankingBorderMap = BorderRanking.doRankingBorder(friedman);
         iterator = summaryMean.keySet().iterator();
         String summary = "";
         HashMap<String, String> sumMap = new HashMap<>();
@@ -472,15 +471,15 @@ public class NSGA3WPExperimentationMetrics {
                     ranking_ += String.format("%s", name__);
                 data += String.format("%s , %s; ", values_.get(i).toString(), name__);
 
-                summary += String.format(" $%f_{%f}^%d$ %s,", summaryMean.get(name__), summarySTD.get(name__), i + 1,
-                        name__);
+                summary += String.format(" $%f_{%f}^{%.2f}$ %s,", summaryMean.get(name__), summarySTD.get(name__),
+                        rankingBorderMap.get(name__), name__);
                 if (metricName.equalsIgnoreCase("Dominance") || metricName.equalsIgnoreCase("hsat")
                         || metricName.equalsIgnoreCase("sat")) {
-                    sumMap.put(name__, String.format("%s$%5.3f_{%.3f}^%d$", (rs) ? "\\cellcolor[HTML]{FFFF00}" : "",
-                            summaryMean.get(name__), summarySTD.get(name__), i + 1));
+                    sumMap.put(name__, String.format("%s$%5.3f_{%.3f}^{%.2f}$", (rs) ? "\\cellcolor[HTML]{FFFF00}" : "",
+                            summaryMean.get(name__), summarySTD.get(name__), rankingBorderMap.get(name__)));
                 } else {
-                    sumMap.put(name__, String.format("%s$%f_{%.3f}^%d$", (rs) ? "\\cellcolor[HTML]{FFFF00}" : "",
-                            summaryMean.get(name__), summarySTD.get(name__), i + 1));
+                    sumMap.put(name__, String.format("%s$%f_{%.3f}^{%.2f}$", (rs) ? "\\cellcolor[HTML]{FFFF00}" : "",
+                            summaryMean.get(name__), summarySTD.get(name__), rankingBorderMap.get(name__)));
                 }
 
             }
@@ -719,7 +718,7 @@ public class NSGA3WPExperimentationMetrics {
         for (String key : orderNameConfiguration) {
             csatColumn.append(mapTest.get(key));
         }
-        mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, sColumnsG, "Dis");
+        mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, disColumnsG, "Dis");
         for (String key : orderNameConfiguration) {
             cdisColumn.append(mapTest.get(key));
         }
