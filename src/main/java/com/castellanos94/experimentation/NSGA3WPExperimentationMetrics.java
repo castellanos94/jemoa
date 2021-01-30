@@ -19,7 +19,7 @@ import com.castellanos94.problems.preferences.dtlz.*;
 import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
-import com.castellanos94.utils.BorderRanking;
+import com.castellanos94.utils.BordaRanking;
 import com.castellanos94.utils.Distance;
 import com.castellanos94.utils.POST_HOC;
 import com.castellanos94.utils.StacClient;
@@ -60,6 +60,7 @@ public class NSGA3WPExperimentationMetrics {
     private static StringColumn dMinColumn = StringColumn.create("Min");
     private static StringColumn dAvgColumn = StringColumn.create("Avg");
     private static StringColumn dMaxColumn = StringColumn.create("Max");
+    private static HashMap<String, ArrayList<HashMap<String, Double>>> rankListMetric = new HashMap<>();
 
     public static void main(String[] args) throws IOException {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();
@@ -438,7 +439,12 @@ public class NSGA3WPExperimentationMetrics {
         }
 
         File file = File.createTempFile("data", ".csv");
+        // if (!nameProblem.toLowerCase().contains("family")) {
         file.deleteOnExit();
+        // }else{
+        // System.out.printf("\t%s %s
+        // %s\n",nameProblem,metricName,file.getAbsolutePath());
+        // }
         tmpTable.write().csv(file);
         Map<String, Object> friedman = StacClient.FRIEDMAN_ALIGNED_RANK(file.getAbsolutePath(), 0.05, POST_HOC.FINNER);
         Map<String, Object> st = (Map<String, Object>) friedman.get("ranking");
@@ -456,7 +462,18 @@ public class NSGA3WPExperimentationMetrics {
             resultColumn.append("NaN");
         String data = "";
         String ranking_ = "";
-        HashMap<String, Double> rankingBorderMap = BorderRanking.doRankingBorder(friedman);
+        HashMap<String, Double> rankingBorderMap;
+        if (nameProblem.toLowerCase().contains("familiy")) {
+            rankingBorderMap = BordaRanking.doGlobalRanking(rankListMetric.get(metricName));
+        } else {
+            rankingBorderMap = BordaRanking.doRankingBorda(friedman);
+        }
+
+        if (!rankListMetric.containsKey(metricName)) {
+            rankListMetric.put(metricName, new ArrayList<>());
+        }
+        rankListMetric.get(metricName).add(rankingBorderMap);
+
         iterator = summaryMean.keySet().iterator();
         String summary = "";
         HashMap<String, String> sumMap = new HashMap<>();

@@ -12,19 +12,19 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
-public class BorderRanking {
+public class BordaRanking {
 
     public static void main(String[] args) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
         String fileName = "/home/thinkpad/Documents/jemoa/experiments/NSGA3_last/stact-result.json";
         Gson gson = new GsonBuilder().create();
 
-        HashMap<String, Double> doRankingBorder = doRankingBorder(
+        HashMap<String, Double> doRankingBorder = doRankingBorda(
                 (Map<String, Object>) gson.fromJson(new FileReader(fileName), Object.class));
         System.out.println(doRankingBorder);
     }
 
     @SuppressWarnings("unchecked")
-    public static HashMap<String, Double> doRankingBorder(Map<String, Object> stacResultObject) {
+    public static HashMap<String, Double> doRankingBorda(Map<String, Object> stacResultObject) {
         HashMap<String, Double> rs = new HashMap<>();
         if (stacResultObject.containsKey("post_hoc")) {
             Map<String, Object> post_hocranking = (Map<String, Object>) stacResultObject.get("ranking");
@@ -51,11 +51,13 @@ public class BorderRanking {
                     comparisonHashMap.get(a).add(b);
                     comparisonHashMap.get(b).add(a);
                 }
-            }           
+            }
+            // System.out.println(comparisonHashMap);
             while (!comparisonHashMap.isEmpty()) {
                 ArrayList<String> max = getMax(comparisonHashMap);
                 ArrayList<Integer> index = new ArrayList<>();
                 ArrayList<String> keys = new ArrayList<>();
+                boolean wasZero = max.size() == 0;
                 for (int i = 0; i < _names.size(); i++) {
                     String string = _names.get(i);
                     if (comparisonHashMap.containsKey(string) && comparisonHashMap.get(string).size() == max.size()) {
@@ -68,8 +70,33 @@ public class BorderRanking {
                 for (Integer integer : index) {
                     sum += integer;
                 }
+                if (wasZero) {
+                    double tmp = -1;
+                    int lastIndex = -1;
+                    double tmpSum = sum / index.size();
+                    boolean exist = false;
+                    for (int i = 0; i < _names.size(); i++) {
+                        if (rs.containsKey(_names.get(i))) {
+                            lastIndex = i + 1;
+                            tmp = rs.get(_names.get(i));
+                            if (!exist && tmpSum == tmp) {
+                                exist = true;
+                            }
+                        }
+                    }
+                    if (exist) {
+                        while (lastIndex <= tmp) {
+                            lastIndex++;
+                        }
+                        sum = lastIndex;
+                    } else {
+                        sum /= index.size();
+                    }
+                } else {
+                    sum /= index.size();
+                }
                 for (int i = 0; i < index.size(); i++) {
-                    rs.put(keys.get(i), sum / index.size());
+                    rs.put(keys.get(i), sum);
                 }
             }
 
@@ -90,5 +117,21 @@ public class BorderRanking {
             }
         }
         return result;
+    }
+
+    public static HashMap<String, Double> doGlobalRanking(ArrayList<HashMap<String, Double>> rankList) {
+        HashMap<String, Double> rs = new HashMap<>();
+        for (HashMap<String, Double> map : rankList) {
+            Iterator<String> keys = map.keySet().iterator();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                if (rs.containsKey(key)) {
+                    rs.put(key, rs.get(key) + map.get(key));
+                } else {
+                    rs.put(key, map.get(key));
+                }
+            }
+        }
+        return rs;
     }
 }

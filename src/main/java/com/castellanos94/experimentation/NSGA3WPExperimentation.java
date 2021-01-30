@@ -34,7 +34,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class NSGA3WPExperimentation {
     private static final Logger logger = LogManager.getLogger(NSGA3WPExperimentation.class);
-    private static final int CLASSIFY_EVERY_ITERATION = 1; // Classification F0 each 3%
+    private static final int CLASSIFY_EVERY_ITERATION = 1; // Classification F0 each
     private static final int ELEMENTS_TO_REPLACE = 2; // 5 % of population
     static final String DIRECTORY = "experiments" + File.separator + "NSGA3" + File.separator + "C"
             + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
@@ -89,7 +89,7 @@ public class NSGA3WPExperimentation {
             NSGA_III_WP<DoubleSolution> algorithm = new NSGA_III_WP<>(problem, popSize, maxIterations, numberOfDivision,
                     selectionOperator, crossover, mutation);
             algorithm.setClassifyEveryIteration(CLASSIFY_EVERY_ITERATION);
-            algorithm.setNElementsToReplace(ELEMENTS_TO_REPLACE);
+            algorithm.setNumberOfElementToReplace(ELEMENTS_TO_REPLACE);
             logger.info(problem);
             logger.info(algorithm);
 
@@ -101,7 +101,7 @@ public class NSGA3WPExperimentation {
                         crossover, mutation);// algorithm.setReferenceHyperplane(referenceHyperplane);
                 // referenceHyperplane.resetCount();
                 algorithm.setClassifyEveryIteration(CLASSIFY_EVERY_ITERATION);
-                algorithm.setNElementsToReplace(ELEMENTS_TO_REPLACE);
+                algorithm.setNumberOfElementToReplace(ELEMENTS_TO_REPLACE);
                 algorithm.execute();
                 averageTime += algorithm.getComputeTime();
                 try {

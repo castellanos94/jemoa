@@ -20,7 +20,7 @@ import tech.tablesaw.api.Table;
  */
 public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
     private int classifyEveryIteration;
-    private int nElementsToReplace = 1;
+    private int numberOfElementToReplace = 1;
     private Table table;
     private DoubleColumn iterColumn;
     private DoubleColumn nFrontColumn;
@@ -38,17 +38,16 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
         nFrontColumn = DoubleColumn.create("N-Front");
         hsatColumn = DoubleColumn.create("HSat");
         satColumn = DoubleColumn.create("Sat");
-        nElementsToReplace = (int) ((10 / 100.0) * this.populationSize);
+        numberOfElementToReplace = (int) ((10 / 100.0) * this.populationSize);
     }
 
-    public void setNElementsToReplace(int nElementsToReplace) {
-        this.nElementsToReplace = (int) ((nElementsToReplace / 100.0) * this.populationSize);
+    public void setNumberOfElementToReplace(int numberOfElementToReplace) {
+        this.numberOfElementToReplace = numberOfElementToReplace;
 
     }
 
     public void setClassifyEveryIteration(int classifyEveryIteration) {
-        this.classifyEveryIteration = (int) (classifyEveryIteration / 100.0 * this.maxIterations);
-        if (classifyEveryIteration >= 100) {
+        if (classifyEveryIteration >= this.maxIterations) {
             this.classifyEveryIteration = 1;
         }
     }
@@ -139,7 +138,7 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
     private void diversityStrategy(ArrayList<S> pt) {
         if (this.currenIteration > 0 && classifyEveryIteration != 0
                 && this.currenIteration % classifyEveryIteration == 0) {
-            for (int i = pt.size() - this.nElementsToReplace; i < pt.size(); i++) {
+            for (int i = pt.size() - this.numberOfElementToReplace; i < pt.size(); i++) {
                 S randomSolution = this.problem.randomSolution();
                 this.problem.evaluate(randomSolution);
                 this.problem.evaluateConstraint(randomSolution);
@@ -184,7 +183,7 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
     @Override
     public String toString() {
         return String.format("NSGA-III-WP Classify every %3d iteration, %3d elements to replace",
-                classifyEveryIteration, nElementsToReplace);
+                classifyEveryIteration, numberOfElementToReplace);
     }
 
 }
