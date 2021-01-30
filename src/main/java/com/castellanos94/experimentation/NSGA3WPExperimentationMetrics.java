@@ -463,7 +463,7 @@ public class NSGA3WPExperimentationMetrics {
         String data = "";
         String ranking_ = "";
         HashMap<String, Double> rankingBorderMap;
-        if (nameProblem.toLowerCase().contains("familiy")) {
+        if (nameProblem.toLowerCase().contains("family")) {
             rankingBorderMap = BordaRanking.doGlobalRanking(rankListMetric.get(metricName));
         } else {
             rankingBorderMap = BordaRanking.doRankingBorda(friedman);
