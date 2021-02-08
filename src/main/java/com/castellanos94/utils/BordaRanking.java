@@ -3,6 +3,7 @@ package com.castellanos94.utils;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -121,6 +122,7 @@ public class BordaRanking {
 
     public static HashMap<String, Double> doGlobalRanking(ArrayList<HashMap<String, Double>> rankList) {
         HashMap<String, Double> rs = new HashMap<>();
+
         for (HashMap<String, Double> map : rankList) {
             Iterator<String> keys = map.keySet().iterator();
             while (keys.hasNext()) {
@@ -131,6 +133,27 @@ public class BordaRanking {
                     rs.put(key, map.get(key));
                 }
             }
+        }
+        Iterator<String> iterator = rs.keySet().iterator();
+        Double[] array = rs.values().toArray(new Double[rs.values().size()]);
+        Arrays.sort(array);
+        ArrayList<Double> rank = new ArrayList<>();
+        for (Double tmp : array) {
+            if(!rank.contains(tmp)){
+                rank.add(tmp);
+            }
+        }
+        System.out.println(Arrays.toString(array) + " -> " +rank);
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            int _index = 0;
+            for (int i = 0; i < rank.size(); i++) {
+                if (Double.compare(rs.get(key), rank.get(i)) == 0) {
+                    _index = i+1;
+                    break;
+                }
+            }
+            rs.put(key, (1.0) * _index);
         }
         return rs;
     }
