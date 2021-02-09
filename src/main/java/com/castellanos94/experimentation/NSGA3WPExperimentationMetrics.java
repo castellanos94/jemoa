@@ -25,6 +25,8 @@ import com.castellanos94.utils.POST_HOC;
 import com.castellanos94.utils.StacClient;
 import com.castellanos94.utils.Distance.Metric;
 
+import org.checkerframework.checker.units.qual.K;
+
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.NumericColumn;
 import tech.tablesaw.api.StringColumn;
@@ -394,6 +396,52 @@ public class NSGA3WPExperimentationMetrics {
         reportLatex.addColumns(problemColumn, confColumn, domColumn, chsatColumn, csatColumn, cdisColumn, dMinColumn,
                 dAvgColumn, dMaxColumn);
         reportLatex.write().csv(DIRECTORY + "latex_report.csv");
+
+        System.out.println("Generating sum all metrics All...");
+        HashMap<String, Double> makeSumRank = BordaRanking.makeSumRank(rankListMetric);
+        System.out.println("\tName\tRank");
+        makeSumRank.forEach((k,v)->{
+            System.out.println("\t"+k+"\t"+v);
+        });
+        HashMap<String, ArrayList<HashMap<String,Double>>> euclideanList = new HashMap<>();
+        rankListMetric.forEach((k,v)->{
+            if(k.contains("Euclidean")){
+                euclideanList.put(k, v);
+            }
+        });
+        System.out.println("Generating sum all metrics Euclidean...");
+        makeSumRank = BordaRanking.makeSumRank(euclideanList);
+        System.out.println("\tName\tRank");
+        makeSumRank.forEach((k,v)->{
+            System.out.println("\t"+k+"\t"+v);
+        });
+
+        HashMap<String, ArrayList<HashMap<String,Double>>> chebyshevList = new HashMap<>();
+        rankListMetric.forEach((k,v)->{
+            if(k.contains("Chebyshev")){
+                chebyshevList.put(k, v);
+            }
+        });
+        System.out.println("Generating sum all metrics Chebyshev...");
+        makeSumRank = BordaRanking.makeSumRank(chebyshevList);
+        System.out.println("\tName\tRank");
+        makeSumRank.forEach((k,v)->{
+            System.out.println("\t"+k+"\t"+v);
+        });
+
+        HashMap<String, ArrayList<HashMap<String,Double>>> satList = new HashMap<>();
+        rankListMetric.forEach((k,v)->{
+            if(k.contains("Sat")){
+                satList.put(k, v);
+            }
+        });
+        System.out.println("Generating sum all metrics SAT...");
+        makeSumRank = BordaRanking.makeSumRank(satList);
+        System.out.println("\tName\tRank");
+        makeSumRank.forEach((k,v)->{
+            System.out.println("\t"+k+"\t"+v);
+        });
+        System.out.println("Generating Report");
         ReportFront.generateReportFront(algorithmName, DIRECTORY);
     }
 
@@ -467,12 +515,12 @@ public class NSGA3WPExperimentationMetrics {
             rankingBorderMap = BordaRanking.doGlobalRanking(rankListMetric.get(metricName));
         } else {
             rankingBorderMap = BordaRanking.doRankingBorda(friedman);
-        }
 
-        if (!rankListMetric.containsKey(metricName)) {
-            rankListMetric.put(metricName, new ArrayList<>());
+            if (!rankListMetric.containsKey(metricName)) {
+                rankListMetric.put(metricName, new ArrayList<>());
+            }
+            rankListMetric.get(metricName).add(rankingBorderMap);
         }
-        rankListMetric.get(metricName).add(rankingBorderMap);
 
         iterator = summaryMean.keySet().iterator();
         String summary = "";
@@ -755,6 +803,7 @@ public class NSGA3WPExperimentationMetrics {
         doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, chebyshevMin, "Chebyshev Min");
         doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, chebyshevAVG, "Chebyshev AVG");
         doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, chebyshevMax, "Chebyshev Max");
+        
 
     }
 
