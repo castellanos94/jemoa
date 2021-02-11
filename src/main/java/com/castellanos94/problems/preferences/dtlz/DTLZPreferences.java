@@ -23,6 +23,7 @@ public abstract class DTLZPreferences extends GDProblem<DoubleSolution> {
         this.instance = instance;
         this.preference_models = instance.getPreferenceModels();
         this.numberOfConstrains = 0;
+        this.k = this.numberOfDecisionVars - this.numberOfObjectives + 1;
         classifier = new InterClassnC<>(this);
     }
 

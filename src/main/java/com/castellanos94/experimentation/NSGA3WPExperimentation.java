@@ -5,10 +5,13 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.castellanos94.algorithms.multi.NSGA_III_WP;
 import com.castellanos94.instances.DTLZ_Instance;
+import com.castellanos94.operators.CrossoverOperator;
+import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.operators.impl.PolynomialMutation;
 import com.castellanos94.operators.impl.TournamentSelection;
@@ -30,14 +33,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Current Algorithm Experimentation used. 
+ * Current Algorithm Experimentation used.
  */
 public class NSGA3WPExperimentation {
     private static final Logger logger = LogManager.getLogger(NSGA3WPExperimentation.class);
     private static final int CLASSIFY_EVERY_ITERATION = 1; // Classification F0 each
-    private static final int ELEMENTS_TO_REPLACE = 2; // 5 % of population
-    static final String DIRECTORY = "experiments" + File.separator + "NSGA3" + File.separator + "C"
-            + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
+    private static final int ELEMENTS_TO_REPLACE = 0; // 5 % of population
+    private static final int numberOfObjectives = 10;
+    static final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NSGA3"
+            + File.separator + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
     static final int EXPERIMENT = 50;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
@@ -46,50 +50,18 @@ public class NSGA3WPExperimentation {
 
             Tools.setSeed(1L);
             logger.info("Experimentation: DTLZ with preferences");
-            String path = "src/main/resources/DTLZ_INSTANCES/DTLZ" + p + "_Instance.txt";
+            String path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ" + p + "_Instance.txt";
             DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
             logger.info(instance);
-            DTLZPreferences problem = null;
-            switch (p) {
-                case 1:
-                    problem = new DTLZ1_P(instance);
-                    break;
-                case 2:
-                    problem = new DTLZ2_P(instance);
-                    break;
-                case 3:
-                    problem = new DTLZ3_P(instance);
-                    break;
-                case 4:
-                    problem = new DTLZ4_P(instance);
-                    break;
-                case 5:
-                    problem = new DTLZ5_P(instance);
-                    break;
-                case 6:
-                    problem = new DTLZ6_P(instance);
-                    break;
-                case 7:
-                    problem = new DTLZ7_P(instance);
-                    break;
-            }
+
+            NSGA_III_WP<DoubleSolution> algorithm = dtlzTestSuite(p, instance);
+            algorithm.setClassifyEveryIteration(CLASSIFY_EVERY_ITERATION);
+            algorithm.setNumberOfElementToReplace(ELEMENTS_TO_REPLACE);
+            DTLZPreferences problem = (DTLZPreferences) algorithm.getProblem();
             String subDir = problem.getName().trim();
             if (!new File(DIRECTORY + File.separator + subDir).exists()) {
                 new File(DIRECTORY + File.separator + subDir).mkdir();
             }
-
-            int popSize = 92;
-            int numberOfDivision = 12;
-            SBXCrossover crossover = new SBXCrossover(30, 1.0);
-            PolynomialMutation mutation = new PolynomialMutation();
-            int maxIterations = 1000;
-
-            SelectionOperator<DoubleSolution> selectionOperator = new TournamentSelection<>(popSize,
-                    new DominanceComparator<DoubleSolution>());
-            NSGA_III_WP<DoubleSolution> algorithm = new NSGA_III_WP<>(problem, popSize, maxIterations, numberOfDivision,
-                    selectionOperator, crossover, mutation);
-            algorithm.setClassifyEveryIteration(CLASSIFY_EVERY_ITERATION);
-            algorithm.setNumberOfElementToReplace(ELEMENTS_TO_REPLACE);
             logger.info(problem);
             logger.info(algorithm);
 
@@ -97,9 +69,7 @@ public class NSGA3WPExperimentation {
             long averageTime = 0;
 
             for (int i = 0; i < EXPERIMENT; i++) {
-                algorithm = new NSGA_III_WP<>(problem, popSize, maxIterations, numberOfDivision, selectionOperator,
-                        crossover, mutation);// algorithm.setReferenceHyperplane(referenceHyperplane);
-                // referenceHyperplane.resetCount();
+                algorithm = dtlzTestSuite(p, instance);
                 algorithm.setClassifyEveryIteration(CLASSIFY_EVERY_ITERATION);
                 algorithm.setNumberOfElementToReplace(ELEMENTS_TO_REPLACE);
                 algorithm.execute();
@@ -197,6 +167,140 @@ public class NSGA3WPExperimentation {
             }
             logger.info("End Experimentation.");
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static NSGA_III_WP<DoubleSolution> dtlzTestSuite(int p, DTLZ_Instance instance) {
+
+        HashMap<String, Object> options = setup(instance.getNumObjectives());
+        DTLZPreferences problem = null;
+        int maxIterations = 4000;
+        int numberOfObjectives = instance.getNumObjectives();
+        switch (p) {
+            case 1:
+                if (numberOfObjectives == 3) {
+                    problem = new DTLZ1_P(instance);
+                    maxIterations = 400;
+                } else if (numberOfObjectives == 5) {
+                    problem = new DTLZ1_P(instance);
+                    maxIterations = 600;
+                } else if (numberOfObjectives == 8) {
+                    problem = new DTLZ1_P(instance);
+                    maxIterations = 750;
+                } else if (numberOfObjectives == 10) {
+                    problem = new DTLZ1_P(instance);
+                    maxIterations = 1000;
+                } else if (numberOfObjectives == 15) {
+                    problem = new DTLZ1_P(instance);
+                    maxIterations = 1500;
+                }
+                break;
+            case 2:
+                if (numberOfObjectives == 3) {
+                    problem = new DTLZ2_P(instance);
+                    maxIterations = 250;
+                } else if (numberOfObjectives == 5) {
+                    problem = new DTLZ2_P(instance);
+                    maxIterations = 350;
+                } else if (numberOfObjectives == 8) {
+                    problem = new DTLZ2_P(instance);
+                    maxIterations = 500;
+                } else if (numberOfObjectives == 10) {
+                    problem = new DTLZ2_P(instance);
+                    maxIterations = 750;
+                } else if (numberOfObjectives == 15) {
+                    problem = new DTLZ2_P(instance);
+                    maxIterations = 1000;
+                }
+                break;
+            case 3:
+                if (numberOfObjectives == 3) {
+                    problem = new DTLZ3_P(instance);
+                    maxIterations = 1000;
+                } else if (numberOfObjectives == 5 || numberOfObjectives == 9) {
+                    problem = new DTLZ3_P(instance);
+                    maxIterations = 1000;
+                } else if (numberOfObjectives == 10) {
+                    problem = new DTLZ3_P(instance);
+                    maxIterations = 1500;
+                } else if (numberOfObjectives == 15) {
+                    problem = new DTLZ3_P(instance);
+                    maxIterations = 2000;
+                }
+                break;
+            case 4:
+                if (numberOfObjectives == 3) {
+                    problem = new DTLZ4_P(instance);
+                    maxIterations = 600;
+                } else if (numberOfObjectives == 5) {
+                    problem = new DTLZ4_P(instance);
+                    maxIterations = 1000;
+                } else if (numberOfObjectives == 8) {
+                    problem = new DTLZ4_P(instance);
+                    maxIterations = 1250;
+                } else if (numberOfObjectives == 10) {
+                    problem = new DTLZ4_P(instance);
+                    maxIterations = 2000;
+                } else if (numberOfObjectives == 15) {
+                    problem = new DTLZ4_P(instance);
+                    maxIterations = 3000;
+                }
+                break;
+            case 5:
+                problem = new DTLZ5_P(instance);
+                break;
+            case 6:
+                problem = new DTLZ6_P(instance);
+                break;
+            case 7:
+                problem = new DTLZ7_P(instance);
+                break;
+            default:
+                error("Invalid number problem");
+                break;
+        }
+
+        SelectionOperator<DoubleSolution> selectionOperator = new TournamentSelection<>((int) options.get("pop_size"),
+                new DominanceComparator<>());
+        return new NSGA_III_WP<>(problem, (int) options.get("pop_size"), maxIterations, (int) options.get("partitions"),
+                selectionOperator, (CrossoverOperator<DoubleSolution>) options.get("crossover"),
+                (MutationOperator<DoubleSolution>) options.get("mutation"));
+    }
+
+    private static void error(String msg) {
+        throw new IllegalArgumentException(msg);
+    }
+
+    private static HashMap<String, Object> setup(int numberOfObjectives) {
+        HashMap<String, Object> map = new HashMap<>();
+        switch (numberOfObjectives) {
+            case 3:
+                map.put("pop_size", 92);
+                map.put("partitions", 12);
+                break;
+            case 5:
+                map.put("pop_size", 212);
+                map.put("partitions", 6);
+                break;
+            case 8:
+                map.put("pop_size", 156);
+                map.put("partitions", 5);
+                break;
+            case 10:
+                map.put("pop_size", 271);
+                map.put("partitions", 5);
+                break;
+            case 15:
+                map.put("pop_size", 136);
+                map.put("partitions", 3);
+                break;
+            default:
+                error("Invalid number of objectives");
+                break;
+        }
+        map.put("crossover", new SBXCrossover(30, 1.0));
+        map.put("mutation", new PolynomialMutation());
+        return map;
     }
 
     public static void reportResume(String subDir) throws IOException {

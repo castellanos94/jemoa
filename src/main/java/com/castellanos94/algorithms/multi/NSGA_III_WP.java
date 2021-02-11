@@ -49,6 +49,8 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
     public void setClassifyEveryIteration(int classifyEveryIteration) {
         if (classifyEveryIteration >= this.maxIterations) {
             this.classifyEveryIteration = 1;
+        }else{
+            this.classifyEveryIteration = classifyEveryIteration;
         }
     }
 
