@@ -52,11 +52,11 @@ public class NSGA3WPExperimentation {
         for (int integer : problems) {
             problelmArrayList.add(integer);
         }
-        problelmArrayList.stream().parallel().forEach(p -> {
+        // problelmArrayList.stream().parallel().forEach(p -> {
 
-            // for (int p = 1; p <= 7; p++) {
+        for (int p = 1; p <= 7; p++) {
 
-            Tools.setSeed(1L);
+            Tools.setSeed(8435L);
             logger.info("Experimentation: DTLZ with preferences");
             String path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ" + p + "_Instance.txt";
             DTLZ_Instance instance = null;
@@ -91,8 +91,10 @@ public class NSGA3WPExperimentation {
                     Solution.writSolutionsToFile(
                             DIRECTORY + File.separator + subDir + File.separator + "execution_" + i,
                             new ArrayList<>(algorithm.getSolutions()));
-                    algorithm.exportReport(
-                            DIRECTORY + File.separator + subDir + File.separator + "execution_report_" + i);
+                    /*
+                     * algorithm.exportReport( DIRECTORY + File.separator + subDir + File.separator
+                     * + "execution_report_" + i);
+                     */
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -102,11 +104,10 @@ public class NSGA3WPExperimentation {
                 // "_" + i, algorithm.getSolutions());
                 bag.addAll(algorithm.getSolutions());
             }
-            try {
-                reportResume(subDir);
-            } catch (IOException e2) {
-                e2.printStackTrace();
-            }
+            /*
+             * try { reportResume(subDir); } catch (IOException e2) { e2.printStackTrace();
+             * }
+             */
             String str = "Resume " + problem.getName();
             str += "\n" + "Total time: " + averageTime;
             str += "\n" + "Average time : " + (double) averageTime / EXPERIMENT + " ms.";
@@ -162,7 +163,7 @@ public class NSGA3WPExperimentation {
             }
             logger.info(String.format("%s -> HSat : %3d, Sat : %3d, Dis : %3d, HDis : %3d", problem.getName(),
                     hs.size(), s.size(), d.size(), hd.size()));
-            logger.info(problem.getName()+" -> Front 0: " + front.size());
+            logger.info(problem.getName() + " -> Front 0: " + front.size());
 
             ArrayList<String> strings = new ArrayList<>();
             for (DoubleSolution solution : front)
@@ -190,7 +191,7 @@ public class NSGA3WPExperimentation {
                  */
             }
             logger.info("End Experimentation.");
-        });
+        }
     }
 
     @SuppressWarnings("unchecked")

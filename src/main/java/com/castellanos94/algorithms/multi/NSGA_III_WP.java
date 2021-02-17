@@ -16,7 +16,7 @@ import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.Table;
 
 /**
- * Explorar entre 5 20 50 aplicar clasificador
+ * Front report disabled
  */
 public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
     private int classifyEveryIteration;
@@ -40,10 +40,13 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
         satColumn = DoubleColumn.create("Sat");
         numberOfElementToReplace = (int) ((10 / 100.0) * this.populationSize);
     }
-
+    /**
+     * Percentage of elements to replace
+     * @param numberOfElementToReplace
+     */
     public void setNumberOfElementToReplace(int numberOfElementToReplace) {
-        this.numberOfElementToReplace = numberOfElementToReplace;
 
+        this.numberOfElementToReplace = (int) ((numberOfElementToReplace / 100.0) * this.populationSize);
     }
 
     public void setClassifyEveryIteration(int classifyEveryIteration) {
@@ -69,7 +72,7 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
         ranking.computeRanking(Rt);
         InterClassnC<S> classifier = new InterClassnC<>(problem);
         ArrayList<ArrayList<S>> _fronts = new ArrayList<>();
-        report();
+        //report();
         if (ranking.getNumberOfSubFronts() > 0 && classifyEveryIteration != 0 && this.currenIteration > 0
                 && this.currenIteration % classifyEveryIteration == 0) {
             ArrayList<S> hs = new ArrayList<>();
