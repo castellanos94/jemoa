@@ -42,7 +42,7 @@ import tech.tablesaw.columns.Column;
  * {@link ReportFront}
  */
 public class NSGA3WPExperimentationMetrics {
-    private static String algorithmName = "NSGA3_last";
+    private static String algorithmName = "10" + File.separator + "NSGA3";
     private static final String OWNER = "FROM_PROBLEM";
     private static String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
     private static Table stats = Table.create("statistic");
@@ -400,46 +400,46 @@ public class NSGA3WPExperimentationMetrics {
         System.out.println("Generating sum all metrics All...");
         HashMap<String, Double> makeSumRank = BordaRanking.makeSumRank(rankListMetric);
         System.out.println("\tName\tRank");
-        makeSumRank.forEach((k,v)->{
-            System.out.println("\t"+k+"\t"+v);
+        makeSumRank.forEach((k, v) -> {
+            System.out.println("\t" + k + "\t" + v);
         });
-        HashMap<String, ArrayList<HashMap<String,Double>>> euclideanList = new HashMap<>();
-        rankListMetric.forEach((k,v)->{
-            if(k.contains("Euclidean")){
+        HashMap<String, ArrayList<HashMap<String, Double>>> euclideanList = new HashMap<>();
+        rankListMetric.forEach((k, v) -> {
+            if (k.contains("Euclidean")) {
                 euclideanList.put(k, v);
             }
         });
         System.out.println("Generating sum all metrics Euclidean...");
         makeSumRank = BordaRanking.makeSumRank(euclideanList);
         System.out.println("\tName\tRank");
-        makeSumRank.forEach((k,v)->{
-            System.out.println("\t"+k+"\t"+v);
+        makeSumRank.forEach((k, v) -> {
+            System.out.println("\t" + k + "\t" + v);
         });
 
-        HashMap<String, ArrayList<HashMap<String,Double>>> chebyshevList = new HashMap<>();
-        rankListMetric.forEach((k,v)->{
-            if(k.contains("Chebyshev")){
+        HashMap<String, ArrayList<HashMap<String, Double>>> chebyshevList = new HashMap<>();
+        rankListMetric.forEach((k, v) -> {
+            if (k.contains("Chebyshev")) {
                 chebyshevList.put(k, v);
             }
         });
         System.out.println("Generating sum all metrics Chebyshev...");
         makeSumRank = BordaRanking.makeSumRank(chebyshevList);
         System.out.println("\tName\tRank");
-        makeSumRank.forEach((k,v)->{
-            System.out.println("\t"+k+"\t"+v);
+        makeSumRank.forEach((k, v) -> {
+            System.out.println("\t" + k + "\t" + v);
         });
 
-        HashMap<String, ArrayList<HashMap<String,Double>>> satList = new HashMap<>();
-        rankListMetric.forEach((k,v)->{
-            if(k.contains("Sat")){
+        HashMap<String, ArrayList<HashMap<String, Double>>> satList = new HashMap<>();
+        rankListMetric.forEach((k, v) -> {
+            if (k.contains("Sat")) {
                 satList.put(k, v);
             }
         });
         System.out.println("Generating sum all metrics SAT...");
         makeSumRank = BordaRanking.makeSumRank(satList);
         System.out.println("\tName\tRank");
-        makeSumRank.forEach((k,v)->{
-            System.out.println("\t"+k+"\t"+v);
+        makeSumRank.forEach((k, v) -> {
+            System.out.println("\t" + k + "\t" + v);
         });
         System.out.println("Generating Report");
         ReportFront.generateReportFront(algorithmName, DIRECTORY);
@@ -482,7 +482,6 @@ public class NSGA3WPExperimentationMetrics {
                     summaryMean.put(key, Math.abs(summaryMean.get(key) / acum) * 100.0);
                 if (acumSTD != 0)
                     summarySTD.put(key, Math.abs(summarySTD.get(key) / acumSTD));
-
             }
         }
 
@@ -494,6 +493,7 @@ public class NSGA3WPExperimentationMetrics {
         // %s\n",nameProblem,metricName,file.getAbsolutePath());
         // }
         tmpTable.write().csv(file);
+        System.out.println(nameProblem+"/"+metricName+"-> "+file.getAbsolutePath());
         Map<String, Object> friedman = StacClient.FRIEDMAN_ALIGNED_RANK(file.getAbsolutePath(), 0.05, POST_HOC.FINNER);
         Map<String, Object> st = (Map<String, Object>) friedman.get("ranking");
         boolean rs;
@@ -803,7 +803,6 @@ public class NSGA3WPExperimentationMetrics {
         doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, chebyshevMin, "Chebyshev Min");
         doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, chebyshevAVG, "Chebyshev AVG");
         doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, chebyshevMax, "Chebyshev Max");
-        
 
     }
 
@@ -969,7 +968,7 @@ public class NSGA3WPExperimentationMetrics {
          * } return new File(path);
          */
 
-        return new File("/home/thinkpad/Documents/jemoa/roi_generator/" + name);
+        return new File("/home/thinkpad/Documents/jemoa/roi_generator/"+ problem.getNumberOfObjectives()+ File.separator+name);
     }
 
     private static DTLZPreferences loadProblem(String name) throws FileNotFoundException {
@@ -978,37 +977,37 @@ public class NSGA3WPExperimentationMetrics {
         String path = null;
         switch (name) {
             case "DTLZ1_P":
-                path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/10/DTLZ1_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ1_P(instance);
                 break;
             case "DTLZ2_P":
-                path = "src/main/resources/DTLZ_INSTANCES/DTLZ2_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/10/DTLZ2_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ2_P(instance);
                 break;
             case "DTLZ3_P":
-                path = "src/main/resources/DTLZ_INSTANCES/DTLZ3_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/10/DTLZ3_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ3_P(instance);
                 break;
             case "DTLZ4_P":
-                path = "src/main/resources/DTLZ_INSTANCES/DTLZ4_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/10/DTLZ4_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ4_P(instance);
                 break;
             case "DTLZ5_P":
-                path = "src/main/resources/DTLZ_INSTANCES/DTLZ5_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/10/DTLZ5_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ5_P(instance);
                 break;
             case "DTLZ6_P":
-                path = "src/main/resources/DTLZ_INSTANCES/DTLZ6_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/10/DTLZ6_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ6_P(instance);
                 break;
             case "DTLZ7_P":
-                path = "src/main/resources/DTLZ_INSTANCES/DTLZ7_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/10/DTLZ7_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ7_P(instance);
                 break;

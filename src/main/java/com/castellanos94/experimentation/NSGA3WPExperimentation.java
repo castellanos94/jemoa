@@ -38,12 +38,12 @@ import org.apache.logging.log4j.Logger;
  */
 public class NSGA3WPExperimentation {
     private static final Logger logger = LogManager.getLogger(NSGA3WPExperimentation.class);
-    private static final int CLASSIFY_EVERY_ITERATION = 0; // Classification F0 each
+    private static final int CLASSIFY_EVERY_ITERATION = 50; // Classification F0 each
     private static final int ELEMENTS_TO_REPLACE = 0; // 5 % of population
     private static final int numberOfObjectives = 10;
     static final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NSGA3"
             + File.separator + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
-    static final int EXPERIMENT = 31;
+    static final int EXPERIMENT = 3;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         new File(DIRECTORY).mkdirs();
@@ -65,7 +65,7 @@ public class NSGA3WPExperimentation {
             } catch (FileNotFoundException e3) {
                 e3.printStackTrace();
             }
-            logger.info(instance);
+            //logger.info(instance);
 
             NSGA_III_WP<DoubleSolution> algorithm = dtlzTestSuite(p, instance);
             algorithm.setClassifyEveryIteration(CLASSIFY_EVERY_ITERATION);
