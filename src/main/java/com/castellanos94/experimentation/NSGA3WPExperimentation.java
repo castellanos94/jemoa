@@ -28,6 +28,7 @@ import com.castellanos94.utils.Scatter3D;
 import com.castellanos94.utils.Tools;
 
 import tech.tablesaw.api.DoubleColumn;
+import tech.tablesaw.api.LongColumn;
 import tech.tablesaw.api.Table;
 
 import org.apache.logging.log4j.LogManager;
@@ -43,7 +44,7 @@ public class NSGA3WPExperimentation {
     private static final int numberOfObjectives = 10;
     static final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NSGA3"
             + File.separator + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
-    static final int EXPERIMENT = 3;
+    static final int EXPERIMENT = 5;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         new File(DIRECTORY).mkdirs();
@@ -56,7 +57,7 @@ public class NSGA3WPExperimentation {
 
         for (int p = 1; p <= 7; p++) {
 
-            Tools.setSeed(8435L);
+            Tools.setSeed(1L);
             logger.info("Experimentation: DTLZ with preferences");
             String path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ" + p + "_Instance.txt";
             DTLZ_Instance instance = null;
@@ -79,14 +80,14 @@ public class NSGA3WPExperimentation {
             logger.info(algorithm);
 
             ArrayList<DoubleSolution> bag = new ArrayList<>();
-            long averageTime = 0;
-
+            LongColumn experimentTimeColumn = LongColumn.create("Experiment Time");
+            Table infoTime =Table.create("time");
             for (int i = 0; i < EXPERIMENT; i++) {
                 algorithm = dtlzTestSuite(p, instance);
                 algorithm.setClassifyEveryIteration(CLASSIFY_EVERY_ITERATION);
                 algorithm.setNumberOfElementToReplace(ELEMENTS_TO_REPLACE);
                 algorithm.execute();
-                averageTime += algorithm.getComputeTime();
+                experimentTimeColumn.append(algorithm.getComputeTime());
                 try {
                     Solution.writSolutionsToFile(
                             DIRECTORY + File.separator + subDir + File.separator + "execution_" + i,
@@ -109,10 +110,12 @@ public class NSGA3WPExperimentation {
              * }
              */
             String str = "Resume " + problem.getName();
-            str += "\n" + "Total time: " + averageTime;
-            str += "\n" + "Average time : " + (double) averageTime / EXPERIMENT + " ms.";
+            str += "\n" + "Total time: " + experimentTimeColumn.sum();
+            str += "\n" + "Average time : " + experimentTimeColumn.mean()+ " ms.";
             str += "\n" + "Solutions in the bag: " + bag.size();
             logger.info(str);
+            infoTime.addColumns(experimentTimeColumn);
+            infoTime.write().csv(DIRECTORY+File.separator+subDir+File.separator+"times.csv");
             try {
                 Solution.writSolutionsToFile(DIRECTORY + File.separator + subDir + File.separator + "nsga_iii_bag_"
                         + problem.getName() + "_F0_" + problem.getNumberOfObjectives(), new ArrayList<>(bag));
