@@ -1,0 +1,144 @@
+Command: Problem  4, sample 50000, seed 1
+Reading instance
+NumberOfVariables  19, NumberOfObjectives  10, DMs   1
+Weigth
+	0.024000 0.042000, 0.068000 0.118000, 0.059000 0.103000, 0.068000 0.120000, 0.143000 0.251000, 0.111000 0.195000, 0.047000 0.081000, 0.031000 0.053000, 0.146000 0.256000, 0.031000 0.053000
+Veto
+	1.584000 1.683000, 1.402000 1.403000, 1.471000 1.688000, 1.220000 1.466000, 1.269000 1.384000, 1.242000 1.430000, 1.605000 1.660000, 1.498000 1.769000, 1.307000 1.337000, 1.541000 1.725000
+Beta
+	0.510000 0.750000
+Lamda
+	0.510000 0.670000
+Alpha
+	1.000000
+Sample size 50000
+Generating sample ...
+	Check dominance   0... ... size of F0 41121
+	Check dominance   1... ... size of F0 48012
+	Check dominance   2... ... size of F0 49522
+	Check dominance   3... ... size of F0 49898
+	Check dominance   4... ... size of F0 49973
+	Check dominance   5... ... size of F0 49996
+	Check dominance   6... ... size of F0 50000
+Looking best compromise ...
+Iteration (0.10)   5000 of  50000 ...
+Iteration (0.20)  10000 of  50000 ...
+Iteration (0.30)  15000 of  50000 ...
+Iteration (0.40)  20000 of  50000 ...
+Iteration (0.50)  25000 of  50000 ...
+Iteration (0.60)  30000 of  50000 ...
+Iteration (0.70)  35000 of  50000 ...
+Iteration (0.80)  40000 of  50000 ...
+Iteration (0.90)  45000 of  50000 ...
+Check netscore ...
+Best NetScore 48804.340120
+Best compromise by netscore 48804.340120 ...
+0.3210847491030976, 0.0113720013812985, 0.6483267595285209, 0.0163031397463303, 0.0269167143976859, 0.0049982406222253, 0.0353391538538687, 0.7867737369550269, 0.2878468657321515, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50 * 1.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 *   0
+Saving ROI-P File... ROI_P_DTLZ4_V19_O10.txt
+	Best old netscore 48742.104536
+	Best old netscore 48396.076943
+	Best old netscore 47862.349682
+	Best old netscore 47697.702638
+	Best old netscore 47464.952905
+	Best old netscore 47441.057060
+	Best old netscore 47002.200324
+	Best old netscore 46811.314341
+	Best old netscore 46580.558314
+	Best old netscore 46518.764238
+	Best old netscore 46230.674014
+	Best old netscore 46157.925912
+	Best old netscore 46033.519320
+	Best old netscore 45914.449532
+	Best old netscore 45903.537213
+	Best old netscore 45885.593168
+	Best old netscore 45192.965622
+	Best old netscore 45190.771205
+	Best old netscore 45150.044529
+	Best old netscore 45036.564940
+	Best old netscore 44848.684568
+	Best old netscore 44822.184949
+	Best old netscore 44732.907487
+	Best old netscore 44594.378667
+	Best old netscore 44352.760338
+	Best old netscore 44261.596809
+	Best old netscore 44066.571320
+	Best old netscore 43805.821454
+	Best old netscore 43793.687653
+	Best old netscore 43491.034141
+	Best old netscore 43404.471609
+	Best old netscore 43376.179091
+	Best old netscore 43099.638038
+	Best old netscore 43056.889510
+	Best old netscore 42994.329456
+	Best old netscore 42963.233657
+	Best old netscore 42771.962250
+	Best old netscore 42688.115541
+	Best old netscore 42343.562823
+	Best old netscore 41996.350812
+	Best old netscore 41584.454003
+	Best old netscore 41562.316002
+	Best old netscore 41371.478972
+	Best old netscore 41133.492064
+	Best old netscore 40836.017380
+	Best old netscore 40696.493193
+	Best old netscore 40283.302281
+	Best old netscore 39833.684302
+	Best old netscore 39616.509634
+	Best old netscore 39607.934452
+	Best old netscore 39527.317151
+	Best old netscore 39274.885843
+	Best old netscore 39038.459556
+	Best old netscore 38959.156402
+	Best old netscore 38896.466471
+	Best old netscore 38630.480163
+	Best old netscore 38347.118474
+	Best old netscore 37924.929356
+	Best old netscore 37773.963176
+	Best old netscore 37671.997372
+	Best old netscore 37614.861912
+	Best old netscore 37326.122895
+	Best old netscore 37194.850623
+	Best old netscore 36704.214916
+	Best old netscore 36358.477277
+	Best old netscore 35514.400161
+	Best old netscore 35356.776699
+	Best old netscore 35151.332833
+	Best old netscore 34413.747135
+	Best old netscore 33733.551906
+	Best old netscore 33670.058686
+	Best old netscore 33471.910360
+	Best old netscore 33389.200614
+	Best old netscore 33382.018181
+	Best old netscore 33296.737009
+	Best old netscore 33128.550202
+	Best old netscore 33026.395317
+	Best old netscore 32968.960375
+	Best old netscore 32724.536328
+	Best old netscore 32511.686548
+	Best old netscore 31505.767439
+	Best old netscore 30681.920713
+	Best old netscore 30328.383550
+	Best old netscore 29575.537829
+	Best old netscore 29094.619243
+	Best old netscore 28309.677268
+	Best old netscore 28139.941088
+	Best old netscore 27924.798445
+	Best old netscore 27461.854007
+	Best old netscore 25878.826638
+	Best old netscore 24871.024755
+	Best old netscore 23035.527856
+	Best old netscore 21582.563835
+	Best old netscore 21206.541349
+	Best old netscore 19581.421149
+	Best old netscore 18479.510741
+	Best old netscore 14179.352497
+	Best old netscore 9469.795502
+	Best old netscore 8637.745512
+	Best old netscore 6584.472100
+ROI preferential lenght 100
+Making instance
+from 98 to 100
+
+real	307m4.843s
+user	304m14.880s
+sys	0m3.256s

@@ -120,8 +120,9 @@ void printInstanceWithCompromise(char *fileName, struct Instance instance, struc
     solutionToFile(file, solutions[indexBestCompromise]);
     fprintf(file, "TRUE FALSE //Frontiers \n2\n");
     int startIndex = (sizeCandidate/2.0 > 0) ? sizeCandidate/2 : 0;
-    printf("from %d to %d\n", startIndex, sizeCandidate);
-    while(startIndex<sizeCandidate)
+    printf("from %d to", startIndex);
+    int count = 0;
+    while(startIndex<sizeCandidate && count < 2)
     {
         for (int j = 0; j < instance.numberOfObjectives; j++)
         {
@@ -135,7 +136,9 @@ void printInstanceWithCompromise(char *fileName, struct Instance instance, struc
             }
         }
         startIndex = sizeCandidate - 1;
+        count++;
     }
+    printf(" %d\n", startIndex);
     fprintf(file, "FALSE //Initial solutions");
     fclose(file);
 }
