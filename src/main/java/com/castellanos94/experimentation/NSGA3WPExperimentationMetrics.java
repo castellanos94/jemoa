@@ -25,7 +25,6 @@ import com.castellanos94.utils.POST_HOC;
 import com.castellanos94.utils.StacClient;
 import com.castellanos94.utils.Distance.Metric;
 
-import org.checkerframework.checker.units.qual.K;
 
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.NumericColumn;
@@ -155,6 +154,7 @@ public class NSGA3WPExperimentationMetrics {
                 noDomiList.add(comparator.getSubFront(0));
                 // CSat Only F0
                 _csat.add(classifySolutions(_problem, noDomiList.get(i), false, true));
+               // _csat.add(classifySolutions(_problem, noDomiList.get(i), true, true));
             }
 
             globalSolutionNDByProblem.put(_problem, noDomiList);
@@ -479,9 +479,11 @@ public class NSGA3WPExperimentationMetrics {
             while (iterator.hasNext()) {
                 String key = iterator.next();
                 if (acum != 0)
-                    summaryMean.put(key, Math.abs(summaryMean.get(key) / acum) * 100.0);
+                    //summaryMean.put(key, Math.abs(summaryMean.get(key) / acum) * 100.0);
+                    summaryMean.put(key, Math.abs(summaryMean.get(key) ) * 100.0);
                 if (acumSTD != 0)
-                    summarySTD.put(key, Math.abs(summarySTD.get(key) / acumSTD));
+                    //summarySTD.put(key, Math.abs(summarySTD.get(key) / acumSTD));
+                    summarySTD.put(key, Math.abs(summarySTD.get(key) ));
             }
         }
 

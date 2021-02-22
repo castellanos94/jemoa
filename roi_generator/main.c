@@ -119,23 +119,24 @@ void printInstanceWithCompromise(char *fileName, struct Instance instance, struc
     fprintf(file, "TRUE FALSE //Best compromise \n1\n");
     solutionToFile(file, solutions[indexBestCompromise]);
     fprintf(file, "TRUE FALSE //Frontiers \n2\n");
-    int startIndex = (sizeCandidate - 2 > 0) ? sizeCandidate - 2 : 0;
+    int startIndex = (sizeCandidate/2.0 > 0) ? sizeCandidate/2 : 0;
     printf("from %d to %d\n", startIndex, sizeCandidate);
-    for (int i = startIndex; i < sizeCandidate; i++)
+    while(startIndex<sizeCandidate)
     {
         for (int j = 0; j < instance.numberOfObjectives; j++)
         {
             if (j < instance.numberOfObjectives - 1)
             {
-                fprintf(file, "%.16f, ", solutions[indexCandidate[i]]->objective[j]);
+                fprintf(file, "%.16f, ", solutions[indexCandidate[startIndex]]->objective[j]);
             }
             else
             {
-                fprintf(file, "%.16f\n", solutions[indexCandidate[i]]->objective[j]);
+                fprintf(file, "%.16f\n", solutions[indexCandidate[startIndex]]->objective[j]);
             }
         }
+        startIndex = sizeCandidate - 1;
     }
-    fprintf(file, "FALSE //Initial solutions \n2\n");
+    fprintf(file, "FALSE //Initial solutions");
     fclose(file);
 }
 int main(int argc, char const *argv[])
