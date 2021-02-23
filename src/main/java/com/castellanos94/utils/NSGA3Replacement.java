@@ -197,6 +197,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
         for (int i = 0; i < direction.size(); i += 1) {
             numerator = numerator.plus(direction.get(i).times(point.get(i)));
             denominator = denominator.plus(direction.get(i).pow(2));
+            
         }
         Data k = numerator.div(denominator);
 
