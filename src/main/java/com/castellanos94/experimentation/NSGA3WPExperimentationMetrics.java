@@ -41,7 +41,9 @@ import tech.tablesaw.columns.Column;
  * {@link ReportFront}
  */
 public class NSGA3WPExperimentationMetrics {
-    private static String algorithmName = "10" + File.separator + "NSGA3";
+    private final static int numberOfObjectives=3;
+    //private static String algorithmName = "10" + File.separator + "NSGA3";
+    private static String algorithmName =  File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
     private static String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
     private static Table stats = Table.create("statistic");
@@ -78,6 +80,7 @@ public class NSGA3WPExperimentationMetrics {
                         } else {
                             currentProblem = loadProblem(_file.getName());
                             problems.put(_file.getName(), currentProblem);
+                            System.out.println(_file+" "+loadPathRoi(currentProblem));
                             roi.put(currentProblem.getName(),
                                     loadSolutions(currentProblem, loadPathRoi(currentProblem)));
 
@@ -530,6 +533,7 @@ public class NSGA3WPExperimentationMetrics {
         if (st != null) {
             ArrayList<Object> names_ = (ArrayList<Object>) st.get("names");
             ArrayList<Object> values_ = (ArrayList<Object>) st.get("rankings");
+            System.out.println(nameProblem+"/"+nameProblem+" > "+names_ + " <-> "+values_);
             for (int i = 0; i < names_.size(); i++) {
                 String name__ = names_.get(i).toString().replaceAll(regex, "");
                 if (i < names_.size() - 1)
@@ -543,10 +547,12 @@ public class NSGA3WPExperimentationMetrics {
                 if (metricName.equalsIgnoreCase("Dominance") || metricName.equalsIgnoreCase("hsat")
                         || metricName.equalsIgnoreCase("sat")) {
                     sumMap.put(name__, String.format("%s$%5.3f_{%.3f}^{%.1f}$", (rs) ? "\\cellcolor[HTML]{FFFF00}" : "",
-                            summaryMean.get(name__), summarySTD.get(name__), rankingBorderMap.get(name__)));
+                            summaryMean.get(name__), summarySTD.get(name__), 
+                            rankingBorderMap.get(name__)));
                 } else {
                     sumMap.put(name__, String.format("%s$%f_{%.3f}^{%.1f}$", (rs) ? "\\cellcolor[HTML]{FFFF00}" : "",
-                            summaryMean.get(name__), summarySTD.get(name__), rankingBorderMap.get(name__)));
+                            summaryMean.get(name__), summarySTD.get(name__), 
+                            rankingBorderMap.get(name__)));
                 }
 
             }
@@ -979,37 +985,37 @@ public class NSGA3WPExperimentationMetrics {
         String path = null;
         switch (name) {
             case "DTLZ1_P":
-                path = "src/main/resources/DTLZ_INSTANCES/10/DTLZ1_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ1_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ1_P(instance);
                 break;
             case "DTLZ2_P":
-                path = "src/main/resources/DTLZ_INSTANCES/10/DTLZ2_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ2_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ2_P(instance);
                 break;
             case "DTLZ3_P":
-                path = "src/main/resources/DTLZ_INSTANCES/10/DTLZ3_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ3_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ3_P(instance);
                 break;
             case "DTLZ4_P":
-                path = "src/main/resources/DTLZ_INSTANCES/10/DTLZ4_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ4_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ4_P(instance);
                 break;
             case "DTLZ5_P":
-                path = "src/main/resources/DTLZ_INSTANCES/10/DTLZ5_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ5_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ5_P(instance);
                 break;
             case "DTLZ6_P":
-                path = "src/main/resources/DTLZ_INSTANCES/10/DTLZ6_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ6_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ6_P(instance);
                 break;
             case "DTLZ7_P":
-                path = "src/main/resources/DTLZ_INSTANCES/10/DTLZ7_Instance.txt";
+                path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ7_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 dtlzPreferences = new DTLZ7_P(instance);
                 break;
