@@ -43,7 +43,7 @@ public class DTLZNsga3 {
         new File(DIRECTORY).mkdirs();
         Tools.setSeed(1l);
 
-        int numberProblem = 9;
+        int numberProblem = 8;
         int numberOfObjectives = 3;
 
         ArrayList<DoubleSolution> bag = new ArrayList<>();

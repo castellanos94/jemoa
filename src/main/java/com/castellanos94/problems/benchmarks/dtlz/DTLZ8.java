@@ -7,6 +7,14 @@ import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.solutions.DoubleSolution;
 
+/**
+ * DTLZ8
+ * <p>
+ * Problem define in: Deb, K., Thiele, L., Laumanns, M., & Zitzler, E. (n.d.).
+ * Scalable Test Problems for Evolutionary Multiobjective Optimization.
+ * Evolutionary Multiobjective Optimization, 105–145.
+ * doi:10.1007/1-84628-137-7_6
+ */
 public class DTLZ8 extends DTLZ {
 
     public DTLZ8(int numberOfObjectives, int numberOfVariables) {
@@ -28,19 +36,21 @@ public class DTLZ8 extends DTLZ {
         double factorNM = (this.numberOfDecisionVars * 1.0) / this.numberOfObjectives;
         for (int j = 0; j < this.numberOfObjectives; j++) {
             int lower = (int) Math.floor(j * factorNM);
-            int upper = (int) Math.floor((j+1.0) * factorNM);
+            int upper = (int) Math.floor((j + 1.0) * factorNM);
             double sum = 0;
             for (int i = lower; i < upper; i++) {
-               /* int index = 0;
-                if (i != 0) {
-                    index = i - 1;
-                }
-                if (index >= this.numberOfDecisionVars)
-                    index = this.numberOfDecisionVars - 1;*/
+                /*
+                 * int index = 0; if (i != 0) { index = i - 1; } if (index >=
+                 * this.numberOfDecisionVars) index = this.numberOfDecisionVars - 1;
+                 */
                 sum += solution.getVariable(i);
             }
-            solution.setObjective(j , new RealData(sum/factorNM));
+            solution.setObjective(j, new RealData(sum / factorNM));
         }
+    }
+    @Override
+    public void evaluateConstraint(DoubleSolution solution) {
+
         // Constraint evaluated
         int numberOfPenaltieViolated = 0;
         Data min = null;
@@ -83,5 +93,18 @@ public class DTLZ8 extends DTLZ {
             accumulatedConstraint = RealData.ZERO.copy();
         }
         solution.setPenalties(accumulatedConstraint);
+        int cn = numberOfPenaltieViolated;
+        double v = accumulatedConstraint.doubleValue();
+        for (int i = 0; i < numberOfDecisionVars; i++) {
+            if (solution.getVariable(i).compareTo(lowerBound[i].doubleValue()) < 0) {
+                cn++;
+                v += lowerBound[i].doubleValue() - solution.getVariable(i).doubleValue();
+            } else if (solution.getVariable(i).compareTo(upperBound[i].doubleValue()) > 0) {
+                cn++;
+                v += upperBound[i].doubleValue() - solution.getVariable(i).doubleValue();
+            }
+        }
+        solution.setPenalties(new RealData(v));
+        solution.setNumberOfPenalties(cn);
     }
 }

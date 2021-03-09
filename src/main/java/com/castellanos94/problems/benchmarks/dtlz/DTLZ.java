@@ -84,7 +84,6 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
         }
         solution.setPenalties(new RealData(v));
         solution.setNumberOfPenalties(cn);
-
     }
 
     public DTLZ setK(int k) {
