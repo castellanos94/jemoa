@@ -36,7 +36,7 @@ import org.apache.logging.log4j.Logger;
  */
 
 public class ThetaNSGA3Experimentation {
-    private static final Logger logger = LogManager.getLogger(DTLZNsga3.class);
+    private static final Logger logger = LogManager.getLogger(ThetaNSGA3Experimentation.class);
     static final String DIRECTORY = "experiments" + File.separator + "ThetaNSGA3";
     static final int EXPERIMENT = 31;
 
@@ -44,7 +44,7 @@ public class ThetaNSGA3Experimentation {
         new File(DIRECTORY).mkdirs();
         Tools.setSeed(1L);
 
-        int numberProblem = 1;
+        int numberProblem = 7;
         int numberOfObjectives = 3;
 
         ArrayList<DoubleSolution> bag = new ArrayList<>();

@@ -16,6 +16,7 @@ import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
+import com.castellanos94.utils.ReferenceHyperplane;
 import com.castellanos94.utils.Tools;
 
 /**
@@ -29,6 +30,8 @@ public class Theta_NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryA
     protected int currenIteration;
     protected int numberOfReferencePoints;
     protected ArrayList<ArrayList<Data>> references;
+    protected ReferenceHyperplane<S> referenceHyperplane;
+
     protected S idealPoint;
     protected S nadirPoint;
     private static String NORMALIZE_OBJETIVES_KEY = "theta-normalize-objectives";
@@ -49,6 +52,8 @@ public class Theta_NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryA
 
         this.numberOfReferencePoints = numberOfReferencePoints;
         this.references = normalizePoint(createReferencePoint());
+        this.referenceHyperplane = new ReferenceHyperplane<>(problem.getNumberOfObjectives(), 12);
+        this.referenceHyperplane.execute();
 
     }
 
@@ -150,8 +155,12 @@ public class Theta_NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryA
         // Algorithm 4: process of clustering
         for (S solution : rt) {
             int k = 0;
+            // Data min = calcualteDJ2(solution,
+            // this.referenceHyperplane.get(0).getPoint());
             Data min = calcualteDJ2(solution, this.references.get(0));
             for (int i = 1; i < this.numberOfReferencePoints; i++) {
+                // Data dj2 = calcualteDJ2(solution,
+                // this.referenceHyperplane.get(i).getPoint());
                 Data dj2 = calcualteDJ2(solution, this.references.get(i));
                 if (dj2.compareTo(min) < 0) {
                     min = dj2;
@@ -164,27 +173,32 @@ public class Theta_NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryA
         return clusters;
     }
 
-    private Data calcualteDJ2(S solution, ArrayList<Data> lambda_j) {
+    private Data calcualteDJ2(S solution, List<Data> lambda_j) {
         List<Data> x = (List<Data>) solution.getAttribute(NORMALIZE_OBJETIVES_KEY);
         // Let dj1(x) be the distance between the origin and u
         Data dj1 = null;
         for (int objective = 0; objective < lambda_j.size(); objective++) {
-            if (dj1 == null) {
-                dj1 = ((x.get(objective).times(lambda_j.get(objective))).div(lambda_j.get(objective).abs())).abs();
-            } else {
-                dj1 = dj1.plus(((x.get(objective).times(lambda_j.get(objective))).div(lambda_j.get(objective).abs())).abs());
+            if (lambda_j.get(objective).compareTo(0) != 0) {
+                if (dj1 == null) {
+                    dj1 = ((x.get(objective).times(lambda_j.get(objective))).div(lambda_j.get(objective).abs())).abs();
+                } else {
+                    dj1 = dj1
+                            .plus(((x.get(objective).times(lambda_j.get(objective))).div(lambda_j.get(objective).abs()))
+                                    .abs());
+                }
             }
         }
         // Let dj2 the perpendicular distance between f(x) and L
         Data dj2 = null;
         for (int objective = 0; objective < lambda_j.size(); objective++) {
-            if (dj2 == null) {
-                dj2 = (x.get(objective).minus(dj1.times(lambda_j.get(objective).div(lambda_j.get(objective).abs()))))
-                        .abs();
-            } else {
-                dj2 = dj2.plus(
-                        (x.get(objective).minus(dj1.times(lambda_j.get(objective).div(lambda_j.get(objective).abs()))))
-                                .abs());
+            if (lambda_j.get(objective).compareTo(0) != 0) {
+                if (dj2 == null) {
+                    dj2 = (x.get(objective)
+                            .minus(dj1.times(lambda_j.get(objective).div(lambda_j.get(objective).abs())))).abs();
+                } else {
+                    dj2 = dj2.plus((x.get(objective)
+                            .minus(dj1.times(lambda_j.get(objective).div(lambda_j.get(objective).abs())))).abs());
+                }
             }
         }
         solution.setAttribute(DJ1_KEY, dj1);
