@@ -36,14 +36,14 @@ import org.apache.logging.log4j.Logger;
  */
 public class DTLZNsga3 {
     private static final Logger logger = LogManager.getLogger(DTLZNsga3.class);
-    static final String DIRECTORY = "experiments" + File.separator + "NSGA3";
-    static final int EXPERIMENT = 3;
+    static final String DIRECTORY = "experiments" + File.separator + "DTLZNSGA3";
+    static final int EXPERIMENT = 31;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         new File(DIRECTORY).mkdirs();
         Tools.setSeed(8435l);
 
-        int numberProblem = 6;
+        int numberProblem = 8;
         int numberOfObjectives = 3;
 
         ArrayList<DoubleSolution> bag = new ArrayList<>();
@@ -121,90 +121,97 @@ public class DTLZNsga3 {
         DTLZ problem = null;
         int maxIterations = 100;
         switch (p) {
-            case 1:
-                if (numberOfObjectives == 3) {
-                    problem = new DTLZ1();
-                    maxIterations = 400;
-                } else if (numberOfObjectives == 5) {
-                    problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
-                    maxIterations = 600;
-                } else if (numberOfObjectives == 8) {
-                    problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
-                    maxIterations = 750;
-                } else if (numberOfObjectives == 10) {
-                    problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
-                    maxIterations = 1000;
-                } else if (numberOfObjectives == 15) {
-                    problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
-                    maxIterations = 1500;
-                }
-                break;
-            case 2:
-                if (numberOfObjectives == 3) {
-                    problem = new DTLZ2();
-                    maxIterations = 250;
-                } else if (numberOfObjectives == 5) {
-                    problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                    maxIterations = 350;
-                } else if (numberOfObjectives == 8) {
-                    problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                    maxIterations = 500;
-                } else if (numberOfObjectives == 10) {
-                    problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                    maxIterations = 750;
-                } else if (numberOfObjectives == 15) {
-                    problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                    maxIterations = 1000;
-                }
-                break;
-            case 3:
-                if (numberOfObjectives == 3) {
-                    problem = new DTLZ3();
-                    maxIterations = 1000;
-                } else if (numberOfObjectives == 5 || numberOfObjectives == 9) {
-                    problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                    maxIterations = 1000;
-                } else if (numberOfObjectives == 10) {
-                    problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                    maxIterations = 1500;
-                } else if (numberOfObjectives == 15) {
-                    problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                    maxIterations = 2000;
-                }
-                break;
-            case 4:
-                if (numberOfObjectives == 3) {
-                    problem = new DTLZ4();
-                    maxIterations = 600;
-                } else if (numberOfObjectives == 5) {
-                    problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                    maxIterations = 1000;
-                } else if (numberOfObjectives == 8) {
-                    problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                    maxIterations = 1250;
-                } else if (numberOfObjectives == 10) {
-                    problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                    maxIterations = 2000;
-                } else if (numberOfObjectives == 15) {
-                    problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                    maxIterations = 3000;
-                }
-                break;
-            case 5:
-                problem = new DTLZ5();
+        case 1:
+            if (numberOfObjectives == 3) {
+                problem = new DTLZ1();
+                maxIterations = 400;
+            } else if (numberOfObjectives == 5) {
+                problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
+                maxIterations = 600;
+            } else if (numberOfObjectives == 8) {
+                problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
+                maxIterations = 750;
+            } else if (numberOfObjectives == 10) {
+                problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
+                maxIterations = 1000;
+            } else if (numberOfObjectives == 15) {
+                problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
+                maxIterations = 1500;
+            }
+            break;
+        case 2:
+            if (numberOfObjectives == 3) {
+                problem = new DTLZ2();
+                maxIterations = 250;
+            } else if (numberOfObjectives == 5) {
+                problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                maxIterations = 350;
+            } else if (numberOfObjectives == 8) {
+                problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
                 maxIterations = 500;
-                break;
-            case 6:
-                problem = new DTLZ6();
-                maxIterations = 500;
-                break;
-            case 7:
-                problem = new DTLZ7();
-                maxIterations = 500;
-                break;
-            default:
-                error("Invalid number problem");
-                break;
+            } else if (numberOfObjectives == 10) {
+                problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                maxIterations = 750;
+            } else if (numberOfObjectives == 15) {
+                problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                maxIterations = 1000;
+            }
+            break;
+        case 3:
+            if (numberOfObjectives == 3) {
+                problem = new DTLZ3();
+                maxIterations = 1000;
+            } else if (numberOfObjectives == 5 || numberOfObjectives == 9) {
+                problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                maxIterations = 1000;
+            } else if (numberOfObjectives == 10) {
+                problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                maxIterations = 1500;
+            } else if (numberOfObjectives == 15) {
+                problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                maxIterations = 2000;
+            }
+            break;
+        case 4:
+            if (numberOfObjectives == 3) {
+                problem = new DTLZ4();
+                maxIterations = 600;
+            } else if (numberOfObjectives == 5) {
+                problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                maxIterations = 1000;
+            } else if (numberOfObjectives == 8) {
+                problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                maxIterations = 1250;
+            } else if (numberOfObjectives == 10) {
+                problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                maxIterations = 2000;
+            } else if (numberOfObjectives == 15) {
+                problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                maxIterations = 3000;
+            }
+            break;
+        case 5:
+            problem = new DTLZ5();
+            maxIterations = 500;
+            break;
+        case 6:
+            problem = new DTLZ6();
+            maxIterations = 500;
+            break;
+        case 7:
+            problem = new DTLZ7();
+            maxIterations = 500;
+            break;
+        case 8:
+            if (numberOfObjectives == 3)
+                problem = new DTLZ8();
+            else
+                problem = new DTLZ8(numberOfObjectives, numberOfObjectives + 10);
+            maxIterations = 500;
+            break;
+        default:
+            error("Invalid number problem");
+            break;
         }
 
         SelectionOperator<DoubleSolution> selectionOperator = new TournamentSelection<>((int) options.get("pop_size"),
@@ -217,29 +224,29 @@ public class DTLZNsga3 {
     private static HashMap<String, Object> setup(int numberOfObjectives) {
         HashMap<String, Object> map = new HashMap<>();
         switch (numberOfObjectives) {
-            case 3:
-                map.put("pop_size", 92);
-                map.put("partitions", 12);
-                break;
-            case 5:
-                map.put("pop_size", 212);
-                map.put("partitions", 6);
-                break;
-            case 8:
-                map.put("pop_size", 156);
-                map.put("partitions", 5);
-                break;
-            case 10:
-                map.put("pop_size", 271);
-                map.put("partitions", 5);
-                break;
-            case 15:
-                map.put("pop_size", 136);
-                map.put("partitions", 3);
-                break;
-            default:
-                error("Invalid number of objectives");
-                break;
+        case 3:
+            map.put("pop_size", 92);
+            map.put("partitions", 12);
+            break;
+        case 5:
+            map.put("pop_size", 212);
+            map.put("partitions", 6);
+            break;
+        case 8:
+            map.put("pop_size", 156);
+            map.put("partitions", 5);
+            break;
+        case 10:
+            map.put("pop_size", 271);
+            map.put("partitions", 5);
+            break;
+        case 15:
+            map.put("pop_size", 136);
+            map.put("partitions", 3);
+            break;
+        default:
+            error("Invalid number of objectives");
+            break;
         }
         map.put("crossover", new SBXCrossover(30, 1.0));
         map.put("mutation", new PolynomialMutation());
