@@ -43,7 +43,7 @@ public class DTLZNsga3 {
         new File(DIRECTORY).mkdirs();
         Tools.setSeed(1l);
 
-        int numberProblem = 8;
+        int numberProblem = 9;
         int numberOfObjectives = 3;
 
         ArrayList<DoubleSolution> bag = new ArrayList<>();
@@ -207,6 +207,13 @@ public class DTLZNsga3 {
                 problem = new DTLZ8();
             else
                 problem = new DTLZ8(numberOfObjectives, numberOfObjectives + 10);
+            maxIterations = 500;
+            break;
+        case 9:
+            if (numberOfObjectives == 3)
+                problem = new DTLZ9();
+            else
+                problem = new DTLZ9(numberOfObjectives, numberOfObjectives + 10);
             maxIterations = 500;
             break;
         default:
