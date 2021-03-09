@@ -37,11 +37,11 @@ import org.apache.logging.log4j.Logger;
 public class DTLZNsga3 {
     private static final Logger logger = LogManager.getLogger(DTLZNsga3.class);
     static final String DIRECTORY = "experiments" + File.separator + "DTLZNSGA3";
-    static final int EXPERIMENT = 31;
+    static final int EXPERIMENT = 50;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         new File(DIRECTORY).mkdirs();
-        Tools.setSeed(8435l);
+        Tools.setSeed(1l);
 
         int numberProblem = 8;
         int numberOfObjectives = 3;

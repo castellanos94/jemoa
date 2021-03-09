@@ -80,7 +80,7 @@ public class DTLZ8 extends DTLZ {
         }
         solution.setNumberOfPenalties(numberOfPenaltieViolated);
         if (accumulatedConstraint == null) {
-            accumulatedConstraint = RealData.ZERO;
+            accumulatedConstraint = RealData.ZERO.copy();
         }
         solution.setPenalties(accumulatedConstraint);
     }
