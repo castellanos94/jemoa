@@ -3,8 +3,6 @@ package com.castellanos94.examples;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -13,17 +11,13 @@ import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.impl.InterClassnC;
-import com.castellanos94.problems.Problem;
-import com.castellanos94.problems.preferences.dtlz.DTLZ1_P;
+import com.castellanos94.problems.DTLZP;
 import com.castellanos94.solutions.DoubleSolution;
-import com.castellanos94.utils.Plotter;
-import com.castellanos94.utils.Scatter3D;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import tech.tablesaw.api.DoubleColumn;
-import tech.tablesaw.api.Table;
 
 /**
  * Java Bag 4591, F0 - Original : 266. HSat : 154, Sat : 0, Dis : 0, HDis : 112
@@ -41,8 +35,8 @@ public class ReadSolution {
         // path = "src/main/resources/instances/dtlz/PreferenceDTLZ1_Instance_01.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         logger.info(instance);
-
-        DTLZ1_P problem = new DTLZ1_P(instance);
+        int numberOfProblem = 1;
+        DTLZP problem = new DTLZP(numberOfProblem,instance);
         DoubleSolution _best = problem.generate();
         for (int i = 0; i < _best.getNumberOfVariables(); i++) {
             _best.setVariable(i, instance.getBestCompromises()[0][i].doubleValue());
@@ -173,7 +167,7 @@ public class ReadSolution {
 
     }
 
-    private static ArrayList<DoubleSolution> loadFromFile(DTLZ1_P problem, String path) throws FileNotFoundException {
+    private static ArrayList<DoubleSolution> loadFromFile(DTLZP problem, String path) throws FileNotFoundException {
         Scanner sc = new Scanner(new File(path));
         ArrayList<DoubleSolution> solutions = new ArrayList<>();
         while (sc.hasNextLine()) {

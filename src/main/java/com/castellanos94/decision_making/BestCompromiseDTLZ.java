@@ -8,25 +8,22 @@ import java.util.Iterator;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
-import com.castellanos94.preferences.impl.ITHDM_Dominance;
 import com.castellanos94.preferences.impl.ITHDM_Preference;
-import com.castellanos94.problems.preferences.dtlz.*;
-import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
+import com.castellanos94.problems.DTLZP;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.ExtraInformation;
-import com.castellanos94.utils.Tools;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class BestCompromiseDTLZ implements ExtraInformation {
     protected int MAX_T = 5000;
-    protected DTLZPreferences problem;
+    protected DTLZP problem;
     protected ITHDM_Preference<DoubleSolution> preference;
     private DominanceComparator<DoubleSolution> dominance;
 
-    public BestCompromiseDTLZ(DTLZPreferences problem) {
+    public BestCompromiseDTLZ(DTLZP problem) {
         this.problem = problem;
         this.preference = new ITHDM_Preference<>(problem, problem.getInstance().getPreferenceModel(0));
         dominance = preference.getDominance();
@@ -134,11 +131,12 @@ public class BestCompromiseDTLZ implements ExtraInformation {
 
     public static void main(String[] args) throws IOException {
         // Tools.setSeed(1L);
-        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ6_Instance.txt";
+        int numberOfProblem = 6;
+        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ"+numberOfProblem+"_Instance.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         System.out.println(instance);
 
-        DTLZPreferences problem = new DTLZ6_P(instance);
+        DTLZP problem = new DTLZP(numberOfProblem,instance);
         System.out.println(problem);
         BestCompromiseDTLZ bestCompromiseDTLZ = new BestCompromiseDTLZ(problem);
         ArrayList<DoubleSolution> bag = new ArrayList<>();       

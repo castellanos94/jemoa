@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
+import com.castellanos94.problems.DTLZP;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 
@@ -22,7 +22,7 @@ public class ReportFront {
     private static final String OWNER = "FROM_PROBLEM";
 
     @SuppressWarnings("rawtypes")
-    public static ArrayList<DoubleSolution> loadSolutions(DTLZPreferences problem, File file)
+    public static ArrayList<DoubleSolution> loadSolutions(DTLZP problem, File file)
             throws FileNotFoundException {
         ArrayList<DoubleSolution> solutions = new ArrayList<>();
         Scanner sc = new Scanner(file);

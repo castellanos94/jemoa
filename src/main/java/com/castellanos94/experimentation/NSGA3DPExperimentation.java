@@ -13,10 +13,10 @@ import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.operators.impl.PolynomialMutation;
 import com.castellanos94.operators.impl.TournamentSelection;
 import com.castellanos94.preferences.impl.InterClassnC;
+import com.castellanos94.problems.DTLZP;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.impl.SBXCrossover;
-import com.castellanos94.problems.preferences.dtlz.*;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
@@ -49,30 +49,7 @@ public class NSGA3DPExperimentation {
             String path = "src/main/resources/DTLZ_INSTANCES/DTLZ" + p + "_Instance.txt";
             DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
             logger.info(instance);
-            DTLZPreferences problem = null;
-            switch (p) {
-                case 1:
-                    problem = new DTLZ1_P(instance);
-                    break;
-                case 2:
-                    problem = new DTLZ2_P(instance);
-                    break;
-                case 3:
-                    problem = new DTLZ3_P(instance);
-                    break;
-                case 4:
-                    problem = new DTLZ4_P(instance);
-                    break;
-                case 5:
-                    problem = new DTLZ5_P(instance);
-                    break;
-                case 6:
-                    problem = new DTLZ6_P(instance);
-                    break;
-                case 7:
-                    problem = new DTLZ7_P(instance);
-                    break;
-            }
+            DTLZP problem = new DTLZP(p, instance);
             String subDir = problem.getName().trim();
             if (!new File(DIRECTORY + File.separator + subDir).exists()) {
                 new File(DIRECTORY + File.separator + subDir).mkdir();

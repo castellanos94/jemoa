@@ -9,8 +9,7 @@ import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.impl.ITHDM_Preference;
-import com.castellanos94.problems.preferences.dtlz.*;
-import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
+import com.castellanos94.problems.DTLZP;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
@@ -22,10 +21,10 @@ public class BestCompromiseV2 {
     private static final String NETSCORE_KEY = "FLUJO_NETO";
     private static final String WEAKNESS_kEY = "DEBILIDAD_FUERZA";
     protected int MAX_T = 50 * 1000;
-    protected DTLZPreferences problem;
+    protected DTLZP problem;
     protected ITHDM_Preference<DoubleSolution> preference;
 
-    public BestCompromiseV2(DTLZPreferences problem) {
+    public BestCompromiseV2(DTLZP problem) {
         this.problem = problem;
         this.preference = new ITHDM_Preference<>(problem, problem.getInstance().getPreferenceModel(0));
     }
@@ -141,12 +140,13 @@ public class BestCompromiseV2 {
     }
 
     public static void main(String[] args) throws IOException {
-        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ1_Instance.txt";
+        int numberOfProblem = 1;
+        String path = "src/main/resources/DTLZ_INSTANCES/DTLZ"+numberOfProblem+"_Instance.txt";
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         // Tools.setSeed(8435L);
         System.out.println(instance);
 
-        DTLZPreferences problem = new DTLZ1_P(instance);
+        DTLZP problem = new DTLZP(numberOfProblem,instance);
         System.out.println(problem);
         BestCompromiseV2 compromiseV2 = new BestCompromiseV2(problem);
 

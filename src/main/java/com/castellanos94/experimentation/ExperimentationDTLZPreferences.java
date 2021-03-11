@@ -12,23 +12,9 @@ import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.impl.InterClassnC;
+import com.castellanos94.problems.DTLZP;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.problems.benchmarks.dtlz.DTLZ;
-import com.castellanos94.problems.benchmarks.dtlz.DTLZ1;
-import com.castellanos94.problems.benchmarks.dtlz.DTLZ2;
-import com.castellanos94.problems.benchmarks.dtlz.DTLZ3;
-import com.castellanos94.problems.benchmarks.dtlz.DTLZ4;
-import com.castellanos94.problems.benchmarks.dtlz.DTLZ5;
-import com.castellanos94.problems.benchmarks.dtlz.DTLZ6;
-import com.castellanos94.problems.benchmarks.dtlz.DTLZ7;
-import com.castellanos94.problems.preferences.dtlz.DTLZ1_P;
-import com.castellanos94.problems.preferences.dtlz.DTLZ2_P;
-import com.castellanos94.problems.preferences.dtlz.DTLZ3_P;
-import com.castellanos94.problems.preferences.dtlz.DTLZ4_P;
-import com.castellanos94.problems.preferences.dtlz.DTLZ5_P;
-import com.castellanos94.problems.preferences.dtlz.DTLZ6_P;
-import com.castellanos94.problems.preferences.dtlz.DTLZ7_P;
-import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Distance;
@@ -92,38 +78,8 @@ public class ExperimentationDTLZPreferences {
             System.out.println("Reading DTLZ preferences");
             DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
 
-            DTLZPreferences dtlzPreferences = null;
-            switch (i) {
-                case 1:
-                    dtlz = new DTLZ1();
-                    dtlzPreferences = new DTLZ1_P(instance);
-                    break;
-                case 2:
-                    dtlz = new DTLZ2();
-                    dtlzPreferences = new DTLZ2_P(instance);
-                    break;
-                case 3:
-                    dtlz = new DTLZ3();
-                    dtlzPreferences = new DTLZ3_P(instance);
-                    break;
-                case 4:
-                    dtlz = new DTLZ4();
-                    dtlzPreferences = new DTLZ4_P(instance);
-                    break;
-                case 5:
-                    dtlzPreferences = new DTLZ5_P(instance);
-                    dtlz = new DTLZ5();
-                    break;
-                case 6:
-                    dtlzPreferences = new DTLZ6_P(instance);
-                    dtlz = new DTLZ6();
-                    break;
-                case 7:
-                    dtlzPreferences = new DTLZ7_P(instance);
-                    dtlz = new DTLZ7();
-                    break;
-
-            }
+            DTLZP dtlzPreferences = new DTLZP(i, instance);
+            dtlz = dtlzPreferences.getDTLZProblem();
 
             System.out.println("Reading DTLZ standard");
             ArrayList<ArrayList<DoubleSolution>> result_dtlz1 = new ArrayList<>();
@@ -261,7 +217,7 @@ public class ExperimentationDTLZPreferences {
 
     private static void calculate_metrics_dom(ArrayList<ArrayList<DoubleSolution>> result_dtlz,
             ArrayList<ArrayList<DoubleSolution>> result_preferences, ArrayList<DoubleSolution> roi_sat,
-            DTLZPreferences problem_preferences, DTLZ problem_original, String name) {
+            DTLZP problem_preferences, DTLZ problem_original, String name) {
 
         for (int i = 0; i < result_dtlz.size(); i++) {
             ArrayList<DoubleSolution> bag = new ArrayList<>();
@@ -432,7 +388,7 @@ public class ExperimentationDTLZPreferences {
         table.write().csv(DIRECTORY_EXPERIMENTS + File.separator + "FRONT_PREFERENCES_" + label + ".csv");
     }
 
-    private static ArrayList<DoubleSolution> makeFrontHSatSat(DTLZPreferences problem,
+    private static ArrayList<DoubleSolution> makeFrontHSatSat(DTLZP problem,
             ArrayList<DoubleSolution> solutions) {
         InterClassnC<DoubleSolution> classifier = new InterClassnC<>(problem);
         ArrayList<DoubleSolution> front = new ArrayList<>();

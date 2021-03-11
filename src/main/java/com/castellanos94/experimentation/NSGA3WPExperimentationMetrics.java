@@ -15,8 +15,7 @@ import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.impl.InterClassnC;
-import com.castellanos94.problems.preferences.dtlz.*;
-import com.castellanos94.problems.preferences.dtlz.DTLZPreferences;
+import com.castellanos94.problems.DTLZP;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.BordaRanking;
@@ -67,14 +66,14 @@ public class NSGA3WPExperimentationMetrics {
 
     public static void main(String[] args) throws IOException {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();
-        HashMap<String, DTLZPreferences> problems = new HashMap<>();
-        HashMap<DTLZPreferences, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
+        HashMap<String, DTLZP> problems = new HashMap<>();
+        HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
         for (File f : new File(DIRECTORY).listFiles()) {
             if (f.isDirectory()) {
-                HashMap<DTLZPreferences, ArrayList<ArrayList<DoubleSolution>>> algorithmProblems = new HashMap<>();
+                HashMap<DTLZP, ArrayList<ArrayList<DoubleSolution>>> algorithmProblems = new HashMap<>();
                 for (File _file : f.listFiles()) {
                     if (_file.isDirectory()) {
-                        DTLZPreferences currentProblem;
+                        DTLZP currentProblem;
                         if (problems.containsKey(_file.getName())) {
                             currentProblem = problems.get(_file.getName());
                         } else {
@@ -98,9 +97,9 @@ public class NSGA3WPExperimentationMetrics {
                         algorithmProblems.put(currentProblem, solutionFromProblem);
                     }
                 }
-                Iterator<DTLZPreferences> _Iterator = algorithmProblems.keySet().iterator();
+                Iterator<DTLZP> _Iterator = algorithmProblems.keySet().iterator();
                 while (_Iterator.hasNext()) {
-                    DTLZPreferences p = _Iterator.next();
+                    DTLZP p = _Iterator.next();
                     HashMap<String, ArrayList<ArrayList<DoubleSolution>>> map = globalSolutionByProblem.get(p);
                     map.put(f.getName(), algorithmProblems.get(p));
                 }
@@ -128,9 +127,9 @@ public class NSGA3WPExperimentationMetrics {
             System.out.println("Problem : " + _problem.getName() + " -> " + map.keySet());
         });
 
-        HashMap<DTLZPreferences, ArrayList<ArrayList<DoubleSolution>>> globalSolutionNDByProblem = new HashMap<>();
-        HashMap<DTLZPreferences, ArrayList<ArrayList<DoubleSolution>>> globalSolution = new HashMap<>();
-        HashMap<DTLZPreferences, ArrayList<ArrayList<DoubleSolution>>> globalCSat = new HashMap<>();
+        HashMap<DTLZP, ArrayList<ArrayList<DoubleSolution>>> globalSolutionNDByProblem = new HashMap<>();
+        HashMap<DTLZP, ArrayList<ArrayList<DoubleSolution>>> globalSolution = new HashMap<>();
+        HashMap<DTLZP, ArrayList<ArrayList<DoubleSolution>>> globalCSat = new HashMap<>();
 
         globalSolutionByProblem.forEach((_problem, map) -> {
             ArrayList<ArrayList<DoubleSolution>> currentBag = new ArrayList<>();
@@ -208,7 +207,7 @@ public class NSGA3WPExperimentationMetrics {
         }
         Iterator<String> iterator = problems.keySet().iterator();
         while (iterator.hasNext()) {
-            DTLZPreferences dtlz = problems.get(iterator.next());
+            DTLZP dtlz = problems.get(iterator.next());
             int startProblem = (_name.size() - 1 > 0) ? _name.size() - 1 : 0;
             int endProblem = startProblem;
             for (int j = 0; j < globalSolution.get(dtlz).size(); j++) {
@@ -572,7 +571,7 @@ public class NSGA3WPExperimentationMetrics {
     }
 
     private static void globalMetric(
-            HashMap<DTLZPreferences, ArrayList<ArrayList<DoubleSolution>>> globalSolutionNDByProblem,
+            HashMap<DTLZP, ArrayList<ArrayList<DoubleSolution>>> globalSolutionNDByProblem,
             HashMap<String, ArrayList<DoubleSolution>> roi, String[] _names_algorithm) throws IOException {
         StringColumn _nameG = StringColumn.create("problem");
         DoubleColumn allG = DoubleColumn.create("solutions");
@@ -903,7 +902,7 @@ public class NSGA3WPExperimentationMetrics {
         return map;
     }
 
-    private static ArrayList<DoubleSolution> classifySolutions(DTLZPreferences dtlzPreferences,
+    private static ArrayList<DoubleSolution> classifySolutions(DTLZP dtlzPreferences,
             ArrayList<DoubleSolution> solutions, boolean show, boolean isOnlyCSat) {
         InterClassnC<DoubleSolution> classifier = new InterClassnC<>(dtlzPreferences);
         ArrayList<DoubleSolution> front = new ArrayList<>();
@@ -950,7 +949,7 @@ public class NSGA3WPExperimentationMetrics {
         return front;
     }
 
-    private static File loadPathRoi(DTLZPreferences problem) {
+    private static File loadPathRoi(DTLZP problem) {
 
         String name = String.format("ROI_P_%s_V%d_O%d.txt", problem.getName().trim().replace("_P", ""),
                 problem.getNumberOfDecisionVars(), problem.getNumberOfObjectives());
@@ -979,53 +978,55 @@ public class NSGA3WPExperimentationMetrics {
         return new File("/home/thinkpad/Documents/jemoa/roi_generator/"+ problem.getNumberOfObjectives()+ File.separator+name);
     }
 
-    private static DTLZPreferences loadProblem(String name) throws FileNotFoundException {
-        DTLZPreferences dtlzPreferences = null;
+    private static DTLZP loadProblem(String name) throws FileNotFoundException {
+        DTLZP dtlzPreferences = null;
         DTLZ_Instance instance = null;
         String path = null;
+        int numberOfProblem = -1;
         switch (name) {
             case "DTLZ1_P":
                 path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ1_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-                dtlzPreferences = new DTLZ1_P(instance);
+                numberOfProblem = 1;
                 break;
             case "DTLZ2_P":
                 path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ2_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-                dtlzPreferences = new DTLZ2_P(instance);
+                numberOfProblem = 2;
                 break;
             case "DTLZ3_P":
                 path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ3_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-                dtlzPreferences = new DTLZ3_P(instance);
+                numberOfProblem = 3;
                 break;
             case "DTLZ4_P":
                 path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ4_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-                dtlzPreferences = new DTLZ4_P(instance);
+                numberOfProblem = 4;
                 break;
             case "DTLZ5_P":
                 path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ5_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-                dtlzPreferences = new DTLZ5_P(instance);
+                numberOfProblem = 5;
                 break;
             case "DTLZ6_P":
                 path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ6_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-                dtlzPreferences = new DTLZ6_P(instance);
+                numberOfProblem = 6;
                 break;
             case "DTLZ7_P":
                 path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ7_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-                dtlzPreferences = new DTLZ7_P(instance);
+                numberOfProblem = 7;
                 break;
 
         }
+        dtlzPreferences = new DTLZP(numberOfProblem, instance);
         return dtlzPreferences;
     }
 
     @SuppressWarnings("rawtypes")
-    private static ArrayList<DoubleSolution> loadSolutions(DTLZPreferences problem, File file)
+    private static ArrayList<DoubleSolution> loadSolutions(DTLZP problem, File file)
             throws FileNotFoundException {
         ArrayList<DoubleSolution> solutions = new ArrayList<>();
         Scanner sc = new Scanner(file);
