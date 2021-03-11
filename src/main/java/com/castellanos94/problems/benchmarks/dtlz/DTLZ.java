@@ -8,6 +8,7 @@ import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
+import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Tools;
 
 public abstract class DTLZ extends Problem<DoubleSolution> {
@@ -35,6 +36,38 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
             lowerBound[i] = new RealData(0);
             upperBound[i] = new RealData(1);
         }
+    }
+
+    public abstract double[][] getParetoOptimal3Obj() throws FileNotFoundException;
+
+    @Override
+    public void evaluateConstraint(DoubleSolution solution) {
+        int cn = 0;
+        double v = 0;
+        for (int i = 0; i < numberOfDecisionVars; i++) {
+            if (solution.getVariable(i).compareTo(lowerBound[i].doubleValue()) < 0) {
+                cn++;
+                v += lowerBound[i].doubleValue() - solution.getVariable(i).doubleValue();
+            } else if (solution.getVariable(i).compareTo(upperBound[i].doubleValue()) > 0) {
+                cn++;
+                v += upperBound[i].doubleValue() - solution.getVariable(i).doubleValue();
+            }
+        }
+        solution.setPenalties(new RealData(v));
+        solution.setNumberOfPenalties(cn);
+    }
+
+    public DTLZ setK(int k) {
+        this.k = k;
+        this.numberOfDecisionVars = this.k + this.numberOfObjectives - 1;
+        loadBoundarys();
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s, number_of_variables = %d, number_of_objectives = %d, k = %d", name,
+                numberOfDecisionVars, numberOfObjectives, k);
     }
 
     /**
@@ -67,32 +100,6 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
         return g;
     }
 
-    public abstract double[][] getParetoOptimal3Obj() throws FileNotFoundException;
-
-    @Override
-    public void evaluateConstraint(DoubleSolution solution) {
-        int cn = 0;
-        double v = 0;
-        for (int i = 0; i < numberOfDecisionVars; i++) {
-            if (solution.getVariable(i).compareTo(lowerBound[i].doubleValue()) < 0) {
-                cn++;
-                v += lowerBound[i].doubleValue() - solution.getVariable(i).doubleValue();
-            } else if (solution.getVariable(i).compareTo(upperBound[i].doubleValue()) > 0) {
-                cn++;
-                v += upperBound[i].doubleValue() - solution.getVariable(i).doubleValue();
-            }
-        }
-        solution.setPenalties(new RealData(v));
-        solution.setNumberOfPenalties(cn);
-    }
-
-    public DTLZ setK(int k) {
-        this.k = k;
-        this.numberOfDecisionVars = this.k + this.numberOfObjectives - 1;
-        loadBoundarys();
-        return this;
-    }
-
     @Override
     public DoubleSolution randomSolution() {
         DoubleSolution solution = new DoubleSolution(this);
@@ -100,20 +107,6 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
             solution.setVariable(i, Tools.getRandom().nextDouble());
         }
         return solution;
-    }
-
-    public void repairSolution(DoubleSolution solution) {
-        for (int i = 0; i < getNumberOfDecisionVars(); i++) {
-            if (solution.getVariable(i) < 6 * Math.pow(10, -15)) {
-                solution.setVariable(i, 0.);
-            }
-        }
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s, number_of_variables = %d, number_of_objectives = %d, k = %d", name,
-                numberOfDecisionVars, numberOfObjectives, k);
     }
 
     /**
@@ -129,20 +122,84 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
         }
 
         for (int i = numberOfObjectives - 1; i < numberOfDecisionVars; i++) {
-            solution.setVariable(i, 0.5);
+            if (this instanceof DTLZ6 || this instanceof DTLZ7) {
+                solution.setVariable(i, 0.0);
+            } else {
+                solution.setVariable(i, 0.5);
+            }
         }
 
         evaluate(solution);
 
         solution.setNumberOfPenalties(0);
         solution.setPenalties(RealData.ZERO);
+
+        if (this instanceof DTLZ7) {
+            return solution;
+        }
+
+        Double sum = null;
+        if (this instanceof DTLZ6 || this instanceof DTLZ5 || this instanceof DTLZ2 || this instanceof DTLZ3
+                || this instanceof DTLZ4) {
+            do {
+
+                sum = 0.;
+                for (int i = 0; i < solution.getObjectives().size(); i++) {
+                    double f = solution.getObjective(i).doubleValue();
+                    sum += f * f;
+                }
+                // if (Math.abs(sum - 1) > 0.000006) {
+                if (sum != 1.0) {
+                    for (int i = 0; i < numberOfObjectives - 1; i++) {
+                        solution.setVariable(i, Tools.getRandom().nextDouble());
+                    }
+                    evaluate(solution);
+                }
+                // Math.abs(sum - 1) > 0.000006
+                // } while (Math.abs(sum - 1) > 0.000006);
+            } while (sum != 1);
+            return solution;
+        } else if (this instanceof DTLZ1) {
+            // sum = solution.getObjectives().stream().mapToDouble(f ->
+            // f.doubleValue()).sum();
+            do {
+                sum = 0.;
+                for (int i = 0; i < solution.getObjectives().size(); i++) {
+                    sum += solution.getObjective(i).doubleValue();
+                }
+                if (sum != 0.5) {
+                    for (int i = 0; i < numberOfObjectives - 1; i++) {
+                        solution.setVariable(i, Tools.getRandom().nextDouble());
+                    }
+                    evaluate(solution);
+                }
+            } while (sum != 0.5);
+            return solution;
+        }
+
+        /*
+         * if (this instanceof DTLZ2_P && sum != 1.0) { return this.generate(); }
+         */
+
         return solution;
     }
 
     public ArrayList<DoubleSolution> generateRandomSample(int size) {
         ArrayList<DoubleSolution> solutions = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            solutions.add(generate());
+            DoubleSolution generate;// = generate();
+            boolean contains;
+            do {
+                contains = false;
+                generate = generate();
+                for (DoubleSolution doubleSolution : solutions) {
+                    if (Solution.compareByObjective(generate, doubleSolution)) {
+                        contains = true;
+                        break;
+                    }
+                }
+            } while (contains);
+            solutions.add(generate);
         }
         return solutions;
     }
@@ -165,7 +222,11 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
             }
 
             for (int ii = numberOfObjectives - 1; ii < numberOfDecisionVars; ii++) {
-                solution.setVariable(ii, 0.5);
+                if (this instanceof DTLZ6 || this instanceof DTLZ7) {
+                    solution.setVariable(ii, 0.0);
+                } else {
+                    solution.setVariable(ii, 0.5);
+                }
             }
             evaluate(solution);
             // evaluateConstraint(solution);
@@ -178,12 +239,33 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
     }
 
     public ArrayList<DoubleSolution> generateSampleNonDominated(int size) {
-        ArrayList<DoubleSolution> bag = generateSample(size);
+        System.out.println("Size " + size);
+        ArrayList<DoubleSolution> bag = generateRandomSample(size / 10);
+        System.out.println("Initial sample : " + bag.size());
         DominanceComparator<DoubleSolution> dominanceComparator = new DominanceComparator<>();
         dominanceComparator.computeRanking(bag);
+        System.out.println("Bag : " + bag.size());
+        System.out.println("F0 : " + dominanceComparator.getSubFront(0).size());
         while (dominanceComparator.getSubFront(0).size() < size) {
+            System.out.println("F0' : " + dominanceComparator.getSubFront(0).size());
             bag = dominanceComparator.getSubFront(0);
-            bag.addAll(generateSample((bag.size() > size / 2) ? size / 4 : size / 2));
+            ArrayList<DoubleSolution> generateRandomSample = generateRandomSample(
+                    (bag.size() > size / 2) ? size / 4 : size / 2);
+            ArrayList<DoubleSolution> toAdd = new ArrayList<>();
+            for (DoubleSolution gSolution : generateRandomSample) {
+                boolean contains = false;
+                for (DoubleSolution ndSolution : bag) {
+                    if (Solution.compareByObjective(gSolution, ndSolution)) {
+                        contains = true;
+                        break;
+                    }
+                }
+                if (!contains)
+                    toAdd.add(gSolution);
+            }
+            System.out.println("Bag to add : " + toAdd.size());
+            bag.addAll(toAdd);
+            dominanceComparator.computeRanking(bag);
         }
         return new ArrayList<>(dominanceComparator.getSubFront(0).subList(0, size));
 
@@ -200,4 +282,5 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
         this.evaluateConstraint(solution);
         return solution;
     }
+
 }
