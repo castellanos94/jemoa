@@ -177,10 +177,6 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
             return solution;
         }
 
-        /*
-         * if (this instanceof DTLZ2_P && sum != 1.0) { return this.generate(); }
-         */
-
         return solution;
     }
 

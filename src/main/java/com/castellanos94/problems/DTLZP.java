@@ -2,7 +2,9 @@ package com.castellanos94.problems;
 
 import java.util.ArrayList;
 
+import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.Interval;
+import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.impl.GDProblem;
 import com.castellanos94.problems.benchmarks.dtlz.*;
@@ -17,6 +19,8 @@ public class DTLZP extends GDProblem<DoubleSolution> {
         this.instance = instance;
         this.numberOfObjectives = instance.getNumObjectives();
         this.numberOfDecisionVars = instance.getNumDecisionVariables();
+        this.preference_models = instance.getPreferenceModels();
+        this.numberOfConstrains = 0;
         switch (numberOfProblem) {
         case 1:
             this.dtlz = new DTLZ1(numberOfObjectives, numberOfDecisionVars);
@@ -41,14 +45,30 @@ public class DTLZP extends GDProblem<DoubleSolution> {
             break;
         case 8:
             this.dtlz = new DTLZ8(numberOfObjectives, numberOfDecisionVars);
+            this.numberOfConstrains = numberOfObjectives;
             break;
         case 9:
             this.dtlz = new DTLZ9(numberOfObjectives, numberOfDecisionVars);
+            this.numberOfConstrains = numberOfObjectives;
             break;
         default:
             throw new IllegalArgumentException("Invalid Problem Number " + numberOfProblem);
         }
+        objectives_type = new int[numberOfObjectives];
+        for (int i = 0; i < numberOfObjectives; i++) {
+            objectives_type[i] = Problem.MINIMIZATION;
+        }
+        loadBoundarys();
 
+    }
+
+    private void loadBoundarys() {
+        lowerBound = new Data[numberOfDecisionVars];
+        upperBound = new Data[numberOfDecisionVars];
+        for (int i = 0; i < lowerBound.length; i++) {
+            lowerBound[i] = new RealData(0);
+            upperBound[i] = new RealData(1);
+        }
     }
 
     @Override
@@ -86,6 +106,7 @@ public class DTLZP extends GDProblem<DoubleSolution> {
     public DTLZ_Instance getInstance() {
         return (DTLZ_Instance) this.instance;
     }
+
     @Override
     public int getNumDMs() {
         return getInstance().getNumDMs();
@@ -104,6 +125,7 @@ public class DTLZP extends GDProblem<DoubleSolution> {
     public DTLZ getDTLZProblem() {
         return dtlz;
     }
+
     @Override
     public String toString() {
         return this.dtlz.toString();

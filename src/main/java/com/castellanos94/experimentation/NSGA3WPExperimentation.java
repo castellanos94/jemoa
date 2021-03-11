@@ -17,10 +17,10 @@ import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.operators.impl.PolynomialMutation;
 import com.castellanos94.operators.impl.TournamentSelection;
 import com.castellanos94.preferences.impl.InterClassnC;
+import com.castellanos94.problems.DTLZP;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.impl.SBXCrossover;
-import com.castellanos94.problems.preferences.dtlz.*;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
@@ -39,10 +39,10 @@ import org.apache.logging.log4j.Logger;
  */
 public class NSGA3WPExperimentation {
     private static final Logger logger = LogManager.getLogger(NSGA3WPExperimentation.class);
-    private static final int CLASSIFY_EVERY_ITERATION = 50; // Classification F0 each
+    private static final int CLASSIFY_EVERY_ITERATION = 1; // Classification F0 each
     private static final int ELEMENTS_TO_REPLACE = 0; // 5 % of population
-    private static final int numberOfObjectives = 10;
-    static final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NSGA3"
+    private static final int numberOfObjectives = 3;
+    static final String DIRECTORY = "experiments_test" + File.separator + numberOfObjectives + File.separator + "NSGA3"
             + File.separator + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
     static final int EXPERIMENT = 5;
 
@@ -66,12 +66,12 @@ public class NSGA3WPExperimentation {
             } catch (FileNotFoundException e3) {
                 e3.printStackTrace();
             }
-            //logger.info(instance);
+            // logger.info(instance);
 
             NSGA_III_WP<DoubleSolution> algorithm = dtlzTestSuite(p, instance);
             algorithm.setClassifyEveryIteration(CLASSIFY_EVERY_ITERATION);
             algorithm.setNumberOfElementToReplace(ELEMENTS_TO_REPLACE);
-            DTLZPreferences problem = (DTLZPreferences) algorithm.getProblem();
+            DTLZP problem = (DTLZP) algorithm.getProblem();
             String subDir = problem.getName().trim();
             if (!new File(DIRECTORY + File.separator + subDir).exists()) {
                 new File(DIRECTORY + File.separator + subDir).mkdir();
@@ -81,7 +81,7 @@ public class NSGA3WPExperimentation {
 
             ArrayList<DoubleSolution> bag = new ArrayList<>();
             LongColumn experimentTimeColumn = LongColumn.create("Experiment Time");
-            Table infoTime =Table.create("time");
+            Table infoTime = Table.create("time");
             for (int i = 0; i < EXPERIMENT; i++) {
                 algorithm = dtlzTestSuite(p, instance);
                 algorithm.setClassifyEveryIteration(CLASSIFY_EVERY_ITERATION);
@@ -111,11 +111,11 @@ public class NSGA3WPExperimentation {
              */
             String str = "Resume " + problem.getName();
             str += "\n" + "Total time: " + experimentTimeColumn.sum();
-            str += "\n" + "Average time : " + experimentTimeColumn.mean()+ " ms.";
+            str += "\n" + "Average time : " + experimentTimeColumn.mean() + " ms.";
             str += "\n" + "Solutions in the bag: " + bag.size();
             logger.info(str);
             infoTime.addColumns(experimentTimeColumn);
-            infoTime.write().csv(DIRECTORY+File.separator+subDir+File.separator+"times.csv");
+            infoTime.write().csv(DIRECTORY + File.separator + subDir + File.separator + "times.csv");
             try {
                 Solution.writSolutionsToFile(DIRECTORY + File.separator + subDir + File.separator + "nsga_iii_bag_"
                         + problem.getName() + "_F0_" + problem.getNumberOfObjectives(), new ArrayList<>(bag));
@@ -201,91 +201,63 @@ public class NSGA3WPExperimentation {
     private static NSGA_III_WP<DoubleSolution> dtlzTestSuite(int p, DTLZ_Instance instance) {
 
         HashMap<String, Object> options = setup(instance.getNumObjectives());
-        DTLZPreferences problem = null;
+        DTLZP problem = new DTLZP(p, instance);
         int maxIterations = 1000;
         int numberOfObjectives = instance.getNumObjectives();
         switch (p) {
-            case 1:
-                if (numberOfObjectives == 3) {
-                    problem = new DTLZ1_P(instance);
-                    maxIterations = 400;
-                } else if (numberOfObjectives == 5) {
-                    problem = new DTLZ1_P(instance);
-                    maxIterations = 600;
-                } else if (numberOfObjectives == 8) {
-                    problem = new DTLZ1_P(instance);
-                    maxIterations = 750;
-                } else if (numberOfObjectives == 10) {
-                    problem = new DTLZ1_P(instance);
-                    maxIterations = 1000;
-                } else if (numberOfObjectives == 15) {
-                    problem = new DTLZ1_P(instance);
-                    maxIterations = 1500;
-                }
-                break;
-            case 2:
-                if (numberOfObjectives == 3) {
-                    problem = new DTLZ2_P(instance);
-                    maxIterations = 250;
-                } else if (numberOfObjectives == 5) {
-                    problem = new DTLZ2_P(instance);
-                    maxIterations = 350;
-                } else if (numberOfObjectives == 8) {
-                    problem = new DTLZ2_P(instance);
-                    maxIterations = 500;
-                } else if (numberOfObjectives == 10) {
-                    problem = new DTLZ2_P(instance);
-                    maxIterations = 750;
-                } else if (numberOfObjectives == 15) {
-                    problem = new DTLZ2_P(instance);
-                    maxIterations = 1000;
-                }
-                break;
-            case 3:
-                if (numberOfObjectives == 3) {
-                    problem = new DTLZ3_P(instance);
-                    maxIterations = 1000;
-                } else if (numberOfObjectives == 5 || numberOfObjectives == 9) {
-                    problem = new DTLZ3_P(instance);
-                    maxIterations = 1000;
-                } else if (numberOfObjectives == 10) {
-                    problem = new DTLZ3_P(instance);
-                    maxIterations = 1500;
-                } else if (numberOfObjectives == 15) {
-                    problem = new DTLZ3_P(instance);
-                    maxIterations = 2000;
-                }
-                break;
-            case 4:
-                if (numberOfObjectives == 3) {
-                    problem = new DTLZ4_P(instance);
-                    maxIterations = 600;
-                } else if (numberOfObjectives == 5) {
-                    problem = new DTLZ4_P(instance);
-                    maxIterations = 1000;
-                } else if (numberOfObjectives == 8) {
-                    problem = new DTLZ4_P(instance);
-                    maxIterations = 1250;
-                } else if (numberOfObjectives == 10) {
-                    problem = new DTLZ4_P(instance);
-                    maxIterations = 2000;
-                } else if (numberOfObjectives == 15) {
-                    problem = new DTLZ4_P(instance);
-                    maxIterations = 3000;
-                }
-                break;
-            case 5:
-                problem = new DTLZ5_P(instance);
-                break;
-            case 6:
-                problem = new DTLZ6_P(instance);
-                break;
-            case 7:
-                problem = new DTLZ7_P(instance);
-                break;
-            default:
-                error("Invalid number problem");
-                break;
+        case 1:
+            if (numberOfObjectives == 3) {
+                maxIterations = 400;
+            } else if (numberOfObjectives == 5) {
+                maxIterations = 600;
+            } else if (numberOfObjectives == 8) {
+                maxIterations = 750;
+            } else if (numberOfObjectives == 10) {
+                maxIterations = 1000;
+            } else if (numberOfObjectives == 15) {
+                maxIterations = 1500;
+            }
+            break;
+        case 2:
+            if (numberOfObjectives == 3) {
+                maxIterations = 250;
+            } else if (numberOfObjectives == 5) {
+                maxIterations = 350;
+            } else if (numberOfObjectives == 8) {
+                maxIterations = 500;
+            } else if (numberOfObjectives == 10) {
+                maxIterations = 750;
+            } else if (numberOfObjectives == 15) {
+                maxIterations = 1000;
+            }
+            break;
+        case 3:
+            if (numberOfObjectives == 3) {
+                maxIterations = 1000;
+            } else if (numberOfObjectives == 5 || numberOfObjectives == 9) {
+                maxIterations = 1000;
+            } else if (numberOfObjectives == 10) {
+                maxIterations = 1500;
+            } else if (numberOfObjectives == 15) {
+                maxIterations = 2000;
+            }
+            break;
+        case 4:
+            if (numberOfObjectives == 3) {
+                maxIterations = 600;
+            } else if (numberOfObjectives == 5) {
+                maxIterations = 1000;
+            } else if (numberOfObjectives == 8) {
+                maxIterations = 1250;
+            } else if (numberOfObjectives == 10) {
+                maxIterations = 2000;
+            } else if (numberOfObjectives == 15) {
+                maxIterations = 3000;
+            }
+            break;
+        default:
+            maxIterations = 1000;
+            break;
         }
 
         SelectionOperator<DoubleSolution> selectionOperator = new TournamentSelection<>((int) options.get("pop_size"),
@@ -302,29 +274,29 @@ public class NSGA3WPExperimentation {
     private static HashMap<String, Object> setup(int numberOfObjectives) {
         HashMap<String, Object> map = new HashMap<>();
         switch (numberOfObjectives) {
-            case 3:
-                map.put("pop_size", 92);
-                map.put("partitions", 12);
-                break;
-            case 5:
-                map.put("pop_size", 212);
-                map.put("partitions", 6);
-                break;
-            case 8:
-                map.put("pop_size", 156);
-                map.put("partitions", 5);
-                break;
-            case 10:
-                map.put("pop_size", 271);
-                map.put("partitions", 5);
-                break;
-            case 15:
-                map.put("pop_size", 136);
-                map.put("partitions", 3);
-                break;
-            default:
-                error("Invalid number of objectives");
-                break;
+        case 3:
+            map.put("pop_size", 92);
+            map.put("partitions", 12);
+            break;
+        case 5:
+            map.put("pop_size", 212);
+            map.put("partitions", 6);
+            break;
+        case 8:
+            map.put("pop_size", 156);
+            map.put("partitions", 5);
+            break;
+        case 10:
+            map.put("pop_size", 271);
+            map.put("partitions", 5);
+            break;
+        case 15:
+            map.put("pop_size", 136);
+            map.put("partitions", 3);
+            break;
+        default:
+            error("Invalid number of objectives");
+            break;
         }
         map.put("crossover", new SBXCrossover(30, 1.0));
         map.put("mutation", new PolynomialMutation());
