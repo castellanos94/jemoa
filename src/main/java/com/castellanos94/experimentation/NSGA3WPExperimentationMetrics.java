@@ -41,10 +41,10 @@ import tech.tablesaw.columns.Column;
  */
 public class NSGA3WPExperimentationMetrics {
     private final static int numberOfObjectives=3;
-    //private static String algorithmName = "10" + File.separator + "NSGA3";
-    private static String algorithmName =  File.separator + "NSGA3_last";
+    private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
+    //private static String algorithmName =  File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
-    private static String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
+    private static String DIRECTORY = "experiments_test" + File.separator + algorithmName + File.separator;
     private static Table stats = Table.create("statistic");
     private static StringColumn nameColumn = StringColumn.create("Problem");
     private static StringColumn metricNameColumn = StringColumn.create("Metric Name");
@@ -979,50 +979,49 @@ public class NSGA3WPExperimentationMetrics {
     }
 
     private static DTLZP loadProblem(String name) throws FileNotFoundException {
-        DTLZP dtlzPreferences = null;
         DTLZ_Instance instance = null;
         String path = null;
         int numberOfProblem = -1;
+        System.out.println(name);
         switch (name) {
-            case "DTLZ1_P":
+            case "DTLZ1":
                 path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ1_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 numberOfProblem = 1;
                 break;
-            case "DTLZ2_P":
+            case "DTLZ2":
                 path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ2_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 numberOfProblem = 2;
                 break;
-            case "DTLZ3_P":
+            case "DTLZ3":
                 path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ3_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 numberOfProblem = 3;
                 break;
-            case "DTLZ4_P":
+            case "DTLZ4":
                 path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ4_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 numberOfProblem = 4;
                 break;
-            case "DTLZ5_P":
+            case "DTLZ5":
                 path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ5_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 numberOfProblem = 5;
                 break;
-            case "DTLZ6_P":
+            case "DTLZ6":
                 path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ6_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 numberOfProblem = 6;
                 break;
-            case "DTLZ7_P":
+            case "DTLZ7":
                 path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ7_Instance.txt";
                 instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
                 numberOfProblem = 7;
                 break;
 
-        }
-        dtlzPreferences = new DTLZP(numberOfProblem, instance);
-        return dtlzPreferences;
+        }        
+        return new DTLZP(numberOfProblem, instance);
     }
 
     @SuppressWarnings("rawtypes")

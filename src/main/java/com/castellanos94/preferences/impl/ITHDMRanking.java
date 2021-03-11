@@ -30,14 +30,12 @@ public class ITHDMRanking<S extends Solution<?>> implements Ranking<S> {
         for (int i = 0; i < dominating_ith.length; i++) {
             ith_dominated.add(new ArrayList<>());
         }
-        int count = 0;
         for (int i = 0; i < population.size() - 1; i++) {
             for (int j = 1; j < population.size(); j++) {
                 int dominance_test_result = this.preference.compare(population.get(i), population.get(j));
                 if (dominance_test_result == -1 || dominance_test_result == -2) {
                     population.get(i).setAttribute("net_score",
                             this.preference.getSigmaXY().minus(this.preference.getSigmaYX()));
-                    count++;
                     ith_dominated.get(i).add(j);
                     dominating_ith[i] += 1;
                 }
@@ -72,7 +70,6 @@ public class ITHDMRanking<S extends Solution<?>> implements Ranking<S> {
 
     @Override
     public int getNumberOfSubFronts() {
-        // TODO Auto-generated method stub
         return 1;
     }
 

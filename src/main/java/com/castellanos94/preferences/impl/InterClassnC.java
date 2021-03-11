@@ -3,7 +3,6 @@ package com.castellanos94.preferences.impl;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 
-import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.instances.PSPI_Instance;
 import com.castellanos94.preferences.Classifier;
@@ -99,8 +98,6 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
     }
 
     private void setPenalties(S x, int hsat, int sat, int dis, int hdis) {
-        Data penaltie = x.getPenalties();
-        int violated = x.getNumberOfPenalties();
 
         /*
          * if (hsat < sat) { penaltie = penaltie.plus((hsat - sat) / 3.0); violated++; }
@@ -137,7 +134,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
                 w.setObjective(j, r2[i][j]);
             }
             int v = pref.compare(w, x);
-            if (v <= -1 || v ==2) {
+            if (v <= -1 || v == 2) {
                 clase = i;
                 break;
             }
@@ -172,15 +169,12 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
         int clase = -1;
         w.setPenalties(Interval.ZERO);
         w.setNumberOfPenalties(0);
-       /* for (int i = r1.length - 1; i > 0; i--) {
-            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
-                w.setObjective(j, r1[i][j]);
-            }
-            if (pref.compare(x, w) <= -1) {
-                clase = i;
-            }
-        }*/
-        for (int i =0; i < r1.length ;i++) {
+        /*
+         * for (int i = r1.length - 1; i > 0; i--) { for (int j = 0; j <
+         * problem.getNumberOfObjectives(); j++) { w.setObjective(j, r1[i][j]); } if
+         * (pref.compare(x, w) <= -1) { clase = i; } }
+         */
+        for (int i = 0; i < r1.length; i++) {
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
                 w.setObjective(j, r1[i][j]);
             }
@@ -193,14 +187,11 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
             clase = +r1.length;
 
         Interval[][] r2 = problem.getR2()[dm];
-        /*for (int i = r2.length - 1; i > 0; i--) {
-            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
-                w.setObjective(j, r2[i][j]);
-            }
-            if (pref.compare(x, w) <= -1) {
-                clase = i;
-            }
-        }*/
+        /*
+         * for (int i = r2.length - 1; i > 0; i--) { for (int j = 0; j <
+         * problem.getNumberOfObjectives(); j++) { w.setObjective(j, r2[i][j]); } if
+         * (pref.compare(x, w) <= -1) { clase = i; } }
+         */
         for (int i = 0; i < r2.length; i++) {
             for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
                 w.setObjective(j, r2[i][j]);
@@ -210,7 +201,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
                 break;
             }
         }
-        
+
         return clase;
     }
 

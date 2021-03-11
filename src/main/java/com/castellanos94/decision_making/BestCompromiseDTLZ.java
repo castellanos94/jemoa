@@ -21,12 +21,10 @@ public class BestCompromiseDTLZ implements ExtraInformation {
     protected int MAX_T = 5000;
     protected DTLZP problem;
     protected ITHDM_Preference<DoubleSolution> preference;
-    private DominanceComparator<DoubleSolution> dominance;
 
     public BestCompromiseDTLZ(DTLZP problem) {
         this.problem = problem;
         this.preference = new ITHDM_Preference<>(problem, problem.getInstance().getPreferenceModel(0));
-        dominance = preference.getDominance();
     }
 
     /**
@@ -41,7 +39,7 @@ public class BestCompromiseDTLZ implements ExtraInformation {
         // sample = problem.generateSample(MAX_T);
         sample = problem.generateRandomSample(MAX_T);
         // System.out.println("Sample size: " + sample.size());
-        RealData best = RealData.ZERO, bestPref = new RealData(Double.MIN_VALUE);
+        RealData  bestPref = new RealData(Double.MIN_VALUE);
         ArrayList<Pair<DoubleSolution, RealData>> candidatos = new ArrayList<>();
         DoubleSolution best_compromise = null;
         for (int i = 0; i < sample.size() - 1; i++) {
