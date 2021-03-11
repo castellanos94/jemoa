@@ -39,12 +39,12 @@ import org.apache.logging.log4j.Logger;
  */
 public class NSGA3WPExperimentation {
     private static final Logger logger = LogManager.getLogger(NSGA3WPExperimentation.class);
-    private static final int CLASSIFY_EVERY_ITERATION = 1; // Classification F0 each
+    private static final int CLASSIFY_EVERY_ITERATION = 0; // Classification F0 each
     private static final int ELEMENTS_TO_REPLACE = 0; // 5 % of population
     private static final int numberOfObjectives = 3;
     static final String DIRECTORY = "experiments_test" + File.separator + numberOfObjectives + File.separator + "NSGA3"
             + File.separator + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
-    static final int EXPERIMENT = 5;
+    static final int EXPERIMENT = 10;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         new File(DIRECTORY).mkdirs();

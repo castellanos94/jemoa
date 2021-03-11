@@ -59,7 +59,7 @@ public class DTLZP extends GDProblem<DoubleSolution> {
             objectives_type[i] = Problem.MINIMIZATION;
         }
         loadBoundarys();
-
+        setName(this.dtlz.getName());
     }
 
     private void loadBoundarys() {

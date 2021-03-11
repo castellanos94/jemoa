@@ -42,5 +42,6 @@ local.properties
 *.launch
 #ignore experiments
 experiments/
+experiments_test/
 logs/
 /.idea/
