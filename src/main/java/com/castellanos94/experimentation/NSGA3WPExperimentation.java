@@ -178,7 +178,7 @@ public class NSGA3WPExperimentation {
                 e.printStackTrace();
             }
             if (problem.getNumberOfObjectives() == 3) {
-                Plotter plotter = new Scatter3D<DoubleSolution>(front, DIRECTORY + File.separator + subDir
+              /*  Plotter plotter = new Scatter3D<DoubleSolution>(front, DIRECTORY + File.separator + subDir
                         + File.separator + "Class_F0" + problem.getName() + "_nsga3_WP");
                 plotter.plot();
                 // new Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator +
