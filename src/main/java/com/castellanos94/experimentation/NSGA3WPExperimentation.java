@@ -43,13 +43,31 @@ public class NSGA3WPExperimentation {
     private final int CLASSIFY_EVERY_ITERATION; // Classification F0 each
     private final int ELEMENTS_TO_REPLACE; // 5 % of population
     private final String DIRECTORY;
-    static final int EXPERIMENT = 50;
+    private final int EXPERIMENT;
 
-    public NSGA3WPExperimentation(int numberOfObjectives, int cLASSIFY_EVERY_ITERATION, int eLEMENTS_TO_REPLACE) {
+    public static void main(String[] args) {
+        if (args.length < 4) {
+            System.out.println(String.format(
+                    "The following elements are required:\n\t Experiments \n\t number of objectives \n\t classify every iteration \n\t elements to replace"));
+            System.exit(-1);
+        }
+        System.out.println(Arrays.toString(args));
+        NSGA3WPExperimentation experimentation = new NSGA3WPExperimentation(Integer.parseInt(args[0]),
+                Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+        logger.info(experimentation);
+        try {
+            experimentation.execute();
+        } catch (IOException e) {
+            logger.error(e);
+        }
+    }
+
+    public NSGA3WPExperimentation(int numberOfExperiments, int numberOfObjectives, int cLASSIFY_EVERY_ITERATION, int eLEMENTS_TO_REPLACE) {
+        this.EXPERIMENT = numberOfExperiments;
         this.numberOfObjectives = numberOfObjectives;
         CLASSIFY_EVERY_ITERATION = cLASSIFY_EVERY_ITERATION;
         ELEMENTS_TO_REPLACE = eLEMENTS_TO_REPLACE;
-        DIRECTORY = "experiments_test" + File.separator + numberOfObjectives + File.separator + "NSGA3" + File.separator
+        DIRECTORY = "experimentation" + File.separator + numberOfObjectives + File.separator + "NSGA3" + File.separator
                 + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
     }
 
@@ -95,7 +113,7 @@ public class NSGA3WPExperimentation {
                      * + "execution_report_" + i);
                      */
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error(e);
                 }
 
                 logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
@@ -118,7 +136,7 @@ public class NSGA3WPExperimentation {
                 Solution.writSolutionsToFile(DIRECTORY + File.separator + subDir + File.separator + "nsga_iii_bag_"
                         + problem.getName() + "_F0_" + problem.getNumberOfObjectives(), new ArrayList<>(bag));
             } catch (IOException e1) {
-                e1.printStackTrace();
+                logger.error(e1);
             }
             Ranking<DoubleSolution> compartor = new DominanceComparator<>();
             compartor.computeRanking(bag);
@@ -173,7 +191,7 @@ public class NSGA3WPExperimentation {
             try {
                 Files.write(f.toPath(), strings, Charset.defaultCharset());
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e);
             }
             if (problem.getNumberOfObjectives() == 3) {
                 /*
@@ -192,24 +210,6 @@ public class NSGA3WPExperimentation {
             }
             logger.info("End Experimentation.");
         }
-    }
-
-    public static void main(String[] args) {
-        if (args.length < 3) {
-            System.out.println(String.format(
-                    "The following elements are required:\n\t number of objectives \n\t classify every iteration \n\t elements to replace"));
-            System.exit(-1);
-        }
-        System.out.println(Arrays.toString(args));
-        NSGA3WPExperimentation experimentation = new NSGA3WPExperimentation(Integer.parseInt(args[0]),
-                Integer.parseInt(args[1]), Integer.parseInt(args[2]));
-        try {
-            experimentation.execute();
-        } catch (IOException e) {
-            logger.error(e);
-        }
-        // problelmArrayList.stream().parallel().forEach(p -> {
-
     }
 
     @SuppressWarnings("unchecked")
@@ -340,6 +340,13 @@ public class NSGA3WPExperimentation {
             table.replaceColumn(string, table.numberColumn(string).divide(EXPERIMENT));
         }
         table.write().csv(DIRECTORY + File.separator + subDir + File.separator + "report.csv");
+    }
+
+    @Override
+    public String toString() {
+        return "NSGA3WPExperimentation [CLASSIFY_EVERY_ITERATION=" + CLASSIFY_EVERY_ITERATION + ", DIRECTORY="
+                + DIRECTORY + ", ELEMENTS_TO_REPLACE=" + ELEMENTS_TO_REPLACE + ", EXPERIMENT=" + EXPERIMENT
+                + ", numberOfObjectives=" + numberOfObjectives + "]";
     }
 
 }

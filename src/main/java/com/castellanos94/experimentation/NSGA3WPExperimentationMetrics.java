@@ -44,7 +44,7 @@ public class NSGA3WPExperimentationMetrics {
     private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
     //private static String algorithmName =  File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
-    private static String DIRECTORY = "experiments_test" + File.separator + algorithmName + File.separator;
+    private static String DIRECTORY = "experimentation" + File.separator + algorithmName + File.separator;
     private static Table stats = Table.create("statistic");
     private static StringColumn nameColumn = StringColumn.create("Problem");
     private static StringColumn metricNameColumn = StringColumn.create("Metric Name");
