@@ -71,7 +71,21 @@
 
     <build>
         <plugins>
-            <!-- Make this jar executable -->         
+            
+            <!-- Make this jar executable -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>com.castellanos94.experimentation.NSGA3WPExperimentation</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -83,9 +97,9 @@
                         </goals>
                         <configuration>
                             <archive>
-                            <manifest>
-                                <mainClass>com.castellanos94.utils.FileResourcesUtils</mainClass>
-                            </manifest>
+                                <manifest>
+                                    <mainClass>com.castellanos94.experimentation.NSGA3WPExperimentation</mainClass>
+                                </manifest>
                             </archive>
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>

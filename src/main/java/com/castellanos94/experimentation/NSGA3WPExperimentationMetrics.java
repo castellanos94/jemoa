@@ -975,7 +975,7 @@ public class NSGA3WPExperimentationMetrics {
          * } return new File(path);
          */
 
-        return new File("/home/thinkpad/Documents/jemoa/roi_generator/"+ problem.getNumberOfObjectives()+ File.separator+name);
+        return new File("roi_generator"+File.separator+ problem.getNumberOfObjectives()+ File.separator+name);
     }
 
     private static DTLZP loadProblem(String name) throws FileNotFoundException {

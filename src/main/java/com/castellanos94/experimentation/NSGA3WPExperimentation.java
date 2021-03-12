@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,8 +24,7 @@ import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.impl.SBXCrossover;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
-import com.castellanos94.utils.Plotter;
-import com.castellanos94.utils.Scatter3D;
+
 import com.castellanos94.utils.Tools;
 
 import tech.tablesaw.api.DoubleColumn;
@@ -39,33 +39,31 @@ import org.apache.logging.log4j.Logger;
  */
 public class NSGA3WPExperimentation {
     private static final Logger logger = LogManager.getLogger(NSGA3WPExperimentation.class);
-    private static final int CLASSIFY_EVERY_ITERATION = 0; // Classification F0 each
-    private static final int ELEMENTS_TO_REPLACE = 0; // 5 % of population
-    private static final int numberOfObjectives = 3;
-    static final String DIRECTORY = "experiments_test" + File.separator + numberOfObjectives + File.separator + "NSGA3"
-            + File.separator + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
-    static final int EXPERIMENT = 10;
+    private final int numberOfObjectives;
+    private final int CLASSIFY_EVERY_ITERATION; // Classification F0 each
+    private final int ELEMENTS_TO_REPLACE; // 5 % of population
+    private final String DIRECTORY;
+    static final int EXPERIMENT = 50;
 
-    public static void main(String[] args) throws CloneNotSupportedException, IOException {
+    public NSGA3WPExperimentation(int numberOfObjectives, int cLASSIFY_EVERY_ITERATION, int eLEMENTS_TO_REPLACE) {
+        this.numberOfObjectives = numberOfObjectives;
+        CLASSIFY_EVERY_ITERATION = cLASSIFY_EVERY_ITERATION;
+        ELEMENTS_TO_REPLACE = eLEMENTS_TO_REPLACE;
+        DIRECTORY = "experiments_test" + File.separator + numberOfObjectives + File.separator + "NSGA3" + File.separator
+                + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
+    }
+
+    public void execute() throws IOException {
         new File(DIRECTORY).mkdirs();
-        int[] problems = { 1, 2, 3, 4, 5, 6, 7 };
-        ArrayList<Integer> problelmArrayList = new ArrayList<>();
-        for (int integer : problems) {
-            problelmArrayList.add(integer);
-        }
-        // problelmArrayList.stream().parallel().forEach(p -> {
 
         for (int p = 1; p <= 7; p++) {
 
             Tools.setSeed(1L);
             logger.info("Experimentation: DTLZ with preferences");
-            String path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ" + p + "_Instance.txt";
-            DTLZ_Instance instance = null;
-            try {
-                instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-            } catch (FileNotFoundException e3) {
-                e3.printStackTrace();
-            }
+            String resourseFile = "DTLZ_INSTANCES" + File.separator + numberOfObjectives + File.separator + "DTLZ" + p
+                    + "_Instance.txt";
+            DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(resourseFile).loadInstance();
+
             // logger.info(instance);
 
             NSGA_III_WP<DoubleSolution> algorithm = dtlzTestSuite(p, instance);
@@ -178,14 +176,13 @@ public class NSGA3WPExperimentation {
                 e.printStackTrace();
             }
             if (problem.getNumberOfObjectives() == 3) {
-              /*  Plotter plotter = new Scatter3D<DoubleSolution>(front, DIRECTORY + File.separator + subDir
-                        + File.separator + "Class_F0" + problem.getName() + "_nsga3_WP");
-                plotter.plot();
-                // new Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator +
-                // problem.getName()).plot();
-            } else {
                 /*
-                 * Table table = Table.create(problem.getName() + "_F0_WP_" +
+                 * Plotter plotter = new Scatter3D<DoubleSolution>(front, DIRECTORY +
+                 * File.separator + subDir + File.separator + "Class_F0" + problem.getName() +
+                 * "_nsga3_WP"); plotter.plot(); // new
+                 * Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator + //
+                 * problem.getName()).plot(); } else { /* Table table =
+                 * Table.create(problem.getName() + "_F0_WP_" +
                  * problem.getNumberOfObjectives()); for (int j = 0; j <
                  * problem.getNumberOfObjectives(); j++) { DoubleColumn column =
                  * DoubleColumn.create("objective_" + j); for (int k = 0; k < front.size(); k++)
@@ -195,6 +192,24 @@ public class NSGA3WPExperimentation {
             }
             logger.info("End Experimentation.");
         }
+    }
+
+    public static void main(String[] args) {
+        if (args.length < 3) {
+            System.out.println(String.format(
+                    "The following elements are required:\n\t number of objectives \n\t classify every iteration \n\t elements to replace"));
+            System.exit(-1);
+        }
+        System.out.println(Arrays.toString(args));
+        NSGA3WPExperimentation experimentation = new NSGA3WPExperimentation(Integer.parseInt(args[0]),
+                Integer.parseInt(args[1]), Integer.parseInt(args[2]));
+        try {
+            experimentation.execute();
+        } catch (IOException e) {
+            logger.error(e);
+        }
+        // problelmArrayList.stream().parallel().forEach(p -> {
+
     }
 
     @SuppressWarnings("unchecked")
@@ -303,7 +318,7 @@ public class NSGA3WPExperimentation {
         return map;
     }
 
-    public static void reportResume(String subDir) throws IOException {
+    public void reportResume(String subDir) throws IOException {
         Table table = null;
 
         List<String> names = null;
@@ -326,4 +341,5 @@ public class NSGA3WPExperimentation {
         }
         table.write().csv(DIRECTORY + File.separator + subDir + File.separator + "report.csv");
     }
+
 }
