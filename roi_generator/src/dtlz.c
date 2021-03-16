@@ -332,6 +332,34 @@ void evaluateDTLZ7(struct Solution solution)
         solution.objective[i] = f[i];
     }
 }
+void evaluateDTLZ8(struct Solution solution)
+{
+    double factorNM = (solution.numberOfVariables * 1.0) / solution.numberOfObjectives;
+    for (int j = 0; j < solution.numberOfObjectives; j++)
+    {
+        int lower = floor(j * factorNM);
+        int upper = floor((j + 1.0) * factorNM);
+        double sum = 0;
+        for (int i = lower; i < upper; i++)
+        {
+            sum += solution.variable[i];
+        }
+        solution.objective[j] = (sum / factorNM);
+    }
+}
+void evaluateDTLZ9(struct Solution solution)
+{
+    double factorNM = (solution.numberOfVariables * 1.0) / solution.numberOfObjectives;
+    for (int j = 0; j < solution.numberOfObjectives; j++)
+    {
+        double sum = 0;
+        for (int i = (j * factorNM); i < (j + 1) * factorNM; i++)
+        {
+            sum += pow(solution.variable[i], 0.1);
+        }
+        solution.objective[j] = sum;
+    }
+}
 
 void evaluateSolution(int problem, struct Solution solution)
 {
