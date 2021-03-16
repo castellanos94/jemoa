@@ -198,7 +198,7 @@ int main(int argc, char const *argv[])
         {
             for (int j = 0; j < k; j++)
             {
-                int value = dominance(numberOfObjectives, sample[i]->objective, sample[j]->objective);
+                int value = dominance(numberOfObjectives, sample[i]->objective, sample[j]->objective);                
                 if (value == -1)
                 {
                     dominate_me[j]++;

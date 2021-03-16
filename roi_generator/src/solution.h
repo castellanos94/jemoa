@@ -7,6 +7,8 @@ struct Solution
     double *variable;
     double *objective;
     int rank;
+    int numberOfPenaltieViolated;
+    double accumulatedPenaltieViolated;
 };
 typedef struct Solution solution;
 

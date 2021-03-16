@@ -60,11 +60,25 @@ struct Solution *generateAnalyticalSolution(int numberOfProblem, int numberOfVar
     }
     else
     {
-        for (int i = 0; i < numberOfObjectives - 1; i++)
+        if (numberOfProblem > 7)
         {
-            solution.variable[i] = randfrom(0, 1);
+            while (solution.numberOfPenaltieViolated != 0)
+            {
+                for (int i = 0; i < numberOfObjectives - 1; i++)
+                {
+                    solution.variable[i] = randfrom(0, 1);
+                }
+                evaluateSolution(numberOfProblem, solution);
+            }
         }
-        evaluateSolution(numberOfProblem, solution);
+        else
+        {
+            for (int i = 0; i < numberOfObjectives - 1; i++)
+            {
+                solution.variable[i] = randfrom(0, 1);
+            }
+            evaluateSolution(numberOfProblem, solution);
+        }
     }
     struct Solution *tmp = malloc(sizeof(solution));
     memcpy(tmp, &solution, sizeof(solution));
@@ -335,6 +349,7 @@ void evaluateDTLZ7(struct Solution solution)
 void evaluateDTLZ8(struct Solution solution)
 {
     double factorNM = (solution.numberOfVariables * 1.0) / solution.numberOfObjectives;
+
     for (int j = 0; j < solution.numberOfObjectives; j++)
     {
         int lower = floor(j * factorNM);
@@ -345,6 +360,34 @@ void evaluateDTLZ8(struct Solution solution)
             sum += solution.variable[i];
         }
         solution.objective[j] = (sum / factorNM);
+    }
+    double g[solution.numberOfObjectives];
+    double min = 999 * 10000.0;
+    for (int j = 0; j < solution.numberOfObjectives - 1; j++)
+    {
+        g[j] = solution.objective[solution.numberOfObjectives - 1] + 4 * solution.objective[j] - 1;
+        for (int i = 0; i < solution.numberOfObjectives - 1; i++)
+        {
+            if (i != j)
+            {
+                double tmp = solution.objective[i] + solution.objective[j];
+                if (min > tmp)
+                {
+                    min = tmp;
+                }
+            }
+        }
+    }
+    g[solution.numberOfObjectives - 1] = 2 * solution.objective[solution.numberOfObjectives - 1] + min - 1;
+    solution.numberOfPenaltieViolated = 0;
+    solution.accumulatedPenaltieViolated = 0;
+    for (int i = 0; i < solution.numberOfObjectives; i++)
+    {
+        if (g[i] < 0)
+        {
+            solution.numberOfPenaltieViolated += 1;
+            solution.accumulatedPenaltieViolated += g[i];
+        }
     }
 }
 void evaluateDTLZ9(struct Solution solution)
@@ -359,6 +402,22 @@ void evaluateDTLZ9(struct Solution solution)
         }
         solution.objective[j] = sum;
     }
+    double g[solution.numberOfObjectives];
+    double fm = solution.objective[solution.numberOfObjectives - 1];
+    fm = fm * fm;
+    solution.numberOfPenaltieViolated = 0;
+    solution.accumulatedPenaltieViolated = 0;
+    for (int j = 0; j < solution.numberOfObjectives ; j++)
+    {
+        double fj = solution.objective[j];
+        g[j]= fm + fj*fj - 1;
+        if (g[j] < 0)
+        {
+            solution.numberOfPenaltieViolated += 1;
+            solution.accumulatedPenaltieViolated += g[j];
+        }
+    }
+    
 }
 
 void evaluateSolution(int problem, struct Solution solution)
@@ -385,6 +444,12 @@ void evaluateSolution(int problem, struct Solution solution)
         break;
     case 7:
         evaluateDTLZ7(solution);
+        break;
+    case 8:
+        evaluateDTLZ8(solution);
+        break;
+    case 9:
+        evaluateDTLZ9(solution);
         break;
     default:
         break;

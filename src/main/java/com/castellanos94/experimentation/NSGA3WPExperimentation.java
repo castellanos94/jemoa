@@ -44,6 +44,8 @@ public class NSGA3WPExperimentation {
     private final int ELEMENTS_TO_REPLACE; // 5 % of population
     private final String DIRECTORY;
     private final int EXPERIMENT;
+    private int initialProblem;
+    private int endProblem;
 
     public static void main(String[] args) {
         if (args.length < 4) {
@@ -54,6 +56,13 @@ public class NSGA3WPExperimentation {
         System.out.println(Arrays.toString(args));
         NSGA3WPExperimentation experimentation = new NSGA3WPExperimentation(Integer.parseInt(args[0]),
                 Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+        if (args.length == 5) {
+            experimentation.setInitialProblem(Integer.parseInt(args[4]));
+            experimentation.setEndProblem(Integer.parseInt(args[4]));
+        } else if (args.length == 6) {
+            experimentation.setInitialProblem(Integer.parseInt(args[4]));
+            experimentation.setEndProblem(Integer.parseInt(args[5]));
+        }
         logger.info(experimentation);
         try {
             experimentation.execute();
@@ -62,19 +71,30 @@ public class NSGA3WPExperimentation {
         }
     }
 
-    public NSGA3WPExperimentation(int numberOfExperiments, int numberOfObjectives, int cLASSIFY_EVERY_ITERATION, int eLEMENTS_TO_REPLACE) {
+    public void setInitialProblem(int initialProblem) {
+        this.initialProblem = initialProblem;
+    }
+
+    public void setEndProblem(int endProblem) {
+        this.endProblem = endProblem;
+    }
+
+    public NSGA3WPExperimentation(int numberOfExperiments, int numberOfObjectives, int cLASSIFY_EVERY_ITERATION,
+            int eLEMENTS_TO_REPLACE) {
         this.EXPERIMENT = numberOfExperiments;
         this.numberOfObjectives = numberOfObjectives;
         CLASSIFY_EVERY_ITERATION = cLASSIFY_EVERY_ITERATION;
         ELEMENTS_TO_REPLACE = eLEMENTS_TO_REPLACE;
         DIRECTORY = "experimentation" + File.separator + numberOfObjectives + File.separator + "NSGA3" + File.separator
                 + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
+        initialProblem = 1;
+        endProblem = 7;
     }
 
     public void execute() throws IOException {
         new File(DIRECTORY).mkdirs();
 
-        for (int p = 1; p <= 7; p++) {
+        for (int p = initialProblem; p <= endProblem; p++) {
 
             Tools.setSeed(1L);
             logger.info("Experimentation: DTLZ with preferences");
@@ -249,7 +269,7 @@ public class NSGA3WPExperimentation {
         case 3:
             if (numberOfObjectives == 3) {
                 maxIterations = 1000;
-            } else if (numberOfObjectives == 5 || numberOfObjectives == 9) {
+            } else if (numberOfObjectives == 5 || numberOfObjectives == 8) {
                 maxIterations = 1000;
             } else if (numberOfObjectives == 10) {
                 maxIterations = 1500;
@@ -271,7 +291,15 @@ public class NSGA3WPExperimentation {
             }
             break;
         default:
-            maxIterations = 1000;
+            if (numberOfObjectives == 3) {
+                maxIterations = 750;
+            } else if (numberOfObjectives == 5)
+                maxIterations = 1000;
+            else if (numberOfObjectives == 8)
+                maxIterations = 1250;
+            else {
+                maxIterations = 1500;
+            }
             break;
         }
 
@@ -346,7 +374,8 @@ public class NSGA3WPExperimentation {
     public String toString() {
         return "NSGA3WPExperimentation [CLASSIFY_EVERY_ITERATION=" + CLASSIFY_EVERY_ITERATION + ", DIRECTORY="
                 + DIRECTORY + ", ELEMENTS_TO_REPLACE=" + ELEMENTS_TO_REPLACE + ", EXPERIMENT=" + EXPERIMENT
-                + ", numberOfObjectives=" + numberOfObjectives + "]";
+                + ", endProblem=" + endProblem + ", initialProblem=" + initialProblem + ", numberOfObjectives="
+                + numberOfObjectives + "]";
     }
 
 }

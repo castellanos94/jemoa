@@ -11,12 +11,13 @@ struct Solution init_solution(int numberOfVariables, int numberOfObjectives)
     struct Solution solution = {.numberOfObjectives = numberOfObjectives,
                                 .numberOfVariables = numberOfVariables,
                                 .variable = (double *)malloc(sizeof(double) * numberOfVariables),
-                                .objective = (double *)malloc(sizeof(double) * numberOfObjectives)};
+                                .objective = (double *)malloc(sizeof(double) * numberOfObjectives),
+                                .accumulatedPenaltieViolated = 0,
+                                .numberOfPenaltieViolated = 0};
     for (int i = 0; i < numberOfVariables; i++)
     {
         solution.variable[i] = 0;
     }
-
     //memcpy(solution, &init, sizeof *solution);
     //solution.objective =
     //solution.variable = (double *)malloc(sizeof(double) * numberOfVariables);
