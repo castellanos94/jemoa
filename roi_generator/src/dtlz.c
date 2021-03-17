@@ -29,7 +29,7 @@ int constraintDTLZ8(struct Solution solution)
     {
         double valida;
         //NOTA: Con 3 objetivos se debe hacer un ajuste ya que RandomNumber.nextInt(M - 2) devuelve un numero entre [0 y M-2] que seria [0 y 1] peroo para el 1 la proabilidad es baja, cambie [M-2] por [M-1] en este caso momentaneamente en las siguienes 6 lineas
-        int i = randfrom(0, solution.numberOfObjectives - 2); //Antes era [M - 2] pero la probabilidad de generar [M - 1] es muy baja a comparacion de los otros
+        int i = randfrom(0, solution.numberOfObjectives - 1); //Antes era [M - 2] pero la probabilidad de generar [M - 1] es muy baja a comparacion de los otros
 
         while (i == solution.numberOfObjectives - 1)
         { //[M - 1] es invalido, si cae se vuelve a generar otro
@@ -111,13 +111,61 @@ int constraintDTLZ8(struct Solution solution)
     }
     return solution.numberOfPenaltieViolated;
 }
-int constraintDTLZ9(struct Solution solution){
-    double rand = randfrom(0,1);
-    for (int i = 0; i < solution.numberOfObjectives-1; i++)
+int constraintDTLZ9(struct Solution solution)
+{
+    double rand = randfrom(0, 1);
+    if (rand < 0.5)
     {
-        solution.objective[i] = rand;
+        rand = randfrom(0, 1);
+        for (int i = 0; i < solution.numberOfObjectives - 1; i++)
+        {
+            solution.objective[i] = rand;
+        }
+        solution.objective[solution.numberOfObjectives - 1] = sqrt(1 - rand * rand);
     }
-    solution.objective[solution.numberOfObjectives-1] = sqrt(1 - rand*rand);
+    else
+    {
+
+        double valida;
+        //NOTA: Con 3 objetivos se debe hacer un ajuste ya que RandomNumber.nextInt(M - 2) devuelve un numero entre [0 y M-2] que seria [0 y 1] peroo para el 1 la proabilidad es baja, cambie [M-2] por [M-1] en este caso momentaneamente en las siguienes 6 lineas
+        int i = randfrom(0, solution.numberOfObjectives - 1); //Antes era [M - 2] pero la probabilidad de generar [M - 1] es muy baja a comparacion de los otros
+
+        while (i == solution.numberOfObjectives - 1)
+        { //[M - 1] es invalido, si cae se vuelve a generar otro
+            i = randfrom(0, solution.numberOfObjectives - 1);
+        }
+
+        int j = randfrom(0, solution.numberOfObjectives - 1);
+
+        while (j == i || j == solution.numberOfObjectives - 1)
+        {
+            j = randfrom(0, solution.numberOfObjectives - 1);
+        }
+        do
+        {
+
+            double fi = randfrom(0, 1) * (0.5 - 1.0 / 8) + 1.0 / 8;
+            double fj = randfrom(0, 1) * (1 - 2 * fi) + fi;
+            for (int o = 0; o < solution.numberOfObjectives - 1; o++)
+            {
+                if (o == i)
+                {
+                    solution.objective[o] = fi;
+                }
+                else if (o == j)
+                {
+                    solution.objective[o] = fj;
+                }
+                else
+                {
+                    solution.objective[o] = randfrom(0, 1) * (1 - fj) + fj;
+                }
+            }
+
+            solution.objective[solution.numberOfObjectives - 1] = (1 - fi - fj) / 2.0;
+            valida = solution.objective[solution.numberOfObjectives - 1] + 4 * fi;
+        } while (valida < (1.0 - 1.e-08));
+    }
     double g[solution.numberOfObjectives];
     double fm = solution.objective[solution.numberOfObjectives - 1];
     fm = fm * fm;
@@ -508,7 +556,7 @@ void evaluateDTLZ9(struct Solution solution)
             sum += pow(solution.variable[i], 0.1);
         }
         solution.objective[j] = sum;
-    }    
+    }
 }
 
 void evaluateSolution(int problem, struct Solution solution)

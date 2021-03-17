@@ -165,7 +165,7 @@ int main(int argc, char const *argv[])
         srand(time(NULL));
     }
 
-    int k = sample_size;
+    const int k = sample_size;
     printf("Command: Problem %2d, sample %d, seed %d\n", problem, k, seed);
 
     struct Instance instance = readInstance(argv[3]);
@@ -228,11 +228,7 @@ int main(int argc, char const *argv[])
             }
         }
         printf("... size of F0 %4d\n", count);
-    }
-    if(intents > MAX_DOMINATION_INTENTS){
-        k = count;
-        //pendinte cambiar esto
-    }
+    }    
     
     char fileNameRoi[128];
     /*snprintf(fileNameRoi, 128, "ROI_DTLZ%d_V%d_O%d.txt", problem, numberOfVariables, numberOfObjectives);
