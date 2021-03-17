@@ -39,7 +39,7 @@ void destroy_solution(struct Solution *solution)
     free(solution);
 }
 
-void printSolution(struct Solution *solutionToPrint)
+void printSolution(const struct Solution *solutionToPrint)
 {
     for (int i = 0; i < solutionToPrint->numberOfVariables; i++)
     {
@@ -66,5 +66,5 @@ void printSolution(struct Solution *solutionToPrint)
         else
             printf("%f * ", solutionToPrint->objective[i]);
     }
-    printf("%3d\n", solutionToPrint->rank);
+    printf("%3d * %3d * %.2f\n", solutionToPrint->rank,solutionToPrint->numberOfPenaltieViolated , solutionToPrint->accumulatedPenaltieViolated);
 }

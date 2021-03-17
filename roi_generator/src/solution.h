@@ -13,6 +13,6 @@ struct Solution
 typedef struct Solution solution;
 
 struct Solution init_solution(int numberOfVariables, int numberOfObjectives);
-void printSolution(struct Solution *solutionToPrint);
+void printSolution(const struct Solution *solutionToPrint);
 void destroy_solution(struct Solution *solution);
 #endif // TYPES_H

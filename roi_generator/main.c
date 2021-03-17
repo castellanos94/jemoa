@@ -8,6 +8,7 @@
 #include "src/dtlz.h"
 #include "src/preferences.h"
 #include "src/instance.h"
+#define MAX_DOMINATION_INTENTS 50000
 
 void printObjectives(int index, struct Solution *old, struct Solution *new)
 {
@@ -164,7 +165,7 @@ int main(int argc, char const *argv[])
         srand(time(NULL));
     }
 
-    const int k = sample_size;
+    int k = sample_size;
     printf("Command: Problem %2d, sample %d, seed %d\n", problem, k, seed);
 
     struct Instance instance = readInstance(argv[3]);
@@ -185,7 +186,7 @@ int main(int argc, char const *argv[])
     int count = 0;
     int intents = 0;
     int dominate_me[k];
-    while (count != k)
+    while (count != k && intents < MAX_DOMINATION_INTENTS)
     {
         printf("\tCheck dominance %3d... ", intents++);
 
@@ -219,8 +220,8 @@ int main(int argc, char const *argv[])
             }
             else
             {
-                struct Solution *tmp = generateAnalyticalSolution(problem, numberOfVariables, numberOfObjectives);
-                int value;
+                struct Solution *tmp = generateAnalyticalSolution(problem, numberOfVariables, numberOfObjectives);             
+                
                 memcpy(sample[i]->variable, tmp->variable, numberOfVariables * sizeof(double));
                 memcpy(sample[i]->objective, tmp->objective, numberOfObjectives * sizeof(double));
                 destroy_solution(tmp);
@@ -228,6 +229,11 @@ int main(int argc, char const *argv[])
         }
         printf("... size of F0 %4d\n", count);
     }
+    if(intents > MAX_DOMINATION_INTENTS){
+        k = count;
+        //pendinte cambiar esto
+    }
+    
     char fileNameRoi[128];
     /*snprintf(fileNameRoi, 128, "ROI_DTLZ%d_V%d_O%d.txt", problem, numberOfVariables, numberOfObjectives);
 

@@ -11,12 +11,137 @@ double randfrom(double min, double max)
     double div = RAND_MAX / range;
     return min + (rand() / div);
 }
+int constraintDTLZ8(struct Solution solution)
+{
+    double rand = randfrom(0, 1);
+    int wasStraightLine = 0;
+    if (rand < 0.5)
+    {
+        rand = randfrom(0, 1);
+        for (int i = 0; i < solution.numberOfObjectives - 1; i++)
+        {
+            solution.objective[i] = rand;
+        }
+        solution.objective[solution.numberOfObjectives - 1] = 1 - 4 * rand;
+        wasStraightLine = 1;
+    }
+    else
+    {
+        double valida;
+        //NOTA: Con 3 objetivos se debe hacer un ajuste ya que RandomNumber.nextInt(M - 2) devuelve un numero entre [0 y M-2] que seria [0 y 1] peroo para el 1 la proabilidad es baja, cambie [M-2] por [M-1] en este caso momentaneamente en las siguienes 6 lineas
+        int i = randfrom(0, solution.numberOfObjectives - 2); //Antes era [M - 2] pero la probabilidad de generar [M - 1] es muy baja a comparacion de los otros
+
+        while (i == solution.numberOfObjectives - 1)
+        { //[M - 1] es invalido, si cae se vuelve a generar otro
+            i = randfrom(0, solution.numberOfObjectives - 1);
+        }
+
+        int j = randfrom(0, solution.numberOfObjectives - 1);
+
+        while (j == i || j == solution.numberOfObjectives - 1)
+        {
+            j = randfrom(0, solution.numberOfObjectives - 1);
+        }
+        do
+        {
+
+            double fi = randfrom(0, 1) * (0.5 - 1.0 / 8) + 1.0 / 8;
+            double fj = randfrom(0, 1) * (1 - 2 * fi) + fi;
+            for (int o = 0; o < solution.numberOfObjectives - 1; o++)
+            {
+                if (o == i)
+                {
+                    solution.objective[o] = fi;
+                }
+                else if (o == j)
+                {
+                    solution.objective[o] = fj;
+                }
+                else
+                {
+                    solution.objective[o] = randfrom(0, 1) * (1 - fj) + fj;
+                }
+            }
+
+            solution.objective[solution.numberOfObjectives - 1] = (1 - fi - fj) / 2.0;
+            valida = solution.objective[solution.numberOfObjectives - 1] + 4 * fi;
+        } while (valida < (1.0 - 1.e-08));
+    }
+
+    double g[solution.numberOfObjectives];
+    double min = 999 * 10000.0;
+    for (int j = 0; j < solution.numberOfObjectives - 1; j++)
+    {
+        g[j] = solution.objective[solution.numberOfObjectives - 1] + 4 * solution.objective[j] - 1;
+        for (int i = 0; i < solution.numberOfObjectives - 1; i++)
+        {
+            if (i != j)
+            {
+                double tmp = solution.objective[i] + solution.objective[j];
+                if (min > tmp)
+                {
+                    min = tmp;
+                }
+            }
+        }
+    }
+    g[solution.numberOfObjectives - 1] = 2 * solution.objective[solution.numberOfObjectives - 1] + min - 1;
+    solution.numberOfPenaltieViolated = 0;
+    solution.accumulatedPenaltieViolated = 0;
+    for (int i = 0; i < solution.numberOfObjectives; i++)
+    {
+        if (g[i] < 0)
+        {
+            solution.numberOfPenaltieViolated += 1;
+            solution.accumulatedPenaltieViolated += g[i];
+        }
+    }
+    //Check the straight line intersection
+    if (wasStraightLine == 1)
+    {
+        int M = (solution.numberOfObjectives == 3) ? 1 : solution.numberOfObjectives - 1;
+        for (int i = 0; i < M; i++)
+        {
+            if (solution.objective[i] != solution.objective[i + 1])
+            {
+                solution.numberOfPenaltieViolated = solution.numberOfPenaltieViolated + 100;
+                solution.accumulatedPenaltieViolated = solution.accumulatedPenaltieViolated + 100;
+            }
+        }
+    }
+    return solution.numberOfPenaltieViolated;
+}
+int constraintDTLZ9(struct Solution solution){
+    double rand = randfrom(0,1);
+    for (int i = 0; i < solution.numberOfObjectives-1; i++)
+    {
+        solution.objective[i] = rand;
+    }
+    solution.objective[solution.numberOfObjectives-1] = sqrt(1 - rand*rand);
+    double g[solution.numberOfObjectives];
+    double fm = solution.objective[solution.numberOfObjectives - 1];
+    fm = fm * fm;
+    solution.numberOfPenaltieViolated = 0;
+    solution.accumulatedPenaltieViolated = 0;
+    for (int j = 0; j < solution.numberOfObjectives; j++)
+    {
+        double fj = solution.objective[j];
+        g[j] = fm + fj * fj - 1;
+        if (g[j] < 0)
+        {
+            solution.numberOfPenaltieViolated += 1;
+            solution.accumulatedPenaltieViolated += g[j];
+        }
+    }
+    return solution.numberOfPenaltieViolated;
+}
+
 struct Solution *generateAnalyticalSolution(int numberOfProblem, int numberOfVariables, int numberOfObjectives)
 {
 
     struct Solution solution = init_solution(numberOfVariables, numberOfObjectives);
     int k = numberOfVariables - numberOfObjectives + 1;
-    if (numberOfProblem <= 5 && numberOfProblem > 0)
+    if (numberOfProblem <= 5)
     {
 
         for (int i = numberOfObjectives - 1; i < numberOfVariables; i++)
@@ -62,13 +187,20 @@ struct Solution *generateAnalyticalSolution(int numberOfProblem, int numberOfVar
     {
         if (numberOfProblem > 7)
         {
-            while (solution.numberOfPenaltieViolated != 0)
+            int numberOfViolatedPenalties;
+            if (numberOfProblem == 8)
             {
-                for (int i = 0; i < numberOfObjectives - 1; i++)
+                do
                 {
-                    solution.variable[i] = randfrom(0, 1);
-                }
-                evaluateSolution(numberOfProblem, solution);
+                    numberOfViolatedPenalties = constraintDTLZ8(solution);
+                } while (numberOfViolatedPenalties != 0);
+            }
+            else if (numberOfProblem == 9)
+            {
+                do
+                {
+                    numberOfViolatedPenalties = constraintDTLZ9(solution);
+                } while (numberOfViolatedPenalties != 0);
             }
         }
         else
@@ -82,6 +214,8 @@ struct Solution *generateAnalyticalSolution(int numberOfProblem, int numberOfVar
     }
     struct Solution *tmp = malloc(sizeof(solution));
     memcpy(tmp, &solution, sizeof(solution));
+    tmp->accumulatedPenaltieViolated = solution.accumulatedPenaltieViolated;
+    tmp->numberOfPenaltieViolated = solution.numberOfPenaltieViolated;
     return tmp;
 }
 
@@ -361,35 +495,8 @@ void evaluateDTLZ8(struct Solution solution)
         }
         solution.objective[j] = (sum / factorNM);
     }
-    double g[solution.numberOfObjectives];
-    double min = 999 * 10000.0;
-    for (int j = 0; j < solution.numberOfObjectives - 1; j++)
-    {
-        g[j] = solution.objective[solution.numberOfObjectives - 1] + 4 * solution.objective[j] - 1;
-        for (int i = 0; i < solution.numberOfObjectives - 1; i++)
-        {
-            if (i != j)
-            {
-                double tmp = solution.objective[i] + solution.objective[j];
-                if (min > tmp)
-                {
-                    min = tmp;
-                }
-            }
-        }
-    }
-    g[solution.numberOfObjectives - 1] = 2 * solution.objective[solution.numberOfObjectives - 1] + min - 1;
-    solution.numberOfPenaltieViolated = 0;
-    solution.accumulatedPenaltieViolated = 0;
-    for (int i = 0; i < solution.numberOfObjectives; i++)
-    {
-        if (g[i] < 0)
-        {
-            solution.numberOfPenaltieViolated += 1;
-            solution.accumulatedPenaltieViolated += g[i];
-        }
-    }
 }
+
 void evaluateDTLZ9(struct Solution solution)
 {
     double factorNM = (solution.numberOfVariables * 1.0) / solution.numberOfObjectives;
@@ -401,23 +508,7 @@ void evaluateDTLZ9(struct Solution solution)
             sum += pow(solution.variable[i], 0.1);
         }
         solution.objective[j] = sum;
-    }
-    double g[solution.numberOfObjectives];
-    double fm = solution.objective[solution.numberOfObjectives - 1];
-    fm = fm * fm;
-    solution.numberOfPenaltieViolated = 0;
-    solution.accumulatedPenaltieViolated = 0;
-    for (int j = 0; j < solution.numberOfObjectives ; j++)
-    {
-        double fj = solution.objective[j];
-        g[j]= fm + fj*fj - 1;
-        if (g[j] < 0)
-        {
-            solution.numberOfPenaltieViolated += 1;
-            solution.accumulatedPenaltieViolated += g[j];
-        }
-    }
-    
+    }    
 }
 
 void evaluateSolution(int problem, struct Solution solution)
