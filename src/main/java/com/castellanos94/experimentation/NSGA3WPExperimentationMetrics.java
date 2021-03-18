@@ -235,9 +235,6 @@ public class NSGA3WPExperimentationMetrics {
             }
             for (int index = 0; index < globalCSat.get(dtlz).size(); index++) {
                 ArrayList<DoubleSolution> solutions = globalCSat.get(dtlz).get(index);
-                if(solutions.isEmpty()){
-                    solutions = globalSolutionNDByProblem.get(dtlz).get(index);
-                }
                 HashMap<String, ArrayList<DoubleSolution>> grouped = groupByAlgorithm(solutions, _names_algorithm,
                         false);
                 int sizeOfFrontZero = globalSolutionNDByProblem.get(dtlz).get(index).size();
@@ -271,7 +268,12 @@ public class NSGA3WPExperimentationMetrics {
                         }
                     }
 
-                    // Make Distance
+                });
+                if (solutions.isEmpty()) {
+                    solutions = globalSolutionNDByProblem.get(dtlz).get(index);
+                }
+                grouped = groupByAlgorithm(solutions, _names_algorithm, false);
+                grouped.forEach((__name, _solutions) -> { // Make Distance
                     double[] euclidean = calculateDistances(_solutions, roi.get(dtlz.getName()),
                             Metric.EUCLIDEAN_DISTANCE);
                     for (DoubleColumn column : euclideanMin) {
@@ -472,8 +474,20 @@ public class NSGA3WPExperimentationMetrics {
         HashMap<String, Double> summaryMean = new HashMap<>();
         HashMap<String, Double> summarySTD = new HashMap<>();
         double acum = 0, acumSTD = 0;
+        double max = Double.MIN_VALUE;
         for (Column<?> c : tmpTable.columns()) {
             NumericColumn column = (NumericColumn) c;
+            double _max = column.max();
+            if (_max > max) {
+                max = _max;
+            }
+        }
+        max *= 10;
+        for (Column<?> c : tmpTable.columns()) {
+            NumericColumn column = (NumericColumn) c;
+            if (column.countMissing() > tmpTable.rowCount() / 3.0)
+                column.setMissingTo(max);
+
             double mean = column.mean();
             acum += mean;
             double std = column.standardDeviation();
@@ -916,7 +930,7 @@ public class NSGA3WPExperimentationMetrics {
         ArrayList<DoubleSolution> d = new ArrayList<>();
         ArrayList<DoubleSolution> hd = new ArrayList<>();
         for (DoubleSolution x : solutions) {
-            //System.out.println(x+" "+x.getAttributes());
+            // System.out.println(x+" "+x.getAttributes());
             classifier.classify(x);
             int[] iclass = (int[]) x.getAttribute(classifier.getAttributeKey());
             if (iclass[0] > 0) {
