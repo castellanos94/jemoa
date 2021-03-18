@@ -279,4 +279,13 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
         return solution;
     }
 
+    public DoubleSolution generateFromObjective(String stringObjectives) {
+        DoubleSolution solution = new DoubleSolution(this);
+        String split[] = stringObjectives.trim().split(",");
+        for (int i = 0; i < this.numberOfObjectives; i++) {
+            solution.setObjective(i, new RealData(Double.parseDouble(split[i])));
+        }
+        return solution;
+    }
+
 }

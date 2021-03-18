@@ -9,11 +9,11 @@ echo "Size sample $KSample, Seed $Seed"
 if mkdir logs; then
 	echo "Log dir created"
 fi
-for N in `seq 1 7`
+for N in `seq 1 9`
 do
 	echo "Executing DTLZ$N..."
 	varInstance="/home/thinkpad/Documents/jemoa/src/main/resources/DTLZ_INSTANCES/$numberOfObjectives/DTLZ$N""_Instance.txt"
-	(time ./main $N $KSample $varInstance $Seed) &> logs/log$N.txt &
+	(time ./main $N $KSample $varInstance $Seed) &> logs/"log$N""_O"$numberOfObjectives.txt &
 done
 wait
 echo "All tasks are done."

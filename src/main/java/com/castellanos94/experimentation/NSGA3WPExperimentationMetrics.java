@@ -13,9 +13,12 @@ import java.util.Scanner;
 
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.Data;
+import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.impl.InterClassnC;
 import com.castellanos94.problems.DTLZP;
+import com.castellanos94.problems.benchmarks.dtlz.DTLZ8;
+import com.castellanos94.problems.benchmarks.dtlz.DTLZ9;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.BordaRanking;
@@ -23,7 +26,6 @@ import com.castellanos94.utils.Distance;
 import com.castellanos94.utils.POST_HOC;
 import com.castellanos94.utils.StacClient;
 import com.castellanos94.utils.Distance.Metric;
-
 
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.NumericColumn;
@@ -40,11 +42,11 @@ import tech.tablesaw.columns.Column;
  * {@link ReportFront}
  */
 public class NSGA3WPExperimentationMetrics {
-    private final static int numberOfObjectives=3;
+    private final static int numberOfObjectives = 3;
     private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
-    //private static String algorithmName =  File.separator + "NSGA3_last";
+    // private static String algorithmName = File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
-    private static String DIRECTORY = "experimentation" + File.separator + algorithmName + File.separator;
+    private static String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
     private static Table stats = Table.create("statistic");
     private static StringColumn nameColumn = StringColumn.create("Problem");
     private static StringColumn metricNameColumn = StringColumn.create("Metric Name");
@@ -68,6 +70,7 @@ public class NSGA3WPExperimentationMetrics {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();
         HashMap<String, DTLZP> problems = new HashMap<>();
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
+        System.out.println("Working directory: " + DIRECTORY);
         for (File f : new File(DIRECTORY).listFiles()) {
             if (f.isDirectory()) {
                 HashMap<DTLZP, ArrayList<ArrayList<DoubleSolution>>> algorithmProblems = new HashMap<>();
@@ -79,9 +82,9 @@ public class NSGA3WPExperimentationMetrics {
                         } else {
                             currentProblem = loadProblem(_file.getName());
                             problems.put(_file.getName(), currentProblem);
-                            System.out.println(_file+" "+loadPathRoi(currentProblem));
+                            System.out.println(_file + " " + loadPathRoi(currentProblem));
                             roi.put(currentProblem.getName(),
-                                    loadSolutions(currentProblem, loadPathRoi(currentProblem)));
+                                    loadSolutions(currentProblem, loadPathRoi(currentProblem), true));
 
                             for (DoubleSolution s : roi.get(currentProblem.getName())) {
                                 s.setAttribute(OWNER, "ROI");
@@ -91,7 +94,7 @@ public class NSGA3WPExperimentationMetrics {
                         ArrayList<ArrayList<DoubleSolution>> solutionFromProblem = new ArrayList<>();
                         for (File executions : _file.listFiles()) {
                             if (executions.getName().contains("execution") && executions.getName().endsWith(".out")) {
-                                solutionFromProblem.add(loadSolutions(currentProblem, executions));
+                                solutionFromProblem.add(loadSolutions(currentProblem, executions, false));
                             }
                         }
                         algorithmProblems.put(currentProblem, solutionFromProblem);
@@ -156,7 +159,7 @@ public class NSGA3WPExperimentationMetrics {
                 noDomiList.add(comparator.getSubFront(0));
                 // CSat Only F0
                 _csat.add(classifySolutions(_problem, noDomiList.get(i), false, true));
-               // _csat.add(classifySolutions(_problem, noDomiList.get(i), true, true));
+                // _csat.add(classifySolutions(_problem, noDomiList.get(i), true, true));
             }
 
             globalSolutionNDByProblem.put(_problem, noDomiList);
@@ -232,6 +235,9 @@ public class NSGA3WPExperimentationMetrics {
             }
             for (int index = 0; index < globalCSat.get(dtlz).size(); index++) {
                 ArrayList<DoubleSolution> solutions = globalCSat.get(dtlz).get(index);
+                if(solutions.isEmpty()){
+                    solutions = globalSolutionNDByProblem.get(dtlz).get(index);
+                }
                 HashMap<String, ArrayList<DoubleSolution>> grouped = groupByAlgorithm(solutions, _names_algorithm,
                         false);
                 int sizeOfFrontZero = globalSolutionNDByProblem.get(dtlz).get(index).size();
@@ -480,12 +486,14 @@ public class NSGA3WPExperimentationMetrics {
                 || metricName.equalsIgnoreCase("sat") || metricName.equalsIgnoreCase("dis")) {
             while (iterator.hasNext()) {
                 String key = iterator.next();
-                if (acum != 0)
-                    //summaryMean.put(key, Math.abs(summaryMean.get(key) / acum) * 100.0);
-                    summaryMean.put(key, Math.abs(summaryMean.get(key) ) * 100.0);
-                if (acumSTD != 0)
-                    //summarySTD.put(key, Math.abs(summarySTD.get(key) / acumSTD));
-                    summarySTD.put(key, Math.abs(summarySTD.get(key) ));
+                if (acum != 0 && metricName.equalsIgnoreCase("Dominance"))
+                    summaryMean.put(key, Math.abs(summaryMean.get(key) / acum) * 100.0);
+                else
+                    summaryMean.put(key, Math.abs(summaryMean.get(key)) * 100.0);
+                if (acumSTD != 0 && metricName.equalsIgnoreCase("Dominance"))
+                    summarySTD.put(key, Math.abs(summarySTD.get(key) / acumSTD));
+                else
+                    summarySTD.put(key, Math.abs(summarySTD.get(key)));
             }
         }
 
@@ -497,7 +505,7 @@ public class NSGA3WPExperimentationMetrics {
         // %s\n",nameProblem,metricName,file.getAbsolutePath());
         // }
         tmpTable.write().csv(file);
-        System.out.println(nameProblem+"/"+metricName+"-> "+file.getAbsolutePath());
+        System.out.println(nameProblem + "/" + metricName + "-> " + file.getAbsolutePath());
         Map<String, Object> friedman = StacClient.FRIEDMAN_ALIGNED_RANK(file.getAbsolutePath(), 0.05, POST_HOC.FINNER);
         Map<String, Object> st = (Map<String, Object>) friedman.get("ranking");
         boolean rs;
@@ -532,7 +540,7 @@ public class NSGA3WPExperimentationMetrics {
         if (st != null) {
             ArrayList<Object> names_ = (ArrayList<Object>) st.get("names");
             ArrayList<Object> values_ = (ArrayList<Object>) st.get("rankings");
-            System.out.println(nameProblem+"/"+nameProblem+" > "+names_ + " <-> "+values_);
+            System.out.println(nameProblem + "/" + nameProblem + " > " + names_ + " <-> " + values_);
             for (int i = 0; i < names_.size(); i++) {
                 String name__ = names_.get(i).toString().replaceAll(regex, "");
                 if (i < names_.size() - 1)
@@ -546,12 +554,10 @@ public class NSGA3WPExperimentationMetrics {
                 if (metricName.equalsIgnoreCase("Dominance") || metricName.equalsIgnoreCase("hsat")
                         || metricName.equalsIgnoreCase("sat")) {
                     sumMap.put(name__, String.format("%s$%5.3f_{%.3f}^{%.1f}$", (rs) ? "\\cellcolor[HTML]{FFFF00}" : "",
-                            summaryMean.get(name__), summarySTD.get(name__), 
-                            rankingBorderMap.get(name__)));
+                            summaryMean.get(name__), summarySTD.get(name__), rankingBorderMap.get(name__)));
                 } else {
                     sumMap.put(name__, String.format("%s$%f_{%.3f}^{%.1f}$", (rs) ? "\\cellcolor[HTML]{FFFF00}" : "",
-                            summaryMean.get(name__), summarySTD.get(name__), 
-                            rankingBorderMap.get(name__)));
+                            summaryMean.get(name__), summarySTD.get(name__), rankingBorderMap.get(name__)));
                 }
 
             }
@@ -570,8 +576,7 @@ public class NSGA3WPExperimentationMetrics {
 
     }
 
-    private static void globalMetric(
-            HashMap<DTLZP, ArrayList<ArrayList<DoubleSolution>>> globalSolutionNDByProblem,
+    private static void globalMetric(HashMap<DTLZP, ArrayList<ArrayList<DoubleSolution>>> globalSolutionNDByProblem,
             HashMap<String, ArrayList<DoubleSolution>> roi, String[] _names_algorithm) throws IOException {
         StringColumn _nameG = StringColumn.create("problem");
         DoubleColumn allG = DoubleColumn.create("solutions");
@@ -911,6 +916,7 @@ public class NSGA3WPExperimentationMetrics {
         ArrayList<DoubleSolution> d = new ArrayList<>();
         ArrayList<DoubleSolution> hd = new ArrayList<>();
         for (DoubleSolution x : solutions) {
+            //System.out.println(x+" "+x.getAttributes());
             classifier.classify(x);
             int[] iclass = (int[]) x.getAttribute(classifier.getAttributeKey());
             if (iclass[0] > 0) {
@@ -975,7 +981,7 @@ public class NSGA3WPExperimentationMetrics {
          * } return new File(path);
          */
 
-        return new File("roi_generator"+File.separator+ problem.getNumberOfObjectives()+ File.separator+name);
+        return new File("roi_generator" + File.separator + problem.getNumberOfObjectives() + File.separator + name);
     }
 
     private static DTLZP loadProblem(String name) throws FileNotFoundException {
@@ -984,54 +990,63 @@ public class NSGA3WPExperimentationMetrics {
         int numberOfProblem = -1;
         System.out.println(name);
         switch (name) {
-            case "DTLZ1":
-                path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ1_Instance.txt";
-                instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-                numberOfProblem = 1;
-                break;
-            case "DTLZ2":
-                path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ2_Instance.txt";
-                instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-                numberOfProblem = 2;
-                break;
-            case "DTLZ3":
-                path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ3_Instance.txt";
-                instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-                numberOfProblem = 3;
-                break;
-            case "DTLZ4":
-                path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ4_Instance.txt";
-                instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-                numberOfProblem = 4;
-                break;
-            case "DTLZ5":
-                path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ5_Instance.txt";
-                instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-                numberOfProblem = 5;
-                break;
-            case "DTLZ6":
-                path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ6_Instance.txt";
-                instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-                numberOfProblem = 6;
-                break;
-            case "DTLZ7":
-                path = "src/main/resources/DTLZ_INSTANCES/"+numberOfObjectives+"/DTLZ7_Instance.txt";
-                instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
-                numberOfProblem = 7;
-                break;
+        case "DTLZ1":
+            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ1_Instance.txt";
+            numberOfProblem = 1;
+            break;
+        case "DTLZ2":
+            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ2_Instance.txt";
+            numberOfProblem = 2;
+            break;
+        case "DTLZ3":
+            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ3_Instance.txt";
+            numberOfProblem = 3;
+            break;
+        case "DTLZ4":
+            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ4_Instance.txt";
+            numberOfProblem = 4;
+            break;
+        case "DTLZ5":
+            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ5_Instance.txt";
+            numberOfProblem = 5;
+            break;
+        case "DTLZ6":
+            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ6_Instance.txt";
+            numberOfProblem = 6;
+            break;
+        case "DTLZ7":
+            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ7_Instance.txt";
+            numberOfProblem = 7;
+            break;
+        case "DTLZ8":
+            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ8_Instance.txt";
+            numberOfProblem = 8;
+            break;
+        case "DTLZ9":
+            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ9_Instance.txt";
+            numberOfProblem = 9;
+            break;
 
-        }        
+        }
+        instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
+
         return new DTLZP(numberOfProblem, instance);
     }
 
     @SuppressWarnings("rawtypes")
-    private static ArrayList<DoubleSolution> loadSolutions(DTLZP problem, File file)
+    private static ArrayList<DoubleSolution> loadSolutions(DTLZP problem, File file, boolean isROI)
             throws FileNotFoundException {
         ArrayList<DoubleSolution> solutions = new ArrayList<>();
         Scanner sc = new Scanner(file);
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
-            Solution tmp = problem.generateFromVarString(line.split("\\*")[0].trim());
+            Solution tmp;
+            if (isROI && (problem.getDTLZProblem() instanceof DTLZ8 || problem.getDTLZProblem() instanceof DTLZ9)) {
+                tmp = problem.getDTLZProblem().generateFromObjective(line.split("\\*")[1]);
+                tmp.setPenalties(RealData.ZERO);
+                tmp.setRank(0);
+            } else
+                tmp = problem.generateFromVarString(line.split("\\*")[0].trim());
             tmp.setAttribute(OWNER, problem.getName());
             solutions.add((DoubleSolution) tmp.copy());
         }

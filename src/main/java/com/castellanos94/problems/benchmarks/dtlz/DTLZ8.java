@@ -107,4 +107,5 @@ public class DTLZ8 extends DTLZ {
         solution.setPenalties(new RealData(v));
         solution.setNumberOfPenalties(cn);
     }
+    
 }

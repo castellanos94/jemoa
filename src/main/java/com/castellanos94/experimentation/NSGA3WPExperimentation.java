@@ -24,7 +24,8 @@ import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.impl.SBXCrossover;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
-
+import com.castellanos94.utils.Plotter;
+import com.castellanos94.utils.Scatter3D;
 import com.castellanos94.utils.Tools;
 
 import tech.tablesaw.api.DoubleColumn;
@@ -214,19 +215,22 @@ public class NSGA3WPExperimentation {
                 logger.error(e);
             }
             if (problem.getNumberOfObjectives() == 3) {
-                /*
-                 * Plotter plotter = new Scatter3D<DoubleSolution>(front, DIRECTORY +
-                 * File.separator + subDir + File.separator + "Class_F0" + problem.getName() +
-                 * "_nsga3_WP"); plotter.plot(); // new
-                 * Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator + //
-                 * problem.getName()).plot(); } else { /* Table table =
-                 * Table.create(problem.getName() + "_F0_WP_" +
-                 * problem.getNumberOfObjectives()); for (int j = 0; j <
-                 * problem.getNumberOfObjectives(); j++) { DoubleColumn column =
-                 * DoubleColumn.create("objective_" + j); for (int k = 0; k < front.size(); k++)
-                 * { column.append(front.get(k).getObjective(j).doubleValue()); }
-                 * table.addColumns(column); } logger.info(table.summary());
-                 */
+
+                Plotter plotter = new Scatter3D<DoubleSolution>(front, DIRECTORY + File.separator + subDir
+                        + File.separator + "Class_F0" + problem.getName() + "_nsga3_WP");
+                plotter.plot(); // new
+                //Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator + problem.getName()).plot();
+            } else {
+                Table table = Table.create(problem.getName() + "_F0_WP_" + problem.getNumberOfObjectives());
+                for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
+                    DoubleColumn column = DoubleColumn.create("objective_" + j);
+                    for (int k = 0; k < front.size(); k++) {
+                        column.append(front.get(k).getObjective(j).doubleValue());
+                    }
+                    table.addColumns(column);
+                }
+                logger.info(table.summary());
+
             }
             logger.info("End Experimentation.");
         }
