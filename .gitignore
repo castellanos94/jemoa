@@ -45,3 +45,4 @@ experiments/
 experiments_test/
 logs/
 /.idea/
+jemoa**.jar
