@@ -86,7 +86,7 @@ public class NSGA3WPExperimentation {
         this.numberOfObjectives = numberOfObjectives;
         CLASSIFY_EVERY_ITERATION = cLASSIFY_EVERY_ITERATION;
         ELEMENTS_TO_REPLACE = eLEMENTS_TO_REPLACE;
-        DIRECTORY = "experimentation" + File.separator + numberOfObjectives + File.separator + "NSGA3" + File.separator
+        DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NSGA3" + File.separator
                 + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
         initialProblem = 1;
         endProblem = 7;
