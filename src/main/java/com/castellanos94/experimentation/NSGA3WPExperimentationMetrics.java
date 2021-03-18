@@ -554,7 +554,12 @@ public class NSGA3WPExperimentationMetrics {
         if (st != null) {
             ArrayList<Object> names_ = (ArrayList<Object>) st.get("names");
             ArrayList<Object> values_ = (ArrayList<Object>) st.get("rankings");
-            System.out.println(nameProblem + "/" + nameProblem + " > " + names_ + " <-> " + values_);
+            ArrayList<Double> valuesD_ = new ArrayList<>();
+            for (Object object : values_) {
+                valuesD_.add(Double.parseDouble(object.toString()));
+            }
+
+            System.out.println(nameProblem + "/" + nameProblem + " > " + names_ + " <-> " + valuesD_);
             for (int i = 0; i < names_.size(); i++) {
                 String name__ = names_.get(i).toString().replaceAll(regex, "");
                 if (i < names_.size() - 1)
@@ -562,16 +567,27 @@ public class NSGA3WPExperimentationMetrics {
                 else
                     ranking_ += String.format("%s", name__);
                 data += String.format("%s , %s; ", values_.get(i).toString(), name__);
+                double min_rank = valuesD_.stream().min(Double::compare).get();// =
+                                                                               // rankingBorderMap.values().stream().min(Double::compare).get();
 
                 summary += String.format(" $%f_{%f}^{%.1f}$ %s,", summaryMean.get(name__), summarySTD.get(name__),
                         rankingBorderMap.get(name__), name__);
                 if (metricName.equalsIgnoreCase("Dominance") || metricName.equalsIgnoreCase("hsat")
                         || metricName.equalsIgnoreCase("sat")) {
-                    sumMap.put(name__, String.format("%s$%5.3f_{%.3f}^{%.1f}$", (rs) ? "\\cellcolor[HTML]{FFFF00}" : "",
-                            summaryMean.get(name__), summarySTD.get(name__), rankingBorderMap.get(name__)));
+                    sumMap.put(name__,
+                            String.format("%s$%5.3f_{%.3f}^{%.1f}$",
+                                    (rs && min_rank == valuesD_.get(i)) ? "\\cellcolor[HTML]{FFFF00}" : "",
+                                    summaryMean.get(name__), summarySTD.get(name__), valuesD_.get(i)));
+                    // summaryMean.get(name__), summarySTD.get(name__),
+                    // rankingBorderMap.get(name__)));
                 } else {
-                    sumMap.put(name__, String.format("%s$%f_{%.3f}^{%.1f}$", (rs) ? "\\cellcolor[HTML]{FFFF00}" : "",
-                            summaryMean.get(name__), summarySTD.get(name__), rankingBorderMap.get(name__)));
+                    sumMap.put(name__,
+                            String.format("%s$%f_{%.3f}^{%.1f}$",
+                                    (rs && min_rank == valuesD_.get(i)) ? "\\cellcolor[HTML]{FFFF00}" : "",
+                                    summaryMean.get(name__), summarySTD.get(name__), valuesD_.get(i)));
+                    // summaryMean.get(name__), summarySTD.get(name__),
+                    // rankingBorderMap.get(name__)));
+
                 }
 
             }
@@ -739,16 +755,17 @@ public class NSGA3WPExperimentationMetrics {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("\tCheck domin with roi, F0 " + frontZero.size());
-            frontZero.addAll(roi.get(_p.getName()));
-            System.out.println("\tAfter add roi " + frontZero.size());
-            comparator = new DominanceComparator<>();
-            comparator.computeRanking(frontZero);
-            ArrayList<DoubleSolution> fzero = comparator.getSubFront(0);
-            System.out.println("\tF0 : " + fzero.size());
-
-            HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm2 = groupByAlgorithm(fzero, _names_algorithm,
-                    true);
+            /*
+             * System.out.println("\tCheck domin with roi, F0 " + frontZero.size());
+             * frontZero.addAll(roi.get(_p.getName()));
+             * System.out.println("\tAfter add roi " + frontZero.size()); comparator = new
+             * DominanceComparator<>(); comparator.computeRanking(frontZero);
+             * ArrayList<DoubleSolution> fzero = comparator.getSubFront(0);
+             * System.out.println("\tF0 : " + fzero.size());
+             */
+            System.out.println("Csat distribution: " + csatSolutions.size());
+            HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm2 = groupByAlgorithm(csatSolutions,
+                    _names_algorithm, false);
             groupByAlgorithm2.forEach((k, v) -> {
                 System.out.println("\t" + k + " -> " + v.size());
             });
@@ -906,6 +923,7 @@ public class NSGA3WPExperimentationMetrics {
                 if (owner.equals(algorithmName[j])) {
                     map.get(algorithmName[j]).add(s);
                     wasAdded = true;
+                    break;
                 }
             }
             if (!wasAdded && groupAll) {
