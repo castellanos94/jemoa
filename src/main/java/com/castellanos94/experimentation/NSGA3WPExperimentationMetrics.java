@@ -1023,39 +1023,39 @@ public class NSGA3WPExperimentationMetrics {
         System.out.println(name);
         switch (name) {
         case "DTLZ1":
-            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ1_Instance.txt";
+            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ1_Instance.txt";
             numberOfProblem = 1;
             break;
         case "DTLZ2":
-            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ2_Instance.txt";
+            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ2_Instance.txt";
             numberOfProblem = 2;
             break;
         case "DTLZ3":
-            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ3_Instance.txt";
+            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ3_Instance.txt";
             numberOfProblem = 3;
             break;
         case "DTLZ4":
-            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ4_Instance.txt";
+            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ4_Instance.txt";
             numberOfProblem = 4;
             break;
         case "DTLZ5":
-            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ5_Instance.txt";
+            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ5_Instance.txt";
             numberOfProblem = 5;
             break;
         case "DTLZ6":
-            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ6_Instance.txt";
+            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ6_Instance.txt";
             numberOfProblem = 6;
             break;
         case "DTLZ7":
-            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ7_Instance.txt";
+            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ7_Instance.txt";
             numberOfProblem = 7;
             break;
         case "DTLZ8":
-            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ8_Instance.txt";
+            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ8_Instance.txt";
             numberOfProblem = 8;
             break;
         case "DTLZ9":
-            path = "src/main/resources/DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ9_Instance.txt";
+            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ9_Instance.txt";
             numberOfProblem = 9;
             break;
 

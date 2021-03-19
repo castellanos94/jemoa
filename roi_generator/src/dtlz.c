@@ -181,6 +181,7 @@ int constraintDTLZ9(struct Solution solution)
             solution.accumulatedPenaltieViolated += g[j];
         }
     }
+    
     return solution.numberOfPenaltieViolated;
 }
 
@@ -248,7 +249,7 @@ struct Solution *generateAnalyticalSolution(int numberOfProblem, int numberOfVar
                 do
                 {
                     numberOfViolatedPenalties = constraintDTLZ9(solution);
-                } while (numberOfViolatedPenalties != 0);
+                } while (numberOfViolatedPenalties != 0);                
             }
         }
         else

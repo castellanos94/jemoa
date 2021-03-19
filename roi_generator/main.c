@@ -301,7 +301,7 @@ int main(int argc, char const *argv[])
     int indexBestNetScore = 0;
     int indexWeakNess = -1;
     int candidatos_length = 0;
-    int nOld = (sample_size > 100) ? 100 : sample_size;
+    int nOld = (sample_size > 300) ? 300 : sample_size;
 
     int old_best[nOld];
     for (int i = 0; i < nOld; i++)

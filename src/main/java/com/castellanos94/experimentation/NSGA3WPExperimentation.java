@@ -89,7 +89,7 @@ public class NSGA3WPExperimentation {
         DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NSGA3" + File.separator
                 + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
         initialProblem = 1;
-        endProblem = 7;
+        endProblem = 9;
     }
 
     public void execute() throws IOException {
@@ -214,7 +214,7 @@ public class NSGA3WPExperimentation {
             } catch (IOException e) {
                 logger.error(e);
             }
-            if (problem.getNumberOfObjectives() == 3) {
+          /*  if (problem.getNumberOfObjectives() == 3) {
 
                 Plotter plotter = new Scatter3D<DoubleSolution>(front, DIRECTORY + File.separator + subDir
                         + File.separator + "Class_F0" + problem.getName() + "_nsga3_WP");
@@ -231,7 +231,7 @@ public class NSGA3WPExperimentation {
                 }
                 logger.info(table.summary());
 
-            }
+            }*/
             logger.info("End Experimentation.");
         }
     }
