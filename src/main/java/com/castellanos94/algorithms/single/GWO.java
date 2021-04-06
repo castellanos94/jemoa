@@ -104,7 +104,7 @@ public class GWO<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<S>
                     // Equation (3.4)
                     C1 = 2 * r2;
                     // Equation (3.5)-part 1
-                    copyVarsToVector()
+                    //copyVarsToVector()
                     double d_alpha[] = MatrixArithmetic.abs(MatrixArithmetic.entrywiseProduct(C1, pos) ) ;
                 }
             }
