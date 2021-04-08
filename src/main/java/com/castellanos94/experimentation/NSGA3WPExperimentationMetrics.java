@@ -17,8 +17,6 @@ import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.impl.InterClassnC;
 import com.castellanos94.problems.DTLZP;
-import com.castellanos94.problems.benchmarks.dtlz.DTLZ8;
-import com.castellanos94.problems.benchmarks.dtlz.DTLZ9;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.BordaRanking;
@@ -42,7 +40,7 @@ import tech.tablesaw.columns.Column;
  * {@link ReportFront}
  */
 public class NSGA3WPExperimentationMetrics {
-    private final static int numberOfObjectives = 5;
+    private final static int numberOfObjectives = 10;
     private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
     // private static String algorithmName = File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
@@ -77,7 +75,7 @@ public class NSGA3WPExperimentationMetrics {
                 for (File _file : f.listFiles()) {
                     if (_file.isDirectory()) {
                         DTLZP currentProblem;
-                        if(_file.getName().equalsIgnoreCase("dtlz4")){
+                        // if (_file.getName().equalsIgnoreCase("dtlz4")) {
                         if (problems.containsKey(_file.getName())) {
                             currentProblem = problems.get(_file.getName());
                         } else {
@@ -99,7 +97,7 @@ public class NSGA3WPExperimentationMetrics {
                             }
                         }
                         algorithmProblems.put(currentProblem, solutionFromProblem);
-                    }
+                        // }
                     }
                 }
                 Iterator<DTLZP> _Iterator = algorithmProblems.keySet().iterator();
@@ -967,8 +965,8 @@ public class NSGA3WPExperimentationMetrics {
                 hd.add(x);
                 x.setAttribute("class", "HDIS");
             }
-         //   System.out.print(x+" "+Arrays.toString(iclass)+" >" +x.getAttributes());
-         //   System.out.println();
+            // System.out.print(x+" "+Arrays.toString(iclass)+" >" +x.getAttributes());
+            // System.out.println();
         }
         if (!hs.isEmpty()) {
             front.addAll(hs);
@@ -1037,7 +1035,8 @@ public class NSGA3WPExperimentationMetrics {
             break;
 
         }
-        path = "DTLZ_INSTANCES"+File.separator+ numberOfObjectives + File.separator+"DTLZ"+numberOfProblem+"_Instance.txt";
+        path = "DTLZ_INSTANCES" + File.separator + numberOfObjectives + File.separator + "DTLZ" + numberOfProblem
+                + "_Instance.txt";
         instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
 
         return new DTLZP(numberOfProblem, instance);
@@ -1051,8 +1050,9 @@ public class NSGA3WPExperimentationMetrics {
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
             Solution tmp;
-            //if (isROI && (problem.getDTLZProblem() instanceof DTLZ8 || problem.getDTLZProblem() instanceof DTLZ9)) {
-                if(isROI){
+            // if (isROI && (problem.getDTLZProblem() instanceof DTLZ8 ||
+            // problem.getDTLZProblem() instanceof DTLZ9)) {
+            if (isROI) {
                 tmp = problem.getDTLZProblem().generateFromObjective(line.split("\\*")[1]);
                 tmp.setPenalties(RealData.ZERO);
                 tmp.setRank(0);
