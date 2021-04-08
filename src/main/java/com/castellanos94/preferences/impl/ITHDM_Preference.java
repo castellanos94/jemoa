@@ -59,11 +59,15 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
             return -2;
         if (v == 1)
             return 2;
-        if (sigmaXY.compareTo(model.getBeta()) >= 0 && model.getBeta().compareTo(sigmaYX) > 0)
+        int sxyVb = sigmaXY.compareTo(model.getBeta());
+        int bVsYX = model.getBeta().compareTo(sigmaYX);
+        if (sxyVb >= 0 &&  bVsYX> 0)
             return -1;
-        if (sigmaXY.compareTo(model.getBeta()) >= 0 && sigmaYX.compareTo(model.getBeta()) >= 0)
+        int sYXvB = sigmaYX.compareTo(model.getBeta());
+        if (sxyVb >= 0 &&  sYXvB>= 0)
             return 0;
-        if (sigmaXY.compareTo(model.getBeta()) < 0 && sigmaYX.compareTo(0) < 0)
+        int yxV0 =sigmaYX.compareTo(0);
+        if (sxyVb < 0 && yxV0 < 0)
             return 1;
 
         return 1;

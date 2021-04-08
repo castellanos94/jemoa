@@ -82,7 +82,7 @@ public class ITHDM_Dominance<S extends Solution<?>> extends IntervalDominance<S>
             return -1;
         if (s2_dominates_s1)
             return 1;
-       /* if (!s2_dominates_s1 && better_a != x.getObjectives().size() && !s1_dominates_s2
+       if (!s2_dominates_s1 && better_a != x.getObjectives().size() && !s1_dominates_s2
                 && better_b != x.getObjectives().size()) {
             if (isMax) {
                 if (better_a < better_b)
@@ -95,7 +95,7 @@ public class ITHDM_Dominance<S extends Solution<?>> extends IntervalDominance<S>
                 if (better_b > better_a)
                     return 1;
             }
-        }*/
+        }
         return 0;
     }
 

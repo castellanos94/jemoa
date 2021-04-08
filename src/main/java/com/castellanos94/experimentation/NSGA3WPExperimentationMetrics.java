@@ -42,7 +42,7 @@ import tech.tablesaw.columns.Column;
  * {@link ReportFront}
  */
 public class NSGA3WPExperimentationMetrics {
-    private final static int numberOfObjectives = 3;
+    private final static int numberOfObjectives = 5;
     private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
     // private static String algorithmName = File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
@@ -77,6 +77,7 @@ public class NSGA3WPExperimentationMetrics {
                 for (File _file : f.listFiles()) {
                     if (_file.isDirectory()) {
                         DTLZP currentProblem;
+                        if(_file.getName().equalsIgnoreCase("dtlz4")){
                         if (problems.containsKey(_file.getName())) {
                             currentProblem = problems.get(_file.getName());
                         } else {
@@ -98,6 +99,7 @@ public class NSGA3WPExperimentationMetrics {
                             }
                         }
                         algorithmProblems.put(currentProblem, solutionFromProblem);
+                    }
                     }
                 }
                 Iterator<DTLZP> _Iterator = algorithmProblems.keySet().iterator();
@@ -763,11 +765,13 @@ public class NSGA3WPExperimentationMetrics {
              * ArrayList<DoubleSolution> fzero = comparator.getSubFront(0);
              * System.out.println("\tF0 : " + fzero.size());
              */
-            System.out.println("Csat distribution: " + csatSolutions.size());
+            System.out.println("\tCsat distribution: " + csatSolutions.size());
             HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm2 = groupByAlgorithm(csatSolutions,
-                    _names_algorithm, false);
+                    _names_algorithm, true);
             groupByAlgorithm2.forEach((k, v) -> {
-                System.out.println("\t" + k + " -> " + v.size());
+                ;
+                System.out.println("\t" + k + " -> "
+                        + v.stream().filter(s -> ((String) s.getAttribute("class")).contains("SAT")).count());
             });
         });
         Table global = Table.create("global");
@@ -948,7 +952,6 @@ public class NSGA3WPExperimentationMetrics {
         ArrayList<DoubleSolution> d = new ArrayList<>();
         ArrayList<DoubleSolution> hd = new ArrayList<>();
         for (DoubleSolution x : solutions) {
-            // System.out.println(x+" "+x.getAttributes());
             classifier.classify(x);
             int[] iclass = (int[]) x.getAttribute(classifier.getAttributeKey());
             if (iclass[0] > 0) {
@@ -964,6 +967,8 @@ public class NSGA3WPExperimentationMetrics {
                 hd.add(x);
                 x.setAttribute("class", "HDIS");
             }
+         //   System.out.print(x+" "+Arrays.toString(iclass)+" >" +x.getAttributes());
+         //   System.out.println();
         }
         if (!hs.isEmpty()) {
             front.addAll(hs);
@@ -981,9 +986,11 @@ public class NSGA3WPExperimentationMetrics {
             if (!isOnlyCSat || front.isEmpty())
                 front.addAll(hd);
         }
-        if (show)
+        if (show) {
             System.out.println(String.format("\tHSat : %3d, Sat : %3d, Dis : %3d, HDis : %3d", hs.size(), s.size(),
                     d.size(), hd.size()));
+            System.out.println(String.format("\tFront %5d <> %5d Sum Csat", front.size(), (hs.size() + s.size())));
+        }
         return front;
     }
 
@@ -991,27 +998,6 @@ public class NSGA3WPExperimentationMetrics {
 
         String name = String.format("ROI_P_%s_V%d_O%d.txt", problem.getName().trim().replace("_P", ""),
                 problem.getNumberOfDecisionVars(), problem.getNumberOfObjectives());
-
-        /*
-         * String path = ""; switch (problem.getName()) { case "DTLZ1_P": path =
-         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ1_P.out";
-         * break; case "DTLZ2_P": path =
-         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ2_P.out";
-         * break; case "DTLZ3_P": path =
-         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ3_P.out";
-         * break; case "DTLZ4_P": path =
-         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ4_P.out";
-         * break; case "DTLZ5_P": path =
-         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ5_P.out";
-         * break; case "DTLZ6_P": path =
-         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ6_P.out";
-         * 
-         * break; case "DTLZ7_P": path =
-         * "/home/thinkpad/Documents/jemoa/bestCompromise/dtlz_bc23/3/bestCompromise_DTLZ7_P.out";
-         * break;
-         * 
-         * } return new File(path);
-         */
 
         return new File("roi_generator" + File.separator + problem.getNumberOfObjectives() + File.separator + name);
     }
@@ -1023,43 +1009,35 @@ public class NSGA3WPExperimentationMetrics {
         System.out.println(name);
         switch (name) {
         case "DTLZ1":
-            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ1_Instance.txt";
             numberOfProblem = 1;
             break;
         case "DTLZ2":
-            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ2_Instance.txt";
             numberOfProblem = 2;
             break;
         case "DTLZ3":
-            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ3_Instance.txt";
             numberOfProblem = 3;
             break;
         case "DTLZ4":
-            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ4_Instance.txt";
             numberOfProblem = 4;
             break;
         case "DTLZ5":
-            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ5_Instance.txt";
             numberOfProblem = 5;
             break;
         case "DTLZ6":
-            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ6_Instance.txt";
             numberOfProblem = 6;
             break;
         case "DTLZ7":
-            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ7_Instance.txt";
             numberOfProblem = 7;
             break;
         case "DTLZ8":
-            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ8_Instance.txt";
             numberOfProblem = 8;
             break;
         case "DTLZ9":
-            path = "DTLZ_INSTANCES/" + numberOfObjectives + "/DTLZ9_Instance.txt";
             numberOfProblem = 9;
             break;
 
         }
+        path = "DTLZ_INSTANCES"+File.separator+ numberOfObjectives + File.separator+"DTLZ"+numberOfProblem+"_Instance.txt";
         instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
 
         return new DTLZP(numberOfProblem, instance);
@@ -1073,7 +1051,8 @@ public class NSGA3WPExperimentationMetrics {
         while (sc.hasNextLine()) {
             String line = sc.nextLine();
             Solution tmp;
-            if (isROI && (problem.getDTLZProblem() instanceof DTLZ8 || problem.getDTLZProblem() instanceof DTLZ9)) {
+            //if (isROI && (problem.getDTLZProblem() instanceof DTLZ8 || problem.getDTLZProblem() instanceof DTLZ9)) {
+                if(isROI){
                 tmp = problem.getDTLZProblem().generateFromObjective(line.split("\\*")[1]);
                 tmp.setPenalties(RealData.ZERO);
                 tmp.setRank(0);
