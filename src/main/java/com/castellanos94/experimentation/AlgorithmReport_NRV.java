@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.Data;
@@ -36,7 +38,7 @@ import tech.tablesaw.columns.Column;
  */
 public class AlgorithmReport_NRV {
 
-    private final static int numberOfObjectives = 10;
+    private final static int numberOfObjectives = 3;
     private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
     // private static String algorithmName = File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
@@ -66,7 +68,9 @@ public class AlgorithmReport_NRV {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();
         HashMap<String, DTLZP> problems = new HashMap<>();
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
+        loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem);
         loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem);
+
         // make hsat roi for problem
         System.out.println("Make roi preferences");
         Iterator<String> problem_Iterator = problems.keySet().iterator();
@@ -107,7 +111,8 @@ public class AlgorithmReport_NRV {
                     for (DoubleSolution _Solution : _execution) {
                         _Solution.setAttribute(OWNER, _algorithm_name + ":" + _problem.getName());
                     }
-                    currentBag.get(_index++).addAll(_execution);
+                    if (_index < currentBag.size())
+                        currentBag.get(_index++).addAll(_execution);
                 }
             });
             for (int i = 0; i < currentBag.size(); i++) {
@@ -355,15 +360,15 @@ public class AlgorithmReport_NRV {
             table.addColumns(doubleColumn);
         }
         // System.out.println(table.summary());
-        table.write().csv(DIRECTORY + "metrics.csv");
+        table.write().csv(NRV_DIRECTORY + "metrics.csv");
         // Reset
         globalMetric(globalSolutionNDByProblem, roi, _names_algorithm);
         stats.addColumns(nameColumn, metricNameColumn, resultColumn, rankingColumn, meanColumn, techicalColumn);
-        stats.write().csv(DIRECTORY + "stac.csv");
+        stats.write().csv(NRV_DIRECTORY + "stac.csv");
         Table reportLatex = Table.create("latex");
         reportLatex.addColumns(problemColumn, confColumn, domColumn, chsatColumn, csatColumn, cdisColumn, dMinColumn,
                 dAvgColumn, dMaxColumn);
-        reportLatex.write().csv(DIRECTORY + "latex_report.csv");
+        reportLatex.write().csv(NRV_DIRECTORY + "latex_report.csv");
 
         System.out.println("Generating sum all metrics All...");
         HashMap<String, Double> makeSumRank = BordaRanking.makeSumRank(rankListMetric);
@@ -439,9 +444,16 @@ public class AlgorithmReport_NRV {
                         }
                         ArrayList<ArrayList<DoubleSolution>> solutionFromProblem = new ArrayList<>();
                         for (File executions : _file.listFiles()) {
-                            if (executions.getName().contains("execution") && executions.getName().endsWith(".out|.txt")) {
-                                solutionFromProblem.add(loadSolutions(currentProblem, executions, false));
+                            if (!_DIRECTORY.contains("NRV")) {
+                                if (executions.getName().contains("execution")
+                                        && executions.getName().endsWith(".out")) {
+                                    solutionFromProblem.add(loadSolutions(currentProblem, executions, false));
+                                }
+                            } else {
+                                solutionFromProblem.add(loadExternalSolutions(currentProblem, executions));
+
                             }
+
                         }
                         algorithmProblems.put(currentProblem, solutionFromProblem);
                         // }
@@ -462,7 +474,6 @@ public class AlgorithmReport_NRV {
     private static HashMap<String, String> doStatisticTest(String nameProblem, int startRow, int rowEnd,
             StringColumn problemColumn, ArrayList<DoubleColumn> targetColumn, String metricName) throws IOException {
         Table tmpTable = Table.create("data");
-        // tmpTable.addColumns(problemColumn);
 
         for (DoubleColumn column : targetColumn) {
             tmpTable.addColumns(column);
@@ -523,7 +534,9 @@ public class AlgorithmReport_NRV {
         // }
         tmpTable.write().csv(file);
         System.out.println(nameProblem + "/" + metricName + "-> " + file.getAbsolutePath());
-        Map<String, Object> friedman = StacClient.FRIEDMAN_ALIGNED_RANK(file.getAbsolutePath(), 0.05, POST_HOC.FINNER);
+        Map<String, Object> friedman = (tmpTable.columnCount() < 5)
+                ? StacClient.FRIEDMAN_ALIGNED_RANK(file.getAbsolutePath(), 0.05, POST_HOC.FINNER)
+                : StacClient.FRIEDMAN(file.getAbsolutePath(), 0.05, POST_HOC.FINNER);
         Map<String, Object> st = (Map<String, Object>) friedman.get("ranking");
         boolean rs;
         nameColumn.append(nameProblem);
@@ -811,7 +824,7 @@ public class AlgorithmReport_NRV {
         for (DoubleColumn doubleColumn : chebyshevMax) {
             global.addColumns(doubleColumn);
         }
-        global.write().csv(DIRECTORY + "global-metrics.csv");
+        global.write().csv(NRV_DIRECTORY + "global-metrics.csv");
         // Performance statistic Tests
 
         HashMap<String, String> mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, zColumnsG,
@@ -907,10 +920,10 @@ public class AlgorithmReport_NRV {
         }
 
         table.addColumns(column, category);
-        if (!new File(DIRECTORY + File.separator + "FRONT_PREFERENCES").exists()) {
-            new File(DIRECTORY + File.separator + "FRONT_PREFERENCES").mkdirs();
+        if (!new File(NRV_DIRECTORY + File.separator + "FRONT_PREFERENCES").exists()) {
+            new File(NRV_DIRECTORY + File.separator + "FRONT_PREFERENCES").mkdirs();
         }
-        table.write().csv(DIRECTORY + File.separator + "FRONT_PREFERENCES" + File.separator + label + ".csv");
+        table.write().csv(NRV_DIRECTORY + File.separator + "FRONT_PREFERENCES" + File.separator + label + ".csv");
     }
 
     private static HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm(ArrayList<DoubleSolution> front,
@@ -1063,6 +1076,38 @@ public class AlgorithmReport_NRV {
                 tmp = problem.generateFromVarString(line.split("\\*")[0].trim());
             tmp.setAttribute(OWNER, problem.getName());
             solutions.add((DoubleSolution) tmp.copy());
+        }
+        sc.close();
+        return solutions;
+    }
+
+    @SuppressWarnings("rawtypes")
+
+    private static ArrayList<DoubleSolution> loadExternalSolutions(DTLZP problem, File file)
+            throws FileNotFoundException {
+        ArrayList<DoubleSolution> solutions = new ArrayList<>();
+        Scanner sc = new Scanner(file);
+        int num = sc.nextInt();
+        for (int i = 0; i < num; i++) {
+            String line = sc.nextLine();
+            Pattern pattern = Pattern.compile("\\[ .*\\s*\\]");
+            Matcher matcher = pattern.matcher(line);
+            int bracketsPos[] = new int[6];
+            if (matcher.find()) {
+                int startIndex = 0;
+                String subgroup = matcher.group();
+                for (int j = 0; j < subgroup.length(); j++) {
+                    if (subgroup.charAt(j) == '[' || subgroup.charAt(j) == ']') {
+                        bracketsPos[startIndex++] = j;
+                    }
+                }
+                Solution tmp = problem.getDTLZProblem()
+                        .generateFromObjective(subgroup.substring(bracketsPos[2] + 1, bracketsPos[3]).trim());
+                tmp.setPenalties(RealData.ZERO);
+                tmp.setRank(0);
+                tmp.setAttribute(OWNER, problem.getName());
+                solutions.add((DoubleSolution) tmp.copy());
+            }
         }
         sc.close();
         return solutions;

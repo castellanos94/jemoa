@@ -270,7 +270,7 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
     @Override
     public DoubleSolution generateFromVarString(String string) {
         DoubleSolution solution = new DoubleSolution(this);
-        String split[] = string.trim().split(",");
+        String split[] = string.trim().split((string.contains(",")) ? "," : " ");
         for (int i = 0; i < this.numberOfDecisionVars; i++) {
             solution.setVariable(i, Double.parseDouble(split[i]));
         }
@@ -281,7 +281,7 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
 
     public DoubleSolution generateFromObjective(String stringObjectives) {
         DoubleSolution solution = new DoubleSolution(this);
-        String split[] = stringObjectives.trim().split(",");
+        String split[] = stringObjectives.trim().split((stringObjectives.contains(",")) ? "," : " ");
         for (int i = 0; i < this.numberOfObjectives; i++) {
             solution.setObjective(i, new RealData(Double.parseDouble(split[i])));
         }
