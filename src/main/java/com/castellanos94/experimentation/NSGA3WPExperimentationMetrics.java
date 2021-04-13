@@ -40,7 +40,7 @@ import tech.tablesaw.columns.Column;
  * {@link ReportFront}
  */
 public class NSGA3WPExperimentationMetrics {
-    private final static int numberOfObjectives = 10;
+    private final static int numberOfObjectives = 3;
     private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
     // private static String algorithmName = File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
@@ -54,6 +54,7 @@ public class NSGA3WPExperimentationMetrics {
     private static StringColumn meanColumn = StringColumn.create("Mean");
     private static StringColumn problemColumn = StringColumn.create("Problema");
     private static StringColumn confColumn = StringColumn.create("Configuracion");
+    private static StringColumn noDominateColumn = StringColumn.create("NoDominated Size");
 
     private static StringColumn domColumn = StringColumn.create("Dominancia");
     private static StringColumn chsatColumn = StringColumn.create("CHSat");
@@ -325,10 +326,17 @@ public class NSGA3WPExperimentationMetrics {
                     "Dominance");
             String[] orderNameConfiguration = mapTest.keySet().toArray(new String[mapTest.size()]);
             Arrays.sort(orderNameConfiguration);
+
+            int countNoDominated = 0;
+            for (ArrayList<DoubleSolution> solutions : globalSolutionNDByProblem.get(dtlz)) {
+                countNoDominated += solutions.size();
+            }
+            countNoDominated /= globalSolutionNDByProblem.get(dtlz).size();
             for (String key : orderNameConfiguration) {
                 problemColumn.append(dtlz.getName());
                 confColumn.append(key);
                 domColumn.append(mapTest.get(key));
+                noDominateColumn.append("" + countNoDominated);
             }
             mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, hsColumns, "HSat");
             for (String key : orderNameConfiguration) {
@@ -403,8 +411,9 @@ public class NSGA3WPExperimentationMetrics {
         stats.addColumns(nameColumn, metricNameColumn, resultColumn, rankingColumn, meanColumn, techicalColumn);
         stats.write().csv(DIRECTORY + "stac.csv");
         Table reportLatex = Table.create("latex");
-        reportLatex.addColumns(problemColumn, confColumn, domColumn, chsatColumn, csatColumn, cdisColumn, dMinColumn,
-                dAvgColumn, dMaxColumn);
+
+        reportLatex.addColumns(problemColumn, confColumn, noDominateColumn, domColumn, chsatColumn, csatColumn,
+                cdisColumn, dMinColumn, dAvgColumn, dMaxColumn);
         reportLatex.write().csv(DIRECTORY + "latex_report.csv");
 
         System.out.println("Generating sum all metrics All...");
@@ -512,15 +521,13 @@ public class NSGA3WPExperimentationMetrics {
         }
 
         File file = File.createTempFile("data", ".csv");
-        // if (!nameProblem.toLowerCase().contains("family")) {
         file.deleteOnExit();
-        // }else{
-        // System.out.printf("\t%s %s
-        // %s\n",nameProblem,metricName,file.getAbsolutePath());
-        // }
         tmpTable.write().csv(file);
         System.out.println(nameProblem + "/" + metricName + "-> " + file.getAbsolutePath());
-        Map<String, Object> friedman = StacClient.FRIEDMAN_ALIGNED_RANK(file.getAbsolutePath(), 0.05, POST_HOC.FINNER);
+        Map<String, Object> friedman = (tmpTable.columnCount() < 5)
+                ? StacClient.FRIEDMAN_ALIGNED_RANK(file.getAbsolutePath(), 0.05, POST_HOC.FINNER)
+                : StacClient.FRIEDMAN(file.getAbsolutePath(), 0.05, POST_HOC.FINNER);
+
         Map<String, Object> st = (Map<String, Object>) friedman.get("ranking");
         boolean rs;
         nameColumn.append(nameProblem);
@@ -647,6 +654,8 @@ public class NSGA3WPExperimentationMetrics {
             disColumnsG.add(_dis);
         }
         // Global
+        HashMap<String, Double> nodomMap = new HashMap<>();
+
         globalSolutionNDByProblem.forEach((_p, bags) -> {
             ArrayList<DoubleSolution> bag = new ArrayList<>();
             bags.forEach(b -> bag.addAll(b));
@@ -655,6 +664,7 @@ public class NSGA3WPExperimentationMetrics {
             ArrayList<DoubleSolution> frontZero = comparator.getSubFront(0);
             System.out.println(
                     String.format("Problem : %s, bag : %6d, F0 : %6d", _p.getName(), bags.size(), frontZero.size()));
+            nodomMap.put(_p.getName(), (double) frontZero.size());
 
             _nameG.append(_p.getName());
             allG.append(bag.size());
@@ -768,7 +778,7 @@ public class NSGA3WPExperimentationMetrics {
                     _names_algorithm, true);
             groupByAlgorithm2.forEach((k, v) -> {
                 ;
-                System.out.println("\t" + k + " -> "
+                System.out.println("\t\t" + k + " -> "
                         + v.stream().filter(s -> ((String) s.getAttribute("class")).contains("SAT")).count());
             });
         });
@@ -815,9 +825,12 @@ public class NSGA3WPExperimentationMetrics {
                 "Dominance");
         String[] orderNameConfiguration = mapTest.keySet().toArray(new String[mapTest.size()]);
         Arrays.sort(orderNameConfiguration);
+        double sum = nodomMap.values().stream().mapToDouble(f->f.doubleValue()).average().getAsDouble();
         for (String key : orderNameConfiguration) {
             problemColumn.append("DTLZ");
             confColumn.append(key);
+            noDominateColumn.append(""+sum);
+
             domColumn.append(mapTest.get(key));
         }
         mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, hsColumnsG, "HSat");

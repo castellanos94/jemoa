@@ -374,15 +374,10 @@ public class AlgorithmReport_NRV {
         table.write().csv(NRV_DIRECTORY + "metrics.csv");
         // Reset
 
-        System.out.println(confColumn.size());
-        System.out.println(noDominateColumn.size());
-
         globalMetric(globalSolutionNDByProblem, roi, _names_algorithm);
         stats.addColumns(nameColumn, metricNameColumn, resultColumn, rankingColumn, meanColumn, techicalColumn);
         stats.write().csv(NRV_DIRECTORY + "stac.csv");
         Table reportLatex = Table.create("latex");
-        System.out.println(confColumn.size());
-        System.out.println(noDominateColumn.size());
 
         reportLatex.addColumns(problemColumn, confColumn, noDominateColumn, domColumn, chsatColumn, csatColumn,
                 cdisColumn, dMinColumn, dAvgColumn, dMaxColumn);
@@ -843,11 +838,13 @@ public class AlgorithmReport_NRV {
                 "Dominance");
         String[] orderNameConfiguration = mapTest.keySet().toArray(new String[mapTest.size()]);
         Arrays.sort(orderNameConfiguration);
+        double sum = nodomMap.values().stream().mapToDouble(f -> f.doubleValue()).average().getAsDouble();
+
         for (String key : orderNameConfiguration) {
             problemColumn.append("DTLZ");
             confColumn.append(key);
-            noDominateColumn.append(nodomMap.toString());
-            
+            noDominateColumn.append("" + sum);
+
             domColumn.append(mapTest.get(key));
         }
         mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, hsColumnsG, "HSat");
