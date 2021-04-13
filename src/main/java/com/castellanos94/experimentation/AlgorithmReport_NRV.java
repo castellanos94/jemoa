@@ -55,6 +55,7 @@ public class AlgorithmReport_NRV {
     private static StringColumn problemColumn = StringColumn.create("Problema");
     private static StringColumn confColumn = StringColumn.create("Configuracion");
 
+    private static StringColumn noDominateColumn = StringColumn.create("NoDominated Size");
     private static StringColumn domColumn = StringColumn.create("Dominancia");
     private static StringColumn chsatColumn = StringColumn.create("CHSat");
     private static StringColumn csatColumn = StringColumn.create("CSat");
@@ -196,6 +197,7 @@ public class AlgorithmReport_NRV {
                     }
                 });
             }
+
             for (int index = 0; index < globalCSat.get(dtlz).size(); index++) {
                 ArrayList<DoubleSolution> solutions = globalCSat.get(dtlz).get(index);
                 HashMap<String, ArrayList<DoubleSolution>> grouped = groupByAlgorithm(solutions, _names_algorithm,
@@ -286,12 +288,21 @@ public class AlgorithmReport_NRV {
 
             HashMap<String, String> mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, zColumns,
                     "Dominance");
+
             String[] orderNameConfiguration = mapTest.keySet().toArray(new String[mapTest.size()]);
             Arrays.sort(orderNameConfiguration);
+            int countNoDominated = 0;
+            for (ArrayList<DoubleSolution> solutions : globalSolutionNDByProblem.get(dtlz)) {
+                countNoDominated += solutions.size();
+            }
+            countNoDominated /= globalSolutionNDByProblem.get(dtlz).size();
+
             for (String key : orderNameConfiguration) {
                 problemColumn.append(dtlz.getName());
                 confColumn.append(key);
                 domColumn.append(mapTest.get(key));
+                noDominateColumn.append("" + countNoDominated);
+
             }
             mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, hsColumns, "HSat");
             for (String key : orderNameConfiguration) {
@@ -362,12 +373,19 @@ public class AlgorithmReport_NRV {
         // System.out.println(table.summary());
         table.write().csv(NRV_DIRECTORY + "metrics.csv");
         // Reset
+
+        System.out.println(confColumn.size());
+        System.out.println(noDominateColumn.size());
+
         globalMetric(globalSolutionNDByProblem, roi, _names_algorithm);
         stats.addColumns(nameColumn, metricNameColumn, resultColumn, rankingColumn, meanColumn, techicalColumn);
         stats.write().csv(NRV_DIRECTORY + "stac.csv");
         Table reportLatex = Table.create("latex");
-        reportLatex.addColumns(problemColumn, confColumn, domColumn, chsatColumn, csatColumn, cdisColumn, dMinColumn,
-                dAvgColumn, dMaxColumn);
+        System.out.println(confColumn.size());
+        System.out.println(noDominateColumn.size());
+
+        reportLatex.addColumns(problemColumn, confColumn, noDominateColumn, domColumn, chsatColumn, csatColumn,
+                cdisColumn, dMinColumn, dAvgColumn, dMaxColumn);
         reportLatex.write().csv(NRV_DIRECTORY + "latex_report.csv");
 
         System.out.println("Generating sum all metrics All...");
@@ -481,6 +499,7 @@ public class AlgorithmReport_NRV {
         String regex = "-F-0|-HSat|-Sat|-Dis|-Eulidean-Min|-Eulidean-AVG|-Eulidean-Max|-Chebyshev-Min|-Chebyshev-AVG|-Chebyshev-Max";
 
         tmpTable = tmpTable.inRange(startRow, rowEnd).copy();
+
         for (Column<?> column : tmpTable.columns()) {
             String newName = column.name().toString().replaceAll(regex, "");
             column.setName(newName);
@@ -663,6 +682,7 @@ public class AlgorithmReport_NRV {
             disColumnsG.add(_dis);
         }
         // Global
+        HashMap<String, Double> nodomMap = new HashMap<>();
         globalSolutionNDByProblem.forEach((_p, bags) -> {
             ArrayList<DoubleSolution> bag = new ArrayList<>();
             bags.forEach(b -> bag.addAll(b));
@@ -671,6 +691,7 @@ public class AlgorithmReport_NRV {
             ArrayList<DoubleSolution> frontZero = comparator.getSubFront(0);
             System.out.println(
                     String.format("Problem : %s, bag : %6d, F0 : %6d", _p.getName(), bags.size(), frontZero.size()));
+            nodomMap.put(_p.getName(), (double) frontZero.size());
 
             _nameG.append(_p.getName());
             allG.append(bag.size());
@@ -771,20 +792,11 @@ public class AlgorithmReport_NRV {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            /*
-             * System.out.println("\tCheck domin with roi, F0 " + frontZero.size());
-             * frontZero.addAll(roi.get(_p.getName()));
-             * System.out.println("\tAfter add roi " + frontZero.size()); comparator = new
-             * DominanceComparator<>(); comparator.computeRanking(frontZero);
-             * ArrayList<DoubleSolution> fzero = comparator.getSubFront(0);
-             * System.out.println("\tF0 : " + fzero.size());
-             */
             System.out.println("\tCsat distribution: " + csatSolutions.size());
             HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm2 = groupByAlgorithm(csatSolutions,
                     _names_algorithm, true);
             groupByAlgorithm2.forEach((k, v) -> {
-                ;
-                System.out.println("\t" + k + " -> "
+                System.out.println("\t\t" + k + " -> "
                         + v.stream().filter(s -> ((String) s.getAttribute("class")).contains("SAT")).count());
             });
         });
@@ -834,6 +846,8 @@ public class AlgorithmReport_NRV {
         for (String key : orderNameConfiguration) {
             problemColumn.append("DTLZ");
             confColumn.append(key);
+            noDominateColumn.append(nodomMap.toString());
+            
             domColumn.append(mapTest.get(key));
         }
         mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, hsColumnsG, "HSat");
@@ -861,9 +875,12 @@ public class AlgorithmReport_NRV {
             dMaxColumn.append(mapTest.get(key));
         }
 
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, chebyshevMin, "Chebyshev Min");
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, chebyshevAVG, "Chebyshev AVG");
-        doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, chebyshevMax, "Chebyshev Max");
+        /*
+         * doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, chebyshevMin,
+         * "Chebyshev Min"); doStatisticTest("DTLZ Family", 0, global.rowCount(),
+         * _nameG, chebyshevAVG, "Chebyshev AVG"); doStatisticTest("DTLZ Family", 0,
+         * global.rowCount(), _nameG, chebyshevMax, "Chebyshev Max");
+         */
 
     }
 
