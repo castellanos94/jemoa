@@ -38,7 +38,7 @@ import tech.tablesaw.columns.Column;
  */
 public class AlgorithmReport_NRV {
 
-    private final static int numberOfObjectives = 3;
+    private final static int numberOfObjectives = 10;
     private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
     // private static String algorithmName = File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
@@ -1110,17 +1110,19 @@ public class AlgorithmReport_NRV {
             if (matcher.find()) {
                 int startIndex = 0;
                 String subgroup = matcher.group();
-                for (int j = 0; j < subgroup.length(); j++) {
-                    if (subgroup.charAt(j) == '[' || subgroup.charAt(j) == ']') {
-                        bracketsPos[startIndex++] = j;
+                if (!subgroup.contains("nan")) {
+                    for (int j = 0; j < subgroup.length(); j++) {
+                        if (subgroup.charAt(j) == '[' || subgroup.charAt(j) == ']') {
+                            bracketsPos[startIndex++] = j;
+                        }
                     }
+                    Solution tmp = problem.getDTLZProblem()
+                            .generateFromObjective(subgroup.substring(bracketsPos[2] + 1, bracketsPos[3]).trim());
+                    tmp.setPenalties(RealData.ZERO);
+                    tmp.setRank(0);
+                    tmp.setAttribute(OWNER, problem.getName());
+                    solutions.add((DoubleSolution) tmp.copy());
                 }
-                Solution tmp = problem.getDTLZProblem()
-                        .generateFromObjective(subgroup.substring(bracketsPos[2] + 1, bracketsPos[3]).trim());
-                tmp.setPenalties(RealData.ZERO);
-                tmp.setRank(0);
-                tmp.setAttribute(OWNER, problem.getName());
-                solutions.add((DoubleSolution) tmp.copy());
             }
         }
         sc.close();

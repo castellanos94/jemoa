@@ -21,6 +21,11 @@ public abstract class AbstractAlgorithm<S extends Solution<?>> {
         return solutions;
     }
 
+    /**
+     * Execution time
+     * 
+     * @return miliseconds
+     */
     public long getComputeTime() {
         return computeTime;
     }
