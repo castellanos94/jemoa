@@ -23,7 +23,6 @@ public class GWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorithm
     protected S deltaWolf;
     protected int currentIteration;
     protected final int MAX_ITERATIONS;
-    protected static final String FITNESS_KEY = "GWO_FITNESS";
     protected RepairOperator<S> repairOperator;
     private DominanceComparator<DoubleSolution> dominanceComparator = new DominanceComparator<>();
     /**
@@ -134,12 +133,11 @@ public class GWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorithm
             }
 
         }
-        problem.evaluate(alphaWolf);
-        problem.evaluate(betaWolf);
-        problem.evaluate(deltaWolf);
-        problem.evaluateConstraint(alphaWolf);
-        problem.evaluateConstraint(betaWolf);
-        problem.evaluateConstraint(deltaWolf);
+        /*
+         * problem.evaluate(alphaWolf); problem.evaluate(betaWolf);
+         * problem.evaluate(deltaWolf); problem.evaluateConstraint(alphaWolf);
+         * problem.evaluateConstraint(betaWolf); problem.evaluateConstraint(deltaWolf);
+         */
     }
 
     @Override

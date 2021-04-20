@@ -12,7 +12,7 @@ import com.castellanos94.utils.Tools;
 public class GWOExample {
     public static void main(String[] args) {
         Tools.setSeed(1L);
-        GreyWolfOptimizerTestProblem problem = new GreyWolfOptimizerTestProblem(8);
+        GreyWolfOptimizerTestProblem problem = new GreyWolfOptimizerTestProblem(18);
         int populationSize = 20;
         int MAX_ITERATIONS = 10000;
         System.out.println(problem);
