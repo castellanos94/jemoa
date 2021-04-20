@@ -12,7 +12,7 @@ import com.castellanos94.utils.Tools;
 public class GWOExample {
     public static void main(String[] args) {
         Tools.setSeed(1L);
-        GreyWolfOptimizerTestProblem problem = new GreyWolfOptimizerTestProblem(1);
+        GreyWolfOptimizerTestProblem problem = new GreyWolfOptimizerTestProblem(8);
         int populationSize = 20;
         int MAX_ITERATIONS = 10000;
         System.out.println(problem);
@@ -28,7 +28,7 @@ public class GWOExample {
         }
         double mean = 0;
         for (int i = 0; i < runs; i++) {
-            mean = values.get(i);
+            mean += values.get(i);
         }
         mean /= runs;
         double std = 0;
@@ -48,6 +48,11 @@ public class GWOExample {
     public static class GreyWolfOptimizerTestProblem extends Problem<DoubleSolution> {
         private final int fij;
 
+        /**
+         * Problems 1(0), 8(-418.9829*5) & 18(3)
+         * 
+         * @param f_ij number of problem to evalute
+         */
         public GreyWolfOptimizerTestProblem(int f_ij) {
             this.fij = f_ij;
             this.numberOfObjectives = 1;
