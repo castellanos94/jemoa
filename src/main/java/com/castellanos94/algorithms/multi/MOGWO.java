@@ -2,6 +2,7 @@ package com.castellanos94.algorithms.multi;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.stream.Collectors;
 
 import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.components.impl.CrowdingDistance;
@@ -121,7 +122,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
         if (solutions.isEmpty()) {
             dominanceComparator.computeRanking(wolves);
             for (S s : dominanceComparator.getSubFront(0)) {
-                if (!solutions.contains(s))
+                if (!solutions.contains(s) && solutions.size() < this.nGrid)
                     solutions.add(s);
             }
             // Select alfa and remove to exclude
@@ -136,18 +137,22 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
             for (int i = 0; i < wolves.size(); i++) {
                 Iterator<S> iterator = solutions.iterator();
                 boolean wasNonDominated = false;
+                boolean wasAdded = false;
+                int index = 0;
                 while (iterator.hasNext()) {
                     S _solution = iterator.next();
                     int val = dominanceComparator.compare(wolves.get(i), _solution);
                     if (val == -1) {
-                        iterator.remove();
-                        solutions.add((S) wolves.get(i).copy());
-                        break;
+                        this.solutions.set(index, wolves.get(i));
+                        wasAdded = true;
                     } else if (val == 1) {
                         wasNonDominated = false;
+                        if (wasAdded)
+                            this.solutions.remove(wolves.get(i));
                         break;
                     }
                     wasNonDominated = true;
+                    index++;
                 }
                 if (wasNonDominated) {
                     boolean isNotPresent = solutions.contains(wolves.get(i)) == false;
@@ -158,10 +163,19 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
                         CrowdingDistance<S> crowdingDistance = new CrowdingDistance<>();
                         ArrayList<S> tmpList = new ArrayList<>(solutions);
                         tmpList.add(wolves.get(i));
-                        crowdingDistance.compute(tmpList);
-                        this.solutions = new ArrayList<>(crowdingDistance.sort(tmpList).subList(0, this.nGrid));
+                        try {
+                            crowdingDistance.compute(tmpList);
+                            this.solutions = new ArrayList<>(crowdingDistance.sort(tmpList).subList(0, this.nGrid));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
+            }
+            // Filter uniques
+            this.solutions = new ArrayList<>(this.solutions.stream().distinct().collect(Collectors.toList()));
+            if (solutions.size() < 3) {
+                System.out.println("nani");
             }
             // Select alfa and remove to exclude
             alphaWolf = selectLeader(solutions);

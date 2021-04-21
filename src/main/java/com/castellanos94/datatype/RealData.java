@@ -1,6 +1,7 @@
 package com.castellanos94.datatype;
 
 import org.apache.commons.math3.util.Precision;
+import org.checkerframework.checker.units.qual.A;
 
 /*
 *@author Castellanos Alvarez, Alejandro
@@ -74,7 +75,8 @@ public class RealData extends Data {
          * if (a > 1.0 || b > 1.0) return (a == b) ? 0 : (a > b) ? 1 : -1; double v =
          * Math.abs(a - b); return (v <= THRESHOLD) ? 0 : (a > b) ? 1 : -1;
          */
-        return Precision.compareTo(a, b, EPSILON);
+        //return Precision.compareTo(a, b, EPSILON);
+        return Double.compare(a, b);
 
     }
 

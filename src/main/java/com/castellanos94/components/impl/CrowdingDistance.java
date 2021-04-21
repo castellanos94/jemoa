@@ -6,6 +6,7 @@ import java.util.Comparator;
 
 import com.castellanos94.components.DensityEstimator;
 import com.castellanos94.datatype.Data;
+import com.castellanos94.datatype.RealData;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.ObjectiveComparator;
 
@@ -28,22 +29,79 @@ public class CrowdingDistance<S extends Solution<?>> implements DensityEstimator
         }
         int numOfObj = solutions.get(0).getObjectives().size();
         Data MaxValue = maxValue(solutions.get(0));
+
         for (int i = 0; i < numOfObj; i++) {
-            Collections.sort(solutions, new ObjectiveComparator(i));
-            solutions.get(0).getAttributes().put(getAttributeKey(), MaxValue.copy());
-            solutions.get(solutions.size() - 1).getAttributes().put(getAttributeKey(), (Data) MaxValue.copy());
+            // bubbleSort(i, solutions);
+
             Data min = solutions.get(0).getObjectives().get(i);
-            Data max = solutions.get(solutions.size() - 1).getObjectives().get(i);
-            Data distance = Data.getZeroByType(min);
-            for (int j = 1; j < solutions.size() - 1; j++) {
-                distance = solutions.get(j + 1).getObjectives().get(i)
-                        .minus(solutions.get(j - 1).getObjectives().get(i));
-                distance = distance.div(max.minus(min));
-                distance = distance.plus((Data) solutions.get(j).getAttributes().getOrDefault(getAttributeKey(),
-                        Data.getZeroByType(min)));
-                solutions.get(j).getAttributes().put(getAttributeKey(), distance);
+            Data max = min.copy();
+            for (int j = 1; j < solutions.size(); j++) {
+                Data current = solutions.get(j).getObjective(i);
+                if (current.compareTo(min) < 0) {
+                    min = current;
+                }
+                if (current.compareTo(max) > 0) {
+                    max = current;
+                }
+            }
+            if (min.compareTo(max) != 0) {
+                final int ii = i;
+                Collections.sort(solutions, new Comparator<S>() {
+
+                    @Override
+                    public int compare(S a, S b) {
+                        double i1 = a.getObjective(ii).doubleValue();
+                        double i2 = b.getObjective(ii).doubleValue();
+                        return (int) Math.signum(i1 - i2);
+                    }
+
+                });
+                solutions.get(0).getAttributes().put(getAttributeKey(), MaxValue.copy());
+                solutions.get(solutions.size() - 1).getAttributes().put(getAttributeKey(), (Data) MaxValue.copy());
+
+                for (int j = 1; j < solutions.size() - 1; j++) {
+                    double p = solutions.get(j - 1).getObjective(i).doubleValue();
+                    double n = solutions.get(j + 1).getObjective(i).doubleValue();
+                    S s = solutions.get(j);
+                    Data current = (Data) s.getAttributes().getOrDefault(getAttributeKey(), RealData.ZERO);
+                    s.setAttribute(getAttributeKey(), current.plus(n - p));
+                    /*
+                     * distance = solutions.get(j + 1).getObjectives().get(i) .minus(solutions.get(j
+                     * - 1).getObjectives().get(i)); distance = distance.div(max.minus(min));
+                     * distance = distance.plus((Data)
+                     * solutions.get(j).getAttributes().getOrDefault(getAttributeKey(),
+                     * Data.getZeroByType(min)));
+                     * solutions.get(j).getAttributes().put(getAttributeKey(), distance);
+                     */
+                }
             }
         }
+    }
+
+    private void bubbleSort(int index, ArrayList<S> solutions) {
+
+        int i, j, n = solutions.size();
+        boolean swapped;
+        ObjectiveComparator cmp = new ObjectiveComparator(index);
+        for (i = 0; i < n - 1; i++) {
+            swapped = false;
+            for (j = 0; j < n - i - 1; j++) {
+                if (cmp.compare(solutions.get(j), solutions.get(j + 1)) > 0) {
+                    // swap arr[j] and arr[j+1]
+                    S tmp = (S) solutions.get(j).copy();
+                    solutions.set(j, (S) solutions.get(j + 1).copy());
+                    solutions.set(j + 1, tmp);
+
+                    swapped = true;
+                }
+            }
+
+            // IF no two elements were
+            // swapped by inner loop, then break
+            if (swapped == false)
+                break;
+        }
+
     }
 
     private Data maxValue(S solution) {
@@ -69,8 +127,10 @@ public class CrowdingDistance<S extends Solution<?>> implements DensityEstimator
 
         @Override
         public int compare(S a, S b) {
-            return ((Data) a.getAttributes().get(getAttributeKey()))
-                    .compareTo(((Data) b.getAttributes().get(getAttributeKey())));
+            Data aa = (Data) a.getAttributes().get(getAttributeKey());
+            Data bb = ((Data) b.getAttributes().get(getAttributeKey()));
+
+            return (aa).compareTo(bb);
         }
 
     }

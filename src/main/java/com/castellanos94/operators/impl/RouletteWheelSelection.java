@@ -17,7 +17,7 @@ public class RouletteWheelSelection<S extends Solution<?>> implements SelectionO
     }
 
     @Override
-    public Void execute(final ArrayList<S> source) {
+    public Void execute( ArrayList<S> source) {
         this.parents = new ArrayList<>();
         Data facum = Data.getZeroByType(source.get(0).getObjective(0));
         ArrayList<Data> probability = new ArrayList<>();

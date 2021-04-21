@@ -37,7 +37,6 @@ public class MOGWOExample {
         logger.info(algorithm);
         ArrayList<Long> time = new ArrayList<>();
         ArrayList<DoubleSolution> bag = new ArrayList<>();
-        long averageTime = 0;
         for (int i = 0; i < EXPERIMENT; i++) {
             algorithm = loadConfiguration(numberOfProblem, numberOfObjectives);
             algorithm.execute();
@@ -47,10 +46,11 @@ public class MOGWOExample {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            time.add(algorithm.getComputeTime());
             logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
             bag.addAll(algorithm.getSolutions());
         }
-        averageTime = time.stream().mapToLong(v -> v.longValue()).sum();
+        long averageTime = time.stream().mapToLong(v -> v.longValue()).sum();
         logger.info("Resume " + problem.getName());
         logger.info("Total time: " + averageTime);
         logger.info("Average time : " + (double) averageTime / EXPERIMENT + " ms.");

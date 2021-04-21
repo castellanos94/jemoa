@@ -31,8 +31,9 @@ public class ObjectiveComparator implements Comparator<Solution<?>> {
                 type = ORDER.DESC;
             }
         }
-        return (type == ORDER.ASC) ? a.getObjectives().get(index).compareTo(b.getObjectives().get(index))
-                : b.getObjectives().get(index).compareTo(a.getObjectives().get(index));
+
+        return (type == ORDER.ASC) ? a.getObjective(index).minus(b.getObjective(index)).intValue()
+                : b.getObjective(index).minus(a.getObjective(index)).intValue();
     }
 
     @Override
