@@ -1,9 +1,7 @@
 package com.castellanos94.algorithms.multi;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
 
 import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.components.impl.CrowdingDistance;
@@ -44,6 +42,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
         this.populationSize = populationSize;
         this.repairOperator = repairOperator;
         this.nGrid = nGrid;
+        this.selection = new RouletteWheelSelection<>(nGrid);
     }
 
     @Override
@@ -101,7 +100,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
         }
 
         updatePopulation();
-        this.computeTime = init_time - System.currentTimeMillis();
+        computeTime = System.currentTimeMillis() - init_time;
 
         /*
          * for (S s : wolves) { if (!solutions.contains(s)) solutions.add(s); }
@@ -120,10 +119,19 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
         }
 
         if (solutions.isEmpty()) {
-            dominanceComparator.computeRanking(solutions);
+            dominanceComparator.computeRanking(wolves);
             for (S s : dominanceComparator.getSubFront(0)) {
-                solutions.add(s);
+                if (!solutions.contains(s))
+                    solutions.add(s);
             }
+            // Select alfa and remove to exclude
+            alphaWolf = selectLeader(solutions);
+            betaWolf = selectLeader(solutions);
+            deltaWolf = selectLeader(solutions);
+            // add back alpha, beta and deta to the archive
+            solutions.add(alphaWolf);
+            solutions.add(betaWolf);
+            solutions.add(deltaWolf);
         } else {
             for (int i = 0; i < wolves.size(); i++) {
                 Iterator<S> iterator = solutions.iterator();
@@ -142,9 +150,10 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
                     wasNonDominated = true;
                 }
                 if (wasNonDominated) {
-                    if (solutions.size() < this.nGrid) {
+                    boolean isNotPresent = solutions.contains(wolves.get(i)) == false;
+                    if (solutions.size() < this.nGrid && isNotPresent) {
                         solutions.add((S) wolves.get(i).copy());
-                    } else {
+                    } else if (isNotPresent) {
                         // Compute crowding distance
                         CrowdingDistance<S> crowdingDistance = new CrowdingDistance<>();
                         ArrayList<S> tmpList = new ArrayList<>(solutions);
@@ -202,6 +211,12 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
     @Override
     protected boolean isStoppingCriteriaReached() {
         return currentIteration >= MAX_ITERATIONS;
+    }
+
+    @Override
+    public String toString() {
+        return "MOGWO [MAX_ITERATIONS=" + MAX_ITERATIONS + ", nGrid=" + nGrid + ", Problem=" + this.problem.toString()
+                + "]";
     }
 
 }

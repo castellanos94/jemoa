@@ -94,7 +94,7 @@ public class GWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorithm
         solutions.add(alphaWolf);
         solutions.add(betaWolf);
         solutions.add(deltaWolf);
-        this.computeTime = init_time - System.currentTimeMillis();
+        computeTime = System.currentTimeMillis() - init_time;
 
         /*
          * for (S s : wolves) { if (!solutions.contains(s)) solutions.add(s); }

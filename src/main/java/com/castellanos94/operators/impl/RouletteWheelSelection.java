@@ -32,12 +32,14 @@ public class RouletteWheelSelection<S extends Solution<?>> implements SelectionO
             f_sum.add(tmp.copy());
             facum = facum.plus(tmp);
         }
+        Data sum = RealData.ZERO;
         for (int i = 0; i < source.size(); i++) {
             probability.set(i, probability.get(i).div(facum));
+            sum = sum.plus(probability.get(i));
         }
-        for (int i = 0; i < n_offsrping; i++) {
+        for (int i = 0; i < Math.min(n_offsrping, source.size()); i++) {
             Data partialSum = RealData.ZERO;
-            double roulette = Tools.getRandomNumberInRange(0, facum.doubleValue()).doubleValue();
+            double roulette = Tools.getRandom().nextDouble();
             for (int j = 0; j < source.size(); j++) {
                 partialSum = partialSum.plus(probability.get(j));
                 if (partialSum.compareTo(roulette) >= 0) {
