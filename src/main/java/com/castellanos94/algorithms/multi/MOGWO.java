@@ -1,6 +1,7 @@
 package com.castellanos94.algorithms.multi;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.components.impl.CrowdingDistance;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.RepairOperator;
+import com.castellanos94.operators.impl.RouletteWheelSelection;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
 
@@ -27,6 +29,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
     protected final int MAX_ITERATIONS;
     protected final int nGrid;
     protected RepairOperator<S> repairOperator;
+    protected RouletteWheelSelection<S>
     private DominanceComparator<S> dominanceComparator = new DominanceComparator<>();
     /**
      * Positions (agents) at Matlab code
@@ -147,7 +150,19 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
                         ArrayList<S> tmpList = new ArrayList<>(solutions);
                         tmpList.add(wolves.get(i));
                         crowdingDistance.compute(tmpList);
-                        solutions = new ArrayList<>(crowdingDistance.sort(tmpList).subList(0, nGrid));
+                        ArrayList<S> sort = crowdingDistance.sort(tmpList);
+                        ArrayList<S> vList = new ArrayList<>();
+                        Comparator<S> cmp = crowdingDistance.getComparator();
+                        for (S s : sort) {
+                            boolean toAdd = true;
+                            for (S s2 : vList) {
+                                if(cmp.compare(s, s2) == 0){
+                                    toAdd = false;
+                                    break;
+                                }
+                            }
+                        }
+
                     }
                 }
             }
