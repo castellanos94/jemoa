@@ -28,7 +28,6 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
     protected final int MAX_ITERATIONS;
     protected final int nGrid;
     protected RepairOperator<S> repairOperator;
-    protected RouletteWheelSelection<S> selection;
     private DominanceComparator<S> dominanceComparator = new DominanceComparator<>();
     /**
      * Positions (agents) at Matlab code
@@ -43,7 +42,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
         this.populationSize = populationSize;
         this.repairOperator = repairOperator;
         this.nGrid = nGrid;
-        this.selection = new RouletteWheelSelection<>(nGrid);
+        this.selectionOperator = new RouletteWheelSelection<>(nGrid);
     }
 
     @Override
@@ -126,13 +125,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
                     solutions.add(s);
             }
             // Select alfa and remove to exclude
-            alphaWolf = selectLeader(solutions);
-            betaWolf = selectLeader(solutions);
-            deltaWolf = selectLeader(solutions);
-            // add back alpha, beta and deta to the archive
-            solutions.add(alphaWolf);
-            solutions.add(betaWolf);
-            solutions.add(deltaWolf);
+            selectLeader(solutions);
         } else {
             for (int i = 0; i < wolves.size(); i++) {
                 Iterator<S> iterator = solutions.iterator();
@@ -177,14 +170,6 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
             if (solutions.size() < 3) {
                 System.out.println("nani");
             }
-            // Select alfa and remove to exclude
-            alphaWolf = selectLeader(solutions);
-            betaWolf = selectLeader(solutions);
-            deltaWolf = selectLeader(solutions);
-            // add back alpha, beta and deta to the archive
-            solutions.add(alphaWolf);
-            solutions.add(betaWolf);
-            solutions.add(deltaWolf);
 
         }
     }
@@ -193,15 +178,55 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
      * Select a leader from archive, this remove the element from the list.
      * 
      * @param solutions
-     * @return
+     * 
      */
-    private S selectLeader(ArrayList<S> solutions) {
+    private void selectLeader(ArrayList<S> solutions) {
         // Select Leader with roulette
-        this.selection.execute(solutions);
-        Iterator<S> iterator = this.selection.getParents().iterator();
-        S next = iterator.next();
+        this.selectionOperator.execute(solutions);
+        ArrayList<S> parents = this.selectionOperator.getParents();
+        Iterator<S> iterator = parents.iterator();
+
+        // Select alfa and remove to exclude
+        alphaWolf = (S) iterator.next().copy();
         iterator.remove();
-        return next;
+
+        // Select beta and remove to exclude
+
+        this.selectionOperator.execute(parents);
+        parents = this.selectionOperator.getParents();
+        iterator = parents.iterator();
+        if (iterator.hasNext()) {
+            betaWolf = (S) iterator.next().copy();
+            iterator.remove();
+        } else {
+            int index = -1;
+            do {
+                index = Tools.getRandomNumberInRange(0, solutions.size()).intValue();
+            } while (solutions.get(index).equals(alphaWolf));
+            betaWolf = (S) solutions.get(index).copy();
+        }
+        // Select delta and remove to exclude
+        this.selectionOperator.execute(parents);
+        parents = this.selectionOperator.getParents();
+        iterator = parents.iterator();
+        if (iterator.hasNext()) {
+            deltaWolf = (S) iterator.next().copy();
+            iterator.remove();
+        } else {
+            int index = -1;
+            do {
+                index = Tools.getRandomNumberInRange(0, solutions.size()).intValue();
+            } while (solutions.get(index).equals(betaWolf) || solutions.get(index).equals(alphaWolf));
+            deltaWolf = (S) solutions.get(index).copy();
+        }
+
+        // add back alpha, beta and deta to the archive
+        if (!solutions.contains(alphaWolf))
+            solutions.add(alphaWolf);
+        if (!solutions.contains(betaWolf))
+            solutions.add(betaWolf);
+        if (!solutions.contains(deltaWolf))
+            solutions.add(deltaWolf);
 
     }
 

@@ -40,12 +40,11 @@ public class MOGWOExample {
         for (int i = 0; i < EXPERIMENT; i++) {
             algorithm = loadConfiguration(numberOfProblem, numberOfObjectives);
             algorithm.execute();
-            try {
-                Solution.writSolutionsToFile(DIRECTORY + File.separator + "execution_" + i,
-                        new ArrayList<>(algorithm.getSolutions()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            /*
+             * try { Solution.writSolutionsToFile(DIRECTORY + File.separator + "execution_"
+             * + i, new ArrayList<>(algorithm.getSolutions())); } catch (IOException e) {
+             * e.printStackTrace(); }
+             */
             time.add(algorithm.getComputeTime());
             logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
             bag.addAll(algorithm.getSolutions());
