@@ -17,8 +17,11 @@ public class RouletteWheelSelection<S extends Solution<?>> implements SelectionO
     }
 
     @Override
-    public Void execute( ArrayList<S> source) {
+    public Void execute(ArrayList<S> source) {
         this.parents = new ArrayList<>();
+        if (source.isEmpty()) {
+            return null;
+        }
         Data facum = Data.getZeroByType(source.get(0).getObjective(0));
         ArrayList<Data> probability = new ArrayList<>();
         ArrayList<Data> f_sum = new ArrayList<>();

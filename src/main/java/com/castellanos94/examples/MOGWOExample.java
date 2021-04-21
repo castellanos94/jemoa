@@ -29,7 +29,7 @@ public class MOGWOExample {
     public static void main(String[] args) throws IOException {
         new File(DIRECTORY).mkdirs();
         Tools.setSeed(1L);
-        int numberOfProblem = 1;
+        int numberOfProblem = 9;
         int numberOfObjectives = 3;
         MOGWO<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, numberOfObjectives);
         DTLZ problem = (DTLZ) algorithm.getProblem();
@@ -37,6 +37,8 @@ public class MOGWOExample {
         logger.info(algorithm);
         ArrayList<Long> time = new ArrayList<>();
         ArrayList<DoubleSolution> bag = new ArrayList<>();
+        Ranking<DoubleSolution> compartor = new DominanceComparator<>();
+
         for (int i = 0; i < EXPERIMENT; i++) {
             algorithm = loadConfiguration(numberOfProblem, numberOfObjectives);
             algorithm.execute();
@@ -46,8 +48,10 @@ public class MOGWOExample {
              * e.printStackTrace(); }
              */
             time.add(algorithm.getComputeTime());
+            compartor.computeRanking(algorithm.getSolutions());
             logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
-            bag.addAll(algorithm.getSolutions());
+
+            bag.addAll(compartor.getSubFront(0));
         }
         long averageTime = time.stream().mapToLong(v -> v.longValue()).sum();
         logger.info("Resume " + problem.getName());
@@ -55,7 +59,6 @@ public class MOGWOExample {
         logger.info("Average time : " + (double) averageTime / EXPERIMENT + " ms.");
         logger.info("Solutions in the bag: " + bag.size());
 
-        Ranking<DoubleSolution> compartor = new DominanceComparator<>();
         compartor.computeRanking(bag);
 
         logger.info("Fronts : " + compartor.getNumberOfSubFronts());
@@ -83,8 +86,10 @@ public class MOGWOExample {
     private static MOGWO<DoubleSolution> loadConfiguration(int numberOfProblem, int numberOfObjectives) {
         int maxIterations = 1000;
         DTLZ problem = null;
-        int pop_size = 92;
-        if (numberOfObjectives == 5) {
+        int pop_size;
+        if (numberOfObjectives == 3) {
+            pop_size = 92;
+        } else if (numberOfObjectives == 5) {
             pop_size = 212;
         } else {
             pop_size = 271;
@@ -186,6 +191,6 @@ public class MOGWOExample {
             }
             break;
         }
-        return new MOGWO<>(problem, pop_size, maxIterations, numberOfObjectives * 10, new RepairBoundary());
+        return new MOGWO<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
     }
 }

@@ -152,24 +152,25 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
                     if (solutions.size() < this.nGrid && isNotPresent) {
                         solutions.add((S) wolves.get(i).copy());
                     } else if (isNotPresent) {
-                        // Compute crowding distance
-                        CrowdingDistance<S> crowdingDistance = new CrowdingDistance<>();
+                        this.solutions = new ArrayList<>(
+                                this.solutions.stream().distinct().collect(Collectors.toList()));
                         ArrayList<S> tmpList = new ArrayList<>(solutions);
                         tmpList.add(wolves.get(i));
-                        try {
+                        if (tmpList.size() > nGrid) {
+                            // Compute crowding distance
+                            CrowdingDistance<S> crowdingDistance = new CrowdingDistance<>();
                             crowdingDistance.compute(tmpList);
-                            this.solutions = new ArrayList<>(crowdingDistance.sort(tmpList).subList(0, this.nGrid));
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            ArrayList<S> sorted = crowdingDistance.sort(tmpList);
+                            this.solutions = new ArrayList<>(sorted.subList(0, this.nGrid));
+                        } else {
+                            this.solutions.add(wolves.get(i));
                         }
                     }
                 }
             }
             // Filter uniques
             this.solutions = new ArrayList<>(this.solutions.stream().distinct().collect(Collectors.toList()));
-            if (solutions.size() < 3) {
-                System.out.println("nani");
-            }
+            selectLeader(solutions);
 
         }
     }
@@ -195,15 +196,17 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
         this.selectionOperator.execute(parents);
         parents = this.selectionOperator.getParents();
         iterator = parents.iterator();
+        boolean isBetaWolf = false, isDeltaWolf = false;
         if (iterator.hasNext()) {
             betaWolf = (S) iterator.next().copy();
             iterator.remove();
         } else {
             int index = -1;
             do {
-                index = Tools.getRandomNumberInRange(0, solutions.size()).intValue();
-            } while (solutions.get(index).equals(alphaWolf));
-            betaWolf = (S) solutions.get(index).copy();
+                index = Tools.getRandomNumberInRange(0, wolves.size()).intValue();
+            } while (wolves.get(index).equals(alphaWolf));
+            betaWolf = (S) wolves.get(index).copy();
+            isBetaWolf = true;
         }
         // Select delta and remove to exclude
         this.selectionOperator.execute(parents);
@@ -215,17 +218,18 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
         } else {
             int index = -1;
             do {
-                index = Tools.getRandomNumberInRange(0, solutions.size()).intValue();
-            } while (solutions.get(index).equals(betaWolf) || solutions.get(index).equals(alphaWolf));
-            deltaWolf = (S) solutions.get(index).copy();
+                index = Tools.getRandomNumberInRange(0, wolves.size()).intValue();
+            } while (wolves.get(index).equals(betaWolf) || wolves.get(index).equals(alphaWolf));
+            deltaWolf = (S) wolves.get(index).copy();
+            isDeltaWolf = true;
         }
 
         // add back alpha, beta and deta to the archive
         if (!solutions.contains(alphaWolf))
             solutions.add(alphaWolf);
-        if (!solutions.contains(betaWolf))
+        if (!solutions.contains(betaWolf) && !isBetaWolf)
             solutions.add(betaWolf);
-        if (!solutions.contains(deltaWolf))
+        if (!solutions.contains(deltaWolf) && !isDeltaWolf)
             solutions.add(deltaWolf);
 
     }
@@ -256,6 +260,13 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
     public String toString() {
         return "MOGWO [MAX_ITERATIONS=" + MAX_ITERATIONS + ", nGrid=" + nGrid + ", Problem=" + this.problem.toString()
                 + "]";
+    }
+
+    @Override
+    public ArrayList<S> getSolutions() {
+        this.dominanceComparator = new DominanceComparator<>();
+        this.dominanceComparator.computeRanking(this.solutions);
+        return this.dominanceComparator.getSubFront(0);
     }
 
 }

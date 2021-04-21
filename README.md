@@ -18,4 +18,4 @@ Java Evolutionary Multi-Objective Algorithm
    * NSGA-II
    * NSGA-III
    * NSGA-III-WP : NSGA-III with preferences incorporation, using a multi-criteria ordinal classifier.
-   * MOGWO : Multi-Objective Grey Wolf Optimizer(Pending...)
+   * MOGWO : Multi-Objective Grey Wolf Optimizer
