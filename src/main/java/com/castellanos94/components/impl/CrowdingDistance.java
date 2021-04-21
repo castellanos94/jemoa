@@ -61,6 +61,10 @@ public class CrowdingDistance<S extends Solution<?>> implements DensityEstimator
         return solutions;
     }
 
+    public Comparator<S> getComparator() {
+        return new CrowdingDistanceComparator();
+    }
+
     public class CrowdingDistanceComparator implements Comparator<S> {
 
         @Override

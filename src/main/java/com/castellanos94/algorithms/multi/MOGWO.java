@@ -29,7 +29,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
     protected final int MAX_ITERATIONS;
     protected final int nGrid;
     protected RepairOperator<S> repairOperator;
-    protected RouletteWheelSelection<S>
+    protected RouletteWheelSelection<S> selection;
     private DominanceComparator<S> dominanceComparator = new DominanceComparator<>();
     /**
      * Positions (agents) at Matlab code
@@ -150,25 +150,36 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
                         ArrayList<S> tmpList = new ArrayList<>(solutions);
                         tmpList.add(wolves.get(i));
                         crowdingDistance.compute(tmpList);
-                        ArrayList<S> sort = crowdingDistance.sort(tmpList);
-                        ArrayList<S> vList = new ArrayList<>();
-                        Comparator<S> cmp = crowdingDistance.getComparator();
-                        for (S s : sort) {
-                            boolean toAdd = true;
-                            for (S s2 : vList) {
-                                if(cmp.compare(s, s2) == 0){
-                                    toAdd = false;
-                                    break;
-                                }
-                            }
-                        }
-
+                        this.solutions = new ArrayList<>(crowdingDistance.sort(tmpList).subList(0, this.nGrid));
                     }
                 }
             }
-            // Select Leader with roulette
-            // TODO : Select leader
+            // Select alfa and remove to exclude
+            alphaWolf = selectLeader(solutions);
+            betaWolf = selectLeader(solutions);
+            deltaWolf = selectLeader(solutions);
+            // add back alpha, beta and deta to the archive
+            solutions.add(alphaWolf);
+            solutions.add(betaWolf);
+            solutions.add(deltaWolf);
+
         }
+    }
+
+    /**
+     * Select a leader from archive, this remove the element from the list.
+     * 
+     * @param solutions
+     * @return
+     */
+    private S selectLeader(ArrayList<S> solutions) {
+        // Select Leader with roulette
+        this.selection.execute(solutions);
+        Iterator<S> iterator = this.selection.getParents().iterator();
+        S next = iterator.next();
+        iterator.remove();
+        return next;
+
     }
 
     @Override
