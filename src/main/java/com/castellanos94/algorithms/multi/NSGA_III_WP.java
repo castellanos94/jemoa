@@ -16,7 +16,13 @@ import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.Table;
 
 /**
- * Front report disabled
+ * NSGA-III-P <br>
+ * Castellanos-Alvarez, A.; Cruz-Reyes, L.; Fernandez, E.; Rangel-Valdez, N.;
+ * Gómez-Santillán, C.; Fraire, H.; Brambila-Hernández, J.A. A Method for
+ * Integration of Preferences to a Multi-Objective Evolutionary Algorithm Using
+ * Ordinal Multi-Criteria Classification. Math. Comput. Appl. 2021, 26, 27.
+ * https://doi.org/10.3390/mca26020027
+ * 
  */
 public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
     private int classifyEveryIteration;
@@ -40,8 +46,10 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
         satColumn = DoubleColumn.create("Sat");
         numberOfElementToReplace = (int) ((10 / 100.0) * this.populationSize);
     }
+
     /**
      * Percentage of elements to replace
+     * 
      * @param numberOfElementToReplace
      */
     public void setNumberOfElementToReplace(int numberOfElementToReplace) {
@@ -52,7 +60,7 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
     public void setClassifyEveryIteration(int classifyEveryIteration) {
         if (classifyEveryIteration >= this.maxIterations) {
             this.classifyEveryIteration = 1;
-        }else{
+        } else {
             this.classifyEveryIteration = classifyEveryIteration;
         }
     }
@@ -72,7 +80,7 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
         ranking.computeRanking(Rt);
         InterClassnC<S> classifier = new InterClassnC<>(problem);
         ArrayList<ArrayList<S>> _fronts = new ArrayList<>();
-        //report();
+        // report();
         if (ranking.getNumberOfSubFronts() > 0 && classifyEveryIteration != 0 && this.currenIteration > 0
                 && this.currenIteration % classifyEveryIteration == 0) {
             ArrayList<S> hs = new ArrayList<>();

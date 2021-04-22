@@ -11,7 +11,6 @@ import com.castellanos94.operators.RepairOperator;
 import com.castellanos94.operators.impl.RouletteWheelSelection;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
-
 import com.castellanos94.utils.Tools;
 
 /**
@@ -79,10 +78,10 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
                     }
 
                     // Auxiliar
-                    alpha_ij = alphaWolf.getVariable(j);
-                    beta_ij = betaWolf.getVariable(j);
-                    delta_ij = deltaWolf.getVariable(j);
-                    x_ij = currentWolf.getVariable(j);
+                    alpha_ij = (double) alphaWolf.getVariable(j);
+                    beta_ij = (double) betaWolf.getVariable(j);
+                    delta_ij = (double) deltaWolf.getVariable(j);
+                    x_ij = (double) currentWolf.getVariable(j);
                     // Equation (3.5)
                     double d1 = Math.abs(C[0] * alpha_ij - x_ij);
                     double d2 = Math.abs(C[1] * beta_ij - x_ij);
@@ -181,7 +180,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
      * @param solutions
      * 
      */
-    private void selectLeader(ArrayList<S> solutions) {
+    protected void selectLeader(ArrayList<S> solutions) {
         // Select Leader with roulette
         this.selectionOperator.execute(solutions);
         ArrayList<S> parents = this.selectionOperator.getParents();
@@ -266,7 +265,8 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
     public ArrayList<S> getSolutions() {
         this.dominanceComparator = new DominanceComparator<>();
         this.dominanceComparator.computeRanking(this.solutions);
-        return this.dominanceComparator.getSubFront(0);
+        this.solutions = this.dominanceComparator.getSubFront(0);
+        return this.solutions;
     }
 
 }
