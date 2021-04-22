@@ -72,7 +72,7 @@ public class AlgorithmReport_NRV {
         HashMap<String, DTLZP> problems = new HashMap<>();
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
         loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem);
-        loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem);
+        //loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem);
         loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem);
 
         // make hsat roi for problem

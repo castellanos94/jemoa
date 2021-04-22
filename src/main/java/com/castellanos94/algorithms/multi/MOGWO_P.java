@@ -30,16 +30,16 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO<S> {
             int[] iclass = (int[]) x.getAttribute(classifier.getAttributeKey());
             if (iclass[0] > 0) {
                 cHSat.add(x);
-                x.setAttribute("class-nc", "hsat");
+                x.setAttribute(keyClass(), "hsat");
             } else if (iclass[1] > 0) {
                 cSat.add(x);
-                x.setAttribute("class-nc", "sat");
+                x.setAttribute(keyClass(), "sat");
             } else if (iclass[2] > 0) {
                 cDis.add(x);
-                x.setAttribute("class-nc", "dis");
+                x.setAttribute(keyClass(), "dis");
             } else {
                 cHDis.add(x);
-                x.setAttribute("class-nc", "hdis");
+                x.setAttribute(keyClass(), "hdis");
             }
         }
         ArrayList<S> _solutions = null;
@@ -58,58 +58,60 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO<S> {
         Iterator<S> iterator = parents.iterator();
 
         // Select alfa and remove to exclude
-        alphaWolf = (S) iterator.next().copy();
+        alphaWolf =  iterator.next();
         iterator.remove();
 
         // Select beta and remove to exclude
-        if (!cHSat.isEmpty()) {
-            _solutions = cHSat;
+        _solutions = new ArrayList<>();
+        String[] classAttribute = { "hsat", "sat", "dis", "hdis" };
+        int indexClass = 0;
+        while (_solutions.size() < 2 && indexClass < classAttribute.length) {
+            for (S sol : (!parents.isEmpty()) ? parents : solutions) {
+                if (((String) sol.getAttribute(keyClass())).equalsIgnoreCase(classAttribute[indexClass])) {
+                    if (!sol.equals(alphaWolf))
+                        _solutions.add(sol);
+                }
+            }
+            indexClass++;
         }
-        if (!cSat.isEmpty() || cHSat.size() < 2) {
-            _solutions = cSat;
-        }
-        if (!cDis.isEmpty() || cSat.size() < 2) {
-            _solutions = cDis;
-            _solutions.addAll(cHDis);
-        }
-        this.selectionOperator.execute(parents);
+        this.selectionOperator.execute(_solutions);
         parents = this.selectionOperator.getParents();
         iterator = parents.iterator();
         boolean isBetaWolf = false, isDeltaWolf = false;
         if (iterator.hasNext()) {
-            betaWolf = (S) iterator.next().copy();
+            betaWolf = iterator.next();
             iterator.remove();
         } else {
             int index = -1;
             do {
                 index = Tools.getRandomNumberInRange(0, wolves.size()).intValue();
             } while (wolves.get(index).equals(alphaWolf));
-            betaWolf = (S) wolves.get(index).copy();
+            betaWolf =  wolves.get(index);
             isBetaWolf = true;
         }
         // Select delta and remove to exclude
-        if (!cHSat.isEmpty()) {
-            _solutions = cHSat;
+        indexClass = 0;
+        while (_solutions.size() < 3 && indexClass < classAttribute.length) {
+            for (S sol : (!parents.isEmpty()) ? parents : solutions) {
+                if (((String) sol.getAttribute(keyClass())).equalsIgnoreCase(classAttribute[indexClass])) {
+                    if (!sol.equals(alphaWolf) && !sol.equals(betaWolf))
+                        _solutions.add(sol);
+                }
+            }
+            indexClass++;
         }
-        if (!cSat.isEmpty() || cHSat.size() < 3) {
-            _solutions = cSat;
-        }
-        if (!cDis.isEmpty() || cSat.size() < 3) {
-            _solutions = cDis;
-            _solutions.addAll(cHDis);
-        }
-        this.selectionOperator.execute(parents);
+        this.selectionOperator.execute(_solutions);
         parents = this.selectionOperator.getParents();
         iterator = parents.iterator();
         if (iterator.hasNext()) {
-            deltaWolf = (S) iterator.next().copy();
+            deltaWolf =  iterator.next();
             iterator.remove();
         } else {
             int index = -1;
             do {
                 index = Tools.getRandomNumberInRange(0, wolves.size()).intValue();
             } while (wolves.get(index).equals(betaWolf) || wolves.get(index).equals(alphaWolf));
-            deltaWolf = (S) wolves.get(index).copy();
+            deltaWolf =  wolves.get(index);
             isDeltaWolf = true;
         }
 
@@ -121,6 +123,10 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO<S> {
         if (!solutions.contains(deltaWolf) && !isDeltaWolf)
             solutions.add(deltaWolf);
 
+    }
+
+    protected String keyClass() {
+        return "class-nc";
     }
 
     @Override

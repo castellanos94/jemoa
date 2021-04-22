@@ -6,7 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
-import com.castellanos94.algorithms.multi.MOGWO;
+import com.castellanos94.algorithms.multi.MOGWO_P;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.instances.DTLZ_Instance;
@@ -44,7 +44,7 @@ public class MOGWOPExample {
                     + numberOfProblem + "_Instance.txt";
             DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(resourseFile).loadInstance();
 
-            MOGWO<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, instance);
+            MOGWO_P<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, instance);
             DTLZP problem = (DTLZP) algorithm.getProblem();
             String subDir = problem.getName().trim();
 
@@ -149,7 +149,7 @@ public class MOGWOPExample {
 
     }
 
-    private static MOGWO<DoubleSolution> loadConfiguration(int numberOfProblem, DTLZ_Instance instance) {
+    private static MOGWO_P<DoubleSolution> loadConfiguration(int numberOfProblem, DTLZ_Instance instance) {
         DTLZP problem = new DTLZP(numberOfProblem, instance);
         int maxIterations = 1000;
         int numberOfObjectives = instance.getNumObjectives();
@@ -237,6 +237,6 @@ public class MOGWOPExample {
             break;
         }
 
-        return new MOGWO<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
+        return new MOGWO_P<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
     }
 }
