@@ -38,13 +38,15 @@ import tech.tablesaw.columns.Column;
  */
 public class AlgorithmReport_NRV {
 
-    private final static int numberOfObjectives = 10;
+    private final static int numberOfObjectives = 3;
     private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
     // private static String algorithmName = File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
     private static String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
     private static String NRV_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NRV"
             + File.separator;
+    private static String MOGWOP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
+            + "MOGWOP" + File.separator;
     private static Table stats = Table.create("statistic");
     private static StringColumn nameColumn = StringColumn.create("Problem");
     private static StringColumn metricNameColumn = StringColumn.create("Metric Name");
@@ -71,6 +73,7 @@ public class AlgorithmReport_NRV {
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
         loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem);
         loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem);
+        loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem);
 
         // make hsat roi for problem
         System.out.println("Make roi preferences");

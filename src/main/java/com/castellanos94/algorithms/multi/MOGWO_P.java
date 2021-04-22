@@ -30,12 +30,16 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO<S> {
             int[] iclass = (int[]) x.getAttribute(classifier.getAttributeKey());
             if (iclass[0] > 0) {
                 cHSat.add(x);
+                x.setAttribute("class-nc", "hsat");
             } else if (iclass[1] > 0) {
                 cSat.add(x);
+                x.setAttribute("class-nc", "sat");
             } else if (iclass[2] > 0) {
                 cDis.add(x);
+                x.setAttribute("class-nc", "dis");
             } else {
                 cHDis.add(x);
+                x.setAttribute("class-nc", "hdis");
             }
         }
         ArrayList<S> _solutions = null;
@@ -60,12 +64,13 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO<S> {
         // Select beta and remove to exclude
         if (!cHSat.isEmpty()) {
             _solutions = cHSat;
-        } else if (!cSat.isEmpty()) {
+        }
+        if (!cSat.isEmpty() || cHSat.size() < 2) {
             _solutions = cSat;
-        } else if (!cDis.isEmpty()) {
+        }
+        if (!cDis.isEmpty() || cSat.size() < 2) {
             _solutions = cDis;
-        } else {
-            _solutions = cHDis;
+            _solutions.addAll(cHDis);
         }
         this.selectionOperator.execute(parents);
         parents = this.selectionOperator.getParents();
@@ -85,12 +90,13 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO<S> {
         // Select delta and remove to exclude
         if (!cHSat.isEmpty()) {
             _solutions = cHSat;
-        } else if (!cSat.isEmpty()) {
+        }
+        if (!cSat.isEmpty() || cHSat.size() < 3) {
             _solutions = cSat;
-        } else if (!cDis.isEmpty()) {
+        }
+        if (!cDis.isEmpty() || cSat.size() < 3) {
             _solutions = cDis;
-        } else {
-            _solutions = cHDis;
+            _solutions.addAll(cHDis);
         }
         this.selectionOperator.execute(parents);
         parents = this.selectionOperator.getParents();
