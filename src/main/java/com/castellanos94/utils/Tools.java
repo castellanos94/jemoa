@@ -111,6 +111,7 @@ public class Tools {
         solutions.forEach(_s::add);
         SOLUTIONS_TO_FILE_(path, _s);
     }
+
     public static void SOLUTIONS_TO_FILE_BINARY(String path, ArrayList<BinarySolution> solutions) throws IOException {
         ArrayList<Solution> _s = new ArrayList<>();
         solutions.forEach(_s::add);
@@ -154,5 +155,39 @@ public class Tools {
         table.addColumns(column, column_rank);
         table.write().csv(path);
     }
-    
+
+    /**
+     * Generate a vector with random permutation
+     * 
+     * @param perm vector of permutations to save
+     * @param size of vector
+     */
+    public static void randomPermutation(int[] perm, int size) {
+
+        int[] index = new int[size];
+        boolean[] flag = new boolean[size];
+
+        for (int n = 0; n < size; n++) {
+            index[n] = n;
+            flag[n] = true;
+        }
+
+        int num = 0;
+        while (num < size) {
+            int start = Tools.random.nextInt(size);
+            while (true) {
+                if (flag[start]) {
+                    perm[num] = index[start];
+                    flag[start] = false;
+                    num++;
+                    break;
+                }
+                if (start == (size - 1)) {
+                    start = 0;
+                } else {
+                    start++;
+                }
+            }
+        }
+    }
 }

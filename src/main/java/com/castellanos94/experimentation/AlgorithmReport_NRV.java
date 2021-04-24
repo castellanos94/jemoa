@@ -43,8 +43,7 @@ public class AlgorithmReport_NRV {
     // private static String algorithmName = File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
     private static String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
-    private static String NRV_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NRV"
-            + File.separator;
+    private static String NRV_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NRV" + File.separator;
     private static String MOGWOP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
             + "MOGWOP" + File.separator;
     private static Table stats = Table.create("statistic");
@@ -71,10 +70,10 @@ public class AlgorithmReport_NRV {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();
         HashMap<String, DTLZP> problems = new HashMap<>();
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
-        loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem);
+        // loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem);
         //loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem);
         loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem);
-
+        final String LAST_DIRECTORY = MOGWOP_DIRECTORY;
         // make hsat roi for problem
         System.out.println("Make roi preferences");
         Iterator<String> problem_Iterator = problems.keySet().iterator();
@@ -374,17 +373,17 @@ public class AlgorithmReport_NRV {
             table.addColumns(doubleColumn);
         }
         // System.out.println(table.summary());
-        table.write().csv(NRV_DIRECTORY + "metrics.csv");
+        table.write().csv(LAST_DIRECTORY + "metrics.csv");
         // Reset
 
-        globalMetric(globalSolutionNDByProblem, roi, _names_algorithm);
+        globalMetric(LAST_DIRECTORY, globalSolutionNDByProblem, roi, _names_algorithm);
         stats.addColumns(nameColumn, metricNameColumn, resultColumn, rankingColumn, meanColumn, techicalColumn);
-        stats.write().csv(NRV_DIRECTORY + "stac.csv");
+        stats.write().csv(LAST_DIRECTORY + "stac.csv");
         Table reportLatex = Table.create("latex");
 
         reportLatex.addColumns(problemColumn, confColumn, noDominateColumn, domColumn, chsatColumn, csatColumn,
                 cdisColumn, dMinColumn, dAvgColumn, dMaxColumn);
-        reportLatex.write().csv(NRV_DIRECTORY + "latex_report.csv");
+        reportLatex.write().csv(LAST_DIRECTORY + "latex_report.csv");
 
         System.out.println("Generating sum all metrics All...");
         HashMap<String, Double> makeSumRank = BordaRanking.makeSumRank(rankListMetric);
@@ -639,7 +638,8 @@ public class AlgorithmReport_NRV {
 
     }
 
-    private static void globalMetric(HashMap<DTLZP, ArrayList<ArrayList<DoubleSolution>>> globalSolutionNDByProblem,
+    private static void globalMetric(final String LAST_DIRECTORY,
+            HashMap<DTLZP, ArrayList<ArrayList<DoubleSolution>>> globalSolutionNDByProblem,
             HashMap<String, ArrayList<DoubleSolution>> roi, String[] _names_algorithm) throws IOException {
         StringColumn _nameG = StringColumn.create("problem");
         DoubleColumn allG = DoubleColumn.create("solutions");
@@ -786,7 +786,7 @@ public class AlgorithmReport_NRV {
 
             try {
                 System.out.println("\tExport all solutions with class");
-                EXPORT_OBJECTIVES_TO_CSV(csatSolutions, _p.getName() + "_ALL");
+                EXPORT_OBJECTIVES_TO_CSV(LAST_DIRECTORY, csatSolutions, _p.getName() + "_ALL");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -834,7 +834,7 @@ public class AlgorithmReport_NRV {
         for (DoubleColumn doubleColumn : chebyshevMax) {
             global.addColumns(doubleColumn);
         }
-        global.write().csv(NRV_DIRECTORY + "global-metrics.csv");
+        global.write().csv(LAST_DIRECTORY + "global-metrics.csv");
         // Performance statistic Tests
 
         HashMap<String, String> mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, zColumnsG,
@@ -916,8 +916,8 @@ public class AlgorithmReport_NRV {
         return distances;
     }
 
-    private static void EXPORT_OBJECTIVES_TO_CSV(ArrayList<DoubleSolution> front_preferences, String label)
-            throws IOException {
+    private static void EXPORT_OBJECTIVES_TO_CSV(final String LAST_DIRECTORY,
+            ArrayList<DoubleSolution> front_preferences, String label) throws IOException {
         Table table = Table.create("FRONT_PREFERENCES");
         for (int i = 0; i < front_preferences.get(0).getProblem().getNumberOfObjectives(); i++) {
             StringColumn column = StringColumn.create("F-" + (i + 1));
@@ -937,10 +937,10 @@ public class AlgorithmReport_NRV {
         }
 
         table.addColumns(column, category);
-        if (!new File(NRV_DIRECTORY + File.separator + "FRONT_PREFERENCES").exists()) {
-            new File(NRV_DIRECTORY + File.separator + "FRONT_PREFERENCES").mkdirs();
+        if (!new File(LAST_DIRECTORY + File.separator + "FRONT_PREFERENCES").exists()) {
+            new File(LAST_DIRECTORY + File.separator + "FRONT_PREFERENCES").mkdirs();
         }
-        table.write().csv(NRV_DIRECTORY + File.separator + "FRONT_PREFERENCES" + File.separator + label + ".csv");
+        table.write().csv(LAST_DIRECTORY + File.separator + "FRONT_PREFERENCES" + File.separator + label + ".csv");
     }
 
     private static HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm(ArrayList<DoubleSolution> front,

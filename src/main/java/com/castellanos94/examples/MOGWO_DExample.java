@@ -6,7 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
-import com.castellanos94.algorithms.multi.MOGWO;
+import com.castellanos94.algorithms.multi.MOGWO_D;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.impl.RepairBoundary;
@@ -19,10 +19,10 @@ import com.castellanos94.utils.Tools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class MOGWOExample {
+public class MOGWO_DExample {
 
     private static final Logger logger = LogManager.getLogger(MOGWOExample.class);
-    static final String DIRECTORY = "experiments" + File.separator + "MOGWO";
+    static final String DIRECTORY = "experiments" + File.separator + "MOGWO-D";
     static final int EXPERIMENT = 31;
 
     public static void main(String[] args) throws IOException {
@@ -30,7 +30,7 @@ public class MOGWOExample {
         Tools.setSeed(1L);
         int numberOfProblem = 9;
         int numberOfObjectives = 3;
-        MOGWO<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, numberOfObjectives);
+        MOGWO_D<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, numberOfObjectives);
         DTLZ problem = (DTLZ) algorithm.getProblem();
         logger.info(problem);
         logger.info(algorithm);
@@ -82,12 +82,14 @@ public class MOGWOExample {
 
     }
 
-    private static MOGWO<DoubleSolution> loadConfiguration(int numberOfProblem, int numberOfObjectives) {
+    private static MOGWO_D<DoubleSolution> loadConfiguration(int numberOfProblem, int numberOfObjectives) {
         int maxIterations = 1000;
         DTLZ problem = null;
         int pop_size;
+        int T = 20;
+        int nr = 2;
         if (numberOfObjectives == 3) {
-            pop_size = 92;
+            pop_size = 210;
         } else if (numberOfObjectives == 5) {
             pop_size = 212;
         } else {
@@ -190,6 +192,6 @@ public class MOGWOExample {
             }
             break;
         }
-        return new MOGWO<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
+        return new MOGWO_D<>(problem, pop_size, maxIterations, T, nr, new RepairBoundary());
     }
 }
