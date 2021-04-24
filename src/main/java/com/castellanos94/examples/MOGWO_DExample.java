@@ -28,7 +28,7 @@ public class MOGWO_DExample {
     public static void main(String[] args) throws IOException {
         new File(DIRECTORY).mkdirs();
         Tools.setSeed(1L);
-        int numberOfProblem = 9;
+        int numberOfProblem = 7;
         int numberOfObjectives = 3;
         MOGWO_D<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, numberOfObjectives);
         DTLZ problem = (DTLZ) algorithm.getProblem();
@@ -192,6 +192,6 @@ public class MOGWO_DExample {
             }
             break;
         }
-        return new MOGWO_D<>(problem, pop_size, maxIterations, T, nr, new RepairBoundary());
+        return new MOGWO_D<>(problem, pop_size, 0.9, maxIterations, T, nr, new RepairBoundary());
     }
 }

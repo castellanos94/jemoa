@@ -12,6 +12,7 @@ import com.castellanos94.operators.impl.PolynomialMutation;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.Distance;
+import com.castellanos94.utils.ReferenceHyperplane;
 import com.castellanos94.utils.Tools;
 import com.castellanos94.utils.Distance.Metric;
 
@@ -28,7 +29,7 @@ public class MOGWO_D<S extends DoubleSolution> extends MOGWO<S> {
     /**
      * Lambda: a well-distributed set of weight vectors
      */
-    protected ArrayList<S> weightList;
+    protected ReferenceHyperplane<S> lambdas;
     /**
      * p: a neighborhood selection probability
      */
@@ -47,13 +48,17 @@ public class MOGWO_D<S extends DoubleSolution> extends MOGWO<S> {
     protected S idealPoint;
     protected Distance<S> distance;
 
-    public MOGWO_D(Problem<S> problem, int neighborSize, int MAX_ITERATIONS, int tSubPackSize,
-            int maximumNumberOfReplacedSolutions, RepairOperator<S> repairOperator) {
+    public MOGWO_D(Problem<S> problem, int neighborSize, double neighborhoodSelectionProbability, int MAX_ITERATIONS,
+            int tSubPackSize, int maximumNumberOfReplacedSolutions, RepairOperator<S> repairOperator) {
         super(problem, neighborSize, MAX_ITERATIONS, tSubPackSize, repairOperator);
         this.distance = new Distance<>(Metric.EUCLIDEAN_DISTANCE);
         this.mutationOperator = (MutationOperator<S>) new PolynomialMutation();
         this.subPackSize = tSubPackSize;
         this.maximumNumberOfReplacedSolutions = maximumNumberOfReplacedSolutions;
+        this.lambdas = new ReferenceHyperplane<>(problem.getNumberOfObjectives(), 13);
+        this.lambdas.execute();
+        this.neighborSize = neighborSize;
+        this.neighborhoodSelectionProbability = neighborhoodSelectionProbability;
     }
 
     @Override
@@ -74,22 +79,20 @@ public class MOGWO_D<S extends DoubleSolution> extends MOGWO<S> {
         // Step 3 - 5
         for (int i = 0; i < this.neighborSize; i++) {
             ArrayList<S> bi = new ArrayList<>();
-            bi.add(weightList.get(i));
-            List<Data> evaluate = distance.evaluate(bi, wolves);
-            bi.clear();
+            List<Data> evaluate = distance.evaluateSolutionsToPoint(wolves, lambdas.get(i).getPoint());
 
-            int indexMin = -1;
-            Data min = new RealData(Double.MAX_VALUE);
-            ArrayList<Integer> ignore = new ArrayList<>();
+            boolean[] ingore = new boolean[evaluate.size()];
             while (bi.size() < this.subPackSize) {
+                int indexMin = -1;
+                Data min = new RealData(Double.MAX_VALUE);
                 for (int j = 0; j < evaluate.size(); j++) {
-                    if (min.compareTo(evaluate.get(j)) > 0 && !ignore.contains(j)) {
+                    if (ingore[j] == false && min.compareTo(evaluate.get(j)) > 0) {
                         indexMin = j;
                         min = evaluate.get(j);
                     }
                 }
                 bi.add(wolves.get(indexMin));
-                ignore.add(indexMin);
+                ingore[indexMin] = true;
             }
             neightborhood.add(bi);
             // update 5
@@ -116,23 +119,34 @@ public class MOGWO_D<S extends DoubleSolution> extends MOGWO<S> {
                     phi_i = wolves;
                 }
                 // Step 11 - 12: calculate fitness and update alpha, beta and delta
-                S xnew = this.mutationOperator.execute(computeNewPosition(phi_i));
-                problem.evaluate(xnew);
-                problem.evaluateConstraint(xnew);
+                ArrayList<S> xnew = computeNewPosition(phi_i);
+                for (S s : xnew) {
+                    this.mutationOperator.execute(s);
+                    problem.evaluate(s);
+                    problem.evaluateConstraint(s);
+                }
                 // Step 13 update idealPoint
-                for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
-                    if (idealPoint.getObjective(j).compareTo(xnew.getObjective(j)) > 0) {
-                        idealPoint.setObjective(j, xnew.getObjective(j).copy());
+                for (S xnew_ : xnew) {
+                    for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
+                        if (idealPoint.getObjective(j).compareTo(xnew_.getObjective(j)) > 0) {
+                            idealPoint.setObjective(j, xnew_.getObjective(j).copy());
+                        }
                     }
                 }
                 // Update neightboring subproblems
-                int c = 0;
-                for (int j = 0; j < phi_i.size() && c < this.maximumNumberOfReplacedSolutions; j++) {
-                    if (gpbi(xnew, weightList.get(i), idealPoint) < gpbi(phi_i.get(j), weightList.get(i), idealPoint)) {
-                        phi_i.set(j, (S) xnew.copy());
-                        c++;
+                int c = 0, intents = 0;
+                while (c < maximumNumberOfReplacedSolutions && intents < 2) {
+                    for (int j = 0; j < phi_i.size() && c < maximumNumberOfReplacedSolutions; j++) {
+                        S xnew_ = xnew.get(c);
+                        if (gpbi(xnew_, lambdas.get(i).getPoint(), idealPoint) < gpbi(phi_i.get(j),
+                                lambdas.get(i).getPoint(), idealPoint)) {
+                            phi_i.set(j, (S) xnew_.copy());
+                            c++;
+                        }
                     }
+                    intents++;
                 }
+
             }
             updateProgress();
 
@@ -147,33 +161,35 @@ public class MOGWO_D<S extends DoubleSolution> extends MOGWO<S> {
 
     }
 
-    private double gpbi(S x, S lambda, S idealPoint2) {
+    private double gpbi(S x, List<Data> lambda, S idealPoint2) {
         double d1, d2, nl;
         double theta = 5.0;
 
         d1 = d2 = nl = 0.0;
         for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
-            d1 += x.getObjective(i).minus(idealPoint2.getObjective(i)).times(lambda.getObjective(i)).doubleValue();
-            nl += Math.pow(lambda.getObjective(i).doubleValue(), 2.0);
+            d1 += x.getObjective(i).minus(idealPoint2.getObjective(i)).times(lambda.get(i)).doubleValue();
+            nl += Math.pow(lambda.get(i).doubleValue(), 2.0);
         }
         nl = Math.sqrt(nl);
         d1 = Math.abs(d1) / nl;
         for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
             d2 += Math.pow((x.getObjective(i).minus(idealPoint2.getObjective(i)).doubleValue())
-                    - d1 * (lambda.getObjective(i).div(nl).doubleValue()), 2.0);
+                    - d1 * (lambda.get(i).div(nl).doubleValue()), 2.0);
         }
         d2 = Math.sqrt(d2);
         return (d1 + theta * d2);
     }
 
-    private S computeNewPosition(ArrayList<S> phi_i) {
+    private ArrayList<S> computeNewPosition(ArrayList<S> phi_i) {
 
         // Chpse randomly alpha, beta, delta from phi
         int index;
         ArrayList<Integer> candidates = new ArrayList<>();
         do {
             index = Tools.getRandom().nextInt(phi_i.size());
-        } while (!candidates.contains(index) && candidates.size() < 3);
+            if (!candidates.contains(index))
+                candidates.add(index);
+        } while (candidates.size() < 3 + maximumNumberOfReplacedSolutions);
         alphaWolf = phi_i.get(candidates.get(0));
         betaWolf = phi_i.get(candidates.get(1));
         deltaWolf = phi_i.get(candidates.get(2));
@@ -182,37 +198,41 @@ public class MOGWO_D<S extends DoubleSolution> extends MOGWO<S> {
         double C[] = new double[3];
         // a decreases linearly fron 2 to 0
         a = 2 - currentIteration * ((2.0) / MAX_ITERATIONS);
-        S currentWolf = (S) alphaWolf.copy();
+        ArrayList<S> news = new ArrayList<>();
+        for (int i = 0; i < maximumNumberOfReplacedSolutions; i++) {
+            S currentWolf = (S) phi_i.get(candidates.get(3 + i)).copy();
 
-        for (int j = 0; j < problem.getNumberOfDecisionVars(); j++) {
+            for (int j = 0; j < problem.getNumberOfDecisionVars(); j++) {
 
-            for (int k = 0; k < A.length; k++) {
-                r1 = Tools.getRandom().nextDouble();
-                r2 = Tools.getRandom().nextDouble();
-                // Equation (3.3)
-                A[k] = 2 * a * r1 - a;
-                // Equation (3.4)
-                C[k] = 2 * r2;
+                for (int k = 0; k < A.length; k++) {
+                    r1 = Tools.getRandom().nextDouble();
+                    r2 = Tools.getRandom().nextDouble();
+                    // Equation (3.3)
+                    A[k] = 2 * a * r1 - a;
+                    // Equation (3.4)
+                    C[k] = 2 * r2;
+                }
+
+                // Auxiliar
+                alpha_ij = (double) alphaWolf.getVariable(j);
+                beta_ij = (double) betaWolf.getVariable(j);
+                delta_ij = (double) deltaWolf.getVariable(j);
+                x_ij = (double) currentWolf.getVariable(j);
+                // Equation (3.5)
+                double d1 = Math.abs(C[0] * alpha_ij - x_ij);
+                double d2 = Math.abs(C[1] * beta_ij - x_ij);
+                double d3 = Math.abs(C[2] * delta_ij - x_ij);
+                // Equation 3.6
+                double x1 = alpha_ij - A[0] * d1;
+                double x2 = beta_ij - A[1] * d2;
+                double x3 = delta_ij - A[2] * d3;
+                // Equation 3.7
+                currentWolf.setVariable(j, (x1 + x2 + x3) / 3.0);
             }
-
-            // Auxiliar
-            alpha_ij = (double) alphaWolf.getVariable(j);
-            beta_ij = (double) betaWolf.getVariable(j);
-            delta_ij = (double) deltaWolf.getVariable(j);
-            x_ij = (double) currentWolf.getVariable(j);
-            // Equation (3.5)
-            double d1 = Math.abs(C[0] * alpha_ij - x_ij);
-            double d2 = Math.abs(C[1] * beta_ij - x_ij);
-            double d3 = Math.abs(C[2] * delta_ij - x_ij);
-            // Equation 3.6
-            double x1 = alpha_ij - A[0] * d1;
-            double x2 = beta_ij - A[1] * d2;
-            double x3 = delta_ij - A[2] * d3;
-            // Equation 3.7
-            currentWolf.setVariable(j, (x1 + x2 + x3) / 3.0);
+            news.add(currentWolf);
         }
 
-        return currentWolf;
+        return news;
 
     }
 
