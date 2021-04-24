@@ -17,5 +17,6 @@ Java Evolutionary Multi-Objective Algorithm
    * GA: A multi-objectve evolutionary algorithm (using dominance)
    * NSGA-II
    * NSGA-III
-   * NSGA-III-WP : NSGA-III with preferences incorporation, using a multi-criteria ordinal classifier.
+   * NSGA-III-P : NSGA-III with preferences incorporation, using a multi-criteria ordinal classifier (NSGA-III-WP).
    * MOGWO : Multi-Objective Grey Wolf Optimizer
+   * MOGWO : Multi-Objective Grey Wolf Optimizer based on decomposition
