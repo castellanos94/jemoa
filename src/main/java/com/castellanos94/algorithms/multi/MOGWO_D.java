@@ -75,24 +75,22 @@ public class MOGWO_D<S extends DoubleSolution> extends MOGWO<S> {
 
         this.idealPoint = createIdealPoint();
         // b_i
-        ArrayList<ArrayList<S>> neightborhood = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> neightborhood = new ArrayList<>(this.neighborSize);
         // Step 3 - 5
         for (int i = 0; i < this.neighborSize; i++) {
-            ArrayList<S> bi = new ArrayList<>();
+            ArrayList<Integer> bi = new ArrayList<>();
             List<Data> evaluate = distance.evaluateSolutionsToPoint(wolves, lambdas.get(i).getPoint());
 
-            boolean[] ingore = new boolean[evaluate.size()];
             while (bi.size() < this.subPackSize) {
                 int indexMin = -1;
                 Data min = new RealData(Double.MAX_VALUE);
                 for (int j = 0; j < evaluate.size(); j++) {
-                    if (ingore[j] == false && min.compareTo(evaluate.get(j)) > 0) {
+                    if (!bi.contains(j) && min.compareTo(evaluate.get(j)) > 0) {
                         indexMin = j;
                         min = evaluate.get(j);
                     }
                 }
-                bi.add(wolves.get(indexMin));
-                ingore[indexMin] = true;
+                bi.add(indexMin);
             }
             neightborhood.add(bi);
             // update 5
@@ -114,7 +112,10 @@ public class MOGWO_D<S extends DoubleSolution> extends MOGWO<S> {
             ArrayList<S> phi_i;
             for (int i = 0; i < perm.length; i++) {
                 if (Tools.getRandom().nextDouble() < this.neighborhoodSelectionProbability) {
-                    phi_i = neightborhood.get(perm[i]);
+                    phi_i = new ArrayList<>();
+                    for (Integer index : neightborhood.get(perm[i])) {
+                        phi_i.add(wolves.get(index));
+                    }
                 } else {
                     phi_i = wolves;
                 }
@@ -152,7 +153,10 @@ public class MOGWO_D<S extends DoubleSolution> extends MOGWO<S> {
 
         }
         for (int i = 0; i < this.neighborSize; i++) {
-            solutions.addAll(neightborhood.get(i));
+            for (Integer index : neightborhood.get(i)) {
+                if (!solutions.contains(wolves.get(index)))
+                    solutions.add(wolves.get(index));
+            }
         }
         DominanceComparator<S> comparator = new DominanceComparator<>();
         comparator.computeRanking(solutions);
