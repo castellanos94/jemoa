@@ -4,6 +4,7 @@ Java Evolutionary Multi-Objective Algorithm
 * Integer
 * Real (double)
 * Interval 
+* Fuzzy Number (Trapezoidal)
 # Problems
 *  PSP
 *  Knapsack
