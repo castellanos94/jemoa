@@ -21,7 +21,7 @@ public abstract class Data extends Number implements Comparable<Number> {
     abstract public Number getData();
 
     /**
-     * @return -1 if this < b, 0 if this == b and 1 if this > 1
+     * @return -1 if this < b, 0 if this == b and 1 if this > b
      */
     public int compareTo(Number b) {
         if (b instanceof Interval && !(this instanceof Interval)) {
@@ -30,6 +30,7 @@ public abstract class Data extends Number implements Comparable<Number> {
 
         return this.compareTo(b);
     }
+
     public abstract Data copy();
 
     @Override
@@ -54,7 +55,10 @@ public abstract class Data extends Number implements Comparable<Number> {
         if (d instanceof Interval) {
             return new Interval(0);
         }
-        return null;
+        if (d instanceof Trapezoidal) {
+            return new Trapezoidal(1, 1, 1, 1);
+        }
+        throw new UnsupportedOperationException("Operation not defined.");
     }
 
     public static Data getOneByType(Number d) {
@@ -70,7 +74,10 @@ public abstract class Data extends Number implements Comparable<Number> {
         if (d instanceof Interval) {
             return new Interval(1);
         }
-        return null;
+        if (d instanceof Trapezoidal) {
+            return new Trapezoidal(1, 1, 1, 1);
+        }
+        throw new UnsupportedOperationException("Operation not defined.");
     }
 
     /**
@@ -86,7 +93,7 @@ public abstract class Data extends Number implements Comparable<Number> {
         if (this instanceof RealData) {
             return new RealData(Math.abs(this.doubleValue()));
         }
-        return null;
+        throw new UnsupportedOperationException("Operation not defined.");
     }
 
     public Data pow(Number exp) {
@@ -96,7 +103,18 @@ public abstract class Data extends Number implements Comparable<Number> {
         if (this instanceof RealData) {
             return new RealData(Math.pow(this.doubleValue(), exp.doubleValue()));
         }
-        return null;
+        if (this instanceof Trapezoidal) {
+            if (exp.intValue() >= 1) {
+                Data rs = (Trapezoidal) this;
+                for (int i = 1; i <= exp.intValue(); i++) {
+                    rs = rs.times(this);
+                }
+                return rs;
+            } else {
+                return new Trapezoidal(0, 0, 0, 0);
+            }
+        }
+        throw new UnsupportedOperationException("Operation not defined.");
     }
 
     public Data sqrt() {
@@ -106,7 +124,12 @@ public abstract class Data extends Number implements Comparable<Number> {
         if (this instanceof RealData) {
             return new RealData(Math.sqrt(this.doubleValue()));
         }
-        return null;
+        if (this instanceof Trapezoidal) {
+            Trapezoidal a = (Trapezoidal) this;
+            return new Trapezoidal(Math.sqrt(a.getA()), Math.sqrt(a.getB()), a.c / 2 * Math.sqrt(a.getA()),
+                    a.d / Math.sqrt(a.getB()));
+        }
+        throw new UnsupportedOperationException("Operation not defined.");
     }
 
     public static Data initByRefType(Number var, Number value) {
@@ -122,7 +145,11 @@ public abstract class Data extends Number implements Comparable<Number> {
         if (var instanceof Interval) {
             return new Interval(value);
         }
-        return null;
+        if (var instanceof Trapezoidal) {
+            return new Trapezoidal(value.doubleValue(), value.doubleValue(), value.doubleValue(), value.doubleValue());
+        }
+        throw new UnsupportedOperationException("Operation not defined.");
+
     }
 
     public static boolean checkNaN(Number var) {
@@ -148,4 +175,25 @@ public abstract class Data extends Number implements Comparable<Number> {
         }
         return new Interval(this);
     }
+
+    @Override
+    public int intValue() {
+        throw new UnsupportedOperationException("Operation not defined.");
+    }
+
+    @Override
+    public long longValue() {
+        throw new UnsupportedOperationException("Operation not defined.");
+    }
+
+    @Override
+    public float floatValue() {
+        throw new UnsupportedOperationException("Operation not defined.");
+    }
+
+    @Override
+    public double doubleValue() {
+        throw new UnsupportedOperationException("Operation not defined.");
+    }
+
 }
