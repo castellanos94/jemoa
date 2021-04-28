@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -108,12 +106,14 @@ public class Tools {
         return bd.doubleValue();
     }
 
+    @SuppressWarnings("rawtypes")
     public static void SOLUTIONS_TO_FILE_DOUBLE(String path, ArrayList<DoubleSolution> solutions) throws IOException {
         ArrayList<Solution> _s = new ArrayList<>();
         solutions.forEach(_s::add);
         SOLUTIONS_TO_FILE_(path, _s);
     }
 
+    @SuppressWarnings("rawtypes")
     public static void SOLUTIONS_TO_FILE_BINARY(String path, ArrayList<BinarySolution> solutions) throws IOException {
         ArrayList<Solution> _s = new ArrayList<>();
         solutions.forEach(_s::add);
@@ -192,5 +192,5 @@ public class Tools {
             }
         }
     }
-    
+
 }

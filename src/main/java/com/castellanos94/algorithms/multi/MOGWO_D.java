@@ -47,7 +47,7 @@ public class MOGWO_D<S extends DoubleSolution> extends MOGWO<S> {
      */
     protected S idealPoint;
     protected Distance<S> distance;
-
+    @SuppressWarnings("unchecked")
     public MOGWO_D(Problem<S> problem, int neighborSize, double neighborhoodSelectionProbability, int MAX_ITERATIONS,
             int tSubPackSize, int maximumNumberOfReplacedSolutions, RepairOperator<S> repairOperator) {
         super(problem, neighborSize, MAX_ITERATIONS, tSubPackSize, repairOperator);
@@ -62,6 +62,7 @@ public class MOGWO_D<S extends DoubleSolution> extends MOGWO<S> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void execute() {
         this.init_time = System.currentTimeMillis();
         wolves = new ArrayList<>();
@@ -183,7 +184,7 @@ public class MOGWO_D<S extends DoubleSolution> extends MOGWO<S> {
         d2 = Math.sqrt(d2);
         return (d1 + theta * d2);
     }
-
+    @SuppressWarnings("unchecked")
     private ArrayList<S> computeNewPosition(ArrayList<S> phi_i) {
 
         // Chpse randomly alpha, beta, delta from phi

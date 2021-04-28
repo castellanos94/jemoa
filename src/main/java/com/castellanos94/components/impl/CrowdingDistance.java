@@ -8,7 +8,6 @@ import com.castellanos94.components.DensityEstimator;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.solutions.Solution;
-import com.castellanos94.utils.ObjectiveComparator;
 
 public class CrowdingDistance<S extends Solution<?>> implements DensityEstimator<S> {
 
@@ -64,7 +63,7 @@ public class CrowdingDistance<S extends Solution<?>> implements DensityEstimator
                     double n = solutions.get(j + 1).getObjective(i).doubleValue();
                     S s = solutions.get(j);
                     Data current = (Data) s.getAttributes().getOrDefault(getAttributeKey(), RealData.ZERO);
-                    s.setAttribute(getAttributeKey(), current.plus(n - p));
+                    s.setAttribute(getAttributeKey(), current.plus(n - p).div(max.minus(min)));
                     /*
                      * distance = solutions.get(j + 1).getObjectives().get(i) .minus(solutions.get(j
                      * - 1).getObjectives().get(i)); distance = distance.div(max.minus(min));
@@ -76,32 +75,6 @@ public class CrowdingDistance<S extends Solution<?>> implements DensityEstimator
                 }
             }
         }
-    }
-
-    private void bubbleSort(int index, ArrayList<S> solutions) {
-
-        int i, j, n = solutions.size();
-        boolean swapped;
-        ObjectiveComparator cmp = new ObjectiveComparator(index);
-        for (i = 0; i < n - 1; i++) {
-            swapped = false;
-            for (j = 0; j < n - i - 1; j++) {
-                if (cmp.compare(solutions.get(j), solutions.get(j + 1)) > 0) {
-                    // swap arr[j] and arr[j+1]
-                    S tmp = (S) solutions.get(j).copy();
-                    solutions.set(j, (S) solutions.get(j + 1).copy());
-                    solutions.set(j + 1, tmp);
-
-                    swapped = true;
-                }
-            }
-
-            // IF no two elements were
-            // swapped by inner loop, then break
-            if (swapped == false)
-                break;
-        }
-
     }
 
     private Data maxValue(S solution) {

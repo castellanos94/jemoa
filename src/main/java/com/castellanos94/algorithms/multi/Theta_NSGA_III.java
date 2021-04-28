@@ -172,7 +172,7 @@ public class Theta_NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryA
         }
         return clusters;
     }
-
+    @SuppressWarnings("unchecked")
     private Data calcualteDJ2(S solution, List<Data> lambda_j) {
         List<Data> x = (List<Data>) solution.getAttribute(NORMALIZE_OBJETIVES_KEY);
         // Let dj1(x) be the distance between the origin and u
@@ -205,9 +205,9 @@ public class Theta_NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryA
         solution.setAttribute(DJ2_KEY, dj2);
         return dj2;
     }
-
+    @SuppressWarnings("unchecked")
     private void normalize(ArrayList<S> rt) {
-
+        
         nadirPoint = (S) idealPoint.copy();
 
         for (int i = 0; i < this.problem.getNumberOfObjectives(); i++) {
@@ -227,7 +227,7 @@ public class Theta_NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryA
             child.setAttribute(NORMALIZE_OBJETIVES_KEY, normalizedObjectives);
         }
     }
-
+    @SuppressWarnings("unchecked")
     protected void updateIdealPoint(ArrayList<S> offspring) {
         if (idealPoint == null) {
             idealPoint = (S) solutions.get(0).copy();

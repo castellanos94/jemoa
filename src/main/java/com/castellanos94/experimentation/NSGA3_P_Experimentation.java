@@ -1,7 +1,6 @@
 package com.castellanos94.experimentation;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -24,8 +23,6 @@ import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.impl.SBXCrossover;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
-import com.castellanos94.utils.Plotter;
-import com.castellanos94.utils.Scatter3D;
 import com.castellanos94.utils.Tools;
 
 import tech.tablesaw.api.DoubleColumn;
