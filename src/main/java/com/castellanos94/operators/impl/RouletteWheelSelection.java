@@ -60,7 +60,7 @@ public class RouletteWheelSelection<S extends Solution<?>> implements SelectionO
     }
 
     @Override
-    public void setPopulaitonSize(int size) {
+    public void setPopulationSize(int size) {
         this.n_offsrping = size;
     }
 }

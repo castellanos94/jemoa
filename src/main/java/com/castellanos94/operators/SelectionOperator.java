@@ -6,5 +6,5 @@ public interface SelectionOperator<Source> extends Operator<ArrayList<Source>, V
 
     public ArrayList<Source> getParents();
 
-    public void setPopulaitonSize(int size);
+    public void setPopulationSize(int size);
 }

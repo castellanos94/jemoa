@@ -315,7 +315,7 @@ public class EnvironmentalSelection<S extends Solution<?>> implements SelectionO
     }
 
     @Override
-    public void setPopulaitonSize(int size) {
+    public void setPopulationSize(int size) {
         System.out.println(size);
     }
 

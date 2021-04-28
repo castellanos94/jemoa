@@ -25,7 +25,7 @@ public class RandomSelection<S extends Solution<?>> implements SelectionOperator
     }
 
     @Override
-    public void setPopulaitonSize(int size) {
+    public void setPopulationSize(int size) {
         this.size = size;
     }
 

@@ -318,7 +318,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
     }
 
     @Override
-    public void setPopulaitonSize(int size) {
+    public void setPopulationSize(int size) {
         this.pop_size = size;
     }
 

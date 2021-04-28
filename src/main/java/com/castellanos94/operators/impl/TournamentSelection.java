@@ -45,7 +45,7 @@ public class TournamentSelection<S extends Solution<?>> implements SelectionOper
     }
 
     @Override
-    public void setPopulaitonSize(int size) {
+    public void setPopulationSize(int size) {
         this.n_offsrping = size;
     }
 
