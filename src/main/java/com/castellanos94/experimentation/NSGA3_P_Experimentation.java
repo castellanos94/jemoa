@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import com.castellanos94.algorithms.multi.NSGA_III_WP;
+import com.castellanos94.algorithms.multi.NSGA_III_P;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
@@ -38,8 +38,8 @@ import org.apache.logging.log4j.Logger;
 /**
  * Current Algorithm Experimentation used.
  */
-public class NSGA3WPExperimentation {
-    private static final Logger logger = LogManager.getLogger(NSGA3WPExperimentation.class);
+public class NSGA3_P_Experimentation {
+    private static final Logger logger = LogManager.getLogger(NSGA3_P_Experimentation.class);
     private final int numberOfObjectives;
     private final int CLASSIFY_EVERY_ITERATION; // Classification F0 each
     private final int ELEMENTS_TO_REPLACE; // 5 % of population
@@ -55,7 +55,7 @@ public class NSGA3WPExperimentation {
             System.exit(-1);
         }
         System.out.println(Arrays.toString(args));
-        NSGA3WPExperimentation experimentation = new NSGA3WPExperimentation(Integer.parseInt(args[0]),
+        NSGA3_P_Experimentation experimentation = new NSGA3_P_Experimentation(Integer.parseInt(args[0]),
                 Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
         if (args.length == 5) {
             experimentation.setInitialProblem(Integer.parseInt(args[4]));
@@ -80,7 +80,7 @@ public class NSGA3WPExperimentation {
         this.endProblem = endProblem;
     }
 
-    public NSGA3WPExperimentation(int numberOfExperiments, int numberOfObjectives, int cLASSIFY_EVERY_ITERATION,
+    public NSGA3_P_Experimentation(int numberOfExperiments, int numberOfObjectives, int cLASSIFY_EVERY_ITERATION,
             int eLEMENTS_TO_REPLACE) {
         this.EXPERIMENT = numberOfExperiments;
         this.numberOfObjectives = numberOfObjectives;
@@ -105,7 +105,7 @@ public class NSGA3WPExperimentation {
 
             // logger.info(instance);
 
-            NSGA_III_WP<DoubleSolution> algorithm = dtlzTestSuite(p, instance);
+            NSGA_III_P<DoubleSolution> algorithm = dtlzTestSuite(p, instance);
             algorithm.setClassifyEveryIteration(CLASSIFY_EVERY_ITERATION);
             algorithm.setNumberOfElementToReplace(ELEMENTS_TO_REPLACE);
             DTLZP problem = (DTLZP) algorithm.getProblem();
@@ -237,7 +237,7 @@ public class NSGA3WPExperimentation {
     }
 
     @SuppressWarnings("unchecked")
-    private static NSGA_III_WP<DoubleSolution> dtlzTestSuite(int p, DTLZ_Instance instance) {
+    private static NSGA_III_P<DoubleSolution> dtlzTestSuite(int p, DTLZ_Instance instance) {
 
         HashMap<String, Object> options = setup(instance.getNumObjectives());
         DTLZP problem = new DTLZP(p, instance);
@@ -309,7 +309,7 @@ public class NSGA3WPExperimentation {
 
         SelectionOperator<DoubleSolution> selectionOperator = new TournamentSelection<>((int) options.get("pop_size"),
                 new DominanceComparator<>());
-        return new NSGA_III_WP<>(problem, (int) options.get("pop_size"), maxIterations, (int) options.get("partitions"),
+        return new NSGA_III_P<>(problem, (int) options.get("pop_size"), maxIterations, (int) options.get("partitions"),
                 selectionOperator, (CrossoverOperator<DoubleSolution>) options.get("crossover"),
                 (MutationOperator<DoubleSolution>) options.get("mutation"));
     }
