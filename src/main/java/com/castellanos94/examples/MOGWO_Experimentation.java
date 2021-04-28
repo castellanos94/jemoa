@@ -23,13 +23,13 @@ import org.apache.logging.log4j.Logger;
 import tech.tablesaw.api.LongColumn;
 import tech.tablesaw.api.Table;
 
-public class MOGWOExample {
+public class MOGWO_Experimentation {
 
-    private static final Logger logger = LogManager.getLogger(MOGWOExample.class);
+    private static final Logger logger = LogManager.getLogger(MOGWO_Experimentation.class);
     static final int EXPERIMENT = 31;
     static int numberOfObjectives = 3;
 
-    static final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWOP";
+    static final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWO"+File.separator + "MOGWO-V";;
 
     public static void main(String[] args) throws IOException {
         new File(DIRECTORY).mkdirs();
