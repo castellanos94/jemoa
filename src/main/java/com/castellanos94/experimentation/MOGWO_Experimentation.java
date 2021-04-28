@@ -13,7 +13,8 @@ import com.castellanos94.operators.impl.RepairBoundary;
 import com.castellanos94.problems.benchmarks.dtlz.*;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
-
+import com.castellanos94.utils.Plotter;
+import com.castellanos94.utils.Scatter3D;
 import com.castellanos94.utils.Tools;
 
 import org.apache.logging.log4j.LogManager;
@@ -61,7 +62,7 @@ public class MOGWO_Experimentation {
                 }
 
                 experimentTimeColumn.append(algorithm.getComputeTime());
-                logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
+             //   logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
 
                 bag.addAll(algorithm.getSolutions());
             }
@@ -89,11 +90,11 @@ public class MOGWO_Experimentation {
                 strings.add(solution.toString());
 
             Files.write(f.toPath(), strings, Charset.defaultCharset());
-           /* if (problem.getNumberOfObjectives() == 3) {
+           if (problem.getNumberOfObjectives() == 3) {
                 Plotter plotter = new Scatter3D<>(compartor.getSubFront(0),
                         new File(subDirFile, problem.getName() + "_MOGWO").getAbsolutePath());
                 plotter.plot();
-            }*/
+            }
         }
 
     }
