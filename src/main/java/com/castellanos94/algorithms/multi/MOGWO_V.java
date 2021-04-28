@@ -3,12 +3,9 @@ package com.castellanos94.algorithms.multi;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
-import com.castellanos94.components.impl.DominanceComparator;
-import com.castellanos94.operators.ArchiveSelection;
+import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.RepairOperator;
-import com.castellanos94.operators.impl.CrowdingDistanceArchive;
-import com.castellanos94.operators.impl.RouletteWheelSelection;
+import com.castellanos94.operators.impl.PolynomialMutation;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.Tools;
@@ -19,16 +16,7 @@ import com.castellanos94.utils.Tools;
  * optimization. Expert Systems with Applications, 47, 106–119.
  * doi:10.1016/j.eswa.2015.10.039
  */
-public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorithm<S> {
-    protected S alphaWolf;
-    protected S betaWolf;
-    protected S deltaWolf;
-    protected int currentIteration;
-    protected final int MAX_ITERATIONS;
-    protected final int nGrid;
-    protected RepairOperator<S> repairOperator;
-    protected ArchiveSelection<S> archiveSelection;
-    protected DominanceComparator<S> comparator;
+public class MOGWO_V<S extends DoubleSolution> extends MOGWO<S> {
 
     /**
      * Positions (agents) at Matlab code
@@ -46,17 +34,11 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
      * @param nGrid          external population size
      * @param repairOperator repair operator
      */
-    public MOGWO(Problem<S> problem, int populationSize, int MAX_ITERATIONS, int nGrid,
+    @SuppressWarnings("unchecked")
+    public MOGWO_V(Problem<S> problem, int populationSize, int MAX_ITERATIONS, int nGrid,
             RepairOperator<S> repairOperator) {
-        super(problem);
-        this.solutions = new ArrayList<>();
-        this.MAX_ITERATIONS = MAX_ITERATIONS;
-        this.populationSize = populationSize;
-        this.repairOperator = repairOperator;
-        this.nGrid = nGrid;
-        this.selectionOperator = new RouletteWheelSelection<>(nGrid);
-        this.archiveSelection = new CrowdingDistanceArchive<>(nGrid);// new AdaptiveGrid<>(problem, nGrid);
-        this.comparator = new DominanceComparator<>();
+        super(problem, populationSize, MAX_ITERATIONS, nGrid, repairOperator);
+        this.mutationOperator = (MutationOperator<S>) new PolynomialMutation();
     }
 
     @Override
@@ -123,6 +105,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
             for (S wolf : wolves) {
                 // Return back the search agents that go beyond the boundaries of the search
                 // space
+                mutationOperator.execute(wolf);
                 repairOperator.execute(wolf);
                 // Calculate objective function for each search agent
                 problem.evaluate(wolf);
@@ -221,7 +204,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
 
     @Override
     public String toString() {
-        return "MOGWO [MAX_ITERATIONS=" + MAX_ITERATIONS + ", nGrid=" + nGrid + ", Problem=" + this.problem.toString()
+        return "MOGWO-V [MAX_ITERATIONS=" + MAX_ITERATIONS + ", nGrid=" + nGrid + ", Problem=" + this.problem.toString()
                 + "]";
     }
 
