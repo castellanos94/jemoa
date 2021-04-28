@@ -44,6 +44,13 @@ public class CrowdingDistanceArchive<S extends Solution<?>> implements ArchiveSe
         this(populationSize, new DominanceComparator<>());
     }
 
+    /**
+     * Add a new solution if it is non-dominated concerning the other solutions.
+     * This method also invokes the re-arrangement with crowding distance mechanism.
+     * 
+     * @param solution The solution to join the non-dominant population
+     */
+    @SuppressWarnings("unchecked")
     public void addSolution(S solution) {
         if (this.solutions.isEmpty()) {
             this.solutions.add((S) solution.copy());

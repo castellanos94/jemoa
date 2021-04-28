@@ -56,6 +56,7 @@ public class AdaptiveGrid<S extends Solution<?>> implements ArchiveSelection<S>,
      * 
      * @param solution The solution to join the non-dominant population
      */
+    @SuppressWarnings("unchecked")
     public void addSolution(S solution) {
         if (this.solutions.isEmpty()) {
             this.solutions.add((S) solution.copy());

@@ -1,6 +1,5 @@
 package com.castellanos94.algorithms.multi;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -12,9 +11,6 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.NSGA3Replacement;
 
-import tech.tablesaw.api.DoubleColumn;
-import tech.tablesaw.api.Table;
-
 /**
  * NSGA-III-P <br>
  * Castellanos-Alvarez, A.; Cruz-Reyes, L.; Fernandez, E.; Rangel-Valdez, N.;
@@ -24,26 +20,16 @@ import tech.tablesaw.api.Table;
  * https://doi.org/10.3390/mca26020027
  * 
  */
-public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
+public class NSGA_III_P<S extends Solution<?>> extends NSGA_III<S> {
     private int classifyEveryIteration;
     private int numberOfElementToReplace = 1;
-    private Table table;
-    private DoubleColumn iterColumn;
-    private DoubleColumn nFrontColumn;
-    private DoubleColumn hsatColumn;
-    private DoubleColumn satColumn;
 
-    public NSGA_III_WP(Problem<S> problem, int populationSize, int maxIterations, int numberOfDivisions,
+    public NSGA_III_P(Problem<S> problem, int populationSize, int maxIterations, int numberOfDivisions,
             SelectionOperator<S> selectionOperator, CrossoverOperator<S> crossoverOperator,
             MutationOperator<S> mutationOperator) {
         super(problem, populationSize, maxIterations, numberOfDivisions, selectionOperator, crossoverOperator,
                 mutationOperator);
         this.classifyEveryIteration = (int) (5 / 100.0 * this.maxIterations);
-        table = Table.create("Report");
-        iterColumn = DoubleColumn.create("Iteration");
-        nFrontColumn = DoubleColumn.create("N-Front");
-        hsatColumn = DoubleColumn.create("HSat");
-        satColumn = DoubleColumn.create("Sat");
         numberOfElementToReplace = (int) ((10 / 100.0) * this.populationSize);
     }
 
@@ -121,7 +107,6 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
             }
         }
         // REPORT : N-Fronts
-        nFrontColumn.append(_fronts.size());
         ArrayList<S> Pt = new ArrayList<>();
         int indexFront = 0;
         ArrayList<ArrayList<S>> fronts = new ArrayList<>();
@@ -158,39 +143,6 @@ public class NSGA_III_WP<S extends Solution<?>> extends NSGA_III<S> {
                 pt.set(i, randomSolution);
             }
         }
-    }
-
-    private void report() {
-        InterClassnC<S> classifier = new InterClassnC<>(problem);
-        ArrayList<S> hs = new ArrayList<>();
-        ArrayList<S> s = new ArrayList<>();
-        ArrayList<S> d = new ArrayList<>();
-        ArrayList<S> hd = new ArrayList<>();
-        for (S x : ranking.getSubFront(0)) {
-            classifier.classify(x);
-            int[] iclass = (int[]) x.getAttribute(classifier.getAttributeKey());
-            if (iclass[0] > 0) {
-                hs.add(x);
-            } else if (iclass[1] > 0) {
-                s.add(x);
-            } else if (iclass[2] > 0) {
-                d.add(x);
-            } else {
-                hd.add(x);
-            }
-        }
-        iterColumn.append(this.currenIteration);
-        // nFrontColumn.append(ranking.getNumberOfSubFronts());
-        hsatColumn.append(hs.size());
-        satColumn.append(s.size());
-
-    }
-
-    public void exportReport(String outPath) throws IOException {
-        if (!outPath.endsWith(".csv"))
-            outPath = outPath + ".csv";
-        table.addColumns(iterColumn, nFrontColumn, hsatColumn, satColumn);
-        table.write().csv(outPath);
     }
 
     @Override

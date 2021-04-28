@@ -35,7 +35,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
     protected CrowdingDistance<S> crowdingDistance;
     protected HeapSort<S> heapSort;
     protected DominanceComparator<S> comparator;
-    
+
     /**
      * Positions (agents) at Matlab code
      */
@@ -52,6 +52,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
      * @param nGrid          external population size
      * @param repairOperator repair operator
      */
+    @SuppressWarnings("unchecked")
     public MOGWO(Problem<S> problem, int populationSize, int MAX_ITERATIONS, int nGrid,
             RepairOperator<S> repairOperator) {
         super(problem);
@@ -64,7 +65,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
         this.crowdingDistance = new CrowdingDistance<>();
         this.heapSort = new HeapSort<>(crowdingDistance.getComparator().reversed());
         this.archiveSelection = new CrowdingDistanceArchive<>(nGrid);// new AdaptiveGrid<>(problem, nGrid);
-        this.comparator = new DominanceComparator<>();
+        this.comparator = new DominanceComparator<>();        
         this.mutationOperator = (MutationOperator<S>) new PolynomialMutation();
     }
 
@@ -152,6 +153,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
      * @param solutions
      * 
      */
+    @SuppressWarnings("unchecked")
     protected void selectLeader(ArrayList<S> solutions) {
         // Select Leader with roulette
         this.selectionOperator.execute(solutions);

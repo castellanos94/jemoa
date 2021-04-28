@@ -19,7 +19,7 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
 public class BordaRanking {
-
+    @SuppressWarnings("unchecked")
     public static void main(String[] args) throws JsonSyntaxException, JsonIOException, FileNotFoundException {
         String fileName = "/home/thinkpad/Documents/jemoa/experiments/NSGA3_last/stact-result.json";
         Gson gson = new GsonBuilder().create();
