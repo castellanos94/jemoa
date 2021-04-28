@@ -6,7 +6,9 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
+import com.castellanos94.algorithms.multi.MOGWO_V;
 import com.castellanos94.algorithms.multi.MOGWO;
+
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.impl.RepairBoundary;
@@ -28,9 +30,10 @@ public class MOGWO_Experimentation {
     private static final Logger logger = LogManager.getLogger(MOGWO_Experimentation.class);
     static final int EXPERIMENT = 31;
     static int numberOfObjectives = 3;
+    private static String algorithmName = "MOGWO-V";
 
     static final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWO"
-            + File.separator + "MOGWO-V";;
+            + File.separator + algorithmName;
 
     public static void main(String[] args) throws IOException {
         new File(DIRECTORY).mkdirs();
@@ -40,7 +43,7 @@ public class MOGWO_Experimentation {
         Ranking<DoubleSolution> compartor = new DominanceComparator<>();
 
         for (int numberOfProblem = initialProblem; numberOfProblem <= endProblem; numberOfProblem++) {
-            MOGWO<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, numberOfObjectives);
+            MOGWO<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, numberOfObjectives, algorithmName);
             DTLZ problem = (DTLZ) algorithm.getProblem();
             logger.info(problem);
             logger.info(algorithm);
@@ -51,7 +54,7 @@ public class MOGWO_Experimentation {
             File subDirFile = new File(DIRECTORY, problem.getName().trim());
             subDirFile.mkdirs();
             for (int i = 0; i < EXPERIMENT; i++) {
-                algorithm = loadConfiguration(numberOfProblem, numberOfObjectives);
+                algorithm = loadConfiguration(numberOfProblem, numberOfObjectives, algorithmName);
                 algorithm.execute();
 
                 try {
@@ -62,7 +65,7 @@ public class MOGWO_Experimentation {
                 }
 
                 experimentTimeColumn.append(algorithm.getComputeTime());
-             //   logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
+                // logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
 
                 bag.addAll(algorithm.getSolutions());
             }
@@ -90,16 +93,17 @@ public class MOGWO_Experimentation {
                 strings.add(solution.toString());
 
             Files.write(f.toPath(), strings, Charset.defaultCharset());
-           if (problem.getNumberOfObjectives() == 3) {
-                Plotter plotter = new Scatter3D<>(compartor.getSubFront(0),
-                        new File(subDirFile, problem.getName() + "_MOGWO").getAbsolutePath());
-                plotter.plot();
-            }
+            /*
+             * if (problem.getNumberOfObjectives() == 3) { Plotter plotter = new
+             * Scatter3D<>(compartor.getSubFront(0), new File(subDirFile, problem.getName()
+             * + "_MOGWO").getAbsolutePath()); plotter.plot(); }
+             */
         }
 
     }
 
-    private static MOGWO<DoubleSolution> loadConfiguration(int numberOfProblem, int numberOfObjectives) {
+    private static MOGWO<DoubleSolution> loadConfiguration(int numberOfProblem, int numberOfObjectives,
+            String algorithm) {
         int maxIterations = 1000;
         DTLZ problem = null;
         int pop_size;
@@ -207,6 +211,10 @@ public class MOGWO_Experimentation {
             }
             break;
         }
+        if (algorithm.equalsIgnoreCase("mogwo-v"))
+            return new MOGWO_V<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
+
         return new MOGWO<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
+
     }
 }

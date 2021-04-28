@@ -17,7 +17,7 @@ import com.castellanos94.solutions.DoubleSolution;
 public class DTLZ7 extends DTLZ {
 
     public DTLZ7() {
-        this(3, 12);
+        this(3, 22);
     }
 
     public DTLZ7(int numberOfObjectives, int numberOfVariables) {

@@ -3,9 +3,11 @@ package com.castellanos94.algorithms.multi;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.RepairOperator;
 import com.castellanos94.operators.impl.PolynomialMutation;
+import com.castellanos94.operators.impl.SBXCrossover;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.Tools;
@@ -17,11 +19,6 @@ import com.castellanos94.utils.Tools;
  * doi:10.1016/j.eswa.2015.10.039
  */
 public class MOGWO_V<S extends DoubleSolution> extends MOGWO<S> {
-
-    /**
-     * Positions (agents) at Matlab code
-     */
-    protected ArrayList<S> wolves;
 
     /**
      * Default ArchiveSelection : CrowdingDistanceArchive
@@ -39,6 +36,7 @@ public class MOGWO_V<S extends DoubleSolution> extends MOGWO<S> {
             RepairOperator<S> repairOperator) {
         super(problem, populationSize, MAX_ITERATIONS, nGrid, repairOperator);
         this.mutationOperator = (MutationOperator<S>) new PolynomialMutation();
+        this.crossoverOperator = (CrossoverOperator<S>) new SBXCrossover();
     }
 
     @Override
@@ -105,14 +103,39 @@ public class MOGWO_V<S extends DoubleSolution> extends MOGWO<S> {
             for (S wolf : wolves) {
                 // Return back the search agents that go beyond the boundaries of the search
                 // space
-                mutationOperator.execute(wolf);
+                // mutationOperator.execute(wolf);
                 repairOperator.execute(wolf);
                 // Calculate objective function for each search agent
                 problem.evaluate(wolf);
                 problem.evaluateConstraint(wolf);
             }
+
+            // Reproction only EP
+            ArrayList<S> leaders = new ArrayList<>();
+
+            leaders.add(alphaWolf);
+            leaders.add(betaWolf);
+            leaders.add(deltaWolf);
+            leaders.add(wolves.get(Tools.getRandom().nextInt(wolves.size())));
+
+            wolves.addAll(reproduction(leaders));
+            comparator.computeRanking(wolves);
+            ArrayList<S> tmp = new ArrayList<>();
+            int indexFront = 0;
+            while (tmp.size() < populationSize) {
+                for (S wolf : comparator.getSubFront(indexFront)) {
+                    if (tmp.size()  < populationSize) {
+                        tmp.add(wolf);
+                    } else {
+                        break;
+                    }
+                }
+                indexFront++;
+            }
+            wolves = tmp;
             // Update External Archive
             this.archiveSelection.execute(wolves);
+
             updateProgress();
 
         }
@@ -133,8 +156,16 @@ public class MOGWO_V<S extends DoubleSolution> extends MOGWO<S> {
         Iterator<S> iterator = parents.iterator();
 
         // Select alfa and remove to exclude
-        alphaWolf = (S) iterator.next().copy();
-        iterator.remove();
+        if (iterator.hasNext()) {
+            alphaWolf = (S) iterator.next().copy();
+            iterator.remove();
+        } else {
+            this.selectionOperator.execute(wolves);
+            int index = 0;
+
+            alphaWolf = (S) selectionOperator.getParents().get(index++).copy();
+
+        }
 
         // Select beta and remove to exclude
 
@@ -146,11 +177,13 @@ public class MOGWO_V<S extends DoubleSolution> extends MOGWO<S> {
             betaWolf = (S) iterator.next().copy();
             iterator.remove();
         } else {
-            int index = -1;
+            S _c = null;
+            this.selectionOperator.execute(wolves);
+            int index = 0;
             do {
-                index = Tools.getRandomNumberInRange(0, wolves.size()).intValue();
-            } while (wolves.get(index).equals(alphaWolf));
-            betaWolf = (S) wolves.get(index).copy();
+                _c = selectionOperator.getParents().get(index++);
+            } while (_c.equals(alphaWolf) && index < selectionOperator.getParents().size());
+            betaWolf = (S) _c.copy();
             isBetaWolf = true;
         }
         // Select delta and remove to exclude
@@ -161,10 +194,12 @@ public class MOGWO_V<S extends DoubleSolution> extends MOGWO<S> {
             deltaWolf = (S) iterator.next().copy();
             iterator.remove();
         } else {
-            int index = -1;
+            S _c = null;
+            this.selectionOperator.execute(wolves);
+            int index = 0;
             do {
-                index = Tools.getRandomNumberInRange(0, wolves.size()).intValue();
-            } while (wolves.get(index).equals(betaWolf) || wolves.get(index).equals(alphaWolf));
+                _c = selectionOperator.getParents().get(index++);
+            } while (_c.equals(betaWolf) || _c.equals(alphaWolf) && index < selectionOperator.getParents().size());
             deltaWolf = (S) wolves.get(index).copy();
             isDeltaWolf = true;
         }
@@ -185,10 +220,23 @@ public class MOGWO_V<S extends DoubleSolution> extends MOGWO<S> {
         this.currentIteration += 1;
     }
 
-    @Deprecated
     @Override
-    protected ArrayList<S> reproduction(ArrayList<S> wolves) {
-        return null;
+    protected ArrayList<S> reproduction(ArrayList<S> parents) {
+        ArrayList<S> offspring = new ArrayList<>();
+        for (int i = 0; i < parents.size(); i++) {
+            ArrayList<S> p = new ArrayList<>();
+            p.add(parents.get(i++));
+            p.add(parents.get((i < parents.size()) ? i : 0));
+            offspring.addAll(crossoverOperator.execute(p));
+
+        }
+        for (S solution : offspring) {
+            mutationOperator.execute(solution);
+            repairOperator.execute(solution);
+            problem.evaluate(solution);
+            problem.evaluateConstraint(solution);
+        }
+        return offspring;
 
     }
 

@@ -10,7 +10,7 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.Tools;
 
-public class MOGWO_P<S extends DoubleSolution> extends MOGWO<S> {
+public class MOGWO_P<S extends DoubleSolution> extends MOGWO_V<S> {
     protected InterClassnC<S> classifier;
 
     public MOGWO_P(Problem<S> problem, int populationSize, int MAX_ITERATIONS, int nGrid,
@@ -69,11 +69,13 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO<S> {
             betaWolf = iterator.next();
             iterator.remove();
         } else {
-            int index = -1;
+            S _c = null;
+            this.selectionOperator.execute(wolves);
+            int index = 0;
             do {
-                index = Tools.getRandomNumberInRange(0, wolves.size()).intValue();
-            } while (wolves.get(index).equals(alphaWolf));
-            betaWolf = wolves.get(index);
+                _c = selectionOperator.getParents().get(index++);
+            } while (_c.equals(alphaWolf) && index < selectionOperator.getParents().size());
+            betaWolf = (S) _c.copy();
             isBetaWolf = true;
         }
         // Select delta and remove to exclude
@@ -94,11 +96,13 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO<S> {
             deltaWolf = iterator.next();
             iterator.remove();
         } else {
-            int index = -1;
+            S _c = null;
+            this.selectionOperator.execute(wolves);
+            int index = 0;
             do {
-                index = Tools.getRandomNumberInRange(0, wolves.size()).intValue();
-            } while (wolves.get(index).equals(betaWolf) || wolves.get(index).equals(alphaWolf));
-            deltaWolf = wolves.get(index);
+                _c = selectionOperator.getParents().get(index++);
+            } while (_c.equals(betaWolf) || _c.equals(alphaWolf) && index < selectionOperator.getParents().size());
+            deltaWolf = (S) wolves.get(index).copy();
             isDeltaWolf = true;
         }
 
