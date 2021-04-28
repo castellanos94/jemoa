@@ -45,7 +45,7 @@ public class AlgorithmReport_NRV {
     private static String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
     private static String NRV_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NRV" + File.separator;
     private static String MOGWOP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
-            + "MOGWOP" + File.separator;
+            + "MOGWO" + File.separator;
     private static Table stats = Table.create("statistic");
     private static StringColumn nameColumn = StringColumn.create("Problem");
     private static StringColumn metricNameColumn = StringColumn.create("Metric Name");

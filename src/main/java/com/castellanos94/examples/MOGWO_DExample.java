@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 
 public class MOGWO_DExample {
 
-    private static final Logger logger = LogManager.getLogger(MOGWOExample.class);
+    private static final Logger logger = LogManager.getLogger(MOGWO_DExample.class);
     static final String DIRECTORY = "experiments" + File.separator + "MOGWO-D";
     static final int EXPERIMENT = 31;
 

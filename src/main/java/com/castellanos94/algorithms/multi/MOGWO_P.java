@@ -27,7 +27,7 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO<S> {
         ArrayList<S> cSat = map.get(InterClassnC.SAT_CLASS_TAG);
         ArrayList<S> cDis = map.get(InterClassnC.DIS_CLASS_TAG);
         ArrayList<S> cHDis = map.get(InterClassnC.HDIS_CLASS_TAG);
-        
+
         ArrayList<S> _solutions = null;
         if (!cHSat.isEmpty()) {
             _solutions = cHSat;
@@ -49,11 +49,12 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO<S> {
 
         // Select beta and remove to exclude
         _solutions = new ArrayList<>();
-        String[] classAttribute = { "hsat", "sat", "dis", "hdis" };
+        String[] classAttribute = { InterClassnC.HSAT_CLASS_TAG, InterClassnC.SAT_CLASS_TAG, InterClassnC.DIS_CLASS_TAG,
+                InterClassnC.HDIS_CLASS_TAG };
         int indexClass = 0;
         while (_solutions.size() < 2 && indexClass < classAttribute.length) {
             for (S sol : (!parents.isEmpty()) ? parents : solutions) {
-                if (((String) sol.getAttribute(keyClass())).equalsIgnoreCase(classAttribute[indexClass])) {
+                if (((String) sol.getAttribute(InterClassnC.CLASS_KEY)).equalsIgnoreCase(classAttribute[indexClass])) {
                     if (!sol.equals(alphaWolf))
                         _solutions.add(sol);
                 }
@@ -79,7 +80,7 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO<S> {
         indexClass = 0;
         while (_solutions.size() < 3 && indexClass < classAttribute.length) {
             for (S sol : (!parents.isEmpty()) ? parents : solutions) {
-                if (((String) sol.getAttribute(keyClass())).equalsIgnoreCase(classAttribute[indexClass])) {
+                if (((String) sol.getAttribute(InterClassnC.CLASS_KEY)).equalsIgnoreCase(classAttribute[indexClass])) {
                     if (!sol.equals(alphaWolf) && !sol.equals(betaWolf))
                         _solutions.add(sol);
                 }
@@ -110,10 +111,6 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO<S> {
         if (!this.archiveSelection.getParents().contains(deltaWolf) && !isDeltaWolf)
             this.archiveSelection.getParents().add(deltaWolf);
 
-    }
-
-    protected String keyClass() {
-        return "class-nc";
     }
 
     @Override

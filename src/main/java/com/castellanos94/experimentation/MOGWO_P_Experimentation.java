@@ -1,20 +1,22 @@
-package com.castellanos94.examples;
+package com.castellanos94.experimentation;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import com.castellanos94.algorithms.multi.MOGWO;
+import com.castellanos94.algorithms.multi.MOGWO_P;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
+import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.operators.impl.RepairBoundary;
-import com.castellanos94.problems.benchmarks.dtlz.*;
+import com.castellanos94.preferences.impl.InterClassnC;
+import com.castellanos94.problems.DTLZP;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
-import com.castellanos94.utils.Plotter;
-import com.castellanos94.utils.Scatter3D;
+
 import com.castellanos94.utils.Tools;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,41 +25,42 @@ import org.apache.logging.log4j.Logger;
 import tech.tablesaw.api.LongColumn;
 import tech.tablesaw.api.Table;
 
-public class MOGWO_Experimentation {
+public class MOGWO_P_Experimentation {
 
     private static final Logger logger = LogManager.getLogger(MOGWO_Experimentation.class);
     static final int EXPERIMENT = 31;
     static int numberOfObjectives = 3;
 
-    static final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWO"+File.separator + "MOGWO-V";;
+    static final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWO"
+            + File.separator + "MOGWO-P";
 
     public static void main(String[] args) throws IOException {
         new File(DIRECTORY).mkdirs();
         int initialProblem = 1;
         int endProblem = 9;
-        Tools.setSeed(1L);
-        Ranking<DoubleSolution> compartor = new DominanceComparator<>();
-
         for (int numberOfProblem = initialProblem; numberOfProblem <= endProblem; numberOfProblem++) {
-            MOGWO<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, numberOfObjectives);
-            DTLZ problem = (DTLZ) algorithm.getProblem();
+
+            Tools.setSeed(1L);
+
+            logger.info("Experimentation MOGWO : DTLZ with preferences");
+            String resourseFile = "DTLZ_INSTANCES" + File.separator + numberOfObjectives + File.separator + "DTLZ"
+                    + numberOfProblem + "_Instance.txt";
+            DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(resourseFile).loadInstance();
+
+            MOGWO_P<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, instance);
+            DTLZP problem = (DTLZP) algorithm.getProblem();
+            String subDir = problem.getName().trim();
+
             logger.info(problem);
             logger.info(algorithm);
             ArrayList<DoubleSolution> bag = new ArrayList<>();
-            String subDir = problem.getName().trim();
+            Ranking<DoubleSolution> compartor = new DominanceComparator<>();
             LongColumn experimentTimeColumn = LongColumn.create("Experiment Time");
             Table infoTime = Table.create("time");
+            new File(DIRECTORY + File.separator + subDir).mkdirs();
             for (int i = 0; i < EXPERIMENT; i++) {
-                algorithm = loadConfiguration(numberOfProblem, numberOfObjectives);
+                algorithm = loadConfiguration(numberOfProblem, instance);
                 algorithm.execute();
-
-                try {
-                    Solution.writSolutionsToFile(DIRECTORY + File.separator + "execution_" + i,
-                            new ArrayList<>(algorithm.getSolutions()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
                 try {
                     Solution.writSolutionsToFile(
                             DIRECTORY + File.separator + subDir + File.separator + "execution_" + i,
@@ -68,11 +71,10 @@ public class MOGWO_Experimentation {
                 }
 
                 experimentTimeColumn.append(algorithm.getComputeTime());
-                logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
+                // logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
 
                 bag.addAll(algorithm.getSolutions());
             }
-
             String str = "Resume " + problem.getName();
             str += "\n" + "Total time: " + experimentTimeColumn.sum();
             str += "\n" + "Average time : " + experimentTimeColumn.mean() + " ms.";
@@ -80,7 +82,6 @@ public class MOGWO_Experimentation {
             logger.info(str);
             infoTime.addColumns(experimentTimeColumn);
             infoTime.write().csv(DIRECTORY + File.separator + subDir + File.separator + "times.csv");
-
             compartor.computeRanking(bag);
 
             logger.info("Fronts : " + compartor.getNumberOfSubFronts());
@@ -89,7 +90,7 @@ public class MOGWO_Experimentation {
             File f = new File(DIRECTORY);
             if (!f.exists())
                 f.mkdirs();
-            f = new File(DIRECTORY + File.separator + subDir + File.separator + "MOGWO_bag_" + problem.getName()
+            f = new File(DIRECTORY + File.separator + subDir + File.separator + "MOGWOP_iii_bag_" + problem.getName()
                     + "_F0_" + problem.getNumberOfObjectives());
 
             ArrayList<String> strings = new ArrayList<>();
@@ -97,112 +98,122 @@ public class MOGWO_Experimentation {
                 strings.add(solution.toString());
 
             Files.write(f.toPath(), strings, Charset.defaultCharset());
-            if (problem.getNumberOfObjectives() == 3) {
-                Plotter plotter = new Scatter3D<>(compartor.getSubFront(0),
-                        DIRECTORY + File.separator + problem.getName() + "_MOGWO");
-                plotter.plot();
+
+            f = new File(DIRECTORY + File.separator + subDir + File.separator + "Class_F0" + problem.getName()
+                    + +problem.getNumberOfObjectives() + ".out");
+            InterClassnC<DoubleSolution> classifier = new InterClassnC<>(problem);
+            HashMap<String, ArrayList<DoubleSolution>> map = classifier.classify(compartor.getSubFront(0));
+
+            logger.info(String.format("%s -> HSat : %3d, Sat : %3d, Dis : %3d, HDis : %3d", problem.getName(),
+                    map.get(InterClassnC.HSAT_CLASS_TAG).size(), map.get(InterClassnC.SAT_CLASS_TAG).size(),
+                    map.get(InterClassnC.DIS_CLASS_TAG).size(), map.get(InterClassnC.HDIS_CLASS_TAG).size()));
+            ArrayList<DoubleSolution> front = new ArrayList<>();
+            if (!map.get(InterClassnC.HSAT_CLASS_TAG).isEmpty()) {
+                front.addAll(map.get(InterClassnC.HSAT_CLASS_TAG));
             }
+            if (!map.get(InterClassnC.SAT_CLASS_TAG).isEmpty()) {
+                front.addAll(map.get(InterClassnC.SAT_CLASS_TAG));
+            }
+            if (front.isEmpty()) {
+                front.addAll(map.get(InterClassnC.DIS_CLASS_TAG));
+                front.addAll(map.get(InterClassnC.HDIS_CLASS_TAG));
+            }
+            logger.info(problem.getName() + " -> Front 0: " + front.size());
+
+            strings = new ArrayList<>();
+            for (DoubleSolution solution : front)
+                strings.add(solution.toString());
+
+            try {
+                Files.write(f.toPath(), strings, Charset.defaultCharset());
+            } catch (IOException e) {
+                logger.error(e);
+            }
+
+            Files.write(f.toPath(), strings, Charset.defaultCharset());
+
+            logger.info("End Experimentation.");
+
         }
 
     }
 
-    private static MOGWO<DoubleSolution> loadConfiguration(int numberOfProblem, int numberOfObjectives) {
+    private static MOGWO_P<DoubleSolution> loadConfiguration(int numberOfProblem, DTLZ_Instance instance) {
+        DTLZP problem = new DTLZP(numberOfProblem, instance);
         int maxIterations = 1000;
-        DTLZ problem = null;
+        int numberOfObjectives = instance.getNumObjectives();
         int pop_size;
-        if (numberOfObjectives == 3) {
+        switch (numberOfObjectives) {
+        case 3:
             pop_size = 92;
-        } else if (numberOfObjectives == 5) {
+            break;
+        case 5:
             pop_size = 212;
-        } else {
+            break;
+        case 8:
+            pop_size = 156;
+            break;
+        case 10:
             pop_size = 271;
+            break;
+        case 15:
+            pop_size = 136;
+            break;
+        default:
+            throw new IllegalArgumentException("Invalid number of objectives");
         }
         switch (numberOfProblem) {
         case 1:
             if (numberOfObjectives == 3) {
-                problem = new DTLZ1();
                 maxIterations = 400;
             } else if (numberOfObjectives == 5) {
-                problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
-
                 maxIterations = 600;
             } else if (numberOfObjectives == 8) {
-                problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
-
                 maxIterations = 750;
             } else if (numberOfObjectives == 10) {
-                problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
-
                 maxIterations = 1000;
             } else if (numberOfObjectives == 15) {
-                problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
-
                 maxIterations = 1500;
             }
             break;
         case 2:
             if (numberOfObjectives == 3) {
-                problem = new DTLZ2();
                 maxIterations = 250;
             } else if (numberOfObjectives == 5) {
-                problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
                 maxIterations = 350;
             } else if (numberOfObjectives == 8) {
-                problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
                 maxIterations = 500;
             } else if (numberOfObjectives == 10) {
-                problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
                 maxIterations = 750;
             } else if (numberOfObjectives == 15) {
-                problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
                 maxIterations = 1000;
             }
             break;
         case 3:
             if (numberOfObjectives == 3) {
-                problem = new DTLZ3();
                 maxIterations = 1000;
             } else if (numberOfObjectives == 5 || numberOfObjectives == 8) {
-                problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
                 maxIterations = 1000;
             } else if (numberOfObjectives == 10) {
-                problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
                 maxIterations = 1500;
             } else if (numberOfObjectives == 15) {
-                problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
                 maxIterations = 2000;
             }
             break;
         case 4:
             if (numberOfObjectives == 3) {
-                problem = new DTLZ4();
                 maxIterations = 600;
             } else if (numberOfObjectives == 5) {
-                problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
                 maxIterations = 1000;
             } else if (numberOfObjectives == 8) {
-                problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
                 maxIterations = 1250;
             } else if (numberOfObjectives == 10) {
-                problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
                 maxIterations = 2000;
             } else if (numberOfObjectives == 15) {
-                problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
                 maxIterations = 3000;
             }
             break;
         default:
-            if (numberOfProblem == 5) {
-                problem = new DTLZ5();
-            } else if (numberOfProblem == 6) {
-                problem = new DTLZ6();
-            } else if (numberOfProblem == 7) {
-                problem = new DTLZ7();
-            } else if (numberOfProblem == 8) {
-                problem = new DTLZ8();
-            } else {
-                problem = new DTLZ9();
-            }
             if (numberOfObjectives == 3) {
                 maxIterations = 750;
             } else if (numberOfObjectives == 5)
@@ -214,6 +225,7 @@ public class MOGWO_Experimentation {
             }
             break;
         }
-        return new MOGWO<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
+
+        return new MOGWO_P<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
     }
 }
