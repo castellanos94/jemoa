@@ -1,7 +1,9 @@
 package com.castellanos94.preferences.impl;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.instances.PSPI_Instance;
@@ -25,10 +27,45 @@ import com.castellanos94.utils.Tools;
 public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
     protected GDProblem<S> problem;
     protected S w;
+    public static String HSAT_CLASS_TAG = "_CLASS_HSAT";
+    public static String SAT_CLASS_TAG = "_CLASS_SAT";
+    public static String DIS_CLASS_TAG = "_CLASS_DIS";
+    public static String HDIS_CLASS_TAG = "_CLASS_HDIS";
 
     public InterClassnC(Problem<S> problem) {
         this.problem = (GDProblem<S>) problem;
         this.w = problem.randomSolution();
+    }
+
+    /**
+     * 
+     * @param front front to classify
+     * @return solutions
+     */
+    public HashMap<String, ArrayList<S>> classify(ArrayList<S> front) {
+        HashMap<String, ArrayList<S>> map = new HashMap<>();
+        map.put(HSAT_CLASS_TAG, new ArrayList<>());
+        map.put(SAT_CLASS_TAG, new ArrayList<>());
+        map.put(DIS_CLASS_TAG, new ArrayList<>());
+        map.put(HDIS_CLASS_TAG, new ArrayList<>());
+        for (S x : front) {
+            classify(x);
+            int[] iclass = (int[]) x.getAttribute(getAttributeKey());
+            if (iclass[0] > 0) {
+                x.setAttribute(CLASS_KEY, HSAT_CLASS_TAG);
+                map.get(HSAT_CLASS_TAG).add(x);
+            } else if (iclass[1] > 0) {
+                x.setAttribute(CLASS_KEY, SAT_CLASS_TAG);
+                map.get(SAT_CLASS_TAG).add(x);
+            } else if (iclass[2] > 0) {
+                x.setAttribute(CLASS_KEY, DIS_CLASS_TAG);
+                map.get(DIS_CLASS_TAG).add(x);
+            } else {
+                x.setAttribute(CLASS_KEY, HDIS_CLASS_TAG);
+                map.get(HDIS_CLASS_TAG).add(x);
+            }
+        }
+        return map;
     }
 
     /**

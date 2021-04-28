@@ -70,7 +70,7 @@ public class AlgorithmReport_NRV {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();
         HashMap<String, DTLZP> problems = new HashMap<>();
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
-        loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem);
+        //loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem);
         //loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem);
         loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem);
         final String LAST_DIRECTORY = MOGWOP_DIRECTORY;

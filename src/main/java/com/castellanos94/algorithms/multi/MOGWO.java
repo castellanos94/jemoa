@@ -7,8 +7,10 @@ import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.components.impl.CrowdingDistance;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.ArchiveSelection;
+import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.RepairOperator;
 import com.castellanos94.operators.impl.CrowdingDistanceArchive;
+import com.castellanos94.operators.impl.PolynomialMutation;
 import com.castellanos94.operators.impl.RouletteWheelSelection;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
@@ -33,7 +35,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
     protected CrowdingDistance<S> crowdingDistance;
     protected HeapSort<S> heapSort;
     protected DominanceComparator<S> comparator;
-
+    
     /**
      * Positions (agents) at Matlab code
      */
@@ -63,6 +65,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
         this.heapSort = new HeapSort<>(crowdingDistance.getComparator().reversed());
         this.archiveSelection = new CrowdingDistanceArchive<>(nGrid);// new AdaptiveGrid<>(problem, nGrid);
         this.comparator = new DominanceComparator<>();
+        this.mutationOperator = (MutationOperator<S>) new PolynomialMutation();
     }
 
     @Override
@@ -129,6 +132,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
             for (S wolf : wolves) {
                 // Return back the search agents that go beyond the boundaries of the search
                 // space
+                mutationOperator.execute(wolf);
                 repairOperator.execute(wolf);
                 // Calculate objective function for each search agent
                 problem.evaluate(wolf);

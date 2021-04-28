@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.castellanos94.algorithms.multi.MOGWO_P;
 import com.castellanos94.components.Ranking;
@@ -24,17 +25,18 @@ import org.apache.logging.log4j.Logger;
 import tech.tablesaw.api.LongColumn;
 import tech.tablesaw.api.Table;
 
-public class MOGWOPExample {
+public class MOGWO_PExample {
 
-    private static final Logger logger = LogManager.getLogger(MOGWOPExample.class);
-    static final String DIRECTORY = "experiments" + File.separator + "MOGWOP";
+    private static final Logger logger = LogManager.getLogger(MOGWO_PExample.class);
     static final int EXPERIMENT = 31;
+    static int numberOfObjectives = 3;
+
+    static final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWOP";
 
     public static void main(String[] args) throws IOException {
         new File(DIRECTORY).mkdirs();
         int initialProblem = 1;
         int endProblem = 9;
-        int numberOfObjectives = 3;
         for (int numberOfProblem = initialProblem; numberOfProblem <= endProblem; numberOfProblem++) {
 
             Tools.setSeed(1L);
@@ -68,7 +70,7 @@ public class MOGWOPExample {
                 }
 
                 experimentTimeColumn.append(algorithm.getComputeTime());
-               // logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
+                // logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
 
                 bag.addAll(algorithm.getSolutions());
             }
@@ -79,59 +81,45 @@ public class MOGWOPExample {
             logger.info(str);
             infoTime.addColumns(experimentTimeColumn);
             infoTime.write().csv(DIRECTORY + File.separator + subDir + File.separator + "times.csv");
-            try {
-                Solution.writSolutionsToFile(DIRECTORY + File.separator + subDir + File.separator + "MOGWOP_iii_bag_"
-                        + problem.getName() + "_F0_" + problem.getNumberOfObjectives(), new ArrayList<>(bag));
-            } catch (IOException e1) {
-                logger.error(e1);
-            }
-            compartor = new DominanceComparator<>();
             compartor.computeRanking(bag);
 
             logger.info("Fronts : " + compartor.getNumberOfSubFronts());
-            logger.info("Front 0 - Original: " + compartor.getSubFront(0).size());
+            logger.info("Front 0: " + compartor.getSubFront(0).size());
 
             File f = new File(DIRECTORY);
             if (!f.exists())
                 f.mkdirs();
+            f = new File(DIRECTORY + File.separator + subDir + File.separator + "MOGWOP_iii_bag_" + problem.getName()
+                    + "_F0_" + problem.getNumberOfObjectives());
+
+            ArrayList<String> strings = new ArrayList<>();
+            for (DoubleSolution solution : compartor.getSubFront(0))
+                strings.add(solution.toString());
+
+            Files.write(f.toPath(), strings, Charset.defaultCharset());
+
             f = new File(DIRECTORY + File.separator + subDir + File.separator + "Class_F0" + problem.getName()
                     + +problem.getNumberOfObjectives() + ".out");
             InterClassnC<DoubleSolution> classifier = new InterClassnC<>(problem);
-            ArrayList<DoubleSolution> front = new ArrayList<>();
-            ArrayList<DoubleSolution> hs = new ArrayList<>();
-            ArrayList<DoubleSolution> s = new ArrayList<>();
-            ArrayList<DoubleSolution> d = new ArrayList<>();
-            ArrayList<DoubleSolution> hd = new ArrayList<>();
-            for (DoubleSolution x : compartor.getSubFront(0)) {
-                classifier.classify(x);
-                int[] iclass = (int[]) x.getAttribute(classifier.getAttributeKey());
-                if (iclass[0] > 0) {
-                    hs.add(x);
-                } else if (iclass[1] > 0) {
-                    s.add(x);
-                } else if (iclass[2] > 0) {
-                    d.add(x);
-                } else {
-                    hd.add(x);
-                }
-            }
-            if (!hs.isEmpty()) {
-                front.addAll(hs);
-            }
-            if (!s.isEmpty()) {
-                front.addAll(s);
-            }
-            if (front.isEmpty() && !d.isEmpty()) {
-                front.addAll(d);
-            }
-            if (front.isEmpty() && !hd.isEmpty()) {
-                front.addAll(hd);
-            }
+            HashMap<String, ArrayList<DoubleSolution>> map = classifier.classify(compartor.getSubFront(0));
+
             logger.info(String.format("%s -> HSat : %3d, Sat : %3d, Dis : %3d, HDis : %3d", problem.getName(),
-                    hs.size(), s.size(), d.size(), hd.size()));
+                    map.get(InterClassnC.HSAT_CLASS_TAG).size(), map.get(InterClassnC.SAT_CLASS_TAG).size(),
+                    map.get(InterClassnC.DIS_CLASS_TAG).size(), map.get(InterClassnC.HDIS_CLASS_TAG).size()));
+            ArrayList<DoubleSolution> front = new ArrayList<>();
+            if (!map.get(InterClassnC.HSAT_CLASS_TAG).isEmpty()) {
+                front.addAll(map.get(InterClassnC.HSAT_CLASS_TAG));
+            }
+            if (!map.get(InterClassnC.SAT_CLASS_TAG).isEmpty()) {
+                front.addAll(map.get(InterClassnC.SAT_CLASS_TAG));
+            }
+            if (front.isEmpty()) {
+                front.addAll(map.get(InterClassnC.DIS_CLASS_TAG));
+                front.addAll(map.get(InterClassnC.HDIS_CLASS_TAG));
+            }
             logger.info(problem.getName() + " -> Front 0: " + front.size());
 
-            ArrayList<String> strings = new ArrayList<>();
+            strings = new ArrayList<>();
             for (DoubleSolution solution : front)
                 strings.add(solution.toString());
 

@@ -12,6 +12,7 @@ import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.impl.RepairBoundary;
 import com.castellanos94.problems.benchmarks.dtlz.*;
 import com.castellanos94.solutions.DoubleSolution;
+import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
 import com.castellanos94.utils.Scatter3D;
 import com.castellanos94.utils.Tools;
@@ -19,65 +20,88 @@ import com.castellanos94.utils.Tools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import tech.tablesaw.api.LongColumn;
+import tech.tablesaw.api.Table;
+
 public class MOGWOExample {
 
     private static final Logger logger = LogManager.getLogger(MOGWOExample.class);
-    static final String DIRECTORY = "experiments" + File.separator + "MOGWO";
     static final int EXPERIMENT = 31;
+    static int numberOfObjectives = 3;
+
+    static final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWOP";
 
     public static void main(String[] args) throws IOException {
         new File(DIRECTORY).mkdirs();
+        int initialProblem = 1;
+        int endProblem = 9;
         Tools.setSeed(1L);
-        int numberOfProblem = 7;
-        int numberOfObjectives = 3;
-        MOGWO<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, numberOfObjectives);
-        DTLZ problem = (DTLZ) algorithm.getProblem();
-        logger.info(problem);
-        logger.info(algorithm);
-        ArrayList<Long> time = new ArrayList<>();
-        ArrayList<DoubleSolution> bag = new ArrayList<>();
         Ranking<DoubleSolution> compartor = new DominanceComparator<>();
 
-        for (int i = 0; i < EXPERIMENT; i++) {
-            algorithm = loadConfiguration(numberOfProblem, numberOfObjectives);
-            algorithm.execute();
-            /*
-             * try { Solution.writSolutionsToFile(DIRECTORY + File.separator + "execution_"
-             * + i, new ArrayList<>(algorithm.getSolutions())); } catch (IOException e) {
-             * e.printStackTrace(); }
-             */
-            time.add(algorithm.getComputeTime());
-            compartor.computeRanking(algorithm.getSolutions());
-            logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
+        for (int numberOfProblem = initialProblem; numberOfProblem <= endProblem; numberOfProblem++) {
+            MOGWO<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, numberOfObjectives);
+            DTLZ problem = (DTLZ) algorithm.getProblem();
+            logger.info(problem);
+            logger.info(algorithm);
+            ArrayList<DoubleSolution> bag = new ArrayList<>();
+            String subDir = problem.getName().trim();
+            LongColumn experimentTimeColumn = LongColumn.create("Experiment Time");
+            Table infoTime = Table.create("time");
+            for (int i = 0; i < EXPERIMENT; i++) {
+                algorithm = loadConfiguration(numberOfProblem, numberOfObjectives);
+                algorithm.execute();
 
-            bag.addAll(compartor.getSubFront(0));
-        }
-        long averageTime = time.stream().mapToLong(v -> v.longValue()).sum();
-        logger.info("Resume " + problem.getName());
-        logger.info("Total time: " + averageTime);
-        logger.info("Average time : " + (double) averageTime / EXPERIMENT + " ms.");
-        logger.info("Solutions in the bag: " + bag.size());
+                try {
+                    Solution.writSolutionsToFile(DIRECTORY + File.separator + "execution_" + i,
+                            new ArrayList<>(algorithm.getSolutions()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-        compartor.computeRanking(bag);
+                try {
+                    Solution.writSolutionsToFile(
+                            DIRECTORY + File.separator + subDir + File.separator + "execution_" + i,
+                            new ArrayList<>(algorithm.getSolutions()));
 
-        logger.info("Fronts : " + compartor.getNumberOfSubFronts());
-        logger.info("Front 0: " + compartor.getSubFront(0).size());
+                } catch (IOException e) {
+                    logger.error(e);
+                }
 
-        File f = new File(DIRECTORY);
-        if (!f.exists())
-            f.mkdirs();
-        f = new File(DIRECTORY + File.separator + "MOGWO_bag_" + problem.getName() + "_F0_"
-                + problem.getNumberOfObjectives());
+                experimentTimeColumn.append(algorithm.getComputeTime());
+                logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
 
-        ArrayList<String> strings = new ArrayList<>();
-        for (DoubleSolution solution : compartor.getSubFront(0))
-            strings.add(solution.toString());
+                bag.addAll(algorithm.getSolutions());
+            }
 
-        Files.write(f.toPath(), strings, Charset.defaultCharset());
-        if (problem.getNumberOfObjectives() == 3) {
-            Plotter plotter = new Scatter3D<>(compartor.getSubFront(0),
-                    DIRECTORY + File.separator + problem.getName() + "_MOGWO");
-            plotter.plot();
+            String str = "Resume " + problem.getName();
+            str += "\n" + "Total time: " + experimentTimeColumn.sum();
+            str += "\n" + "Average time : " + experimentTimeColumn.mean() + " ms.";
+            str += "\n" + "Solutions in the bag: " + bag.size();
+            logger.info(str);
+            infoTime.addColumns(experimentTimeColumn);
+            infoTime.write().csv(DIRECTORY + File.separator + subDir + File.separator + "times.csv");
+
+            compartor.computeRanking(bag);
+
+            logger.info("Fronts : " + compartor.getNumberOfSubFronts());
+            logger.info("Front 0: " + compartor.getSubFront(0).size());
+
+            File f = new File(DIRECTORY);
+            if (!f.exists())
+                f.mkdirs();
+            f = new File(DIRECTORY + File.separator + subDir + File.separator + "MOGWO_bag_" + problem.getName()
+                    + "_F0_" + problem.getNumberOfObjectives());
+
+            ArrayList<String> strings = new ArrayList<>();
+            for (DoubleSolution solution : compartor.getSubFront(0))
+                strings.add(solution.toString());
+
+            Files.write(f.toPath(), strings, Charset.defaultCharset());
+            if (problem.getNumberOfObjectives() == 3) {
+                Plotter plotter = new Scatter3D<>(compartor.getSubFront(0),
+                        DIRECTORY + File.separator + problem.getName() + "_MOGWO");
+                plotter.plot();
+            }
         }
 
     }
