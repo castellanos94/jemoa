@@ -1,0 +1,156 @@
+package com.castellanos94.operators.impl;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+
+import com.castellanos94.components.impl.DominanceComparator;
+import com.castellanos94.datatype.Data;
+import com.castellanos94.operators.SelectionOperator;
+import com.castellanos94.problems.Problem;
+import com.castellanos94.solutions.Solution;
+import com.castellanos94.utils.ExtraInformation;
+
+/**
+ * Adaptive Grid <br>
+ * Gregorio Toscano-Pulido. «Uso de Auto-Adaptación y Elitismo para Optimización
+ * Multiobje-tivo Mediante Cúmulos de Partículas». Tesis doct. Center for
+ * Research y Advanced Studies ofthe National Polytechnic Institute, 2005.
+ * 
+ * @param <S> Solution Domain
+ */
+public class AdaptiveGrid<S extends Solution<?>> implements SelectionOperator<S>, ExtraInformation {
+    protected ArrayList<S> solutions;
+    protected int populationSize;
+    protected Comparator<S> comparator;
+    protected List<Data> idealPoint;
+    protected List<Data> nadirPoint;
+    protected List<Data> sizeDiv;
+    protected Problem<S> problem;
+
+    public AdaptiveGrid(Problem<S> problem, int populationSize, Comparator<S> comparator) {
+        this.solutions = new ArrayList<>(populationSize);
+        this.populationSize = populationSize;
+        this.comparator = comparator;
+        this.problem = problem;
+        this.idealPoint = new ArrayList<>(problem.getNumberOfObjectives());
+        this.nadirPoint = new ArrayList<>(problem.getNumberOfObjectives());
+        this.sizeDiv = new ArrayList<>(problem.getNumberOfObjectives());
+
+        for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+            this.idealPoint.add(null);
+            this.nadirPoint.add(null);
+            this.sizeDiv.add(null);
+        }
+    }
+
+    public AdaptiveGrid(Problem<S> problem, int populationSize) {
+        this(problem, populationSize, new DominanceComparator<>());
+    }
+
+    /**
+     * Add a new solution if it is non-dominated concerning the other solutions.
+     * This method also invokes the re-arrangement grid mechanism.
+     * 
+     * @param solution The solution to join the non-dominant population
+     */
+    public void addSolution(S solution) {
+        if (this.solutions.isEmpty()) {
+            this.solutions.add(solution);
+        }
+        if (this.solutions.size() + 1 < populationSize) {
+            ArrayList<S> toRemove = new ArrayList<>();
+            boolean toAdd = true;
+            for (int index = 0; index < this.solutions.size(); index++) {
+                S next = this.solutions.get(index);
+                int value = comparator.compare(solution, next);
+                if (value == 1) {
+                    toAdd = false;
+                    break;
+                } else if (value == -1) {
+                    toRemove.add(next);
+                }
+            }
+            if (!toRemove.isEmpty()) {
+                this.solutions.removeAll(toRemove);
+            }
+            if (toAdd) {
+                this.solutions.add(solution);
+            }
+        } else {
+            // Grid boundaries
+            for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+                Data min = Data.initByRefType(solutions.get(0).getObjective(i), Double.MAX_VALUE);
+                Data max = min.copy();
+                for (int j = 1; j < this.solutions.size(); j++) {
+                    Data current = this.solutions.get(j).getObjective(i);
+                    if (min.compareTo(current) > 0) {
+                        min = current;
+                    }
+                    if (max.compareTo(current) < 0) {
+                        max = current;
+                    }
+                }
+                this.idealPoint.set(i, min);
+                this.nadirPoint.set(i, max);
+                // Hypercube dimensions eq 5.3
+                this.sizeDiv.set(i, max.minus(min).div(populationSize - 1));
+            }
+            this.solutions.add(solution);
+            ArrayList<Data> locs = new ArrayList<>();
+            for (S s : solutions) {
+                locs.add(identifyLOC(s));
+            }
+            this.solutions.sort((a, b) -> {
+                Data aLoc = (Data) a.getAttribute(getAttributeKey());
+                Data bLoc = (Data) b.getAttribute(getAttributeKey());
+                return aLoc.compareTo(bLoc);
+            });
+            for (int i = this.solutions.size() - 1; i > populationSize; i--) {
+                this.solutions.remove(i);
+            }
+
+        }
+    }
+
+    /**
+     * Region identification: the region to wich the solution 's' belongs
+     * 
+     * @param solution the 's' solution
+     */
+    private Data identifyLOC(S solution) {
+        Data loc = Data.getZeroByType(idealPoint.get(0));
+        for (int objective = 0; objective < problem.getNumberOfObjectives(); objective++) {
+            loc = loc.plus(
+                    (((solution.getObjective(objective).minus(idealPoint.get(objective))).div(sizeDiv.get(objective)))
+                            .times(populationSize)));
+        }
+        solution.setAttribute(getAttributeKey(), loc);
+        return loc;
+
+    }
+
+    @Deprecated
+    @Override
+    public Void execute(ArrayList<S> source) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ArrayList<S> getParents() {
+        return this.solutions;
+    }
+
+    @Override
+    public void setPopulationSize(int size) {
+        this.populationSize = size;
+    }
+
+    @Override
+    public String getAttributeKey() {
+        return "AdaptativeGrid.LOC";
+    }
+
+}
