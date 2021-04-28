@@ -60,10 +60,8 @@ public class AdaptiveGrid<S extends Solution<?>> implements SelectionOperator<S>
         if (this.solutions.isEmpty()) {
             this.solutions.add(solution);
         }
-        if(!this.solutions.contains(solution)){
-            
-        
-        if (this.solutions.size() + 1 <= populationSize) {
+        if (!this.solutions.contains(solution)) {
+
             ArrayList<S> toRemove = new ArrayList<>();
             boolean toAdd = true;
             for (int index = 0; index < this.solutions.size(); index++) {
@@ -79,68 +77,59 @@ public class AdaptiveGrid<S extends Solution<?>> implements SelectionOperator<S>
             if (!toRemove.isEmpty()) {
                 this.solutions.removeAll(toRemove);
             }
-            if (toAdd) {
+            if (toAdd && this.solutions.size() + 1 <= populationSize) {
                 this.solutions.add(solution);
-            }
-        } else {
-            // Grid boundaries
-            for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
-                Data min = solutions.get(0).getObjective(i);
-                Data max = min.copy();
-                for (int j = 1; j < this.solutions.size(); j++) {
-                    Data current = this.solutions.get(j).getObjective(i);
-                    if (min.compareTo(current) > 0) {
-                        min = current;
+            } else if (toAdd) {
+                // Grid boundaries
+                for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+                    Data min = solutions.get(0).getObjective(i);
+                    Data max = min.copy();
+                    for (int j = 1; j < this.solutions.size(); j++) {
+                        Data current = this.solutions.get(j).getObjective(i);
+                        if (min.compareTo(current) > 0) {
+                            min = current;
+                        }
+                        if (max.compareTo(current) < 0) {
+                            max = current;
+                        }
                     }
-                    if (max.compareTo(current) < 0) {
-                        max = current;
-                    }
+                    this.idealPoint.set(i, min);
+                    this.nadirPoint.set(i, max);
+                    // Hypercube dimensions eq 5.3
+                    this.sizeDiv.set(i, max.minus(min).div(populationSize - 1));
                 }
-                this.idealPoint.set(i, min);
-                this.nadirPoint.set(i, max);
-                // Hypercube dimensions eq 5.3
-                this.sizeDiv.set(i, max.minus(min).div(populationSize - 1));
-            }
-            this.solutions.add(solution);
+                this.solutions.add(solution);
 
-            HashMap<Data, ArrayList<S>> gridMap = new HashMap<>();
-            for (S s : solutions) {
-                Data loc = identifyLOC(s);
-                if (gridMap.containsKey(loc)) {
-                    gridMap.get(loc).add(s);
-                } else {
-                    ArrayList<S> tmp = new ArrayList<>();
-                    tmp.add(s);
-                    gridMap.put(loc, tmp);
-                }
-            }
-            ArrayList<S> values = new ArrayList<>();
-            while (values.size() < populationSize) {
-                Iterator<Data> iterator = gridMap.keySet().iterator();
-                while (iterator.hasNext() && values.size() < populationSize) {
-                    Data key = iterator.next();
-                    ArrayList<S> tmp = gridMap.get(key);
-                    if (!tmp.isEmpty()) {
-                        values.add(tmp.get(0));
-                        tmp.remove(0);
-                    }
-                    if(tmp.isEmpty()){
-                        iterator.remove();
+                HashMap<Data, ArrayList<S>> gridMap = new HashMap<>();
+                for (S s : solutions) {
+                    Data loc = identifyLOC(s);
+                    if (gridMap.containsKey(loc)) {
+                        gridMap.get(loc).add(s);
+                    } else {
+                        ArrayList<S> tmp = new ArrayList<>();
+                        tmp.add(s);
+                        gridMap.put(loc, tmp);
                     }
                 }
-            }
-            this.solutions = values;
-           /* this.solutions.sort((a, b) -> {
-                Data aLoc = (Data) a.getAttribute(getAttributeKey());
-                Data bLoc = (Data) b.getAttribute(getAttributeKey());
-                return aLoc.compareTo(bLoc);
-            });
-            for (int i = this.solutions.size() - 1; i > populationSize; i--) {
-                this.solutions.remove(i);
-            }*/
+                ArrayList<S> values = new ArrayList<>();
+                while (values.size() < populationSize) {
+                    Iterator<Data> iterator = gridMap.keySet().iterator();
+                    while (iterator.hasNext() && values.size() < populationSize) {
+                        Data key = iterator.next();
+                        ArrayList<S> tmp = gridMap.get(key);
+                        if (!tmp.isEmpty()) {
+                            values.add(tmp.get(0));
+                            tmp.remove(0);
+                        }
+                        if (tmp.isEmpty()) {
+                            iterator.remove();
+                        }
+                    }
+                }
+                this.solutions = values;
 
+            }
         }
-    }
     }
 
     /**
