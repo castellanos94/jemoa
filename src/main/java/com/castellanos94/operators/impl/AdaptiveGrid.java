@@ -58,7 +58,7 @@ public class AdaptiveGrid<S extends Solution<?>> implements ArchiveSelection<S>,
      */
     public void addSolution(S solution) {
         if (this.solutions.isEmpty()) {
-            this.solutions.add(solution);
+            this.solutions.add((S) solution.copy());
         }
         if (!this.solutions.contains(solution)) {
 
@@ -78,7 +78,7 @@ public class AdaptiveGrid<S extends Solution<?>> implements ArchiveSelection<S>,
                 this.solutions.removeAll(toRemove);
             }
             if (toAdd && this.solutions.size() + 1 <= populationSize) {
-                this.solutions.add(solution);
+                this.solutions.add((S) solution.copy());
             } else if (toAdd) {
                 // Grid boundaries
                 for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
@@ -118,7 +118,7 @@ public class AdaptiveGrid<S extends Solution<?>> implements ArchiveSelection<S>,
                         Data key = iterator.next();
                         ArrayList<S> tmp = gridMap.get(key);
                         if (!tmp.isEmpty()) {
-                            values.add(tmp.get(0));
+                            values.add((S) tmp.get(0).copy());
                             tmp.remove(0);
                         }
                         if (tmp.isEmpty()) {
@@ -141,9 +141,9 @@ public class AdaptiveGrid<S extends Solution<?>> implements ArchiveSelection<S>,
         Data loc = Data.getZeroByType(idealPoint.get(0));
         for (int objective = 0; objective < problem.getNumberOfObjectives(); objective++) {
             loc = loc.plus(
-                    (((solution.getObjective(objective).minus(idealPoint.get(objective))).div(sizeDiv.get(objective)))
-                            .times(populationSize)));
+                    ((solution.getObjective(objective).minus(idealPoint.get(objective))).div(sizeDiv.get(objective))));
         }
+        loc = loc.times(populationSize);
         solution.setAttribute(getAttributeKey(), loc);
         return loc;
 

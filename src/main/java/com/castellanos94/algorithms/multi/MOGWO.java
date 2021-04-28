@@ -2,13 +2,12 @@ package com.castellanos94.algorithms.multi;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.stream.Collectors;
 
 import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.components.impl.CrowdingDistance;
 import com.castellanos94.components.impl.DominanceComparator;
+import com.castellanos94.operators.ArchiveSelection;
 import com.castellanos94.operators.RepairOperator;
-import com.castellanos94.operators.impl.AdaptiveGrid;
 import com.castellanos94.operators.impl.CrowdingDistanceArchive;
 import com.castellanos94.operators.impl.RouletteWheelSelection;
 import com.castellanos94.problems.Problem;
@@ -30,9 +29,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
     protected final int MAX_ITERATIONS;
     protected final int nGrid;
     protected RepairOperator<S> repairOperator;
-    private DominanceComparator<S> dominanceComparator = new DominanceComparator<>();
-    protected AdaptiveGrid<S> adaptiveGridArchive;
-    protected CrowdingDistanceArchive<S> crowdingDistanceArchive;
+    protected ArchiveSelection<S> archiveSelection;
     protected CrowdingDistance<S> crowdingDistance;
     protected HeapSort<S> heapSort;
     protected DominanceComparator<S> comparator;
@@ -42,6 +39,17 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
      */
     protected ArrayList<S> wolves;
 
+    /**
+     * Default ArchiveSelection
+     * 
+     * @see com.castellanos94.operators.impl.CrowdingDistanceArchive
+     * 
+     * @param problem        mop
+     * @param populationSize wolf population size
+     * @param MAX_ITERATIONS max iteration
+     * @param nGrid          external population size
+     * @param repairOperator repair operator
+     */
     public MOGWO(Problem<S> problem, int populationSize, int MAX_ITERATIONS, int nGrid,
             RepairOperator<S> repairOperator) {
         super(problem);
@@ -51,12 +59,9 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
         this.repairOperator = repairOperator;
         this.nGrid = nGrid;
         this.selectionOperator = new RouletteWheelSelection<>(nGrid);
-        this.adaptiveGridArchive = new AdaptiveGrid<>(problem, nGrid);
         this.crowdingDistance = new CrowdingDistance<>();
         this.heapSort = new HeapSort<>(crowdingDistance.getComparator().reversed());
-        // this.heapSortSolutions = new
-        // HeapSort<>(crowdingDistance.getComparator().reversed());
-        this.crowdingDistanceArchive = new CrowdingDistanceArchive<>(nGrid);
+        this.archiveSelection = new CrowdingDistanceArchive<>(nGrid);// new AdaptiveGrid<>(problem, nGrid);
         this.comparator = new DominanceComparator<>();
     }
 
@@ -67,16 +72,25 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
         this.solutions = new ArrayList<>();
         for (int i = 0; i < populationSize; i++) {
             S wolf = problem.randomSolution();
+            // Return back the search agents that go beyond the boundaries of the search
+            // space
+            repairOperator.execute(wolf);
+            // Calculate objective function for each search agent
+            problem.evaluate(wolf);
+            problem.evaluateConstraint(wolf);
             wolves.add(wolf);
         }
+
+        // Update External Archive
+        this.archiveSelection.execute(wolves);
+
         double a, r1, r2, alpha_ij, beta_ij, delta_ij, x_ij;
         double A[] = new double[3];
         double C[] = new double[3];
 
         while (!isStoppingCriteriaReached()) {
-            // calculate fitness and update alpha, beta and delta
-            updatePopulation();
-
+            // Update alpha, beta and delta
+            selectLeader(this.archiveSelection.getParents());
             // a decreases linearly fron 2 to 0
             a = 2 - currentIteration * ((2.0) / MAX_ITERATIONS);
 
@@ -94,10 +108,10 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
                     }
 
                     // Auxiliar
-                    alpha_ij = (double) alphaWolf.getVariable(j);
-                    beta_ij = (double) betaWolf.getVariable(j);
-                    delta_ij = (double) deltaWolf.getVariable(j);
-                    x_ij = (double) currentWolf.getVariable(j);
+                    alpha_ij = alphaWolf.getVariable(j);
+                    beta_ij = betaWolf.getVariable(j);
+                    delta_ij = deltaWolf.getVariable(j);
+                    x_ij = currentWolf.getVariable(j);
                     // Equation (3.5)
                     double d1 = Math.abs(C[0] * alpha_ij - x_ij);
                     double d2 = Math.abs(C[1] * beta_ij - x_ij);
@@ -110,132 +124,27 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
                     currentWolf.setVariable(j, (x1 + x2 + x3) / 3.0);
                 }
             }
+
+            // calculate fitness and update alpha, beta and delta
+            for (S wolf : wolves) {
+                // Return back the search agents that go beyond the boundaries of the search
+                // space
+                repairOperator.execute(wolf);
+                // Calculate objective function for each search agent
+                problem.evaluate(wolf);
+                problem.evaluateConstraint(wolf);
+            }
+            // Update External Archive
+            this.archiveSelection.execute(wolves);
             updateProgress();
 
         }
 
-        updatePopulation();
         computeTime = System.currentTimeMillis() - init_time;
 
         /*
          * for (S s : wolves) { if (!solutions.contains(s)) solutions.add(s); }
          */
-    }
-
-    private void updatePopulation() {
-        for (S wolf : wolves) {
-            // Return back the search agents that go beyond the boundaries of the search
-            // space
-            repairOperator.execute(wolf);
-            // Calculate objective function for each search agent
-            problem.evaluate(wolf);
-            problem.evaluateConstraint(wolf);
-        }
-        // this.adaptiveGridArchive.execute(wolves);
-        // selectLeader(this.adaptiveGridArchive.getParents());
-
-        /*if (solutions.isEmpty()) {
-            dominanceComparator.computeRanking(wolves);
-            for (S s : dominanceComparator.getSubFront(0)) {
-                if (!solutions.contains(s) && solutions.size() < this.nGrid)
-                    solutions.add(s);
-            }
-        } else {
-            for (int i = 0; i < wolves.size(); i++) {
-                Iterator<S> iterator = solutions.iterator();
-                boolean wasNonDominated = false;
-                boolean wasAdded = false;
-                int index = 0;
-                while (iterator.hasNext()) {
-                    S _solution = iterator.next();
-                    int val = dominanceComparator.compare(wolves.get(i), _solution);
-                    if (val == -1) {
-                        this.solutions.set(index, wolves.get(i));
-                        wasAdded = true;
-                    } else if (val == 1) {
-                        wasNonDominated = false;
-                        if (wasAdded)
-                            this.solutions.remove(wolves.get(i));
-                        break;
-                    }
-                    wasNonDominated = true;
-                    index++;
-                }
-                if (wasNonDominated) {
-                    boolean isNotPresent = solutions.contains(wolves.get(i)) == false;
-                    if (solutions.size() < this.nGrid && isNotPresent) {
-                        solutions.add((S) wolves.get(i).copy());
-                    } else if (isNotPresent) {
-                        this.solutions = new ArrayList<>(
-                                this.solutions.stream().distinct().collect(Collectors.toList()));
-                        ArrayList<S> tmpList = new ArrayList<>(solutions);
-                        tmpList.add(wolves.get(i));
-                        if (tmpList.size() > nGrid) { // Compute crowdingdistance
-                            crowdingDistance.compute(tmpList); // ArrayList<S> sorted =
-                           // crowdingDistance.sort(tmpList);
-                            heapSort.sort(tmpList);
-                            this.solutions = new ArrayList<>(tmpList.subList(0, this.nGrid));
-                        } else {
-                            this.solutions.add(wolves.get(i));
-                        }
-                    }
-                }
-            }
-        }*/
-
-        // Filter uniques
-        // this.solutions = new
-        // ArrayList<>(this.solutions.stream().distinct().collect(Collectors.toList()));
-        // this.crowdingDistanceArchive.execute(wolves);
-       /* if (this.solutions.isEmpty()) {
-            comparator.computeRanking(wolves);
-            for (S s : comparator.getSubFront(0)) {
-                if (!solutions.contains(s) && solutions.size() < this.populationSize)
-                    solutions.add(s);
-            }
-        } else {
-            for (int i = 0; i < wolves.size(); i++) {
-                S solution = wolves.get(i);
-                if (!this.solutions.contains(solution)) {
-                    ArrayList<S> toRemove = new ArrayList<>();
-                    boolean toAdd = true;
-                    for (int index = 0; index < this.solutions.size(); index++) {
-                        S next = this.solutions.get(index);
-                        int value = comparator.compare(solution, next);
-                        if (value == 1) {
-                            toAdd = false;
-                            break;
-                        } else if (value == -1) {
-                            toRemove.add(next);
-                        }
-                    }
-                    if (toAdd && !toRemove.isEmpty()) {
-                        this.solutions.removeAll(toRemove);
-                    }
-                    if (toAdd && this.solutions.size() + 1 <= populationSize) {
-                        this.solutions.add(solution);
-                    } else if (toAdd) {
-                        this.solutions = new ArrayList<>(
-                                this.solutions.stream().distinct().collect(Collectors.toList()));
-                        ArrayList<S> tmpList = new ArrayList<>(solutions);
-                        tmpList.add(solution);
-                        if (tmpList.size() > this.populationSize) {
-                            // Compute crowding distance
-                            crowdingDistance.compute(tmpList);
-                            // ArrayList<S> sorted = crowdingDistance.sort(tmpList);
-                            heapSort.sort(tmpList);
-                            this.solutions = new ArrayList<>(tmpList.subList(0, this.populationSize));
-                        } else {
-                            this.solutions = tmpList;
-                        }
-                    }
-                }
-            }
-        }*/
-        // Select alfa and remove to exclude
-        this.crowdingDistanceArchive.execute(wolves);
-     selectLeader(this.crowdingDistanceArchive.getParents());
-    //    selectLeader(solutions);
     }
 
     /**
@@ -289,21 +198,12 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
 
         // add back alpha, beta and deta to the archive
 
-        
-          if (!this.crowdingDistanceArchive.getParents().contains(alphaWolf))
-          this.crowdingDistanceArchive.getParents().add(alphaWolf); if
-          (!this.crowdingDistanceArchive.getParents().contains(betaWolf) &&
-          !isBetaWolf) this.crowdingDistanceArchive.getParents().add(betaWolf); if
-          (!this.crowdingDistanceArchive.getParents().contains(deltaWolf) &&
-          !isDeltaWolf) this.crowdingDistanceArchive.getParents().add(deltaWolf);
-         
-
-       /* if (!this.solutions.contains(alphaWolf))
-            this.solutions.add(alphaWolf);
-        if (!this.solutions.contains(betaWolf) && !isBetaWolf)
-            this.solutions.add(betaWolf);
-        if (!this.solutions.contains(deltaWolf) && !isDeltaWolf)
-            this.solutions.add(deltaWolf);*/
+        if (!this.archiveSelection.getParents().contains(alphaWolf))
+            this.archiveSelection.getParents().add(alphaWolf);
+        if (!this.archiveSelection.getParents().contains(betaWolf) && !isBetaWolf)
+            this.archiveSelection.getParents().add(betaWolf);
+        if (!this.archiveSelection.getParents().contains(deltaWolf) && !isDeltaWolf)
+            this.archiveSelection.getParents().add(deltaWolf);
 
     }
 
@@ -314,11 +214,11 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
 
     @Deprecated
     @Override
-    protected ArrayList<S> reproduction(ArrayList<S> parents) {
+    protected ArrayList<S> reproduction(ArrayList<S> wolves) {
         return null;
+
     }
 
-    @Deprecated
     @Override
     protected ArrayList<S> replacement(ArrayList<S> population, ArrayList<S> offspring) {
         return null;
@@ -337,11 +237,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
 
     @Override
     public ArrayList<S> getSolutions() {
-        this.dominanceComparator = new DominanceComparator<>();
-         this.solutions = this.crowdingDistanceArchive.getParents();
-        this.dominanceComparator.computeRanking(this.solutions);
-        this.solutions = this.dominanceComparator.getSubFront(0);
-        return this.solutions;
+        return this.archiveSelection.getParents();
     }
 
 }

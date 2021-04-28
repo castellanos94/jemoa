@@ -121,10 +121,6 @@ public class CrowdingDistanceArchive<S extends Solution<?>> implements ArchiveSe
                 addSolution(source.get(i));
             }
         }
-
-        // Filter uniques
-        // this.solutions = new
-        // ArrayList<>(this.solutions.stream().distinct().collect(Collectors.toList()));
         return null;
     }
 
