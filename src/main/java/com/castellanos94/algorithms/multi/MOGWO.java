@@ -40,7 +40,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
     protected ArrayList<S> wolves;
 
     /**
-     * Default ArchiveSelection
+     * Default ArchiveSelection : CrowdingDistanceArchive
      * 
      * @see com.castellanos94.operators.impl.CrowdingDistanceArchive
      * 
@@ -139,12 +139,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
             updateProgress();
 
         }
-
         computeTime = System.currentTimeMillis() - init_time;
-
-        /*
-         * for (S s : wolves) { if (!solutions.contains(s)) solutions.add(s); }
-         */
     }
 
     /**
