@@ -135,6 +135,9 @@ public class MOGWO_V<S extends DoubleSolution> extends MOGWO<S> {
             wolves = tmp;
             // Update External Archive
             this.archiveSelection.execute(wolves);
+            //comparator.computeRanking(reproduction(this.archiveSelection.getParents()));
+
+            //this.archiveSelection.execute(comparator.getSubFront(0));
 
             updateProgress();
 
