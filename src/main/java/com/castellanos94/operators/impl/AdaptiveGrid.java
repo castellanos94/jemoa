@@ -3,6 +3,7 @@ package com.castellanos94.operators.impl;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import com.castellanos94.components.impl.DominanceComparator;
@@ -59,7 +60,10 @@ public class AdaptiveGrid<S extends Solution<?>> implements SelectionOperator<S>
         if (this.solutions.isEmpty()) {
             this.solutions.add(solution);
         }
-        if (this.solutions.size() + 1 < populationSize) {
+        if(!this.solutions.contains(solution)){
+            
+        
+        if (this.solutions.size() + 1 <= populationSize) {
             ArrayList<S> toRemove = new ArrayList<>();
             boolean toAdd = true;
             for (int index = 0; index < this.solutions.size(); index++) {
@@ -81,7 +85,7 @@ public class AdaptiveGrid<S extends Solution<?>> implements SelectionOperator<S>
         } else {
             // Grid boundaries
             for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
-                Data min = Data.initByRefType(solutions.get(0).getObjective(i), Double.MAX_VALUE);
+                Data min = solutions.get(0).getObjective(i);
                 Data max = min.copy();
                 for (int j = 1; j < this.solutions.size(); j++) {
                     Data current = this.solutions.get(j).getObjective(i);
@@ -98,20 +102,45 @@ public class AdaptiveGrid<S extends Solution<?>> implements SelectionOperator<S>
                 this.sizeDiv.set(i, max.minus(min).div(populationSize - 1));
             }
             this.solutions.add(solution);
-            ArrayList<Data> locs = new ArrayList<>();
+
+            HashMap<Data, ArrayList<S>> gridMap = new HashMap<>();
             for (S s : solutions) {
-                locs.add(identifyLOC(s));
+                Data loc = identifyLOC(s);
+                if (gridMap.containsKey(loc)) {
+                    gridMap.get(loc).add(s);
+                } else {
+                    ArrayList<S> tmp = new ArrayList<>();
+                    tmp.add(s);
+                    gridMap.put(loc, tmp);
+                }
             }
-            this.solutions.sort((a, b) -> {
+            ArrayList<S> values = new ArrayList<>();
+            while (values.size() < populationSize) {
+                Iterator<Data> iterator = gridMap.keySet().iterator();
+                while (iterator.hasNext() && values.size() < populationSize) {
+                    Data key = iterator.next();
+                    ArrayList<S> tmp = gridMap.get(key);
+                    if (!tmp.isEmpty()) {
+                        values.add(tmp.get(0));
+                        tmp.remove(0);
+                    }
+                    if(tmp.isEmpty()){
+                        iterator.remove();
+                    }
+                }
+            }
+            this.solutions = values;
+           /* this.solutions.sort((a, b) -> {
                 Data aLoc = (Data) a.getAttribute(getAttributeKey());
                 Data bLoc = (Data) b.getAttribute(getAttributeKey());
                 return aLoc.compareTo(bLoc);
             });
             for (int i = this.solutions.size() - 1; i > populationSize; i--) {
                 this.solutions.remove(i);
-            }
+            }*/
 
         }
+    }
     }
 
     /**
@@ -131,10 +160,11 @@ public class AdaptiveGrid<S extends Solution<?>> implements SelectionOperator<S>
 
     }
 
-    @Deprecated
     @Override
     public Void execute(ArrayList<S> source) {
-        // TODO Auto-generated method stub
+        for (S s : source) {
+            addSolution(s);
+        }
         return null;
     }
 

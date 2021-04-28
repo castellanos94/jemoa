@@ -28,7 +28,7 @@ public class MOGWOExample {
     public static void main(String[] args) throws IOException {
         new File(DIRECTORY).mkdirs();
         Tools.setSeed(1L);
-        int numberOfProblem = 9;
+        int numberOfProblem = 7;
         int numberOfObjectives = 3;
         MOGWO<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, numberOfObjectives);
         DTLZ problem = (DTLZ) algorithm.getProblem();
