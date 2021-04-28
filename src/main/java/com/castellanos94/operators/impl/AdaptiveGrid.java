@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.Data;
-import com.castellanos94.operators.SelectionOperator;
+import com.castellanos94.operators.ArchiveSelection;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.ExtraInformation;
@@ -21,7 +21,7 @@ import com.castellanos94.utils.ExtraInformation;
  * 
  * @param <S> Solution Domain
  */
-public class AdaptiveGrid<S extends Solution<?>> implements SelectionOperator<S>, ExtraInformation {
+public class AdaptiveGrid<S extends Solution<?>> implements ArchiveSelection<S>, ExtraInformation {
     protected ArrayList<S> solutions;
     protected int populationSize;
     protected Comparator<S> comparator;
