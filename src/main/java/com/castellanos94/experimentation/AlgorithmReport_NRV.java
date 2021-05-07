@@ -43,7 +43,8 @@ public class AlgorithmReport_NRV {
     // private static String algorithmName = File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
     private static String DIRECTORY = "experiments" + File.separator + algorithmName + File.separator;
-    private static String NRV_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NRV" + File.separator;
+    private static String NRV_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NRV"
+            + File.separator;
     private static String MOGWOP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
             + "MOGWO" + File.separator;
     private static Table stats = Table.create("statistic");
@@ -71,8 +72,9 @@ public class AlgorithmReport_NRV {
         HashMap<String, DTLZP> problems = new HashMap<>();
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
         //loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem);
-        //loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem);
-        loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem);
+        // loadSolutionExperiment(NRV_DIRECTORY, problems, roi,
+        // globalSolutionByProblem);
+         loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem);
         final String LAST_DIRECTORY = MOGWOP_DIRECTORY;
         // make hsat roi for problem
         System.out.println("Make roi preferences");
@@ -466,7 +468,6 @@ public class AlgorithmReport_NRV {
                                 }
                             } else {
                                 solutionFromProblem.add(loadExternalSolutions(currentProblem, executions));
-
                             }
 
                         }

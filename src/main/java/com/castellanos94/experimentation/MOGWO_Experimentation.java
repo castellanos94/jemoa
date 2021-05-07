@@ -15,8 +15,7 @@ import com.castellanos94.operators.impl.RepairBoundary;
 import com.castellanos94.problems.benchmarks.dtlz.*;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
-import com.castellanos94.utils.Plotter;
-import com.castellanos94.utils.Scatter3D;
+
 import com.castellanos94.utils.Tools;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +29,7 @@ public class MOGWO_Experimentation {
     private static final Logger logger = LogManager.getLogger(MOGWO_Experimentation.class);
     static final int EXPERIMENT = 31;
     static int numberOfObjectives = 3;
-    private static String algorithmName = "MOGWO-V";
+    private static String algorithmName = "MOGWO";
 
     static final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWO"
             + File.separator + algorithmName;

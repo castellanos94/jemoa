@@ -6,6 +6,7 @@ import java.util.Iterator;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.RepairOperator;
+import com.castellanos94.operators.impl.CrowdingDistanceArchive;
 import com.castellanos94.operators.impl.PolynomialMutation;
 import com.castellanos94.operators.impl.SBXCrossover;
 import com.castellanos94.problems.Problem;
@@ -37,6 +38,7 @@ public class MOGWO_V<S extends DoubleSolution> extends MOGWO<S> {
         super(problem, populationSize, MAX_ITERATIONS, nGrid, repairOperator);
         this.mutationOperator = (MutationOperator<S>) new PolynomialMutation();
         this.crossoverOperator = (CrossoverOperator<S>) new SBXCrossover();
+        this.archiveSelection = new CrowdingDistanceArchive<>(nGrid);
     }
 
     @Override
@@ -124,7 +126,7 @@ public class MOGWO_V<S extends DoubleSolution> extends MOGWO<S> {
             int indexFront = 0;
             while (tmp.size() < populationSize) {
                 for (S wolf : comparator.getSubFront(indexFront)) {
-                    if (tmp.size()  < populationSize) {
+                    if (tmp.size() < populationSize) {
                         tmp.add(wolf);
                     } else {
                         break;
@@ -135,9 +137,9 @@ public class MOGWO_V<S extends DoubleSolution> extends MOGWO<S> {
             wolves = tmp;
             // Update External Archive
             this.archiveSelection.execute(wolves);
-            //comparator.computeRanking(reproduction(this.archiveSelection.getParents()));
+            // comparator.computeRanking(reproduction(this.archiveSelection.getParents()));
 
-            //this.archiveSelection.execute(comparator.getSubFront(0));
+            // this.archiveSelection.execute(comparator.getSubFront(0));
 
             updateProgress();
 

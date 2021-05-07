@@ -8,7 +8,6 @@ import com.castellanos94.operators.RepairOperator;
 import com.castellanos94.preferences.impl.InterClassnC;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
-import com.castellanos94.utils.Tools;
 
 public class MOGWO_P<S extends DoubleSolution> extends MOGWO_V<S> {
     protected InterClassnC<S> classifier;

@@ -7,7 +7,7 @@ import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.ArchiveSelection;
 import com.castellanos94.operators.RepairOperator;
-import com.castellanos94.operators.impl.CrowdingDistanceArchive;
+import com.castellanos94.operators.impl.AdaptiveGrid;
 import com.castellanos94.operators.impl.RouletteWheelSelection;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
@@ -36,9 +36,9 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
     protected ArrayList<S> wolves;
 
     /**
-     * Default ArchiveSelection : CrowdingDistanceArchive
+     * Default ArchiveSelection : AdaptiveGrid
      * 
-     * @see com.castellanos94.operators.impl.CrowdingDistanceArchive
+     * @see com.castellanos94.operators.impl.AdaptiveGrid
      * 
      * @param problem        mop
      * @param populationSize wolf population size
@@ -55,7 +55,8 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
         this.repairOperator = repairOperator;
         this.nGrid = nGrid;
         this.selectionOperator = new RouletteWheelSelection<>(nGrid);
-        this.archiveSelection = new CrowdingDistanceArchive<>(nGrid);// new AdaptiveGrid<>(problem, nGrid);
+        this.archiveSelection = new AdaptiveGrid<>(problem, nGrid);// new CrowdingDistanceArchive<>(nGrid);// new
+                                                                   // AdaptiveGrid<>(problem, nGrid);
         this.comparator = new DominanceComparator<>();
     }
 
