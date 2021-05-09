@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.castellanos94.datatype.Data;
-import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.datatype.Trapezoidal;
 import com.castellanos94.instances.TRI_PSP_Instance;
 import com.castellanos94.solutions.BinarySolution;
@@ -91,7 +90,7 @@ public class PSP_TRI extends Problem<BinarySolution> {
                 regionSum[region] = regionSum[region].plus(projects[i][0]);
             }
         }
-        Data penaltie = new IntegerData(0);
+        Data penaltie = new Trapezoidal(0, 0, 0, 0);
         int penalties = 0;
 
         if (current_budget.compareTo(budget) > 0) {

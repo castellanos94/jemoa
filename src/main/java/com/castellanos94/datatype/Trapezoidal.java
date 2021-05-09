@@ -44,12 +44,12 @@ public class Trapezoidal extends FuzzyNumber {
      */
     @Override
     public int compareTo(Number b) {
-        double gmi_a = GMI(this);
+        double gmi_a = GMIR(this);
         double gmi_b;
         if (b instanceof Trapezoidal) {
-            gmi_b = GMI((Trapezoidal) b);
+            gmi_b = GMIR((Trapezoidal) b);
         } else {
-            gmi_b = GMI(new Trapezoidal(b.doubleValue(), b.doubleValue(), b.doubleValue(), b.doubleValue()));
+            gmi_b = GMIR(new Trapezoidal(b.doubleValue(), b.doubleValue(), b.doubleValue(), b.doubleValue()));
         }
         if (gmi_a < gmi_b) {
             return -1;
@@ -61,13 +61,13 @@ public class Trapezoidal extends FuzzyNumber {
     }
 
     /**
-     * Graded Mean Integration is a method of comparing two fuzzy numbers. The
-     * number with higher defuzzified value is larger
+     * Graded Mean Integration Representation is a method of comparing two fuzzy
+     * numbers. The number with higher defuzzified value is larger
      * 
      * @param value trapezoidal number
      * @return the gmi value
      */
-    public static double GMI(Trapezoidal value) {
+    public static double GMIR(Trapezoidal value) {
         return (3 * value.getA() + 3 * value.getB() + value.getD() - value.getC()) / 6.0;
     }
 
@@ -180,4 +180,32 @@ public class Trapezoidal extends FuzzyNumber {
         return d;
     }
 
+    @Override
+    public int intValue() {
+        if (a == b && b == c && c == d) {
+            return (int) a;
+        }
+        throw new IllegalArgumentException("The propierties must be equals");
+    }
+
+    /**
+     * This using GMI by Ranking of LR type fuzzy numbers. <br>
+     * Chen, S.-H., & Wang, C.-C. (2009). Fuzzy distance using fuzzy absolute value.
+     * 2009 International Conference on Machine Learning and Cybernetics.
+     * doi:10.1109/icmlc.2009.5212628
+     */
+    @Override
+    public Data abs() {
+        double gmir = Trapezoidal.GMIR(this);
+        if (gmir < 0) {
+            Trapezoidal img = new Trapezoidal(-a, -b, -c, -d);
+            return img;
+        }
+        return new RealData(gmir);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%d %d %d %d", a, b, c, d);
+    }
 }

@@ -195,7 +195,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
     public Data perpendicularDistance(List<Data> direction, ArrayList<Data> point) {
         Data numerator = ZERO_VALUE, denominator = ZERO_VALUE;
         for (int i = 0; i < direction.size(); i += 1) {
-            numerator = numerator.plus(direction.get(i).times(point.get(i)));
+            numerator = numerator.plus( point.get(i).times(direction.get(i)));//.get(i).times(point.get(i)));
             denominator = denominator.plus(direction.get(i).pow(2));
             
         }
@@ -203,7 +203,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
 
         Data d = ZERO_VALUE;
         for (int i = 0; i < direction.size(); i += 1) {
-            d = d.plus(k.times(direction.get(i).minus(point.get(i)).pow(2)));
+            d = d.plus(k.times(Data.initByRefType(point.get(i), direction.get(i)).minus(point.get(i)).pow(2)));
         }
         return d.sqrt();
     }

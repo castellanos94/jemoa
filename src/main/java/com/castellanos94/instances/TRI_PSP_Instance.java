@@ -85,7 +85,7 @@ public class TRI_PSP_Instance extends Instance {
         }
         // Read projects [cost, area, region, obj_1, ..., obj_n]
         Integer numberOfProjects = Integer.parseInt(this.readNextDataLine(in)[0]);
-        Trapezoidal[][] projects = new Trapezoidal[numberOfRegions][1 + 1 + 1 + numberOfObjectives];
+        Trapezoidal[][] projects = new Trapezoidal[numberOfProjects][1 + 1 + 1 + numberOfObjectives];
 
         for (int i = 0; i < numberOfProjects; i++) {
             data = this.readNextDataLine(in);
