@@ -148,4 +148,11 @@ public class PSP_TRI extends Problem<BinarySolution> {
     public TRI_PSP_Instance getInstance() {
         return (TRI_PSP_Instance) super.getInstance();
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s : number of objectives = %3d, number of projects = %3d, budget = %s", name,
+                numberOfObjectives, numberOfDecisionVars, getInstance().getBudget().toString());
+    }
+
 }
