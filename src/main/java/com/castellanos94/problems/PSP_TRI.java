@@ -64,7 +64,7 @@ public class PSP_TRI extends Problem<BinarySolution> {
 
     @Override
     public void evaluateConstraint(BinarySolution solution) {
-        Data budget = instance.getData("budget");
+        Data budget = getInstance().getBudget();
         Data current_budget = new Trapezoidal(0, 0, 0, 0);
         Data[][] projects = getInstance().getProjects();
 
