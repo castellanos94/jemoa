@@ -47,6 +47,8 @@ public class AlgorithmReport_NRV {
             + File.separator;
     private static String MOGWOP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
             + "MOGWO" + File.separator;
+    private static String NEO_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NEO"
+            + File.separator;
     private static Table stats = Table.create("statistic");
     private static StringColumn nameColumn = StringColumn.create("Problem");
     private static StringColumn metricNameColumn = StringColumn.create("Metric Name");
@@ -71,10 +73,10 @@ public class AlgorithmReport_NRV {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();
         HashMap<String, DTLZP> problems = new HashMap<>();
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
-        //loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem);
+        // loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem);
         // loadSolutionExperiment(NRV_DIRECTORY, problems, roi,
         // globalSolutionByProblem);
-         loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem);
+        loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem);
         final String LAST_DIRECTORY = MOGWOP_DIRECTORY;
         // make hsat roi for problem
         System.out.println("Make roi preferences");
@@ -1038,35 +1040,39 @@ public class AlgorithmReport_NRV {
         DTLZ_Instance instance = null;
         String path = null;
         int numberOfProblem = -1;
+        if (name.endsWith("_P")) {
+            name = name.replace("_P", "");
+        }
         System.out.println(name);
+
         switch (name) {
-        case "DTLZ1":
-            numberOfProblem = 1;
-            break;
-        case "DTLZ2":
-            numberOfProblem = 2;
-            break;
-        case "DTLZ3":
-            numberOfProblem = 3;
-            break;
-        case "DTLZ4":
-            numberOfProblem = 4;
-            break;
-        case "DTLZ5":
-            numberOfProblem = 5;
-            break;
-        case "DTLZ6":
-            numberOfProblem = 6;
-            break;
-        case "DTLZ7":
-            numberOfProblem = 7;
-            break;
-        case "DTLZ8":
-            numberOfProblem = 8;
-            break;
-        case "DTLZ9":
-            numberOfProblem = 9;
-            break;
+            case "DTLZ1":
+                numberOfProblem = 1;
+                break;
+            case "DTLZ2":
+                numberOfProblem = 2;
+                break;
+            case "DTLZ3":
+                numberOfProblem = 3;
+                break;
+            case "DTLZ4":
+                numberOfProblem = 4;
+                break;
+            case "DTLZ5":
+                numberOfProblem = 5;
+                break;
+            case "DTLZ6":
+                numberOfProblem = 6;
+                break;
+            case "DTLZ7":
+                numberOfProblem = 7;
+                break;
+            case "DTLZ8":
+                numberOfProblem = 8;
+                break;
+            case "DTLZ9":
+                numberOfProblem = 9;
+                break;
 
         }
         path = "DTLZ_INSTANCES" + File.separator + numberOfObjectives + File.separator + "DTLZ" + numberOfProblem

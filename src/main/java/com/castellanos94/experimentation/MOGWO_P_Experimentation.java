@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.castellanos94.algorithms.multi.MOGWO_P;
+import com.castellanos94.algorithms.multi.MOGWO_PFN;
+import com.castellanos94.algorithms.multi.MOGWO_V;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.instances.DTLZ_Instance;
@@ -30,9 +32,10 @@ public class MOGWO_P_Experimentation {
     private static final Logger logger = LogManager.getLogger(MOGWO_Experimentation.class);
     static final int EXPERIMENT = 31;
     static int numberOfObjectives = 3;
+    private static String algorithmName = "MOGWO-PFN";
 
     static final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWO"
-            + File.separator + "MOGWO-P";
+            + File.separator + algorithmName;
 
     public static void main(String[] args) throws IOException {
         new File(DIRECTORY).mkdirs();
@@ -47,7 +50,7 @@ public class MOGWO_P_Experimentation {
                     + numberOfProblem + "_Instance.txt";
             DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(resourseFile).loadInstance();
 
-            MOGWO_P<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, instance);
+            MOGWO_V<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, instance, algorithmName);
             DTLZP problem = (DTLZP) algorithm.getProblem();
             String subDir = problem.getName().trim();
 
@@ -59,7 +62,7 @@ public class MOGWO_P_Experimentation {
             Table infoTime = Table.create("time");
             new File(DIRECTORY + File.separator + subDir).mkdirs();
             for (int i = 0; i < EXPERIMENT; i++) {
-                algorithm = loadConfiguration(numberOfProblem, instance);
+                algorithm = loadConfiguration(numberOfProblem, instance, algorithmName);
                 algorithm.execute();
                 try {
                     Solution.writSolutionsToFile(
@@ -138,94 +141,99 @@ public class MOGWO_P_Experimentation {
 
     }
 
-    private static MOGWO_P<DoubleSolution> loadConfiguration(int numberOfProblem, DTLZ_Instance instance) {
+    private static MOGWO_V<DoubleSolution> loadConfiguration(int numberOfProblem, DTLZ_Instance instance,
+            String algorithm) {
         DTLZP problem = new DTLZP(numberOfProblem, instance);
         int maxIterations = 1000;
         int numberOfObjectives = instance.getNumObjectives();
         int pop_size;
         switch (numberOfObjectives) {
-        case 3:
-            pop_size = 92;
-            break;
-        case 5:
-            pop_size = 212;
-            break;
-        case 8:
-            pop_size = 156;
-            break;
-        case 10:
-            pop_size = 271;
-            break;
-        case 15:
-            pop_size = 136;
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid number of objectives");
+            case 3:
+                pop_size = 92;
+                break;
+            case 5:
+                pop_size = 212;
+                break;
+            case 8:
+                pop_size = 156;
+                break;
+            case 10:
+                pop_size = 271;
+                break;
+            case 15:
+                pop_size = 136;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid number of objectives");
         }
         switch (numberOfProblem) {
-        case 1:
-            if (numberOfObjectives == 3) {
-                maxIterations = 400;
-            } else if (numberOfObjectives == 5) {
-                maxIterations = 600;
-            } else if (numberOfObjectives == 8) {
-                maxIterations = 750;
-            } else if (numberOfObjectives == 10) {
-                maxIterations = 1000;
-            } else if (numberOfObjectives == 15) {
-                maxIterations = 1500;
-            }
-            break;
-        case 2:
-            if (numberOfObjectives == 3) {
-                maxIterations = 250;
-            } else if (numberOfObjectives == 5) {
-                maxIterations = 350;
-            } else if (numberOfObjectives == 8) {
-                maxIterations = 500;
-            } else if (numberOfObjectives == 10) {
-                maxIterations = 750;
-            } else if (numberOfObjectives == 15) {
-                maxIterations = 1000;
-            }
-            break;
-        case 3:
-            if (numberOfObjectives == 3) {
-                maxIterations = 1000;
-            } else if (numberOfObjectives == 5 || numberOfObjectives == 8) {
-                maxIterations = 1000;
-            } else if (numberOfObjectives == 10) {
-                maxIterations = 1500;
-            } else if (numberOfObjectives == 15) {
-                maxIterations = 2000;
-            }
-            break;
-        case 4:
-            if (numberOfObjectives == 3) {
-                maxIterations = 600;
-            } else if (numberOfObjectives == 5) {
-                maxIterations = 1000;
-            } else if (numberOfObjectives == 8) {
-                maxIterations = 1250;
-            } else if (numberOfObjectives == 10) {
-                maxIterations = 2000;
-            } else if (numberOfObjectives == 15) {
-                maxIterations = 3000;
-            }
-            break;
-        default:
-            if (numberOfObjectives == 3) {
-                maxIterations = 750;
-            } else if (numberOfObjectives == 5)
-                maxIterations = 1000;
-            else if (numberOfObjectives == 8)
-                maxIterations = 1250;
-            else {
-                maxIterations = 1500;
-            }
-            break;
+            case 1:
+                if (numberOfObjectives == 3) {
+                    maxIterations = 400;
+                } else if (numberOfObjectives == 5) {
+                    maxIterations = 600;
+                } else if (numberOfObjectives == 8) {
+                    maxIterations = 750;
+                } else if (numberOfObjectives == 10) {
+                    maxIterations = 1000;
+                } else if (numberOfObjectives == 15) {
+                    maxIterations = 1500;
+                }
+                break;
+            case 2:
+                if (numberOfObjectives == 3) {
+                    maxIterations = 250;
+                } else if (numberOfObjectives == 5) {
+                    maxIterations = 350;
+                } else if (numberOfObjectives == 8) {
+                    maxIterations = 500;
+                } else if (numberOfObjectives == 10) {
+                    maxIterations = 750;
+                } else if (numberOfObjectives == 15) {
+                    maxIterations = 1000;
+                }
+                break;
+            case 3:
+                if (numberOfObjectives == 3) {
+                    maxIterations = 1000;
+                } else if (numberOfObjectives == 5 || numberOfObjectives == 8) {
+                    maxIterations = 1000;
+                } else if (numberOfObjectives == 10) {
+                    maxIterations = 1500;
+                } else if (numberOfObjectives == 15) {
+                    maxIterations = 2000;
+                }
+                break;
+            case 4:
+                if (numberOfObjectives == 3) {
+                    maxIterations = 600;
+                } else if (numberOfObjectives == 5) {
+                    maxIterations = 1000;
+                } else if (numberOfObjectives == 8) {
+                    maxIterations = 1250;
+                } else if (numberOfObjectives == 10) {
+                    maxIterations = 2000;
+                } else if (numberOfObjectives == 15) {
+                    maxIterations = 3000;
+                }
+                break;
+            default:
+                if (numberOfObjectives == 3) {
+                    maxIterations = 750;
+                } else if (numberOfObjectives == 5)
+                    maxIterations = 1000;
+                else if (numberOfObjectives == 8)
+                    maxIterations = 1250;
+                else {
+                    maxIterations = 1500;
+                }
+                break;
         }
+        if (algorithm.equalsIgnoreCase("mogwo_p")) {
+            return new MOGWO_P<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
 
-        return new MOGWO_P<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
+        }
+        return new MOGWO_PFN<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
+
     }
 }
