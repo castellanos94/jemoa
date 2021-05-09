@@ -38,19 +38,15 @@ public class PSP extends Problem<BinarySolution> {
             objs[i] = new IntegerData(0);
         }
         Data[][] projects = instance.getDataMatrix("projects");
+        Data current_budget = new IntegerData(0);
 
         for (int i = 0; i < solution.getVariables().size(); i++) {
             if (solution.getVariable(0).get(i)) {
-                // if (solution.getVariables().get(i).compareTo(1) == 0) {
-                // current_budget = (IntegerData) current_budget.addition(projects[i][0]);
+                current_budget = current_budget.plus(projects[i][0]);
                 for (int j = 0; j < numberOfObjectives; j++) {
                     objs[j] = objs[j].plus(projects[i][3 + j]);
                 }
             }
-        }
-        Data current_budget = objs[0];
-        for (int i = 1; i < objs.length; i++) {
-            current_budget = current_budget.plus(objs[i]);
         }
         solution.setResource(0, current_budget);
         solution.setObjectives(new ArrayList<>(Arrays.asList(objs)));
@@ -126,13 +122,8 @@ public class PSP extends Problem<BinarySolution> {
         for (int i = 0; i < positions.size(); i++) {
             if (Tools.getRandom().nextDouble() < 0.5
                     && projects[positions.get(i)][0].plus(current_budget).compareTo(budget) <= 0) {
-                // sol.setVariables(positions.get(i), new IntegerData(1));
                 sol.getVariable(0).set(positions.get(i));
                 current_budget = (IntegerData) current_budget.plus(projects[positions.get(i)][0]);
-                /*
-                 * for (int j = 0; j < nObjectives ;j++) { objs[j] = (RealData)
-                 * objs[j].addition(projects[positions.get(i)][3 + j]); }
-                 */
             }
         }
         sol.setResource(0, current_budget);
