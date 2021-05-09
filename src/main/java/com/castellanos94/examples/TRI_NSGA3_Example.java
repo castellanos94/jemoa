@@ -27,18 +27,14 @@ import com.castellanos94.utils.Tools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * 36126.16 dtlz2 34126.96 ms dtlz3 30877.86 ms dtlz4 34637.68 ms dtlz5 25228.0
- * ms dtlz6 33271.8 ms dtlz7
- */
 public class TRI_NSGA3_Example {
     private static final Logger logger = LogManager.getLogger(TRI_NSGA3_Example.class);
     static final String DIRECTORY = "experiments" + File.separator + "TRI_NSGA3_Example";
-    static final int EXPERIMENT = 1;
+    static final int EXPERIMENT = 31;
 
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
         new File(DIRECTORY).mkdirs();
-        Tools.setSeed(1l);
+        Tools.setSeed(8435l);
 
         ArrayList<BinarySolution> bag = new ArrayList<>();
         long averageTime = 0;
@@ -67,7 +63,7 @@ public class TRI_NSGA3_Example {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            logger.info(i + " time: " + a.getComputeTime() + " ms.");
+            logger.info(i + " time: " + a.getComputeTime() + " ms. Solutions : " + a.getSolutions().size());
             bag.addAll(a.getSolutions());
         });
         averageTime = time.stream().mapToLong(v -> v.longValue()).sum();
@@ -102,7 +98,7 @@ public class TRI_NSGA3_Example {
         PSP_TRI problem = new PSP_TRI((TRI_PSP_Instance) instance.loadInstance());
         SelectionOperator<BinarySolution> selectionOperator = new TournamentSelection<>(100,
                 new DominanceComparator<>());
-        NSGA_III<BinarySolution> nsga3 = new NSGA_III<>(problem, 100, 500, 12, selectionOperator,
+        NSGA_III<BinarySolution> nsga3 = new NSGA_III<>(problem, 100, 500, 5, selectionOperator,
                 (CrossoverOperator<BinarySolution>) new HUXCrossover(),
                 (MutationOperator<BinarySolution>) new BinaryMutation(0.1));
         return nsga3;

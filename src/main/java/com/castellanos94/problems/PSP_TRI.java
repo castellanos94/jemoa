@@ -34,7 +34,7 @@ public class PSP_TRI extends Problem<BinarySolution> {
         for (int i = 0; i < objectives_type.length; i++) {
             objectives_type[i] = Problem.MAXIMIZATION;
         }
-        this.numberOfConstrains = 1;
+        this.numberOfConstrains = 1 + instance.getNumberOfAreas() + instance.getNumberOfRegions();
         setName("PSP with Trapezoidal data");
     }
 
@@ -45,17 +45,15 @@ public class PSP_TRI extends Problem<BinarySolution> {
             objs[i] = new Trapezoidal(0, 0, 0, 0);
         }
         Trapezoidal[][] projects = getInstance().getProjects();
+        Data current_budget = new Trapezoidal(0, 0, 0, 0);
 
         for (int i = 0; i < solution.getVariables().size(); i++) {
             if (solution.getVariable(0).get(i)) {
+                current_budget = current_budget.plus(projects[i][0]);
                 for (int j = 0; j < numberOfObjectives; j++) {
                     objs[j] = objs[j].plus(projects[i][3 + j]);
                 }
             }
-        }
-        Data current_budget = objs[0];
-        for (int i = 1; i < objs.length; i++) {
-            current_budget = current_budget.plus(objs[i]);
         }
         solution.setResource(0, current_budget);
         for (int i = 0; i < numberOfObjectives; i++) {
@@ -97,23 +95,26 @@ public class PSP_TRI extends Problem<BinarySolution> {
             penalties++;
             penaltie = budget.minus(current_budget);
         }
-        for (int i = 0; i < regionSum.length; i++) {
-            if (regionSum[i].compareTo(regions[i][0]) < 0) {// limite inferior
-                penaltie = penaltie.plus(regionSum[i].minus(regions[i][0]));
-                penalties++;
-            }
-            if (regionSum[i].compareTo(regions[i][1]) > 0) { // limite superior
-                penaltie = penaltie.plus(regions[i][1].minus(regionSum[i]));
-                penalties++;
-            }
-        }
         for (int i = 0; i < areaSum.length; i++) {
+            solution.setResource(i + 1, areaSum[i]);
+
             if (areaSum[i].compareTo(areas[i][0]) < 0) {
                 penaltie = penaltie.plus(areaSum[i].minus(areas[i][0]));
                 penalties++;
-            }
-            if (areaSum[i].compareTo(areas[i][1]) > 0) {
+            } else if (areaSum[i].compareTo(areas[i][1]) > 0) {
                 penaltie = penaltie.plus(areas[i][1].minus(areaSum[i]));
+                penalties++;
+            }
+        }
+
+        for (int i = 0; i < regionSum.length; i++) {
+            solution.setResource(i + getInstance().getNumberOfAreas() + 1, regionSum[i]);
+
+            if (regionSum[i].compareTo(regions[i][0]) < 0) {// limite inferior
+                penaltie = penaltie.plus(regionSum[i].minus(regions[i][0]));
+                penalties++;
+            } else if (regionSum[i].compareTo(regions[i][1]) > 0) { // limite superior
+                penaltie = penaltie.plus(regions[i][1].minus(regionSum[i]));
                 penalties++;
             }
         }

@@ -51,13 +51,13 @@ public class Trapezoidal extends FuzzyNumber {
         } else {
             gmi_b = GMIR(new Trapezoidal(b.doubleValue(), b.doubleValue(), b.doubleValue(), b.doubleValue()));
         }
-        if (gmi_a < gmi_b) {
+        return Double.compare (gmi_a , gmi_b) ;/*{
             return -1;
         }
         if (gmi_a > gmi_b) {
             return 1;
         }
-        return 0;
+        return 0;*/
     }
 
     /**
@@ -206,6 +206,6 @@ public class Trapezoidal extends FuzzyNumber {
 
     @Override
     public String toString() {
-        return String.format("%d %d %d %d", a, b, c, d);
+        return a + " " + b + " " + c + " " + d;
     }
 }

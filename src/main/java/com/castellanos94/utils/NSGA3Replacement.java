@@ -290,7 +290,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
                     this.referencePoints.get(min_rp).incrementPotentialMembers();
                     this.referencePoints.get(min_rp).RemovePotentialMember(chosen);
 
-                    source.add(chosen);
+                    source.add((S) chosen.copy());
                 }
             }
         }
@@ -299,7 +299,7 @@ public class NSGA3Replacement<S extends Solution<?>> implements SelectionOperato
             for (int i = lastIndex; i < this.fronts.size() && source.size() < this.pop_size; i++) {
                 for (int j = 0; j < this.fronts.get(i).size(); j++) {
                     if (source.size() < this.pop_size - 1) {
-                        source.add(this.fronts.get(i).get(j));
+                        source.add((S) this.fronts.get(i).get(j).copy());
                     } else {
                         break;
                     }
