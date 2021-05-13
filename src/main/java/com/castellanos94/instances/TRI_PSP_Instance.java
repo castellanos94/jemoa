@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.datatype.Trapezoidal;
 import com.castellanos94.problems.Problem;
@@ -85,12 +86,20 @@ public class TRI_PSP_Instance extends Instance {
         }
         // Read projects [cost, area, region, obj_1, ..., obj_n]
         Integer numberOfProjects = Integer.parseInt(this.readNextDataLine(in)[0]);
-        Trapezoidal[][] projects = new Trapezoidal[numberOfProjects][1 + 1 + 1 + numberOfObjectives];
+        Data[][] projects = new Data[numberOfProjects][1 + 1 + 1 + numberOfObjectives];
 
         for (int i = 0; i < numberOfProjects; i++) {
             data = this.readNextDataLine(in);
             index = 0;
-            for (int j = 0; j < (3 + numberOfObjectives); j++) {
+            // Cost
+            projects[i][0] = new Trapezoidal(Double.parseDouble(data[index++]), Double.parseDouble(data[index++]),
+                    Double.parseDouble(data[index++]), Double.parseDouble(data[index++]));
+            // area
+            projects[i][1] = new IntegerData(Double.parseDouble(data[index++]));
+            // region
+            projects[i][2] = new IntegerData(Double.parseDouble(data[index++]));
+
+            for (int j = 3; j < (3 + numberOfObjectives); j++) {
                 projects[i][j] = new Trapezoidal(Double.parseDouble(data[index++]), Double.parseDouble(data[index++]),
                         Double.parseDouble(data[index++]), Double.parseDouble(data[index++]));
             }
@@ -152,8 +161,8 @@ public class TRI_PSP_Instance extends Instance {
         return (Integer) this.params.get("numberOfProjects");
     }
 
-    public Trapezoidal[][] getProjects() {
-        return (Trapezoidal[][]) this.getParams().get("projects");
+    public Data[][] getProjects() {
+        return (Data[][]) this.getParams().get("projects");
     }
 
     private String[] readNextDataLine(Scanner in) {

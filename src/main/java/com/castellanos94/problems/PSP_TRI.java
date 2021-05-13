@@ -44,11 +44,12 @@ public class PSP_TRI extends Problem<BinarySolution> {
         for (int i = 0; i < objs.length; i++) {
             objs[i] = new Trapezoidal(0, 0, 0, 0);
         }
-        Trapezoidal[][] projects = getInstance().getProjects();
+        Data[][] projects = getInstance().getProjects();
         Data current_budget = new Trapezoidal(0, 0, 0, 0);
 
-        for (int i = 0; i < solution.getVariables().size(); i++) {
-            if (solution.getVariable(0).get(i)) {
+        for (int i = 0; i < this.numberOfDecisionVars; i++) {
+            boolean var = solution.getVariable(0).get(i);
+            if (var) {
                 current_budget = current_budget.plus(projects[i][0]);
                 for (int j = 0; j < numberOfObjectives; j++) {
                     objs[j] = objs[j].plus(projects[i][3 + j]);
@@ -79,7 +80,7 @@ public class PSP_TRI extends Problem<BinarySolution> {
             regionSum[i] = new Trapezoidal(0, 0, 0, 0);
         }
 
-        for (int i = 0; i < numberOfDecisionVars; i++) {
+        for (int i = 0; i < this.numberOfDecisionVars; i++) {
             if (solution.getVariable(0).get(i)) {
                 current_budget = current_budget.plus(projects[i][0]);
                 int area = projects[i][1].intValue() - 1;
