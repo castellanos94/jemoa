@@ -79,4 +79,11 @@ public class BinarySolution extends Solution<BitSet> {
                 resources.toString().replace("[", "").replace("]", ""), penalties, numberOfPenalties);
     }
 
+    public String varToString() {
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < numberOfVariables; i++) {
+            str.append(this.variables.get(0).get(i) ? '1' : '0');
+        }
+        return str.toString();
+    }
 }

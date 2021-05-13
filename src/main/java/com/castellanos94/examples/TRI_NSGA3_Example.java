@@ -12,6 +12,7 @@ import java.util.stream.IntStream;
 import com.castellanos94.algorithms.multi.NSGA_III;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
+import com.castellanos94.datatype.Trapezoidal;
 import com.castellanos94.instances.TRI_PSP_Instance;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
@@ -88,6 +89,21 @@ public class TRI_NSGA3_Example {
         for (BinarySolution solution : compartor.getSubFront(0))
             strings.add(solution.toString());
 
+        Files.write(f.toPath(), strings, Charset.defaultCharset());
+        // Export GMI
+        f = new File(DIRECTORY + File.separator + "GMI" + problem.getName() + "_F0_" + problem.getNumberOfObjectives());
+
+        strings = new ArrayList<>();
+        for (BinarySolution solution : compartor.getSubFront(0)) {
+            String st = solution.varToString() + " * ";
+            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
+                if (j + 1 < problem.getNumberOfObjectives())
+                    st += Trapezoidal.GMIR((Trapezoidal) solution.getObjective(j)) + ", ";
+                else
+                    st += Trapezoidal.GMIR((Trapezoidal) solution.getObjective(j));
+            }
+            strings.add(st);
+        }
         Files.write(f.toPath(), strings, Charset.defaultCharset());
         logger.info("End Experimentation.");
     }
