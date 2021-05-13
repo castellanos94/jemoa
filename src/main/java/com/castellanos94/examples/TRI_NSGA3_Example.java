@@ -91,7 +91,7 @@ public class TRI_NSGA3_Example {
 
         Files.write(f.toPath(), strings, Charset.defaultCharset());
         // Export GMI
-        f = new File(DIRECTORY + File.separator + "GMI" + problem.getName() + "_F0_" + problem.getNumberOfObjectives());
+        f = new File(DIRECTORY + File.separator + "GMI_" + problem.getName() + "_F0_" + problem.getNumberOfObjectives());
 
         strings = new ArrayList<>();
         for (BinarySolution solution : compartor.getSubFront(0)) {
