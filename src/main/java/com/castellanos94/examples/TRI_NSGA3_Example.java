@@ -7,7 +7,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import com.castellanos94.algorithms.multi.NSGA_III;
 import com.castellanos94.components.Ranking;
@@ -46,9 +45,8 @@ public class TRI_NSGA3_Example {
         logger.info(problem);
         logger.info(algorithm);
 
-        ArrayList<Integer> range = new ArrayList<>(IntStream.range(0, EXPERIMENT).boxed().collect(Collectors.toList()));
         ArrayList<Long> time = new ArrayList<>();
-        range.stream().sequential().forEach(i -> {
+        for (int i = 0; i < EXPERIMENT; i++) {
             NSGA_III<BinarySolution> a = null;
             try {
                 a = loadProblem();
@@ -66,13 +64,15 @@ public class TRI_NSGA3_Example {
             }
             logger.info(i + " time: " + a.getComputeTime() + " ms. Solutions : " + a.getSolutions().size());
             bag.addAll(a.getSolutions());
-        });
+        }
         averageTime = time.stream().mapToLong(v -> v.longValue()).sum();
         logger.info("Resume " + problem.getName());
         logger.info("Total time: " + averageTime);
         logger.info("Average time : " + (double) averageTime / EXPERIMENT + " ms.");
         logger.info("Solutions in the bag: " + bag.size());
-
+        logger.info("Drops duplicate");
+        bag = new ArrayList<>(bag.stream().distinct().collect(Collectors.toList()));
+        logger.info("Unique solutions: " + bag.size());
         Ranking<BinarySolution> compartor = new DominanceComparator<>();
         compartor.computeRanking(bag);
 
