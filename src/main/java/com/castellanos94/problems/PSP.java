@@ -40,7 +40,7 @@ public class PSP extends Problem<BinarySolution> {
         Data[][] projects = instance.getDataMatrix("projects");
         Data current_budget = new IntegerData(0);
 
-        for (int i = 0; i < solution.getVariables().size(); i++) {
+        for (int i = 0; i < this.numberOfDecisionVars; i++) {
             if (solution.getVariable(0).get(i)) {
                 current_budget = current_budget.plus(projects[i][0]);
                 for (int j = 0; j < numberOfObjectives; j++) {
