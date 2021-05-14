@@ -110,7 +110,7 @@ public class TRI_NSGA3_Example {
 
     private static NSGA_III<BinarySolution> loadProblem() throws FileNotFoundException {
 
-        TRI_PSP_Instance instance = new TRI_PSP_Instance("src/main/resources/instances/psp/triO4P25.txt");
+        TRI_PSP_Instance instance = new TRI_PSP_Instance("src/main/resources/instances/psp/o2p25_tri_rand.txt");
         PSP_TRI problem = new PSP_TRI((TRI_PSP_Instance) instance.loadInstance());
         SelectionOperator<BinarySolution> selectionOperator = new TournamentSelection<>(100,
                 new DominanceComparator<>());

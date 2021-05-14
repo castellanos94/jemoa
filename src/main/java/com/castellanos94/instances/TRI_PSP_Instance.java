@@ -36,7 +36,7 @@ public class TRI_PSP_Instance extends Instance {
                 Double.parseDouble(data[2]), Double.parseDouble(data[3]));
         // Read number of objectives
         Integer numberOfObjectives = Integer.parseInt(this.readNextDataLine(in)[0]);
-        // Read weights
+       /* // Read weights
         Trapezoidal[] weights = new Trapezoidal[numberOfObjectives];
         data = this.readNextDataLine(in);
         int index = 0;
@@ -55,12 +55,14 @@ public class TRI_PSP_Instance extends Instance {
         // Read indifference threshold
         Trapezoidal[] indifferenceThreshold = new Trapezoidal[numberOfObjectives];
         data = this.readNextDataLine(in);
+        
         index = 0;
         for (int i = 0; i < numberOfObjectives; i++) {
             indifferenceThreshold[i] = new Trapezoidal(Double.parseDouble(data[index++]),
                     Double.parseDouble(data[index++]), Double.parseDouble(data[index++]),
                     Double.parseDouble(data[index++]));
-        }
+        }*/
+        int index = 0;
         // Read areas
         Integer numberOfAreas = Integer.parseInt(this.readNextDataLine(in)[0]);
         Trapezoidal[][] areas = new Trapezoidal[numberOfAreas][2];
@@ -106,9 +108,7 @@ public class TRI_PSP_Instance extends Instance {
         }
         this.getParams().put("budget", budget);
         this.getParams().put("numberOfObjectives", numberOfObjectives);
-        this.getParams().put("weights", weights);
-        this.getParams().put("vetoThreshold", vetoThreshold);
-        this.getParams().put("indifferenceThreshold", indifferenceThreshold);
+        
         this.getParams().put("numberOfAreas", numberOfAreas);
         this.getParams().put("areas", areas);
         this.getParams().put("numberOfRegions", numberOfRegions);
@@ -129,17 +129,6 @@ public class TRI_PSP_Instance extends Instance {
         return (Integer) this.params.get("numberOfObjectives");
     }
 
-    public Trapezoidal[] getWeights() {
-        return (Trapezoidal[]) this.getParams().get("weights");
-    }
-
-    public Trapezoidal[] getVetoThreshold() {
-        return (Trapezoidal[]) this.getParams().get("vetoThreshold");
-    }
-
-    public Trapezoidal[] getIndifferenceThreshold() {
-        return (Trapezoidal[]) this.getParams().get("indifferenceThreshold");
-    }
 
     public Integer getNumberOfAreas() {
         return (Integer) this.params.get("numberOfAreas");
