@@ -60,6 +60,7 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO_V<S> {
             }
             indexClass++;
         }
+        // Select Beta
         this.selectionOperator.execute(_solutions);
         parents = this.selectionOperator.getParents();
         iterator = parents.iterator();
