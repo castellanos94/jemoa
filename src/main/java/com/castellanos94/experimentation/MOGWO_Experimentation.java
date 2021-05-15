@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.castellanos94.algorithms.multi.MOGWO_V;
 import com.castellanos94.algorithms.multi.MOGWO;
@@ -23,12 +25,14 @@ import org.apache.logging.log4j.Logger;
 
 import tech.tablesaw.api.LongColumn;
 import tech.tablesaw.api.Table;
-
+/**
+ * No usar para mas de 3 objs
+ */
 public class MOGWO_Experimentation {
 
     private static final Logger logger = LogManager.getLogger(MOGWO_Experimentation.class);
     static final int EXPERIMENT = 31;
-    static int numberOfObjectives = 3;
+    static int numberOfObjectives = 5;
     private static String algorithmName = "MOGWO";
 
     static final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWO"
@@ -38,10 +42,12 @@ public class MOGWO_Experimentation {
         new File(DIRECTORY).mkdirs();
         int initialProblem = 1;
         int endProblem = 9;
-        Tools.setSeed(1L);
-        Ranking<DoubleSolution> compartor = new DominanceComparator<>();
-
+        ArrayList<Integer> indexProblem = new ArrayList<>(
+                IntStream.rangeClosed(initialProblem, endProblem).boxed().collect(Collectors.toList()));
         for (int numberOfProblem = initialProblem; numberOfProblem <= endProblem; numberOfProblem++) {
+            // indexProblem.stream().parallel().forEach( numberOfProblem -> {
+            Tools.setSeed(1L);
+            Ranking<DoubleSolution> compartor = new DominanceComparator<>();
             MOGWO<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, numberOfObjectives, algorithmName);
             DTLZ problem = (DTLZ) algorithm.getProblem();
             logger.info(problem);
@@ -75,7 +81,11 @@ public class MOGWO_Experimentation {
             str += "\n" + "Solutions in the bag: " + bag.size();
             logger.info(str);
             infoTime.addColumns(experimentTimeColumn);
-            infoTime.write().csv(new File(subDirFile, "times.csv"));
+            try {
+                infoTime.write().csv(new File(subDirFile, "times.csv"));
+            } catch (IOException e1) {
+                logger.error(e1);
+            }
 
             compartor.computeRanking(bag);
 
@@ -91,13 +101,14 @@ public class MOGWO_Experimentation {
             for (DoubleSolution solution : compartor.getSubFront(0))
                 strings.add(solution.toString());
 
-            Files.write(f.toPath(), strings, Charset.defaultCharset());
-            /*
-             * if (problem.getNumberOfObjectives() == 3) { Plotter plotter = new
-             * Scatter3D<>(compartor.getSubFront(0), new File(subDirFile, problem.getName()
-             * + "_MOGWO").getAbsolutePath()); plotter.plot(); }
-             */
+            try {
+                Files.write(f.toPath(), strings, Charset.defaultCharset());
+            } catch (IOException e) {
+                logger.error(e);
+            }
+
         }
+        ;
 
     }
 
@@ -114,101 +125,130 @@ public class MOGWO_Experimentation {
             pop_size = 271;
         }
         switch (numberOfProblem) {
-        case 1:
-            if (numberOfObjectives == 3) {
-                problem = new DTLZ1();
-                maxIterations = 400;
-            } else if (numberOfObjectives == 5) {
-                problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
+            case 1:
+                if (numberOfObjectives == 3) {
+                    problem = new DTLZ1();
+                    maxIterations = 400;
+                } else if (numberOfObjectives == 5) {
+                    problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
 
-                maxIterations = 600;
-            } else if (numberOfObjectives == 8) {
-                problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
+                    maxIterations = 600;
+                } else if (numberOfObjectives == 8) {
+                    problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
 
-                maxIterations = 750;
-            } else if (numberOfObjectives == 10) {
-                problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
+                    maxIterations = 750;
+                } else if (numberOfObjectives == 10) {
+                    problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
 
-                maxIterations = 1000;
-            } else if (numberOfObjectives == 15) {
-                problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
+                    maxIterations = 1000;
+                } else if (numberOfObjectives == 15) {
+                    problem = new DTLZ1(numberOfObjectives, numberOfObjectives + 5).setK(5);
 
-                maxIterations = 1500;
-            }
-            break;
-        case 2:
-            if (numberOfObjectives == 3) {
-                problem = new DTLZ2();
-                maxIterations = 250;
-            } else if (numberOfObjectives == 5) {
-                problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                maxIterations = 350;
-            } else if (numberOfObjectives == 8) {
-                problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                maxIterations = 500;
-            } else if (numberOfObjectives == 10) {
-                problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                maxIterations = 750;
-            } else if (numberOfObjectives == 15) {
-                problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                maxIterations = 1000;
-            }
-            break;
-        case 3:
-            if (numberOfObjectives == 3) {
-                problem = new DTLZ3();
-                maxIterations = 1000;
-            } else if (numberOfObjectives == 5 || numberOfObjectives == 8) {
-                problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                maxIterations = 1000;
-            } else if (numberOfObjectives == 10) {
-                problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                maxIterations = 1500;
-            } else if (numberOfObjectives == 15) {
-                problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                maxIterations = 2000;
-            }
-            break;
-        case 4:
-            if (numberOfObjectives == 3) {
-                problem = new DTLZ4();
-                maxIterations = 600;
-            } else if (numberOfObjectives == 5) {
-                problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                maxIterations = 1000;
-            } else if (numberOfObjectives == 8) {
-                problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                maxIterations = 1250;
-            } else if (numberOfObjectives == 10) {
-                problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                maxIterations = 2000;
-            } else if (numberOfObjectives == 15) {
-                problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
-                maxIterations = 3000;
-            }
-            break;
-        default:
-            if (numberOfProblem == 5) {
-                problem = new DTLZ5();
-            } else if (numberOfProblem == 6) {
-                problem = new DTLZ6();
-            } else if (numberOfProblem == 7) {
-                problem = new DTLZ7();
-            } else if (numberOfProblem == 8) {
-                problem = new DTLZ8();
-            } else {
-                problem = new DTLZ9();
-            }
-            if (numberOfObjectives == 3) {
-                maxIterations = 750;
-            } else if (numberOfObjectives == 5)
-                maxIterations = 1000;
-            else if (numberOfObjectives == 8)
-                maxIterations = 1250;
-            else {
-                maxIterations = 1500;
-            }
-            break;
+                    maxIterations = 1500;
+                }
+                break;
+            case 2:
+                if (numberOfObjectives == 3) {
+                    problem = new DTLZ2();
+                    maxIterations = 250;
+                } else if (numberOfObjectives == 5) {
+                    problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                    maxIterations = 350;
+                } else if (numberOfObjectives == 8) {
+                    problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                    maxIterations = 500;
+                } else if (numberOfObjectives == 10) {
+                    problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                    maxIterations = 750;
+                } else if (numberOfObjectives == 15) {
+                    problem = new DTLZ2(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                    maxIterations = 1000;
+                }
+                break;
+            case 3:
+                if (numberOfObjectives == 3) {
+                    problem = new DTLZ3();
+                    maxIterations = 1000;
+                } else if (numberOfObjectives == 5 || numberOfObjectives == 8) {
+                    problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                    maxIterations = 1000;
+                } else if (numberOfObjectives == 10) {
+                    problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                    maxIterations = 1500;
+                } else if (numberOfObjectives == 15) {
+                    problem = new DTLZ3(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                    maxIterations = 2000;
+                }
+                break;
+            case 4:
+                if (numberOfObjectives == 3) {
+                    problem = new DTLZ4();
+                    maxIterations = 600;
+                } else if (numberOfObjectives == 5) {
+                    problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                    maxIterations = 1000;
+                } else if (numberOfObjectives == 8) {
+                    problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                    maxIterations = 1250;
+                } else if (numberOfObjectives == 10) {
+                    problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                    maxIterations = 2000;
+                } else if (numberOfObjectives == 15) {
+                    problem = new DTLZ4(numberOfObjectives, numberOfObjectives + 10).setK(10);
+                    maxIterations = 3000;
+                }
+                break;
+            default:
+                if (numberOfProblem == 5) {
+                    if (numberOfObjectives == 3)
+                        problem = new DTLZ5();
+                    else if (numberOfObjectives == 5)
+                        problem = new DTLZ5(numberOfObjectives, 14);
+                    else
+                        problem = new DTLZ5(numberOfObjectives, 19);
+                } else if (numberOfProblem == 6) {
+
+                    if (numberOfObjectives == 3)
+                        problem = new DTLZ6();
+                    else if (numberOfObjectives == 5)
+                        problem = new DTLZ6(numberOfObjectives, 14);
+                    else
+                        problem = new DTLZ6(numberOfObjectives, 19);
+                } else if (numberOfProblem == 7) {
+
+                    if (numberOfObjectives == 3)
+                        problem = new DTLZ5();
+                    else if (numberOfObjectives == 5)
+                        problem = new DTLZ5(numberOfObjectives, 14);
+                    else
+                        problem = new DTLZ5(numberOfObjectives, 19);
+                } else if (numberOfProblem == 8) {
+
+                    if (numberOfObjectives == 3)
+                        problem = new DTLZ5();
+                    else if (numberOfObjectives == 5)
+                        problem = new DTLZ5(numberOfObjectives, 14);
+                    else
+                        problem = new DTLZ5(numberOfObjectives, 19);
+                } else {
+
+                    if (numberOfObjectives == 3)
+                        problem = new DTLZ5();
+                    else if (numberOfObjectives == 5)
+                        problem = new DTLZ5(numberOfObjectives, 14);
+                    else
+                        problem = new DTLZ5(numberOfObjectives, 19);
+                }
+                if (numberOfObjectives == 3) {
+                    maxIterations = 750;
+                } else if (numberOfObjectives == 5)
+                    maxIterations = 1000;
+                else if (numberOfObjectives == 8)
+                    maxIterations = 1250;
+                else {
+                    maxIterations = 1500;
+                }
+                break;
         }
         if (algorithm.equalsIgnoreCase("mogwo-v"))
             return new MOGWO_V<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());

@@ -34,7 +34,7 @@ import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;
 
 /**
- * Reportar la 97
+ * Reportar la VAR0 y VAR5 para comparacion con nsga3-p C1R0 y C1R2
  */
 public class AlgorithmReport_NRV {
 

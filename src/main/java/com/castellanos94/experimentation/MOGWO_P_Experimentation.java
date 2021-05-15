@@ -1,12 +1,16 @@
 package com.castellanos94.experimentation;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
+import com.castellanos94.algorithms.AbstractAlgorithm;
+import com.castellanos94.algorithms.multi.MOGWO;
 import com.castellanos94.algorithms.multi.MOGWO_P;
 import com.castellanos94.algorithms.multi.MOGWO_PFN;
 import com.castellanos94.algorithms.multi.MOGWO_V;
@@ -27,30 +31,61 @@ import org.apache.logging.log4j.Logger;
 import tech.tablesaw.api.LongColumn;
 import tech.tablesaw.api.Table;
 
+/**
+ * Experimentacion de todas las variantes [MOGWO, MOGWO-V, MOGWO-P, MOGWO-PFN]
+ */
 public class MOGWO_P_Experimentation {
 
     private static final Logger logger = LogManager.getLogger(MOGWO_Experimentation.class);
-    static final int EXPERIMENT = 31;
-    static int numberOfObjectives = 3;
-    private static String algorithmName = "MOGWO-PFN";
-
-    static final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWO"
-            + File.separator + algorithmName;
 
     public static void main(String[] args) throws IOException {
+        if (args.length <= 2) {
+            System.out.println(String.format(
+                    "The following elements are required:\n\t Number of Experiments \n\t number of objectives \n\t algorithm [MOGWO, MOGWO-V, MOGWO-P, MOGWO-PFN] "));
+            System.exit(-1);
+        }
+        System.out.println(Arrays.toString(args));
+
+        final int EXPERIMENT = Integer.parseInt(args[0]);
+        final int numberOfObjectives = Integer.parseInt(args[1]);
+        final String algorithmName = args[2];
+        if (!"MOGWO|MOGWO-V|MOGWO-P|MOGWO-PFN".contains(algorithmName)) {
+            System.err.println("Nombre invalido [MOGWO, MOGWO-V, MOGWO-P, MOGWO-PFN]");
+            System.exit(-1);
+        }
+        final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWO"
+                + File.separator + algorithmName;
+
         new File(DIRECTORY).mkdirs();
-        int initialProblem = 1;
-        int endProblem = 9;
+        int tmpInit = 1, tmpEdn = 9;
+        if (args.length == 4) {
+            tmpInit = Integer.parseInt(args[3]);
+            tmpEdn = Integer.parseInt(args[3]);
+        }
+        if (args.length == 5) {
+            tmpInit = Integer.parseInt(args[3]);
+            tmpEdn = Integer.parseInt(args[4]);
+        }
+
+        final int initialProblem = tmpInit;
+        final int endProblem = tmpEdn;
+
         for (int numberOfProblem = initialProblem; numberOfProblem <= endProblem; numberOfProblem++) {
+            // indexProblem.stream().parallel().forEach( numberOfProblem -> {
 
             Tools.setSeed(1L);
 
             logger.info("Experimentation MOGWO : DTLZ with preferences");
             String resourseFile = "DTLZ_INSTANCES" + File.separator + numberOfObjectives + File.separator + "DTLZ"
                     + numberOfProblem + "_Instance.txt";
-            DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(resourseFile).loadInstance();
+            DTLZ_Instance instance = null;
+            try {
+                instance = (DTLZ_Instance) new DTLZ_Instance(resourseFile).loadInstance();
+            } catch (FileNotFoundException e3) {
+                logger.error(e3);
+            }
 
-            MOGWO_V<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, instance, algorithmName);
+            AbstractAlgorithm<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, instance, algorithmName);
             DTLZP problem = (DTLZP) algorithm.getProblem();
             String subDir = problem.getName().trim();
 
@@ -84,7 +119,11 @@ public class MOGWO_P_Experimentation {
             str += "\n" + "Solutions in the bag: " + bag.size();
             logger.info(str);
             infoTime.addColumns(experimentTimeColumn);
-            infoTime.write().csv(DIRECTORY + File.separator + subDir + File.separator + "times.csv");
+            try {
+                infoTime.write().csv(DIRECTORY + File.separator + subDir + File.separator + "times.csv");
+            } catch (IOException e2) {
+                logger.error(e2);
+            }
             compartor.computeRanking(bag);
 
             logger.info("Fronts : " + compartor.getNumberOfSubFronts());
@@ -100,7 +139,11 @@ public class MOGWO_P_Experimentation {
             for (DoubleSolution solution : compartor.getSubFront(0))
                 strings.add(solution.toString());
 
-            Files.write(f.toPath(), strings, Charset.defaultCharset());
+            try {
+                Files.write(f.toPath(), strings, Charset.defaultCharset());
+            } catch (IOException e1) {
+                logger.error(e1);
+            }
 
             f = new File(DIRECTORY + File.separator + subDir + File.separator + "Class_F0" + problem.getName()
                     + +problem.getNumberOfObjectives() + ".out");
@@ -133,7 +176,11 @@ public class MOGWO_P_Experimentation {
                 logger.error(e);
             }
 
-            Files.write(f.toPath(), strings, Charset.defaultCharset());
+            try {
+                Files.write(f.toPath(), strings, Charset.defaultCharset());
+            } catch (IOException e) {
+                logger.error(e);
+            }
 
             logger.info("End Experimentation.");
 
@@ -141,7 +188,7 @@ public class MOGWO_P_Experimentation {
 
     }
 
-    private static MOGWO_V<DoubleSolution> loadConfiguration(int numberOfProblem, DTLZ_Instance instance,
+    private static AbstractAlgorithm<DoubleSolution> loadConfiguration(int numberOfProblem, DTLZ_Instance instance,
             String algorithm) {
         DTLZP problem = new DTLZP(numberOfProblem, instance);
         int maxIterations = 1000;
@@ -229,11 +276,16 @@ public class MOGWO_P_Experimentation {
                 }
                 break;
         }
-        if (algorithm.equalsIgnoreCase("mogwo_p")) {
+        if (algorithm.equalsIgnoreCase("mogwo-p")) {
             return new MOGWO_P<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
-
         }
-        return new MOGWO_PFN<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
+        if (algorithm.equalsIgnoreCase("mogwo-pfn")) {
+            return new MOGWO_PFN<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
+        }
 
+        if (algorithm.equalsIgnoreCase("mogwo-v"))
+            return new MOGWO_V<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
+
+        return new MOGWO<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
     }
 }
