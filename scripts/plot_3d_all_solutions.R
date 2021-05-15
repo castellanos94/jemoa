@@ -1,7 +1,7 @@
 #install.packages("scatterplot3d") # Install
 library("scatterplot3d") # load
 library(readr)
-n <- 1
+n <- 7
 problem <- paste("DTLZ",n, sep ="")
 baseDir = "/home/thinkpad/Documents/jemoa/experiments/3/NSGA3/FRONT_PREFERENCES/"
 FRONT_PREFERENCES  <- read_csv(paste(baseDir,problem,"_ALL.csv",sep=""), col_types = cols(Class = col_factor(levels = c("HSAT", 
@@ -23,11 +23,11 @@ if(n == 2 || n == 5 || n == 6){
 png(file=paste(baseDir,"3D-",problem,".png",sep=""), width = 1280 , height = 720 )
 
 s3d <-scatterplot3d(FRONT_PREFERENCES[,1:3],
-              main=paste("3D Scatter",problem,"plot"),pch = shapes, angle = angle, color=colors,grid=TRUE, box=TRUE)
+              main=paste(problem,""),pch = shapes, angle = angle, color=colors,grid=TRUE, box=TRUE)
 s3d$points3d(FRONT_PREFERENCES[FRONT_PREFERENCES$Algorithm=='ROI',][,1:3], pch = shapes,col=c("#000000"))
 
 legend("right", legend = c(levels(FRONT_PREFERENCES$Class),"ROI"),
-       col =  c("#33fc00", "#0083fe", "#fea500","#ff0019","#000000"), pch = shapes, cex=1.6)
+       col =  c("#33fc00", "#0083fe", "#fea500","#ff0019","#000000"), pch = shapes, cex=0.95)
 
 dev.off()
 

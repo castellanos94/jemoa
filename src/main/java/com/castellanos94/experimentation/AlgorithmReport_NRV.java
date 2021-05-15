@@ -34,11 +34,11 @@ import tech.tablesaw.api.Table;
 import tech.tablesaw.columns.Column;
 
 /**
- * Reportar la VAR0 y VAR5 para comparacion con nsga3-p C1R0 y C1R2
+ * Reportar la VAR0 y VAR5 (112) para comparacion con nsga3-p C1R0 y C1R2
  */
 public class AlgorithmReport_NRV {
 
-    private final static int numberOfObjectives = 3;
+    private final static int numberOfObjectives = 10;
     private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
     // private static String algorithmName = File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
@@ -49,6 +49,8 @@ public class AlgorithmReport_NRV {
             + "MOGWO" + File.separator;
     private static String NEO_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NEO"
             + File.separator;
+    private static String CMP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
+            + "NSGA3vsMOEAD" + File.separator;
     private static Table stats = Table.create("statistic");
     private static StringColumn nameColumn = StringColumn.create("Problem");
     private static StringColumn metricNameColumn = StringColumn.create("Metric Name");
@@ -59,7 +61,7 @@ public class AlgorithmReport_NRV {
     private static StringColumn problemColumn = StringColumn.create("Problema");
     private static StringColumn confColumn = StringColumn.create("Configuracion");
 
-    private static StringColumn noDominateColumn = StringColumn.create("NoDominated Size");
+    private static StringColumn noDominateColumn = StringColumn.create("|F\\_1|");
     private static StringColumn domColumn = StringColumn.create("Dominancia");
     private static StringColumn chsatColumn = StringColumn.create("CHSat");
     private static StringColumn csatColumn = StringColumn.create("CSat");
@@ -67,17 +69,24 @@ public class AlgorithmReport_NRV {
     private static StringColumn dMinColumn = StringColumn.create("Min");
     private static StringColumn dAvgColumn = StringColumn.create("Avg");
     private static StringColumn dMaxColumn = StringColumn.create("Max");
+    private static StringColumn timeColumn = StringColumn.create("time");
     private static HashMap<String, ArrayList<HashMap<String, Double>>> rankListMetric = new HashMap<>();
+    private static String ALGORITHM_IGNORE[] = { "MOGWO-V", "C0R0", "C2R1", "C10R0", "VAR-97", "VAR-98", "VAR-100",
+            "VAR-104", "VAR-127" };// { "MOGWO","MOGWO-V", "C0R0", "C2R1","C10R0" };
 
     public static void main(String[] args) throws IOException {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();
         HashMap<String, DTLZP> problems = new HashMap<>();
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
-        // loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem);
-        // loadSolutionExperiment(NRV_DIRECTORY, problems, roi,
-        // globalSolutionByProblem);
-        loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem);
-        final String LAST_DIRECTORY = MOGWOP_DIRECTORY;
+        HashMap<DTLZP, HashMap<String, Table>> algorithmTimeByProblem = new HashMap<>();
+        // Espeficia que soluciones
+        loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+        loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+        // Ruta de salida
+        final String LAST_DIRECTORY = CMP_DIRECTORY;
+        // Se valida que la ruta existe
+        if (!new File(LAST_DIRECTORY).exists())
+            new File(LAST_DIRECTORY).mkdirs();
         // make hsat roi for problem
         System.out.println("Make roi preferences");
         Iterator<String> problem_Iterator = problems.keySet().iterator();
@@ -302,12 +311,31 @@ public class AlgorithmReport_NRV {
                 countNoDominated += solutions.size();
             }
             countNoDominated /= globalSolutionNDByProblem.get(dtlz).size();
+            HashMap<String, Table> hashMapTime = algorithmTimeByProblem.get(dtlz);
 
             for (String key : orderNameConfiguration) {
                 problemColumn.append(dtlz.getName());
                 confColumn.append(key);
                 domColumn.append(mapTest.get(key));
                 noDominateColumn.append("" + countNoDominated);
+                if (hashMapTime.containsKey(key)) {
+                    if (hashMapTime.get(key) != null) {
+                        Table currentTableTime = hashMapTime.get(key);
+                        NumericColumn column = (NumericColumn) currentTableTime.column(0);
+                        DoubleColumn divide = null;
+                        String suffix = "";
+                        if (dtlz.getNumberOfObjectives() <= 5) {
+                            divide = column.divide(1000);
+                            suffix = "s";
+                        } else {
+                            divide = column.divide(60000);
+                            suffix = "min";
+                        }
+                        timeColumn.append(String.format("%5.4f%s", divide.mean(), suffix));
+                    } else {
+                        timeColumn.append("-");
+                    }
+                }
 
             }
             mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, hsColumns, "HSat");
@@ -380,69 +408,52 @@ public class AlgorithmReport_NRV {
         table.write().csv(LAST_DIRECTORY + "metrics.csv");
         // Reset
 
-        globalMetric(LAST_DIRECTORY, globalSolutionNDByProblem, roi, _names_algorithm);
+        globalMetric(LAST_DIRECTORY, globalSolutionNDByProblem, roi, _names_algorithm, algorithmTimeByProblem);
         stats.addColumns(nameColumn, metricNameColumn, resultColumn, rankingColumn, meanColumn, techicalColumn);
         stats.write().csv(LAST_DIRECTORY + "stac.csv");
         Table reportLatex = Table.create("latex");
 
         reportLatex.addColumns(problemColumn, confColumn, noDominateColumn, domColumn, chsatColumn, csatColumn,
-                cdisColumn, dMinColumn, dAvgColumn, dMaxColumn);
+                cdisColumn, dMinColumn, dAvgColumn, dMaxColumn, timeColumn);
         reportLatex.write().csv(LAST_DIRECTORY + "latex_report.csv");
 
-        System.out.println("Generating sum all metrics All...");
-        HashMap<String, Double> makeSumRank = BordaRanking.makeSumRank(rankListMetric);
-        System.out.println("\tName\tRank");
-        makeSumRank.forEach((k, v) -> {
-            System.out.println("\t" + k + "\t" + v);
-        });
-        HashMap<String, ArrayList<HashMap<String, Double>>> euclideanList = new HashMap<>();
-        rankListMetric.forEach((k, v) -> {
-            if (k.contains("Euclidean")) {
-                euclideanList.put(k, v);
-            }
-        });
-        System.out.println("Generating sum all metrics Euclidean...");
-        makeSumRank = BordaRanking.makeSumRank(euclideanList);
-        System.out.println("\tName\tRank");
-        makeSumRank.forEach((k, v) -> {
-            System.out.println("\t" + k + "\t" + v);
-        });
-
-        HashMap<String, ArrayList<HashMap<String, Double>>> chebyshevList = new HashMap<>();
-        rankListMetric.forEach((k, v) -> {
-            if (k.contains("Chebyshev")) {
-                chebyshevList.put(k, v);
-            }
-        });
-        System.out.println("Generating sum all metrics Chebyshev...");
-        makeSumRank = BordaRanking.makeSumRank(chebyshevList);
-        System.out.println("\tName\tRank");
-        makeSumRank.forEach((k, v) -> {
-            System.out.println("\t" + k + "\t" + v);
-        });
-
-        HashMap<String, ArrayList<HashMap<String, Double>>> satList = new HashMap<>();
-        rankListMetric.forEach((k, v) -> {
-            if (k.contains("Sat")) {
-                satList.put(k, v);
-            }
-        });
-        System.out.println("Generating sum all metrics SAT...");
-        makeSumRank = BordaRanking.makeSumRank(satList);
-        System.out.println("\tName\tRank");
-        makeSumRank.forEach((k, v) -> {
-            System.out.println("\t" + k + "\t" + v);
-        });
+        /*
+         * System.out.println("Generating sum all metrics All..."); HashMap<String,
+         * Double> makeSumRank = BordaRanking.makeSumRank(rankListMetric);
+         * System.out.println("\tName\tRank"); makeSumRank.forEach((k, v) -> {
+         * System.out.println("\t" + k + "\t" + v); }); HashMap<String,
+         * ArrayList<HashMap<String, Double>>> euclideanList = new HashMap<>();
+         * rankListMetric.forEach((k, v) -> { if (k.contains("Euclidean")) {
+         * euclideanList.put(k, v); } });
+         * System.out.println("Generating sum all metrics Euclidean..."); makeSumRank =
+         * BordaRanking.makeSumRank(euclideanList); System.out.println("\tName\tRank");
+         * makeSumRank.forEach((k, v) -> { System.out.println("\t" + k + "\t" + v); });
+         * 
+         * HashMap<String, ArrayList<HashMap<String, Double>>> chebyshevList = new
+         * HashMap<>(); rankListMetric.forEach((k, v) -> { if (k.contains("Chebyshev"))
+         * { chebyshevList.put(k, v); } });
+         * System.out.println("Generating sum all metrics Chebyshev..."); makeSumRank =
+         * BordaRanking.makeSumRank(chebyshevList); System.out.println("\tName\tRank");
+         * makeSumRank.forEach((k, v) -> { System.out.println("\t" + k + "\t" + v); });
+         * 
+         * HashMap<String, ArrayList<HashMap<String, Double>>> satList = new
+         * HashMap<>(); rankListMetric.forEach((k, v) -> { if (k.contains("Sat")) {
+         * satList.put(k, v); } });
+         * System.out.println("Generating sum all metrics SAT..."); makeSumRank =
+         * BordaRanking.makeSumRank(satList); System.out.println("\tName\tRank");
+         * makeSumRank.forEach((k, v) -> { System.out.println("\t" + k + "\t" + v); });
+         */
     }
 
     private static void loadSolutionExperiment(String _DIRECTORY, HashMap<String, DTLZP> problems,
             HashMap<String, ArrayList<DoubleSolution>> roi,
-            HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem)
-            throws FileNotFoundException {
+            HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem,
+            HashMap<DTLZP, HashMap<String, Table>> timeMapByProblemAlgorithm) throws IOException {
         System.out.println("Working directory... " + _DIRECTORY);
         for (File f : new File(_DIRECTORY).listFiles()) {
-            if (f.isDirectory()) {
+            if (f.isDirectory() && !isAlgorithmToIgnore(f.getName())) {
                 HashMap<DTLZP, ArrayList<ArrayList<DoubleSolution>>> algorithmProblems = new HashMap<>();
+                HashMap<DTLZP, Table> algorithmTimeMap = new HashMap<>();
                 for (File _file : f.listFiles()) {
                     if (_file.isDirectory()) {
                         DTLZP currentProblem;
@@ -460,6 +471,7 @@ public class AlgorithmReport_NRV {
                                 }
                             }
                             globalSolutionByProblem.put(currentProblem, new HashMap<>());
+                            timeMapByProblemAlgorithm.put(currentProblem, new HashMap<>());
                         }
                         ArrayList<ArrayList<DoubleSolution>> solutionFromProblem = new ArrayList<>();
                         for (File executions : _file.listFiles()) {
@@ -467,6 +479,8 @@ public class AlgorithmReport_NRV {
                                 if (executions.getName().contains("execution")
                                         && executions.getName().endsWith(".out")) {
                                     solutionFromProblem.add(loadSolutions(currentProblem, executions, false));
+                                } else if (executions.getName().contains("time")) {
+                                    algorithmTimeMap.put(currentProblem, Table.read().csv(executions));
                                 }
                             } else {
                                 solutionFromProblem.add(loadExternalSolutions(currentProblem, executions));
@@ -482,10 +496,21 @@ public class AlgorithmReport_NRV {
                     DTLZP p = _Iterator.next();
                     HashMap<String, ArrayList<ArrayList<DoubleSolution>>> map = globalSolutionByProblem.get(p);
                     map.put(f.getName(), algorithmProblems.get(p));
+                    HashMap<String, Table> hashMapTime = timeMapByProblemAlgorithm.get(p);
+                    hashMapTime.put(f.getName(), algorithmTimeMap.get(p));
                 }
             }
         }
 
+    }
+
+    private static boolean isAlgorithmToIgnore(String name) {
+        for (String name_ : ALGORITHM_IGNORE) {
+            if (name_.equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @SuppressWarnings("unchecked")
@@ -643,7 +668,8 @@ public class AlgorithmReport_NRV {
 
     private static void globalMetric(final String LAST_DIRECTORY,
             HashMap<DTLZP, ArrayList<ArrayList<DoubleSolution>>> globalSolutionNDByProblem,
-            HashMap<String, ArrayList<DoubleSolution>> roi, String[] _names_algorithm) throws IOException {
+            HashMap<String, ArrayList<DoubleSolution>> roi, String[] _names_algorithm,
+            HashMap<DTLZP, HashMap<String, Table>> algorithmTimeByProblem) throws IOException {
         StringColumn _nameG = StringColumn.create("problem");
         DoubleColumn allG = DoubleColumn.create("solutions");
         DoubleColumn frontZeroG = DoubleColumn.create("F-0");
@@ -852,7 +878,31 @@ public class AlgorithmReport_NRV {
             noDominateColumn.append("" + sum);
 
             domColumn.append(mapTest.get(key));
+            ArrayList<Double> time_ = new ArrayList<>();
+            algorithmTimeByProblem.forEach((alg, t) -> {
+                if (t.containsKey(key)) {
+                    if (t.get(key) != null) {
+                        NumericColumn column = (NumericColumn) t.get(key).column(0);
+                        DoubleColumn divide = null;
+
+                        divide = column.divide(60000);
+
+                        time_.add(divide.sum());
+
+                    } else {
+                        time_.add(0.0);
+                    }
+                }
+            });
+            if (algorithmTimeByProblem.keySet().iterator().next().getNumberOfObjectives() <= 5)
+                timeColumn.append(String.format("%5.4f%s",
+                        time_.stream().mapToDouble(Double::doubleValue).average().getAsDouble(), "min"));
+            else
+                timeColumn.append(String.format("%5.3f%s",
+                        time_.stream().mapToDouble(Double::doubleValue).average().getAsDouble() / 60.0, "h"));
+
         }
+
         mapTest = doStatisticTest("DTLZ Family", 0, global.rowCount(), _nameG, hsColumnsG, "HSat");
         for (String key : orderNameConfiguration) {
             chsatColumn.append(mapTest.get(key));
