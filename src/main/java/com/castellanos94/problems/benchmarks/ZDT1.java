@@ -78,4 +78,9 @@ public class ZDT1 extends Problem<DoubleSolution> {
         return solution;
     }
 
+    @Override
+    public DoubleSolution getEmptySolution() {
+        return new DoubleSolution(this);
+    }
+
 }

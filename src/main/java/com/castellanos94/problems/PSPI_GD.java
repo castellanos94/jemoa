@@ -151,4 +151,8 @@ public class PSPI_GD extends GDProblem<BinarySolution> {
         return getInstance().getNumDMs();
     }
 
+    @Override
+    public BinarySolution getEmptySolution() {
+        return new BinarySolution(this);
+    }
 }

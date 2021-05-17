@@ -77,4 +77,8 @@ public class KnapsackProblem extends Problem<BinarySolution> {
         return solution;
     }
 
+    @Override
+    public BinarySolution getEmptySolution() {
+        return new BinarySolution(this);
+    }
 }

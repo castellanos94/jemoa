@@ -22,37 +22,37 @@ public class DTLZP extends GDProblem<DoubleSolution> {
         this.preference_models = instance.getPreferenceModels();
         this.numberOfConstrains = 0;
         switch (numberOfProblem) {
-        case 1:
-            this.dtlz = new DTLZ1(numberOfObjectives, numberOfDecisionVars);
-            break;
-        case 2:
-            this.dtlz = new DTLZ2(numberOfObjectives, numberOfDecisionVars);
-            break;
-        case 3:
-            this.dtlz = new DTLZ3(numberOfObjectives, numberOfDecisionVars);
-            break;
-        case 4:
-            this.dtlz = new DTLZ4(numberOfObjectives, numberOfDecisionVars);
-            break;
-        case 5:
-            this.dtlz = new DTLZ5(numberOfObjectives, numberOfDecisionVars);
-            break;
-        case 6:
-            this.dtlz = new DTLZ6(numberOfObjectives, numberOfDecisionVars);
-            break;
-        case 7:
-            this.dtlz = new DTLZ7(numberOfObjectives, numberOfDecisionVars);
-            break;
-        case 8:
-            this.dtlz = new DTLZ8(numberOfObjectives, numberOfDecisionVars);
-            this.numberOfConstrains = numberOfObjectives;
-            break;
-        case 9:
-            this.dtlz = new DTLZ9(numberOfObjectives, numberOfDecisionVars);
-            this.numberOfConstrains = numberOfObjectives;
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid Problem Number " + numberOfProblem);
+            case 1:
+                this.dtlz = new DTLZ1(numberOfObjectives, numberOfDecisionVars);
+                break;
+            case 2:
+                this.dtlz = new DTLZ2(numberOfObjectives, numberOfDecisionVars);
+                break;
+            case 3:
+                this.dtlz = new DTLZ3(numberOfObjectives, numberOfDecisionVars);
+                break;
+            case 4:
+                this.dtlz = new DTLZ4(numberOfObjectives, numberOfDecisionVars);
+                break;
+            case 5:
+                this.dtlz = new DTLZ5(numberOfObjectives, numberOfDecisionVars);
+                break;
+            case 6:
+                this.dtlz = new DTLZ6(numberOfObjectives, numberOfDecisionVars);
+                break;
+            case 7:
+                this.dtlz = new DTLZ7(numberOfObjectives, numberOfDecisionVars);
+                break;
+            case 8:
+                this.dtlz = new DTLZ8(numberOfObjectives, numberOfDecisionVars);
+                this.numberOfConstrains = numberOfObjectives;
+                break;
+            case 9:
+                this.dtlz = new DTLZ9(numberOfObjectives, numberOfDecisionVars);
+                this.numberOfConstrains = numberOfObjectives;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid Problem Number " + numberOfProblem);
         }
         objectives_type = new int[numberOfObjectives];
         for (int i = 0; i < numberOfObjectives; i++) {
@@ -129,5 +129,10 @@ public class DTLZP extends GDProblem<DoubleSolution> {
     @Override
     public String toString() {
         return this.dtlz.toString();
+    }
+
+    @Override
+    public DoubleSolution getEmptySolution() {
+        return this.dtlz.getEmptySolution();
     }
 }

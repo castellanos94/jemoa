@@ -156,4 +156,8 @@ public class PSP_TRI extends Problem<BinarySolution> {
                 numberOfObjectives, numberOfDecisionVars, getInstance().getBudget().toString());
     }
 
+    @Override
+    public BinarySolution getEmptySolution() {
+        return new BinarySolution(this);
+    }
 }

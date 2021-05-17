@@ -114,4 +114,6 @@ public abstract class Problem<S extends Solution<?>> {
     public void setName(String name) {
         this.name = name;
     }
+
+    public abstract S getEmptySolution();
 }

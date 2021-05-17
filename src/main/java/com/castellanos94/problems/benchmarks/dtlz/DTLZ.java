@@ -287,5 +287,9 @@ public abstract class DTLZ extends Problem<DoubleSolution> {
         }
         return solution;
     }
+    @Override
+    public DoubleSolution getEmptySolution() {
+        return new DoubleSolution(this);
+    }
 
 }

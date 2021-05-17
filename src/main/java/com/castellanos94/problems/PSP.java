@@ -130,4 +130,9 @@ public class PSP extends Problem<BinarySolution> {
         return sol;
     }
 
+    @Override
+    public BinarySolution getEmptySolution() {
+        return new BinarySolution(this);
+    }
+
 }
