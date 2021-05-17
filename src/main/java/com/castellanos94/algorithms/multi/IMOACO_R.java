@@ -6,8 +6,10 @@ import java.util.List;
 
 import com.castellanos94.algorithms.AbstractAlgorithm;
 import com.castellanos94.datatype.Data;
+import com.castellanos94.datatype.RealData;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
+import com.castellanos94.utils.Distance;
 import com.castellanos94.utils.HeapSort;
 import com.castellanos94.utils.ReferenceHyperplane;
 import com.google.common.math.BigIntegerMath;
@@ -19,6 +21,7 @@ import com.google.common.math.BigIntegerMath;
  */
 public class IMOACO_R<S extends Solution<?>> extends AbstractAlgorithm<S> {
     public static String R2_Alpha_KEY = "R2-rank-alpha";
+    public static String NORMALIZE_KEY = "imoaco-norm";
     public static String BEST_UTILITY_KEY = "u*";
     protected ArrayList<Data> idealPoint;
     protected ArrayList<Data> nadirPoint;
@@ -91,7 +94,7 @@ public class IMOACO_R<S extends Solution<?>> extends AbstractAlgorithm<S> {
         normalize(this.solutions, idealPoint, nadirPoint);
         this.record = new ArrayList<>();
         this.record.add(nadirPoint);
-        R2Ranking(this.solutions, idealPoint, LAMBDA);
+        R2Ranking(solutions, idealPoint, LAMBDA);
         this.solutions.sort((a, b) -> Integer.compare(a.getRank(), b.getRank()));
         for (int iteration = 0; iteration < maxIterations; iteration++) {
             for (int ant = 0; ant < this.N; ant++) {
@@ -104,10 +107,12 @@ public class IMOACO_R<S extends Solution<?>> extends AbstractAlgorithm<S> {
 
     private void normalize(ArrayList<S> solutions, ArrayList<Data> zmin, ArrayList<Data> zmax) {
         for (S solution : solutions) {
+            ArrayList<Data> fnorm = new ArrayList<>();
             for (int index = 0; index < problem.getNumberOfObjectives(); index++) {
-                solution.setObjective(index, solution.getObjective(index).minus(zmin.get(index))
+                fnorm.add(solution.getObjective(index).minus(zmin.get(index))
                         .div(zmax.get(index).minus(zmin.get(index))));
             }
+            solution.setAttribute(NORMALIZE_KEY, fnorm);
         }
     }
 
@@ -126,25 +131,34 @@ public class IMOACO_R<S extends Solution<?>> extends AbstractAlgorithm<S> {
      */
     protected void R2Ranking(ArrayList<S> P, ArrayList<Data> idealPoint, ArrayList<ArrayList<Data>> LAMBDA) {
 
+        for (S p : P) {
+            p.setRank(Integer.MAX_VALUE);
+        }
         for (int i = 0; i < LAMBDA.size(); i++) {
             List<Data> lambda = LAMBDA.get(i);
             for (S p : P) {
-                p.setAttribute(R2_Alpha_KEY, ASF(p.getObjectives(), idealPoint, lambda));
+                p.setAttribute(R2_Alpha_KEY, ASF(getFNorm(p), idealPoint, lambda));
             }
             Comparator<S> comparator = (a, b) -> {
                 Data alpha_a = (Data) a.getAttribute(R2_Alpha_KEY);
                 Data alpha_b = (Data) b.getAttribute(R2_Alpha_KEY);
                 return alpha_a.compareTo(alpha_b);
             };
+            comparator = comparator.thenComparing((a, b) -> {
+                Data d1 = Distance.chebyshevDistance(getFNorm(a), lambda);
+                Data d2 = Distance.chebyshevDistance(getFNorm(b), lambda);
+                return d1.compareTo(d2);
+            });
             HeapSort<S> sorter = new HeapSort<>(comparator);
             sorter.sort(P);
-
-            for (int rank = 0; rank < P.size(); rank++) {
-                S p = P.get(rank);
+            int rank = 0;
+            for (int index = 0; index < P.size(); index++) {
+                S p = P.get(index);
                 if (rank < p.getRank()) {
                     p.setRank(rank);
                     p.setAttribute(BEST_UTILITY_KEY, p.getAttribute(R2_Alpha_KEY));
                 }
+                rank++;
             }
 
         }
@@ -161,6 +175,9 @@ public class IMOACO_R<S extends Solution<?>> extends AbstractAlgorithm<S> {
     protected Data ASF(List<Data> objectives, List<Data> idealPoint, List<Data> lambda) {
         Data result = Data.getOneByType(objectives.get(0));
         for (int i = 0; i < objectives.size(); i++) {
+            if (lambda.get(i).compareTo(0) == 0) {
+                lambda.set(i, new RealData(0.0001));
+            }
             Data tmp = objectives.get(i).minus(idealPoint.get(i)).abs().div(lambda.get(i));
             if (tmp.compareTo(result) > 0) {
                 result = tmp;
@@ -268,5 +285,10 @@ public class IMOACO_R<S extends Solution<?>> extends AbstractAlgorithm<S> {
                 }
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public ArrayList<Data> getFNorm(S s) {
+        return (ArrayList<Data>) s.getAttribute(NORMALIZE_KEY);
     }
 }
