@@ -12,6 +12,7 @@ import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Distance;
 import com.castellanos94.utils.HeapSort;
 import com.castellanos94.utils.ReferenceHyperplane;
+import com.castellanos94.utils.Tools;
 import com.google.common.math.BigIntegerMath;
 
 /**
@@ -98,11 +99,35 @@ public class IMOACO_R<S extends Solution<?>> extends AbstractAlgorithm<S> {
         this.solutions.sort((a, b) -> Integer.compare(a.getRank(), b.getRank()));
         for (int iteration = 0; iteration < maxIterations; iteration++) {
             for (int ant = 0; ant < this.N; ant++) {
-
+                ArrayList<S> ns = searchEngine(solutions);
             }
         }
         this.computeTime = System.currentTimeMillis() - this.init_time;
 
+    }
+
+    private ArrayList<S> searchEngine(ArrayList<S> solutions) {
+        ArrayList<S> rs = new ArrayList<>();
+        double[] weight = new double[this.N];
+        double totalWeight = 0.0;
+        for (int index = 0; index < this.N; index++) {
+            S s_k = solutions.get(index);
+            // w_j
+            weight[index] = (Math.exp(-Math.pow(s_k.getRank() - 1, 2) / (2 * this.q * this.q * this.N * this.N)))
+                    / (this.q * this.N * Math.sqrt(2 * Math.PI));
+            totalWeight += weight[index];
+        }
+        // Ants
+        for (int antIndex = 0; antIndex < this.N; antIndex++) {
+            //Explora el espacio de solucion k para seleccionar una variable 
+            S tmp = problem.getEmptySolution();
+            for (int k = 0; k < this.problem.getNumberOfDecisionVars(); k++) {
+                if(Tools.getRandom().nextDouble() < weight[k]/totalWeight){
+
+                }
+            }
+        }
+        return rs;
     }
 
     private void normalize(ArrayList<S> solutions, ArrayList<Data> zmin, ArrayList<Data> zmax) {
