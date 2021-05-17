@@ -50,7 +50,7 @@ public class DoubleSolution extends Solution<Double> {
         doubleSolution.attributes.forEach((k, v) -> this.attributes.put(k, v));
         this.penalties = doubleSolution.getPenalties();
         this.numberOfPenalties = doubleSolution.getNumberOfPenalties();
-
+        this.rank = doubleSolution.getRank();
     }
 
     public ArrayList<Pair<Data, Data>> getBounds() {

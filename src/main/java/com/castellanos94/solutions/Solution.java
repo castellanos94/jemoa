@@ -33,6 +33,7 @@ public abstract class Solution<T> implements Comparable<Solution<?>> {
     public Solution(Problem<?> problem) {
         this(problem.getNumberOfObjectives(), problem.getNumberOfDecisionVars(), problem.getNumberOfConstrains());
         this.problem = problem;
+        this.rank = 0;
 
     }
 
@@ -54,6 +55,7 @@ public abstract class Solution<T> implements Comparable<Solution<?>> {
         this.numberOfObjectives = numberOfObjectives;
         this.numberOfVariables = numberOfVariables;
         this.numberOfResources = numberOfResources;
+        this.rank = 0;
 
     }
 

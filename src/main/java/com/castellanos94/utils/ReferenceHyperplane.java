@@ -3,6 +3,8 @@ package com.castellanos94.utils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.RealData;
@@ -44,11 +46,21 @@ public class ReferenceHyperplane<S extends Solution<?>> {
 
         list = dasAndDennis(list);
         debAndJains(list);
+        list = new ArrayList<>(list.stream().distinct().collect(Collectors.toList()));
         references = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             references.add(new ReferencePointC<>(new ArrayList<>(list.get(i))));
         }
 
+    }
+
+    public ArrayList<ArrayList<Data>> transformToData() {
+        ArrayList<ArrayList<Data>> list = new ArrayList<>();
+        for (int i = 0; i < references.size(); i++) {
+            ReferencePointC<S> rf = this.references.get(i);
+            list.add(new ArrayList<>(rf.getPoint()));
+        }
+        return list;
     }
 
     protected ArrayList<List<Data>> dasAndDennis(ArrayList<List<Data>> list) {
