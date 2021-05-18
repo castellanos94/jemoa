@@ -67,18 +67,10 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
         this.kernelIntegerList = IntStream.range(0, N).boxed().collect(Collectors.toList());
         this.mark = new int[problem.getNumberOfObjectives()];
         this.MAX_RECORD_SIZE = 5;
-        /*
-         * this.zMax = new ArrayList<>(problem.getNumberOfObjectives()); this.zMin = new
-         * ArrayList<>(problem.getNumberOfObjectives()); this.nadirPoint = new
-         * ArrayList<>(problem.getNumberOfObjectives()); this.idealPoint = new
-         * ArrayList<>(problem.getNumberOfObjectives()); for (int index = 0; index <
-         * problem.getNumberOfObjectives(); index++) { zMax.set(index, null);
-         * zMin.set(index, null); nadirPoint.set(index, null); idealPoint.set(index,
-         * null); }
-         */
 
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void execute() {
         this.init_time = System.currentTimeMillis();
@@ -355,7 +347,6 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
      * @param zmax z^max
      * @param P    current population
      */
-    @SuppressWarnings("unchecked")
     protected void updateReferencePoint(ArrayList<Data> zmin, ArrayList<Data> zmax, ArrayList<S> P, int gen) {
         updatePoints(zmin, zmax, P);
         for (int index = 0; index < problem.getNumberOfObjectives(); index++) {
@@ -402,6 +393,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void saveRegisterInRecord(ArrayList<Data> zmax) {
         if (INDEX_OF_RECORD < MAX_RECORD_SIZE && this.record.size() < MAX_RECORD_SIZE) {
             this.record.add((ArrayList<Data>) zmax.clone());
