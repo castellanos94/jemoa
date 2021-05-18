@@ -24,3 +24,4 @@ Java Evolutionary Multi-Objective Algorithm
    * MOGWO-V : Multi-Objective Grey Wolf Optimizer with SBX crossover and Polynomial mutation
    * MOGWO-P : Multi-Objective Grey Wolf Optimizer with preferences incorporation, using a multi-criteria ordinal classifier
    * MOGWO-PFN : Multi-Objective Grey Wolf Optimizer with preferences incorporation, using a net outranking score
+   * iMOACO_R : Indicator-Based Multi-Objective Ant Colony Optimization Algorithm for Continuous Search Spaces
