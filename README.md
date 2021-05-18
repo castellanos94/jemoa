@@ -1,15 +1,15 @@
 # JEMOA
-Java Evolutionary Multi-Objective Algorithm
-# Data type
-* Integer
-* Real (double)
-* Interval 
-* Fuzzy Number (Trapezoidal)
+Java Evolutionary Multi-Objective Algorithms, this version was developed with Java 14.
+   # Data type
+   * Integer
+   * Real (double)
+   * Interval 
+   * Fuzzy Number (Trapezoidal)
 # Problems
-*  PSP
-*  Knapsack
-*  DTLZ
-*  ZDT
+  *  PSP
+  *  Knapsack
+  *  DTLZ
+  *  ZDT
 # Algorithms
 *  For single-objective:
    * GA: a genetic algorithm. 
@@ -25,3 +25,6 @@ Java Evolutionary Multi-Objective Algorithm
    * MOGWO-P : Multi-Objective Grey Wolf Optimizer with preferences incorporation, using a multi-criteria ordinal classifier
    * MOGWO-PFN : Multi-Objective Grey Wolf Optimizer with preferences incorporation, using a net outranking score
    * iMOACO_R : Indicator-Based Multi-Objective Ant Colony Optimization Algorithm for Continuous Search Spaces
+# Multicriteria Decision Aid (MCDA)
+   * Electre Tri
+   * INTERCLASS-nC
