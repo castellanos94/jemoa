@@ -364,7 +364,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
             }
         }
         saveRegisterInRecord(zmax);
-        if (gen >= this.maxIterations - 1) {
+        if (gen >= this.MAX_RECORD_SIZE - 1) {
             ArrayList<Data> mu = calculateMean(record);
             ArrayList<Data> v = calculateVariance(record, mu);
             double epsilon = 0.001;
