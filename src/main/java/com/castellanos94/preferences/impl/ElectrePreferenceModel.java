@@ -11,6 +11,10 @@ public class ElectrePreferenceModel extends PreferenceModel {
      */
     protected Data[] preference;
     /**
+     * The importance coefficients k
+     */
+    protected Data[] weight;
+    /**
      * Indifference threshold
      */
     protected Data[] indifference;
@@ -23,11 +27,16 @@ public class ElectrePreferenceModel extends PreferenceModel {
      */
     protected Data lambda;
 
-    public ElectrePreferenceModel(Data[] preference, Data[] indifference, Data[] veto, Data lambda) {
+    public ElectrePreferenceModel(Data[] preference, Data[] weight, Data[] indifference, Data[] veto, Data lambda) {
         this.preference = preference;
+        this.weight = weight;
         this.indifference = indifference;
         this.veto = veto;
         this.lambda = lambda;
+    }
+
+    public Data getWeight(int index) {
+        return this.weight[index];
     }
 
     public Data getIndiference(int index) {
