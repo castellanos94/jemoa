@@ -173,5 +173,10 @@ public class GWOExample {
             return this.name + " " + numberOfDecisionVars + ", " + numberOfObjectives + ", " + numberOfConstrains;
         }
 
+        @Override
+        public DoubleSolution getEmptySolution() {
+            return null;
+        }
+
     }
 }

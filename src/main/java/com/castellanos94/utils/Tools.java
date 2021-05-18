@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.solutions.BinarySolution;
 import com.castellanos94.solutions.DoubleSolution;
@@ -191,6 +192,30 @@ public class Tools {
                 }
             }
         }
+    }
+
+    /**
+     * Simulación del lanzamiento de una moneda con probabilidad prob.
+     * 
+     * @param prob probabilidad del flip.
+     * @return Valor 0 ó 1 dependiendo del flip.
+     */
+    public static boolean flip(double prob) {
+        return (random.nextInt(101) / 100.0 <= prob);
+    }
+
+    /**
+     * Norma para un vector
+     * 
+     * @param objectives
+     * @return
+     */
+    public static Data NORML2(List<Data> objectives) {
+        Data norm = Data.getZeroByType(objectives.get(0));
+        for (int i = 0; i < objectives.size(); i++) {
+            norm = norm.plus(objectives.get(i).pow(2));
+        }
+        return norm.sqrt();
     }
 
 }

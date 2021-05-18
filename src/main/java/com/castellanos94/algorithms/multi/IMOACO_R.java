@@ -1,14 +1,17 @@
 package com.castellanos94.algorithms.multi;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.castellanos94.algorithms.AbstractAlgorithm;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.problems.Problem;
-import com.castellanos94.solutions.Solution;
+import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.Distance;
 import com.castellanos94.utils.HeapSort;
 import com.castellanos94.utils.ReferenceHyperplane;
@@ -20,9 +23,10 @@ import com.google.common.math.BigIntegerMath;
  * many-objective ant colony optimizer for continuous search spaces. Swarm
  * Intell 11, 71–100 (2017). https://doi.org/10.1007/s11721-017-0133-x
  */
-public class IMOACO_R<S extends Solution<?>> extends AbstractAlgorithm<S> {
+public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
     public static String R2_Alpha_KEY = "R2-rank-alpha";
     public static String NORMALIZE_KEY = "imoaco-norm";
+    public static String ANT_STD_KEY = "ant-std";
     public static String BEST_UTILITY_KEY = "u*";
     protected ArrayList<Data> idealPoint;
     protected ArrayList<Data> nadirPoint;
@@ -35,6 +39,7 @@ public class IMOACO_R<S extends Solution<?>> extends AbstractAlgorithm<S> {
     protected final int h;
     protected final int maxIterations;
     protected final int N;
+    private List<Integer> kernelIntegerList;
 
     /**
      * 
@@ -57,6 +62,7 @@ public class IMOACO_R<S extends Solution<?>> extends AbstractAlgorithm<S> {
         this.N = BigIntegerMath.factorial(problem.getNumberOfObjectives() + h - 1).divide(
                 BigIntegerMath.factorial(h).multiply(BigIntegerMath.factorial(problem.getNumberOfObjectives() - 1)))
                 .intValueExact();
+        this.kernelIntegerList = IntStream.range(0, N).boxed().collect(Collectors.toList());
         /*
          * this.zMax = new ArrayList<>(problem.getNumberOfObjectives()); this.zMin = new
          * ArrayList<>(problem.getNumberOfObjectives()); this.nadirPoint = new
@@ -72,6 +78,19 @@ public class IMOACO_R<S extends Solution<?>> extends AbstractAlgorithm<S> {
     public void execute() {
         this.init_time = System.currentTimeMillis();
         ArrayList<ArrayList<Data>> LAMBDA = generateWeight();
+
+        Comparator<S> cmp = (a, b) -> Integer.compare(a.getRank(), b.getRank());
+        cmp = cmp.thenComparing((a, b) -> {
+            Data ua = (Data) a.getAttribute(BEST_UTILITY_KEY);
+            Data ub = (Data) b.getAttribute(BEST_UTILITY_KEY);
+            return ua.compareTo(ub);
+        });
+        cmp.thenComparing((a, b) -> {
+            Data d1 = Tools.NORML2(a.getObjectives());
+            Data d2 = Tools.NORML2(b.getObjectives());
+            return d1.compareTo(d2);
+        });
+        HeapSort<S> sorted3Criterial = new HeapSort<>(cmp);
         this.solutions = new ArrayList<>(this.N);
         // pheromenes T = solutions
         for (int index = 0; index < this.N; index++) {
@@ -100,14 +119,42 @@ public class IMOACO_R<S extends Solution<?>> extends AbstractAlgorithm<S> {
         for (int iteration = 0; iteration < maxIterations; iteration++) {
             for (int ant = 0; ant < this.N; ant++) {
                 ArrayList<S> ns = searchEngine(solutions);
+                updatePoints(ns);
+                ArrayList<S> psi = new ArrayList<>(solutions);
+                psi.addAll(ns);
+                normalize(psi, idealPoint, nadirPoint);
+                R2Ranking(psi, idealPoint, LAMBDA);
+                // Ordenar PSI en forma creciente con respecto a los criterios (1) rank, (2) u*
+                // y (3) norma L_2
+                sorted3Criterial.sort(psi);
+                // Copiar en Tau los primeros elementos de psi
+                for (int i = 0; i < this.N; i++) {
+                    this.solutions.set(i, (S) psi.get(i).copy());
+                }
+                R2Ranking(solutions, idealPoint, LAMBDA);
+
             }
         }
         this.computeTime = System.currentTimeMillis() - this.init_time;
 
     }
 
+    /**
+     * This method is based on the implementation of iMOACOR: a new indicator-based
+     * multi-target ant colony optimization algorithm for continuous search spaces
+     * MSc. Jesús Guillermo Falcón Cardona. Source Code of iMOACOR v1.0
+     * http://computacion.cs.cinvestav.mx/~jfalcon/iMOACOR/imoacor.html
+     * 
+     * @param solutions
+     * @return
+     */
     private ArrayList<S> searchEngine(ArrayList<S> solutions) {
-        ArrayList<S> rs = new ArrayList<>();
+        ArrayList<S> rs = new ArrayList<>(this.N);
+        // filled with empty solutions
+        for (int i = 0; i < this.N; i++) {
+            rs.add(this.problem.getEmptySolution());
+        }
+        // calculate weights
         double[] weight = new double[this.N];
         double totalWeight = 0.0;
         for (int index = 0; index < this.N; index++) {
@@ -117,17 +164,100 @@ public class IMOACO_R<S extends Solution<?>> extends AbstractAlgorithm<S> {
                     / (this.q * this.N * Math.sqrt(2 * Math.PI));
             totalWeight += weight[index];
         }
+        // calculate probabilities
+        double[] probabilities = new double[this.N];
+        for (int index = 0; index < this.N; index++) {
+            probabilities[index] = weight[index] / totalWeight;
+        }
         // Ants
-        for (int antIndex = 0; antIndex < this.N; antIndex++) {
-            //Explora el espacio de solucion k para seleccionar una variable 
-            S tmp = problem.getEmptySolution();
-            for (int k = 0; k < this.problem.getNumberOfDecisionVars(); k++) {
-                if(Tools.getRandom().nextDouble() < weight[k]/totalWeight){
+        int[] antKernelIndex = chooseGaussianKernel(probabilities);
 
-                }
-            }
+        for (int i = 0; i < problem.getNumberOfDecisionVars(); i++) {
+            calculateStdDev(solutions, i);
+            antSampling(rs, solutions, antKernelIndex, i);
+        }
+        for (S ant : rs) {
+            problem.evaluate(ant);
+            problem.evaluateConstraint(ant);
         }
         return rs;
+    }
+
+    private void antSampling(ArrayList<S> ants, ArrayList<S> pheromones, int[] kernelIndex, int index) {
+        for (int i = 0; i < this.N; i++) {
+            int selectedKernel = kernelIndex[i];
+            S ant = ants.get(i);
+            ant.setVariable(index, Normal(pheromones.get(selectedKernel).getVariable(index),
+                    (double) pheromones.get(selectedKernel).getAttribute(ANT_STD_KEY), index));
+        }
+    }
+
+    /**
+     * Box Muller method
+     * 
+     * @param mean
+     * @param stdDev
+     * @param index
+     * @return
+     */
+    private double Normal(Double mean, double stdDev, int index) {
+        double U1, U2, Z, X;
+        do {
+            do {
+                U1 = Tools.getRandom().nextDouble();
+            } while (U1 == 0.0 || U1 == 1.0);
+
+            do {
+                U2 = Tools.getRandom().nextDouble();
+            } while (U2 == 0.0 || U1 == 1.0);
+
+            if (Tools.flip(0.5))
+                // Standard random variable (media = 0, desvStd = 1)
+                Z = Math.sqrt(-2.0 * Math.log(U1)) * Math.cos(2.0 * Math.PI * U2);
+            else
+                // Standard random variable (media = 0, desvStd = 1)
+                Z = Math.sqrt(-2.0 * Math.log(U1)) * Math.sin(2.0 * Math.PI * U2);
+            /*
+             * Transformando la variable aleatoria normal estándar Z, a una variable
+             * aleatoria normal con media y desviación tomadas del archivo de soluciones
+             * previamente.
+             */
+            X = Z * stdDev + mean;
+
+        } while (problem.getLowerBound()[index].compareTo(X) > 0 || problem.getUpperBound()[index].compareTo(X) < 0);
+        return X;
+    }
+
+    private void calculateStdDev(ArrayList<S> solutions, int index) {
+        for (int i = 0; i < this.N; i++) {
+            double std = 0;
+            for (int j = 0; j < this.N; j++) {
+                std += Math.abs(solutions.get(j).getVariable(index) - solutions.get(i).getVariable(index));
+            }
+            std *= this.xi / (((double) this.N) - 1.0);
+            solutions.get(i).setAttribute(ANT_STD_KEY, std);
+        }
+    }
+
+    private int[] chooseGaussianKernel(double[] probabilities) {
+        int[] kernelIndex = new int[this.N];
+        for (int i = 0; i < kernelIndex.length; i++) {
+            kernelIndex[i] = rouletteWheelSelection(probabilities);
+        }
+        return kernelIndex;
+    }
+
+    private int rouletteWheelSelection(double[] probabilities) {
+        Collections.shuffle(kernelIntegerList);
+        double rand = Tools.getRandom().nextDouble();
+        double sum = 0;
+        for (int i = 0; i < probabilities.length; i++) {
+            sum += probabilities[kernelIntegerList.get(i)];
+            if (sum >= rand) {
+                return kernelIntegerList.get(i);
+            }
+        }
+        return 0;
     }
 
     private void normalize(ArrayList<S> solutions, ArrayList<Data> zmin, ArrayList<Data> zmax) {
@@ -170,8 +300,8 @@ public class IMOACO_R<S extends Solution<?>> extends AbstractAlgorithm<S> {
                 return alpha_a.compareTo(alpha_b);
             };
             comparator = comparator.thenComparing((a, b) -> {
-                Data d1 = Distance.chebyshevDistance(getFNorm(a), lambda);
-                Data d2 = Distance.chebyshevDistance(getFNorm(b), lambda);
+                Data d1 = Tools.NORML2(a.getObjectives());
+                Data d2 = Tools.NORML2(b.getObjectives());
                 return d1.compareTo(d2);
             });
             HeapSort<S> sorter = new HeapSort<>(comparator);
@@ -313,7 +443,13 @@ public class IMOACO_R<S extends Solution<?>> extends AbstractAlgorithm<S> {
     }
 
     @SuppressWarnings("unchecked")
-    public ArrayList<Data> getFNorm(S s) {
+    protected ArrayList<Data> getFNorm(S s) {
         return (ArrayList<Data>) s.getAttribute(NORMALIZE_KEY);
     }
+
+    @Override
+    public String toString() {
+        return "IMOACO_R [N=" + N + ", h=" + h + ", maxIterations=" + maxIterations + ", q=" + q + ", xi=" + xi + "]";
+    }
+    
 }
