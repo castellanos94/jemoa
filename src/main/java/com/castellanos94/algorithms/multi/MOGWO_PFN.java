@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import com.castellanos94.operators.RepairOperator;
-import com.castellanos94.preferences.impl.GDProblem;
 import com.castellanos94.preferences.impl.ITHDM_Preference;
+import com.castellanos94.problems.GDProblem;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.ExtraInformation;

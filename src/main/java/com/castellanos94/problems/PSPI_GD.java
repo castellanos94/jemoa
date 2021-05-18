@@ -10,7 +10,6 @@ import com.castellanos94.datatype.IntegerData;
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.PSPI_Instance;
-import com.castellanos94.preferences.impl.GDProblem;
 import com.castellanos94.preferences.impl.OutrankingModel;
 import com.castellanos94.solutions.BinarySolution;
 import com.castellanos94.utils.Tools;

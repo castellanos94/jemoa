@@ -1,7 +1,7 @@
-package com.castellanos94.preferences.impl;
+package com.castellanos94.problems;
 
 import com.castellanos94.datatype.Interval;
-import com.castellanos94.problems.Problem;
+import com.castellanos94.preferences.impl.OutrankingModel;
 import com.castellanos94.solutions.Solution;
 
 public abstract class GDProblem<S extends Solution<?>> extends Problem<S> {

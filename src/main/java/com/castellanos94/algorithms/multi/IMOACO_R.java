@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 import com.castellanos94.algorithms.AbstractAlgorithm;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.RealData;
+import com.castellanos94.operators.impl.RepairBoundary;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.HeapSort;
@@ -42,6 +43,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
     protected int[] mark;
     protected final int MAX_RECORD_SIZE;
     protected int INDEX_OF_RECORD = 0;
+    protected RepairBoundary repairBoundary;
 
     /**
      * 
@@ -67,6 +69,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
         this.kernelIntegerList = IntStream.range(0, N).boxed().collect(Collectors.toList());
         this.mark = new int[problem.getNumberOfObjectives()];
         this.MAX_RECORD_SIZE = 5;
+        this.repairBoundary = new RepairBoundary();
 
     }
 
@@ -116,6 +119,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
         ArrayList<Data> zmin = (ArrayList<Data>) idealPoint.clone();
         ArrayList<Data> zmax = (ArrayList<Data>) nadirPoint.clone();
         for (int iteration = 0; iteration < maxIterations; iteration++) {
+            System.out.printf("Current iteration : %4d ...\n",(iteration+1));
             for (int ant = 0; ant < this.N; ant++) {
                 ArrayList<S> ns = searchEngine(solutions);
                 updateReferencePoint(zmin, zmax, ns, iteration);
@@ -176,6 +180,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
             antSampling(rs, solutions, antKernelIndex, i);
         }
         for (S ant : rs) {
+            this.repairBoundary.execute(ant);
             problem.evaluate(ant);
             problem.evaluateConstraint(ant);
         }

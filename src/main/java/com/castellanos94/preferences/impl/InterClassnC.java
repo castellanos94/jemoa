@@ -8,6 +8,7 @@ import java.util.HashMap;
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.instances.PSPI_Instance;
 import com.castellanos94.preferences.Classifier;
+import com.castellanos94.problems.GDProblem;
 import com.castellanos94.problems.PSPI_GD;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.BinarySolution;
