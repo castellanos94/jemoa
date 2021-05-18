@@ -12,7 +12,6 @@ import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
-import com.castellanos94.utils.Distance;
 import com.castellanos94.utils.HeapSort;
 import com.castellanos94.utils.ReferenceHyperplane;
 import com.castellanos94.utils.Tools;
@@ -40,6 +39,9 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
     protected final int maxIterations;
     protected final int N;
     private List<Integer> kernelIntegerList;
+    protected int[] mark;
+    protected final int MAX_RECORD_SIZE;
+    protected int INDEX_OF_RECORD = 0;
 
     /**
      * 
@@ -63,6 +65,8 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
                 BigIntegerMath.factorial(h).multiply(BigIntegerMath.factorial(problem.getNumberOfObjectives() - 1)))
                 .intValueExact();
         this.kernelIntegerList = IntStream.range(0, N).boxed().collect(Collectors.toList());
+        this.mark = new int[problem.getNumberOfObjectives()];
+        this.MAX_RECORD_SIZE = 5;
         /*
          * this.zMax = new ArrayList<>(problem.getNumberOfObjectives()); this.zMin = new
          * ArrayList<>(problem.getNumberOfObjectives()); this.nadirPoint = new
@@ -72,6 +76,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
          * zMin.set(index, null); nadirPoint.set(index, null); idealPoint.set(index,
          * null); }
          */
+
     }
 
     @Override
@@ -113,13 +118,15 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
         }
         normalize(this.solutions, idealPoint, nadirPoint);
         this.record = new ArrayList<>();
-        this.record.add(nadirPoint);
+        saveRegisterInRecord(nadirPoint);
         R2Ranking(solutions, idealPoint, LAMBDA);
         this.solutions.sort((a, b) -> Integer.compare(a.getRank(), b.getRank()));
+        ArrayList<Data> zmin = (ArrayList<Data>) idealPoint.clone();
+        ArrayList<Data> zmax = (ArrayList<Data>) nadirPoint.clone();
         for (int iteration = 0; iteration < maxIterations; iteration++) {
             for (int ant = 0; ant < this.N; ant++) {
                 ArrayList<S> ns = searchEngine(solutions);
-                updatePoints(ns);
+                updateReferencePoint(zmin, zmax, ns, iteration);
                 ArrayList<S> psi = new ArrayList<>(solutions);
                 psi.addAll(ns);
                 normalize(psi, idealPoint, nadirPoint);
@@ -349,60 +356,77 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
      * @param P    current population
      */
     @SuppressWarnings("unchecked")
-    protected void updateReferencePoint(List<Data> zmin, List<Data> zmax, ArrayList<S> P) {
-        updatePoints(P);
+    protected void updateReferencePoint(ArrayList<Data> zmin, ArrayList<Data> zmax, ArrayList<S> P, int gen) {
+        updatePoints(zmin, zmax, P);
         for (int index = 0; index < problem.getNumberOfObjectives(); index++) {
             if (zmin.get(index).compareTo(idealPoint.get(index)) < 0) {
-                zmin.set(index, idealPoint.get(index).copy());
+                idealPoint.set(index, zmin.get(index).copy());
             }
         }
-        record.add((ArrayList<Data>) nadirPoint.clone());
-        ArrayList<Data> v = calculateVariance(record);
-
-        Data max_v = v.get(0);
-        for (int index = 0; index < problem.getNumberOfObjectives(); index++) {
-            if (max_v.compareTo(v.get(index)) > 0) {
-                max_v = v.get(index);
-            }
-        }
-        if (max_v.compareTo(0.5) > 0) {
-            for (int index = 0; index < problem.getNumberOfObjectives(); index++) {
-                if (zmax.get(index).compareTo(nadirPoint.get(index)) < 0) {
-                    zmax.set(index, nadirPoint.get(index).copy());
-                }
-            }
-        } else {
+        saveRegisterInRecord(zmax);
+        if (gen >= this.maxIterations - 1) {
+            ArrayList<Data> mu = calculateMean(record);
+            ArrayList<Data> v = calculateVariance(record, mu);
             double epsilon = 0.001;
-            boolean[] indexMarked = new boolean[problem.getNumberOfObjectives()];
             for (int index = 0; index < problem.getNumberOfObjectives(); index++) {
-                if (zmax.get(index).minus(zmin.get(index)).abs().compareTo(epsilon) < 0) {
-                    Data max = zmax.get(0);
-                    for (Data value : zmax) {
-                        if (value.compareTo(max) > 0) {
-                            max = value;
-                        }
+                Data var = v.get(index);
+                if (var.compareTo(0.5) > 0) {
+                    Data max = getMaxValueFromVector(zmax);
+                    for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
+                        nadirPoint.set(j, max);
                     }
-                    zmax.set(index, max.copy());
-                    indexMarked[index] = true;
-                } else if (nadirPoint.get(index).compareTo(zmax.get(index)) > 0) {
-                    zmax.set(index, nadirPoint.get(index).times(2).minus(zmax.get(index)));
-                    indexMarked[index] = true;
-                } else if (v.get(index).compareTo(0) == 0 && !indexMarked[index]) {
-                    Data a = Data.getZeroByType(zmax.get(index));
-                    for (ArrayList<Data> old : record) {
-                        for (Data _data : old) {
-                            if (a.compareTo(_data) < 0) {
-                                a = _data;
+                    break;
+                } else {
+                    if (nadirPoint.get(index).minus(idealPoint.get(index)).abs().compareTo(epsilon) < 0) {
+                        nadirPoint.set(index, getMaxValueFromVector(nadirPoint));
+                        mark[index] = MAX_RECORD_SIZE;
+                    } else if (zmax.get(index).compareTo(nadirPoint.get(index)) > 0) {
+                        nadirPoint.set(index, zmax.get(index).plus(zmax.get(index).minus(nadirPoint.get(index))));
+                    } else if (var.compareTo(0) == 0
+                            || (zmax.get(index).minus(mu.get(index)).compareTo(epsilon) > 0 && mark[index] == 0)) {
+                        Data a = Data.getZeroByType(zmax.get(index));
+                        for (ArrayList<Data> old : record) {
+                            for (Data _data : old) {
+                                if (a.compareTo(_data) < 0) {
+                                    a = _data;
+                                }
                             }
                         }
+                        nadirPoint.set(index, (nadirPoint.get(index).minus(a)).div(2));
                     }
-                    zmax.set(index, (zmax.get(index).minus(a)).div(2));
+                }
+                if (mark[index] > 0) {
+                    mark[index]--;
                 }
             }
         }
     }
 
-    private ArrayList<Data> calculateVariance(ArrayList<ArrayList<Data>> rec) {
+    private void saveRegisterInRecord(ArrayList<Data> zmax) {
+        if (INDEX_OF_RECORD < MAX_RECORD_SIZE && this.record.size() < MAX_RECORD_SIZE) {
+            this.record.add((ArrayList<Data>) zmax.clone());
+            INDEX_OF_RECORD++;
+        } else if (INDEX_OF_RECORD < MAX_RECORD_SIZE) {
+            this.record.set(INDEX_OF_RECORD, (ArrayList<Data>) zmax.clone());
+            INDEX_OF_RECORD++;
+        } else {
+            INDEX_OF_RECORD = 0;
+            saveRegisterInRecord(zmax);
+        }
+
+    }
+
+    private Data getMaxValueFromVector(ArrayList<Data> zmax) {
+        Data rs = zmax.get(0);
+        for (int i = 0; i < zmax.size(); i++) {
+            if (rs.compareTo(zmax.get(i)) < 0) {
+                rs = zmax.get(i);
+            }
+        }
+        return rs;
+    }
+
+    private ArrayList<Data> calculateMean(ArrayList<ArrayList<Data>> rec) {
         ArrayList<Data> mean = new ArrayList<>();
 
         for (int index = 0; index < problem.getNumberOfObjectives(); index++) {
@@ -412,6 +436,11 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
             }
             mean.add(acum.div(rec.size()));
         }
+        return mean;
+    }
+
+    private ArrayList<Data> calculateVariance(ArrayList<ArrayList<Data>> rec, ArrayList<Data> mean) {
+
         ArrayList<Data> v = new ArrayList<>();
         for (int index = 0; index < problem.getNumberOfObjectives(); index++) {
             Data acum = Data.getZeroByType(rec.get(0).get(0));
@@ -429,14 +458,14 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
      * 
      * @param population from reference
      */
-    protected void updatePoints(ArrayList<S> population) {
+    protected void updatePoints(List<Data> zmin, List<Data> zmax, ArrayList<S> population) {
         for (S p : population) {
             for (int index = 0; index < problem.getNumberOfObjectives(); index++) {
-                if (idealPoint.get(index).compareTo(p.getObjective(index)) > 0) {
-                    idealPoint.set(index, p.getObjective(index).copy());
+                if (zmin.get(index).compareTo(p.getObjective(index)) > 0) {
+                    zmin.set(index, p.getObjective(index).copy());
                 }
-                if (nadirPoint.get(index).compareTo(p.getObjective(index)) < 0) {
-                    nadirPoint.set(index, p.getObjective(index).copy());
+                if (zmax.get(index).compareTo(p.getObjective(index)) < 0) {
+                    zmax.set(index, p.getObjective(index).copy());
                 }
             }
         }
@@ -449,7 +478,8 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
 
     @Override
     public String toString() {
-        return "IMOACO_R [N=" + N + ", h=" + h + ", maxIterations=" + maxIterations + ", q=" + q + ", xi=" + xi + "]";
+        return "IMOACO_R [N=" + N + ", h=" + h + ", maxIterations=" + maxIterations + ", q=" + q + ", xi=" + xi
+                + ", MAX RECORD SIZE=" + MAX_RECORD_SIZE + "]";
     }
-    
+
 }

@@ -14,6 +14,7 @@ import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
 import com.castellanos94.utils.Scatter3D;
+import com.castellanos94.utils.Tools;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +23,7 @@ public class IMOACO_Example {
     private static final Logger logger = LogManager.getLogger(IMOACO_Example.class);
 
     static final String DIRECTORY = "experiments" + File.separator + "IMOACOR";
-    static final int EXPERIMENT = 31;
+    static final int EXPERIMENT = 4;
 
     public static void main(String[] args) throws IOException {
         File f = new File(DIRECTORY);
@@ -33,7 +34,7 @@ public class IMOACO_Example {
         ArrayList<Long> time = new ArrayList<>();
         ArrayList<DoubleSolution> bag = new ArrayList<>();
         Ranking<DoubleSolution> compartor = new DominanceComparator<>();
-
+        Tools.setSeed(1L);
         for (int i = 0; i < EXPERIMENT; i++) {
 
             IMOACO_R<DoubleSolution> algorithm = new IMOACO_R<>(problem, 416, 0.1, 0.5, 14);
