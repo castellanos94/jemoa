@@ -11,7 +11,6 @@ import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.problems.benchmarks.dtlz.DTLZ;
 import com.castellanos94.problems.benchmarks.dtlz.DTLZ5;
-import com.castellanos94.problems.benchmarks.dtlz.DTLZ7;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
