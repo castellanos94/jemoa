@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import com.castellanos94.algorithms.multi.IMOACO_R;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
+import com.castellanos94.problems.benchmarks.dtlz.DTLZ;
+import com.castellanos94.problems.benchmarks.dtlz.DTLZ5;
 import com.castellanos94.problems.benchmarks.dtlz.DTLZ7;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
@@ -29,7 +31,7 @@ public class IMOACO_Example {
         File f = new File(DIRECTORY);
         if (!f.exists())
             f.mkdirs();
-        DTLZ7 problem = new DTLZ7();
+        DTLZ problem = new DTLZ5();
         logger.info(problem);
         ArrayList<Long> time = new ArrayList<>();
         ArrayList<DoubleSolution> bag = new ArrayList<>();

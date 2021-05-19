@@ -42,7 +42,6 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
     private List<Integer> kernelIntegerList;
     protected int[] mark;
     protected final int MAX_RECORD_SIZE;
-    protected int INDEX_OF_RECORD = 0;
     protected RepairBoundary repairBoundary;
 
     /**
@@ -119,7 +118,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
         ArrayList<Data> zmin = (ArrayList<Data>) idealPoint.clone();
         ArrayList<Data> zmax = (ArrayList<Data>) nadirPoint.clone();
         for (int iteration = 0; iteration < maxIterations; iteration++) {
-            System.out.printf("Current iteration : %4d ...\n",(iteration+1));
+            System.out.printf("Current iteration : %4d ...\n", (iteration + 1));
             for (int ant = 0; ant < this.N; ant++) {
                 ArrayList<S> ns = searchEngine(solutions);
                 updateReferencePoint(zmin, zmax, ns, iteration);
@@ -400,15 +399,11 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
 
     @SuppressWarnings("unchecked")
     private void saveRegisterInRecord(ArrayList<Data> zmax) {
-        if (INDEX_OF_RECORD < MAX_RECORD_SIZE && this.record.size() < MAX_RECORD_SIZE) {
+        if (this.record.size() < MAX_RECORD_SIZE) {
             this.record.add((ArrayList<Data>) zmax.clone());
-            INDEX_OF_RECORD++;
-        } else if (INDEX_OF_RECORD < MAX_RECORD_SIZE) {
-            this.record.set(INDEX_OF_RECORD, (ArrayList<Data>) zmax.clone());
-            INDEX_OF_RECORD++;
         } else {
-            INDEX_OF_RECORD = 0;
-            saveRegisterInRecord(zmax);
+            this.record.remove(0);
+            this.record.add((ArrayList<Data>) zmax.clone());
         }
 
     }
