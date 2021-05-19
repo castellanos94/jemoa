@@ -32,16 +32,17 @@ public class ELECTRE_Preference<S extends Solution<?>> extends Preference<S> {
         Data cYX = computeDegreeOfCredibility(y.getObjectives(), x.getObjectives());
         boolean bSa = cYX.compareTo(model.getLambda()) >= 0;
         boolean aSb = cXY.compareTo(model.getLambda()) >= 0;
-        System.out.println(String.format("\taSb = %3s (%.3f), bSa = %3s (%.3f)", (aSb) ? "Yes" : "No", cXY.doubleValue(),
-                (bSa) ? "Yes" : "No", cYX.doubleValue()));
+        /*System.out.println(String.format("\taSb = %3s (%.3f), bSa = %3s (%.3f) \t-> ", (aSb) ? "Yes" : "No", cXY.doubleValue(),
+                (bSa) ? "Yes" : "No", cYX.doubleValue()));*/
         if (aSb && bSa) {
             return 0;
         }
-        if (bSa && !aSb) {
-            return 1;
-        }
         if (aSb && !bSa) {
             return -1;
+        }
+
+        if (!aSb && bSa) {
+            return 1;
         }
 
         return 2;
@@ -51,21 +52,19 @@ public class ELECTRE_Preference<S extends Solution<?>> extends Preference<S> {
         Data[] partial_concordance_index = computePartialConcordanceIndex(a, b);
         Data concordanceIndex = computeConcordance(a, partial_concordance_index);
         Data[] discordanceIndex = computeDiscordanceIndex(a, b);
-        System.out.println("\tcj = "+Arrays.toString(partial_concordance_index));
-        System.out.println("\tdj = "+Arrays.toString(discordanceIndex));
-        //System.out.println("C = "+concordanceIndex);
+        //System.out.println("\tcj = "+Arrays.toString(partial_concordance_index));
+        //System.out.println("\tdj = "+Arrays.toString(discordanceIndex));
+        //System.out.println("\tC = "+concordanceIndex);
         Data rs = RealData.ONE;
         for (int i = 0; i < numberOfObjectives; i++) {
             int val =discordanceIndex[i].compareTo(concordanceIndex);
-            if(val <= 0){
-                return concordanceIndex;
-            }else if(val > -1){
-                return RealData.ZERO;
-            }else{
-
+            if(val >0){
+                
                 Data p = RealData.ONE.copy().minus(discordanceIndex[i]);
                 Data q = RealData.ONE.copy().minus(concordanceIndex);
                 rs = rs.times(p.div(q));
+            }else{
+                return concordanceIndex;
             }
             /*
             if (discordanceIndex[i].compareTo(concordanceIndex) <= 0) {

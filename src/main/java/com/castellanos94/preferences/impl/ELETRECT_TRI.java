@@ -30,38 +30,38 @@ public class ELETRECT_TRI<S extends Solution<?>> extends Classifier<S> {
     public void classify(S x) {
         int cp = pessimisticRule(x);
         int co = optimisticRule(x);
-        System.out.printf("Optimistic: %3d, Pesimistic %3d\n", co, cp);
+        System.out.printf("Pesimistic : %c, Optimistic : %c\n", ('A' + cp), ('A' + co));
     }
 
-    private int optimisticRule(S x) {
+    public int optimisticRule(S x) {
         S y = (S) x.copy();
         for (int r = 0; r < this.referenceProfile.size(); r++) {
             for (int index = 0; index < numberOfObjectives; index++) {
                 y.setObjective(index, this.referenceProfile.get(r).get(index));
             }
-            System.out.print(r + " -> ");
+            // System.out.print(r + " -> ");
 
             int val = this.preference.compare(y, x);
-            if (val == 1) {
+            if (val == -1) {
                 return r;
             }
         }
-        return -1;
+        return 0;
     }
 
-    private int pessimisticRule(S x) {
+    public int pessimisticRule(S x) {
         S y = (S) x.copy();
         for (int r = this.referenceProfile.size() - 1; r >= 0; r--) {
             for (int index = 0; index < numberOfObjectives; index++) {
                 y.setObjective(index, this.referenceProfile.get(r).get(index));
             }
-            System.out.print("B"+(r+1) + " -> ");
+            // System.out.print("B"+(r+1) + " -> ");
             int val = this.preference.compare(x, y);
             if (val == -1) {
                 return r + 1;
             }
         }
-        return -1;
+        return this.referenceProfile.size();
     }
 
     @Override
@@ -123,7 +123,7 @@ public class ELETRECT_TRI<S extends Solution<?>> extends Classifier<S> {
         x4.setObjective(4, new RealData(20));
         DoubleSolution x5 = new DoubleSolution(n, 0, 0, null);
         x5.setObjective(0, new RealData(-30));
-        x5.setObjective(1, new RealData(-132));
+        x5.setObjective(1, new RealData(-1321));
         x5.setObjective(2, new RealData(8));
         x5.setObjective(3, new RealData(7.5));
         x5.setObjective(4, new RealData(16));
@@ -158,23 +158,23 @@ public class ELETRECT_TRI<S extends Solution<?>> extends Classifier<S> {
         b.add(b1);
         b.add(b2);
         ELETRECT_TRI<DoubleSolution> eTri = new ELETRECT_TRI<>(model, n, b);
-        System.out.println("a1");
+        System.out.print("a1 ");
         eTri.classify(x1);
-        System.out.println("a2");
+        System.out.print("a2 ");
         eTri.classify(x2);
-        System.out.println("a3");
+        System.out.print("a3 ");
         eTri.classify(x3);
 
-        System.out.println("a4");
+        System.out.print("a4 ");
         eTri.classify(x4);
 
-        System.out.println("a5");
+        System.out.print("a5 ");
         eTri.classify(x5);
 
-        System.out.println("a6");
+        System.out.print("a6 ");
         eTri.classify(x6);
 
-        System.out.println("a7");
+        System.out.print("a7 ");
         eTri.classify(x7);
     }
 
