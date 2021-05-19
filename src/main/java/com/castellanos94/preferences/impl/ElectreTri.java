@@ -8,39 +8,48 @@ import com.castellanos94.preferences.Classifier;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 
-public class ELETRECT_TRI<S extends Solution<?>> extends Classifier<S> {
+/**
+ * Electre Tri implementation (Degree of credibility) based on Fontana, M. E., &
+ * Cavalcante, C. A. V. (2013). Electre tri method used to storage location
+ * assignment into categories. Pesquisa Operacional, 33(2), 283–303.
+ * https://doi.org/10.1590/s0101-74382013000200009
+ */
+public class ElectreTri<S extends Solution<?>> extends Classifier<S> {
     protected ElectrePreferenceModel model;
     protected final int numberOfObjectives;
     protected final ArrayList<ArrayList<Data>> referenceProfile;
     protected ELECTRE_Preference<S> preference;
+    protected RULE ruleForAssignment;
 
     public static enum RULE {
         PESSIMISTIC, OPTIMISTIC
     };
 
-    public ELETRECT_TRI(ElectrePreferenceModel model, int numberOfObjectives,
-            ArrayList<ArrayList<Data>> referenceProfile) {
+    public ElectreTri(ElectrePreferenceModel model, int numberOfObjectives,
+            ArrayList<ArrayList<Data>> referenceProfile, RULE ruleForAssignment) {
         this.model = model;
         this.numberOfObjectives = numberOfObjectives;
         this.referenceProfile = referenceProfile;
         this.preference = new ELECTRE_Preference<>(model, numberOfObjectives);
+        this.ruleForAssignment = ruleForAssignment;
     }
 
     @Override
     public void classify(S x) {
-        int cp = pessimisticRule(x);
-        int co = optimisticRule(x);
-        System.out.printf("Pesimistic : %c, Optimistic : %c\n", ('A' + cp), ('A' + co));
+        if (this.ruleForAssignment == RULE.PESSIMISTIC) {
+            x.setAttribute(getAttributeKey(), String.format("%c", 'A' + pessimisticRule(x)));
+        } else {
+            x.setAttribute(getAttributeKey(), String.format("%c", 'A' + optimisticRule(x)));
+        }
     }
 
-    public int optimisticRule(S x) {
+    @SuppressWarnings("unchecked")
+    protected int optimisticRule(S x) {
         S y = (S) x.copy();
         for (int r = 0; r < this.referenceProfile.size(); r++) {
             for (int index = 0; index < numberOfObjectives; index++) {
                 y.setObjective(index, this.referenceProfile.get(r).get(index));
             }
-            // System.out.print(r + " -> ");
-
             int val = this.preference.compare(y, x);
             if (val == -1) {
                 return r;
@@ -49,19 +58,19 @@ public class ELETRECT_TRI<S extends Solution<?>> extends Classifier<S> {
         return 0;
     }
 
-    public int pessimisticRule(S x) {
+    @SuppressWarnings("unchecked")
+    protected int pessimisticRule(S x) {
         S y = (S) x.copy();
         for (int r = this.referenceProfile.size() - 1; r >= 0; r--) {
             for (int index = 0; index < numberOfObjectives; index++) {
                 y.setObjective(index, this.referenceProfile.get(r).get(index));
             }
-            // System.out.print("B"+(r+1) + " -> ");
             int val = this.preference.compare(x, y);
             if (val == -1) {
                 return r + 1;
             }
         }
-        return this.referenceProfile.size();
+        return 0;
     }
 
     @Override
@@ -157,25 +166,29 @@ public class ELETRECT_TRI<S extends Solution<?>> extends Classifier<S> {
         ArrayList<ArrayList<Data>> b = new ArrayList<>();
         b.add(b1);
         b.add(b2);
-        ELETRECT_TRI<DoubleSolution> eTri = new ELETRECT_TRI<>(model, n, b);
+        ElectreTri<DoubleSolution> eTri = new ElectreTri<>(model, n, b, ElectreTri.RULE.OPTIMISTIC);
         System.out.print("a1 ");
         eTri.classify(x1);
+        System.out.println(x1.getAttribute(eTri.getAttributeKey()));
         System.out.print("a2 ");
         eTri.classify(x2);
+        System.out.println(x2.getAttribute(eTri.getAttributeKey()));
         System.out.print("a3 ");
         eTri.classify(x3);
-
+        System.out.println(x3.getAttribute(eTri.getAttributeKey()));
         System.out.print("a4 ");
         eTri.classify(x4);
-
+        System.out.println(x4.getAttribute(eTri.getAttributeKey()));
         System.out.print("a5 ");
         eTri.classify(x5);
-
+        System.out.println(x5.getAttribute(eTri.getAttributeKey()));
         System.out.print("a6 ");
         eTri.classify(x6);
-
+        System.out.println(x6.getAttribute(eTri.getAttributeKey()));
         System.out.print("a7 ");
         eTri.classify(x7);
+        System.out.println(x7.getAttribute(eTri.getAttributeKey()));
+
     }
 
 }
