@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import com.castellanos94.algorithms.multi.IMOACO_R;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
-import com.castellanos94.problems.benchmarks.dtlz.DTLZ;
-import com.castellanos94.problems.benchmarks.dtlz.DTLZ5;
+import com.castellanos94.problems.benchmarks.dtlz.*;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Plotter;
@@ -24,13 +23,13 @@ public class IMOACO_Example {
     private static final Logger logger = LogManager.getLogger(IMOACO_Example.class);
 
     static final String DIRECTORY = "experiments" + File.separator + "IMOACOR";
-    static final int EXPERIMENT = 4;
+    static final int EXPERIMENT = 31;
 
     public static void main(String[] args) throws IOException {
         File f = new File(DIRECTORY);
         if (!f.exists())
             f.mkdirs();
-        DTLZ problem = new DTLZ5();
+        DTLZ problem = new DTLZ1();
         logger.info(problem);
         ArrayList<Long> time = new ArrayList<>();
         ArrayList<DoubleSolution> bag = new ArrayList<>();
@@ -38,7 +37,7 @@ public class IMOACO_Example {
         Tools.setSeed(1L);
         for (int i = 0; i < EXPERIMENT; i++) {
 
-            IMOACO_R<DoubleSolution> algorithm = new IMOACO_R<>(problem, 300, 0.1, 0.5, 14);
+            IMOACO_R<DoubleSolution> algorithm = new IMOACO_R<>(problem, 465, 0.1, 0.5, 14);
             if (i == 0) {
                 logger.info(algorithm.toString());
             }

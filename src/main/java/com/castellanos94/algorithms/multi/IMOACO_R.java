@@ -118,7 +118,6 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
         ArrayList<Data> zmin = (ArrayList<Data>) idealPoint.clone();
         ArrayList<Data> zmax = (ArrayList<Data>) nadirPoint.clone();
         for (int iteration = 0; iteration < maxIterations; iteration++) {
-            System.out.printf("Current iteration : %4d ...\n", (iteration + 1));
             // The search engine method creates a new solution for each ant and returns all the solutions made.
             ArrayList<S> ns = searchEngine(solutions);
             updateReferencePoint(zmin, zmax, ns, iteration);
