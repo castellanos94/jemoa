@@ -119,23 +119,21 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
         ArrayList<Data> zmax = (ArrayList<Data>) nadirPoint.clone();
         for (int iteration = 0; iteration < maxIterations; iteration++) {
             System.out.printf("Current iteration : %4d ...\n", (iteration + 1));
-            for (int ant = 0; ant < this.N; ant++) {
-                ArrayList<S> ns = searchEngine(solutions);
-                updateReferencePoint(zmin, zmax, ns, iteration);
-                ArrayList<S> psi = new ArrayList<>(solutions);
-                psi.addAll(ns);
-                normalize(psi, idealPoint, nadirPoint);
-                R2Ranking(psi, idealPoint, LAMBDA);
-                // Ordenar PSI en forma creciente con respecto a los criterios (1) rank, (2) u*
-                // y (3) norma L_2
-                sorted3Criterial.sort(psi);
-                // Copiar en Tau los primeros elementos de psi
-                for (int i = 0; i < this.N; i++) {
-                    this.solutions.set(i, (S) psi.get(i).copy());
-                }
-                R2Ranking(solutions, idealPoint, LAMBDA);
-
+            // The search engine method creates a new solution for each ant and returns all the solutions made.
+            ArrayList<S> ns = searchEngine(solutions);
+            updateReferencePoint(zmin, zmax, ns, iteration);
+            ArrayList<S> psi = new ArrayList<>(solutions);
+            psi.addAll(ns);
+            normalize(psi, idealPoint, nadirPoint);
+            R2Ranking(psi, idealPoint, LAMBDA);
+            // Ordenar PSI en forma creciente con respecto a los criterios (1) rank, (2) u*
+            // y (3) norma L_2
+            sorted3Criterial.sort(psi);
+            // Copiar en Tau los primeros elementos de psi
+            for (int i = 0; i < this.N; i++) {
+                this.solutions.set(i, (S) psi.get(i).copy());
             }
+            R2Ranking(solutions, idealPoint, LAMBDA);
         }
         this.computeTime = System.currentTimeMillis() - this.init_time;
 
