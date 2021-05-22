@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.Interval;
+import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.PSPI_Instance;
 import com.castellanos94.preferences.Classifier;
 import com.castellanos94.problems.GDProblem;
@@ -32,10 +34,14 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
     public static String SAT_CLASS_TAG = "_CLASS_SAT";
     public static String DIS_CLASS_TAG = "_CLASS_DIS";
     public static String HDIS_CLASS_TAG = "_CLASS_HDIS";
+    protected Interval[][] referenceAction;
+    protected final int numberOfReferenceActions;
 
     public InterClassnC(Problem<S> problem) {
         this.problem = (GDProblem<S>) problem;
         this.w = problem.randomSolution();
+        numberOfReferenceActions = this.problem.getR1()[0].length + this.problem.getR1()[0].length;
+        this.referenceAction = new Interval[numberOfReferenceActions][this.problem.getNumberOfObjectives()];
     }
 
     /**
@@ -151,6 +157,32 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
         iclass[2] = dis;
         iclass[3] = hdis;
         x.setAttribute(getAttributeKey(), iclass);
+    }
+
+    protected int ascending_rule(S x, int dm) {
+        ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
+        int clase = -1;
+
+        w.setPenalties(Interval.ZERO);
+        w.setNumberOfPenalties(0);
+        Data lastFunctionI = RealData.ZERO;
+        for (int i = 0; i < numberOfReferenceActions; i++) {
+            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
+                w.setObjective(j, referenceAction[i][j]);
+            }
+            if (pref.compare(w, x) <= -1) {
+                if (i > 0 && i + 1 < numberOfReferenceActions) {
+                    Data.getMin(pref.getSigmaXY(),pref.getSigmaYX());
+                } else if (i == 0) {
+                    return i;
+                } else {
+                    return numberOfReferenceActions;
+                }
+                
+            }
+        }
+        return 0;
+
     }
 
     /**
