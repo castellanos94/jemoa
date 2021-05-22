@@ -61,7 +61,6 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
         this.q = q;
         this.xi = xi;
         this.h = h;
-        // {q=objectives, m=h} = (q+m-1)!/(m!(q-1)!)
         this.N = BigIntegerMath.factorial(problem.getNumberOfObjectives() + h - 1).divide(
                 BigIntegerMath.factorial(h).multiply(BigIntegerMath.factorial(problem.getNumberOfObjectives() - 1)))
                 .intValueExact();
@@ -118,7 +117,8 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
         ArrayList<Data> zmin = (ArrayList<Data>) idealPoint.clone();
         ArrayList<Data> zmax = (ArrayList<Data>) nadirPoint.clone();
         for (int iteration = 0; iteration < maxIterations; iteration++) {
-            // The search engine method creates a new solution for each ant and returns all the solutions made.
+            // The search engine method creates a new solution for each ant and returns all
+            // the solutions made.
             ArrayList<S> ns = searchEngine(solutions);
             updateReferencePoint(zmin, zmax, ns, iteration);
             ArrayList<S> psi = new ArrayList<>(solutions);

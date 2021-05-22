@@ -29,7 +29,7 @@ public class IMOACO_Example {
         File f = new File(DIRECTORY);
         if (!f.exists())
             f.mkdirs();
-        DTLZ problem = new DTLZ1();
+        DTLZ problem = new DTLZ7();
         logger.info(problem);
         ArrayList<Long> time = new ArrayList<>();
         ArrayList<DoubleSolution> bag = new ArrayList<>();

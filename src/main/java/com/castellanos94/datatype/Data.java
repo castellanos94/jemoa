@@ -196,4 +196,23 @@ public abstract class Data extends Number implements Comparable<Number> {
         throw new UnsupportedOperationException("Operation not defined.");
     }
 
+    public static Data getMin(Data a, Data b) {
+        int val = a.compareTo(b);
+        if (val < 0) {
+            return a.copy();
+        } else if (val > 0) {
+            return b.copy();
+        }
+        return a.copy();
+    }
+    public static Data getMax(Data a, Data b) {
+        int val = a.compareTo(b);
+        if (val > 0) {
+            return a.copy();
+        } else if (val < 0) {
+            return b.copy();
+        }
+        return a.copy();
+    }
+
 }
