@@ -38,7 +38,7 @@ import tech.tablesaw.columns.Column;
  */
 public class AlgorithmReport_NRV {
 
-    private final static int numberOfObjectives = 10;
+    private final static int numberOfObjectives = 3;
     private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
     // private static String algorithmName = File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
@@ -50,7 +50,7 @@ public class AlgorithmReport_NRV {
     private static String NEO_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NEO"
             + File.separator;
     private static String CMP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
-            + "NSGA3vsMOEAD" + File.separator;
+            + "NSGA3vsMOEAD_nc" + File.separator;
     private static Table stats = Table.create("statistic");
     private static StringColumn nameColumn = StringColumn.create("Problem");
     private static StringColumn metricNameColumn = StringColumn.create("Metric Name");
@@ -83,7 +83,7 @@ public class AlgorithmReport_NRV {
         loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
         loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
         // Ruta de salida
-        final String LAST_DIRECTORY = CMP_DIRECTORY;
+        final String LAST_DIRECTORY = CMP_DIRECTORY; 
         // Se valida que la ruta existe
         if (!new File(LAST_DIRECTORY).exists())
             new File(LAST_DIRECTORY).mkdirs();

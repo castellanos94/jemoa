@@ -190,11 +190,9 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
         Data lastFunctionI = null;
         int clase = -1;
         for (int i = 0; i < numberOfReferenceActions; i++) {
-            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
-                b.setObjective(j, referenceAction[dm][i][j]);
-            }
+            loadObjectivesToFunction(b, referenceAction[dm][i]);
             if (pref.compare(b, x) <= 0) {
-                if (i > 0 && i + 1 < numberOfReferenceActions) {
+                if (i > 0) {
                     Data currentFunctionI = Data.getMin(pref.getSigmaXY(), pref.getSigmaYX());
                     if (currentFunctionI.compareTo(lastFunctionI) >= 0) {
                         clase = i;
@@ -223,15 +221,15 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
         S b = (S) x.copy();
         b.setPenalties(Interval.ZERO);
         b.setNumberOfPenalties(0);
-        Data lastFunctionI = null;
         for (int i = numberOfReferenceActions - 1; i >= 0; i--) {
-            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
-                b.setObjective(j, referenceAction[dm][i][j]);
-            }
-            if (pref.compare(b, x) <= 0) {
+            loadObjectivesToFunction(b, referenceAction[dm][i]);
+            if (pref.compare(x, b) <= 0) {
                 if (i > 0 && i + 1 < numberOfReferenceActions) {
                     Data currentFunctionI = Data.getMin(pref.getSigmaXY(), pref.getSigmaYX());
-                    if (currentFunctionI.compareTo(lastFunctionI) >= 0) {
+                    loadObjectivesToFunction(b, referenceAction[dm][i + 1]);
+                    pref.compare(x, b);
+                    Data nextFunctionI = Data.getMin(pref.getSigmaXY(), pref.getSigmaYX());
+                    if (currentFunctionI.compareTo(nextFunctionI) >= 0) {
                         return i;
                     } else {
                         return i - 1;
@@ -242,9 +240,14 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
                     return numberOfReferenceActions;
                 }
             }
-            lastFunctionI = Data.getMin(pref.getSigmaXY(), pref.getSigmaYX());
         }
         return -1;
+    }
+
+    private void loadObjectivesToFunction(S b, Interval[] action) {
+        for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
+            b.setObjective(j, action[j]);
+        }
     }
 
     /**

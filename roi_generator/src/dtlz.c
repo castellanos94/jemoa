@@ -2,14 +2,29 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <stdio.h>
 
 const double THRESHOLD = 10e-3;
+float round_(float var)
+{
+    // we use array of chars to store number
+    // as a string.
+    char str[40];
+
+    // Print in string the value of var
+    // with two decimal point
+    sprintf(str, "%.4f", var);
+    // scan string value in var
+    sscanf(str, "%f", &var);
+
+    return var;
+}
 /* generate a random floating point number from min to max */
 double randfrom(double min, double max)
 {
     double range = (max - min);
     double div = RAND_MAX / range;
-    return min + (rand() / div);
+    return round_(min + (rand() / div));
 }
 int constraintDTLZ8(struct Solution solution)
 {
@@ -181,7 +196,7 @@ int constraintDTLZ9(struct Solution solution)
             solution.accumulatedPenaltieViolated += g[j];
         }
     }
-    
+
     return solution.numberOfPenaltieViolated;
 }
 
@@ -249,7 +264,7 @@ struct Solution *generateAnalyticalSolution(int numberOfProblem, int numberOfVar
                 do
                 {
                     numberOfViolatedPenalties = constraintDTLZ9(solution);
-                } while (numberOfViolatedPenalties != 0);                
+                } while (numberOfViolatedPenalties != 0);
             }
         }
         else
