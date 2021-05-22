@@ -81,7 +81,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.castellanos94.experimentation.MOGWO_P_Experimentation</mainClass>
+                            <mainClass>com.castellanos94.experimentation.NSGA3_P_Experimentation</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -98,7 +98,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.castellanos94.experimentation.MOGWO_P_Experimentation</mainClass>
+                                    <mainClass>com.castellanos94.experimentation.NSGA3_P_Experimentation</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
