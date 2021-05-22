@@ -12,7 +12,7 @@ fi
 for N in `seq 1 9`
 do
 	echo "Executing DTLZ$N..."
-	varInstance="/home/thinkpad/Documents/jemoa/src/main/resources/DTLZ_INSTANCES/$numberOfObjectives/DTLZ$N""_Instance.txt"
+	varInstance="/home/thinkpad/Documents/jemoa/DTLZ_INSTANCES/$numberOfObjectives/DTLZ$N""_Instance.txt"
 	(time ./main $N $KSample $varInstance $Seed) &> logs/"log$N""_O"$numberOfObjectives.txt &
 done
 wait

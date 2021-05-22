@@ -15,12 +15,12 @@ void printObjectives(int index, struct Solution *old, struct Solution *new)
     printf("%3d - ", index);
     for (int i = 0; i < old->numberOfObjectives; i++)
     {
-        printf("%5f ", old->objective[i]);
+        printf("%.5f ", old->objective[i]);
     }
     printf("<-> ");
     for (int i = 0; i < new->numberOfObjectives; i++)
     {
-        printf("%5f ", new->objective[i]);
+        printf("%.5f ", new->objective[i]);
     }
     printf("\n");
 }
@@ -48,24 +48,38 @@ void solutionToFile(FILE *file, struct Solution *solution)
             if (solution->variable[i] == 0.5 || solution->variable[i] == 0)
                 fprintf(file, "%.1f, ", solution->variable[i]);
             else
-                fprintf(file, "%18.16f, ", solution->variable[i]);
+                fprintf(file, "%.3f, ", solution->variable[i]);
         else
         {
             if (solution->variable[i] == 0.5 || solution->variable[i] == 0)
                 fprintf(file, "%.1f * ", solution->variable[i]);
             else
-                fprintf(file, "%18.16f * ", solution->variable[i]);
+                fprintf(file, "%.3f * ", solution->variable[i]);
         }
     }
     for (int i = 0; i < solution->numberOfObjectives; i++)
     {
         if (i < solution->numberOfObjectives - 1)
-            fprintf(file, "%18.16f, ", solution->objective[i]);
+            fprintf(file, "%.5f, ", solution->objective[i]);
         else
-            fprintf(file, "%18.16f * ", solution->objective[i]);
+            fprintf(file, "%.5f * ", solution->objective[i]);
     }
     fprintf(file, "%3d\n", solution->rank);
 }
+
+void objectiveTofile(FILE *file, struct Solution *solution)
+{
+    for (int i = 0; i < solution->numberOfObjectives; i++)
+    {
+        if (i < solution->numberOfObjectives - 1)
+            fprintf(file, "%.5f, ", solution->objective[i]);
+        else
+            fprintf(file, "%.5f\n", solution->objective[i]);
+    }
+
+}
+
+
 void printInstanceWithCompromise(char *fileName, struct Instance instance, struct Solution *solutions[], int indexBestCompromise, int indexCandidate[], int sizeCandidate)
 {
     //printf("NumberOfVariables %3d, NumberOfObjectives %3d, DMs %3d\n", instance.numberOfVariables, instance.numberOfObjectives, instance.numberOfDM);
@@ -117,8 +131,8 @@ void printInstanceWithCompromise(char *fileName, struct Instance instance, struc
     {
         printf("%f\n", instance.alpha[i]);
     }*/
-    fprintf(file, "TRUE FALSE //Best compromise \n1\n");
-    solutionToFile(file, solutions[indexBestCompromise]);
+    fprintf(file, "TRUE TRUE //Best compromise \n1\n");
+    objectiveTofile(file, solutions[indexBestCompromise]);
     fprintf(file, "TRUE FALSE //Frontiers \n2\n");
     int startIndex = (sizeCandidate/2.0 > 0) ? sizeCandidate/2 : 0;
     printf("from %d to", startIndex);
@@ -129,11 +143,11 @@ void printInstanceWithCompromise(char *fileName, struct Instance instance, struc
         {
             if (j < instance.numberOfObjectives - 1)
             {
-                fprintf(file, "%.16f, ", solutions[indexCandidate[startIndex]]->objective[j]);
+                fprintf(file, "%.5f, ", solutions[indexCandidate[startIndex]]->objective[j]);
             }
             else
             {
-                fprintf(file, "%.16f\n", solutions[indexCandidate[startIndex]]->objective[j]);
+                fprintf(file, "%.5f\n", solutions[indexCandidate[startIndex]]->objective[j]);
             }
         }
         startIndex = sizeCandidate - 1;

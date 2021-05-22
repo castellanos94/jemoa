@@ -115,9 +115,27 @@ double *compare_by_preferences(struct Instance instance, int dm, struct Interval
     {
         result[0] = 2;
     }
-    struct Interval sigmaXY = {result[1], result[1]};
-    struct Interval sigmaYX = {result[2], result[2]};
-    if (compareTo(sigmaXY, instance.beta[dm]) == 0 && compareTo(instance.beta[dm], sigmaYX) > 0)
+    //struct Interval sigmaXY = {result[1], result[1]};
+    //struct Interval sigmaYX = {result[2], result[2]};
+    float sigmaXY = result[1], sigmaYX = result[2];
+    float delta = 0.51;
+    int xSDelta = sigmaXY >= delta;
+    if (xSDelta >= 0)
+    {
+        if (sigmaYX < delta)
+        {
+            result[0] = -1;
+        }
+        else
+        {
+            result[0] = 0;
+        }
+    }
+    else
+    {
+        result[0] = 1;
+    }
+    /*if (compareTo(sigmaXY, instance.beta[dm]) == 0 && compareTo(instance.beta[dm], sigmaYX) > 0)
     {
         result[0] = -1;
     }
@@ -128,7 +146,6 @@ double *compare_by_preferences(struct Instance instance, int dm, struct Interval
     else if (compareTo(sigmaXY, instance.beta[dm]) < 0 && compareTo(instance.beta[dm], sigmaYX) < 0)
     {
         result[0] = 1;
-    }
-    result[0] = 1;
+    }*/
     return result;
 }

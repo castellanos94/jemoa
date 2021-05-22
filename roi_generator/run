@@ -5,7 +5,7 @@ gcc -o main main.c src/*.c -lm
 KSample=$1
 numberOfObjectives=$2
 startProblem=1
-endProblem=7
+endProblem=9
 Seed=$3
 echo "Size sample $KSample, Seed $Seed, from $startProblem to $endProblem"
 

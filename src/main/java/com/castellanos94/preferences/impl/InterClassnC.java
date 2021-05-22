@@ -185,8 +185,8 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
     protected int ascending_rule(S x, int dm) {
         ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         S b = (S) x.copy();
-        b.setPenalties(Interval.ZERO);
-        b.setNumberOfPenalties(0);
+        //b.setPenalties(Interval.ZERO);
+        //b.setNumberOfPenalties(0);
         Data lastFunctionI = null;
         int clase = -1;
         for (int i = 0; i < numberOfReferenceActions; i++) {
@@ -204,6 +204,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
                 } else {
                     return numberOfReferenceActions;
                 }
+                return clase;
             }
             lastFunctionI = Data.getMin(pref.getSigmaXY(), pref.getSigmaYX());
         }
@@ -219,8 +220,8 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
     protected int descending_rule(S x, int dm) {
         ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         S b = (S) x.copy();
-        b.setPenalties(Interval.ZERO);
-        b.setNumberOfPenalties(0);
+       // b.setPenalties(Interval.ZERO);
+        //b.setNumberOfPenalties(0);
         for (int i = numberOfReferenceActions - 1; i >= 0; i--) {
             loadObjectivesToFunction(b, referenceAction[dm][i]);
             if (pref.compare(x, b) <= 0) {
@@ -232,7 +233,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
                     if (currentFunctionI.compareTo(nextFunctionI) >= 0) {
                         return i;
                     } else {
-                        return i - 1;
+                        return i + 1;
                     }
                 } else if (i == 0) {
                     return i;
@@ -302,17 +303,10 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
         ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         int clase = -1;
         w.setPenalties(Interval.ZERO);
-        w.setNumberOfPenalties(0);
-        /*
-         * for (int i = r1.length - 1; i > 0; i--) { for (int j = 0; j <
-         * problem.getNumberOfObjectives(); j++) { w.setObjective(j, r1[i][j]); } if
-         * (pref.compare(x, w) <= -1) { clase = i; } }
-         */
+        w.setNumberOfPenalties(0);        
         for (int i = 0; i < numberOfReferenceActions; i++) {
-            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
-                w.setObjective(j, referenceAction[dm][i][j]);
-            }
-            if (pref.compare(x, w) <= 0) {
+            loadObjectivesToFunction(w, referenceAction[dm][i]);
+            if (pref.compare(x,w) <= 0) {
                 clase = i;
             }
         }
@@ -335,9 +329,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
         w.setNumberOfPenalties(0);
 
         for (int i = numberOfReferenceActions - 1; i >= 0; i--) {
-            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
-                w.setObjective(j, referenceAction[dm][i][j]);
-            }
+            loadObjectivesToFunction(w, referenceAction[dm][i]);
             if (pref.compare(x, w) <= 0) {
                 return i;
             }
@@ -361,10 +353,9 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
         w.setPenalties(Interval.ZERO);
         w.setNumberOfPenalties(0);
         for (int i = 0; i < r2.length; i++) {
-            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
-                w.setObjective(j, r2[i][j]);
-            }
-            if (pref.compare(x, w) > -1) {
+            loadObjectivesToFunction(w, r2[dm]);
+
+            if (pref.compare(x, w) <= -1) {
                 return false;
             }
         }
@@ -386,10 +377,8 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
         w.setPenalties(Interval.ZERO);
         w.setNumberOfPenalties(0);
         for (int i = 0; i < r1.length; i++) {
-            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
-                w.setObjective(j, r1[i][j]);
-            }
-            if (pref.compare(w, x) > -1) {
+            loadObjectivesToFunction(w, r1[i]);
+            if (pref.compare(w, x) <= -1) {
                 return false;
             }
         }

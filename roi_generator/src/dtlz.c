@@ -13,7 +13,7 @@ float round_(float var)
 
     // Print in string the value of var
     // with two decimal point
-    sprintf(str, "%.4f", var);
+    sprintf(str, "%.3f", var);
     // scan string value in var
     sscanf(str, "%f", &var);
 

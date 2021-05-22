@@ -84,7 +84,7 @@ public class NSGA3_P_Experimentation {
         CLASSIFY_EVERY_ITERATION = cLASSIFY_EVERY_ITERATION;
         ELEMENTS_TO_REPLACE = eLEMENTS_TO_REPLACE;
         DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NSGA3" + File.separator
-                + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
+                + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE+"-nc";
         initialProblem = 1;
         endProblem = 9;
     }
@@ -96,8 +96,8 @@ public class NSGA3_P_Experimentation {
 
             Tools.setSeed(1L);
             logger.info("Experimentation: DTLZ with preferences");
-            String resourseFile = "DTLZ_INSTANCES" + File.separator + numberOfObjectives + File.separator + "DTLZ" + p
-                    + "_Instance.txt";
+            String resourseFile = "DTLZ_INSTANCES" + File.separator + numberOfObjectives + File.separator + "DTLZ" + p       + "_Instance.txt";
+            resourseFile = "roi_generator" +  File.separator + "DTLZ" + p                    + "_Instance.txt";
             DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(resourseFile).loadInstance();
 
             // logger.info(instance);
