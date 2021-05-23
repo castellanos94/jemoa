@@ -20,23 +20,27 @@ import com.castellanos94.solutions.Solution;
 public class IntervalOutrankingRelations<S extends Solution<?>> extends Preference<S> {
     protected DominanceComparator<S> dominance;
     protected OutrankingModel model;
-    protected Problem<?> p;
+    protected final int numberOfObjectives;
+    protected final int[] objectiveTypes;
     private int[] coalition;
+
     private RealData sigmaXY, sigmaYX;
 
-    public IntervalOutrankingRelations(Problem<?> p, OutrankingModel model) {
+    public IntervalOutrankingRelations(int numberOfObjectives, int objectiveTypes[], OutrankingModel model) {
         this.model = model;
-        this.p = p;
+        this.numberOfObjectives = numberOfObjectives;
+        this.objectiveTypes = objectiveTypes;
         this.dominance = new EtaDominance<>((RealData) model.getAlpha());
-        coalition = new int[p.getNumberOfObjectives()];
+        coalition = new int[numberOfObjectives];
     }
 
-    public IntervalOutrankingRelations(Problem<?> p, OutrankingModel model,
+    public IntervalOutrankingRelations(int numberOfObjectives, int objectiveTypes[], OutrankingModel model,
             DominanceComparator<S> dominanceComparator) {
         this.model = model;
-        this.p = p;
+        this.objectiveTypes = objectiveTypes;
+        this.numberOfObjectives = numberOfObjectives;
         this.dominance = dominanceComparator;
-        coalition = new int[p.getNumberOfObjectives()];
+        coalition = new int[numberOfObjectives];
     }
 
     /**
@@ -73,23 +77,23 @@ public class IntervalOutrankingRelations<S extends Solution<?>> extends Preferen
 
     private RealData credibility_index(S x, S y) {
         ArrayList<RealData> omegas = new ArrayList<>();
-        RealData[] eta_gamma = new RealData[p.getNumberOfObjectives()];
+        RealData[] eta_gamma = new RealData[numberOfObjectives];
         RealData max_discordance;
         RealData non_discordance;
         RealData max_eta_gamma = new RealData(Double.MIN_VALUE);
         Interval ci;
         RealData[] dj = new RealData[eta_gamma.length];
-        for (int i = 0; i < p.getNumberOfObjectives(); i++) {
+        for (int i = 0; i < numberOfObjectives; i++) {
             omegas.add(compute_alpha_ij(x, y, i));
             dj[i] = compute_discordance_ij(x, y, i);
         }
 
-        for (int i = 0; i < p.getNumberOfObjectives(); i++) {
+        for (int i = 0; i < numberOfObjectives; i++) {
             RealData gamma = omegas.get(i);
             ci = this.concordance_index(gamma, omegas);
             RealData poss = ci.possGreaterThanOrEq((Interval) model.getLambda());
             max_discordance = new RealData(Double.MIN_VALUE);
-            for (int j = 0; j < p.getNumberOfObjectives(); j++) {
+            for (int j = 0; j < numberOfObjectives; j++) {
                 if (this.coalition[j] == 0 && dj[j].compareTo(max_discordance) > 0) {
                     max_discordance = dj[j];
                 }
@@ -113,7 +117,7 @@ public class IntervalOutrankingRelations<S extends Solution<?>> extends Preferen
         double cl = 0, cu = 0, dl = 0, du = 0;
         double lower = 0, upper = 0;
         Interval[] weights = (Interval[]) model.getWeights();
-        for (int i = 0; i < p.getNumberOfObjectives(); i++) {
+        for (int i = 0; i < numberOfObjectives; i++) {
             if (omegas.get(i).compareTo(gamma) >= 0) {
                 coalition[i] = 1;
                 cl += weights[i].getLower();
@@ -144,7 +148,7 @@ public class IntervalOutrankingRelations<S extends Solution<?>> extends Preferen
         Interval value_x = x.getObjective(criteria).toInterval();
         Interval value_y = y.getObjective(criteria).toInterval();
 
-        if (p.getObjectives_type()[criteria] == Problem.MAXIMIZATION) {
+        if (objectiveTypes[criteria] == Problem.MAXIMIZATION) {
             res = value_y.possGreaterThanOrEq((Interval) value_x.plus(veto));
         } else {
             res = value_y.possSmallerThanOrEq((Interval) value_x.minus(veto));
@@ -158,13 +162,13 @@ public class IntervalOutrankingRelations<S extends Solution<?>> extends Preferen
         Interval value_x = x.getObjective(criteria).toInterval();
         Interval value_y = y.getObjective(criteria).toInterval();
         if (value_x.getLower().compareTo(value_x.getUpper()) == 0) {
-            if (p.getObjectives_type()[criteria] == Problem.MAXIMIZATION) {
+            if (objectiveTypes[criteria] == Problem.MAXIMIZATION) {
                 res = (value_x.getLower() >= value_y.getLower()) ? new RealData(1) : new RealData(0);
             } else {
                 res = (value_x.getLower() <= value_y.getLower()) ? new RealData(1) : new RealData(0);
             }
         } else {
-            if (p.getObjectives_type()[criteria] == Problem.MAXIMIZATION) {
+            if (objectiveTypes[criteria] == Problem.MAXIMIZATION) {
                 res = value_x.possGreaterThanOrEq(value_y);
             } else {
                 res = value_x.possSmallerThanOrEq(value_y);
