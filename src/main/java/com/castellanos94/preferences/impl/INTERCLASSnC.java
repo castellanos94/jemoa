@@ -114,8 +114,8 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
                 // System.out.println(String.format("\tOld : asc = %2d, desc = %2d", asc, dsc));
                 // System.out.println(String.format("\tPaper : asc = %2d, desc = %2d",
                 // ascending_rule(x, dm), descengind_rule(x, dm)));
-                if (asc == dsc && asc != -1) {
-                    if (asc >= problem.getR1()[dm].length) {
+                if (dsc != -1) {
+                    if (dsc >= problem.getR1()[dm].length) {
                         if (isHighSat(x, dm)) {
                             hsat++;
                         } else {
@@ -168,7 +168,7 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
     }
 
     /**
-     * Ascending assigment rule acording to paper.
+     * Ascending assigment rule acording to paper. R_kS(Delta,Lambda)x
      * 
      * @param x solution to classify
      * @return class c_k
@@ -182,7 +182,12 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
         int clase = -1;
         for (int i = 0; i < numberOfReferenceActions; i++) {
             loadObjectivesToFunction(b, referenceAction[dm][i]);
-            if (pref.compare(b, x) <= 0) {
+            int val = pref.compare(b, x);
+            // Si b_iD(alpha)x es falso y xD(alpha)b_i es cierto entonces
+            // xS(Delta,Lambda)Lambda entonces por Proposition 1.i xD(alpha)b_i ->
+            // x(delta,lambda)b_i, dado que es comparacion indirecta es necesario verificar
+            // si tienen una realacion
+            if (val <= 0 || val == 2) {
                 if (i > 0) {
                     Data currentFunctionI = Data.getMin(pref.getSigmaXY(), pref.getSigmaYX());
                     if (currentFunctionI.compareTo(lastFunctionI) >= 0) {
@@ -203,7 +208,7 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
     }
 
     /**
-     * Descending assigment rule acording to paper.
+     * Descending assigment rule acording to paper. xS(Delta,Lambda)R_k
      * 
      * @param x solution to classify
      * @return class c_k

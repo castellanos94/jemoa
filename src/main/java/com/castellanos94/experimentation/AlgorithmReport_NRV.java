@@ -17,6 +17,8 @@ import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
+import com.castellanos94.preferences.Classifier;
+import com.castellanos94.preferences.impl.INTERCLASSnB;
 import com.castellanos94.preferences.impl.INTERCLASSnC;
 import com.castellanos94.problems.DTLZP;
 import com.castellanos94.solutions.DoubleSolution;
@@ -80,8 +82,10 @@ public class AlgorithmReport_NRV {
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
         HashMap<DTLZP, HashMap<String, Table>> algorithmTimeByProblem = new HashMap<>();
         // Espeficia que soluciones
-        loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
-        loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+       // loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+        loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+
+        //loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
         // Ruta de salida
         final String LAST_DIRECTORY = CMP_DIRECTORY; 
         // Se valida que la ruta existe
@@ -1029,7 +1033,7 @@ public class AlgorithmReport_NRV {
 
     private static ArrayList<DoubleSolution> classifySolutions(DTLZP dtlzPreferences,
             ArrayList<DoubleSolution> solutions, boolean show, boolean isOnlyCSat) {
-        INTERCLASSnC<DoubleSolution> classifier = new INTERCLASSnC<>(dtlzPreferences);
+        Classifier<DoubleSolution> classifier = new INTERCLASSnC<>(dtlzPreferences);
         ArrayList<DoubleSolution> front = new ArrayList<>();
         ArrayList<DoubleSolution> hs = new ArrayList<>();
         ArrayList<DoubleSolution> s = new ArrayList<>();
