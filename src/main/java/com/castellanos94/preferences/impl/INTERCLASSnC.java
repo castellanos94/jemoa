@@ -176,23 +176,20 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
             loadObjectivesToFunction(b, referenceAction[dm][i]);
             int val = pref.compare(b, x);
             // Si b_iD(alpha)x es falso y xD(alpha)b_i es cierto entonces
-            // xS(Delta,Lambda)Lambda entonces por Proposition 1.i xD(alpha)b_i ->
+            // xS(Delta,Lambda)Lambda por Proposition 1.i xD(alpha)b_i ->
             // x(delta,lambda)b_i, dado que es comparacion indirecta es necesario verificar
             // si tienen una realacion
             if (val <= 0 || val == 2) {
-                if (i > 0) {
+                if (i == 0) {
+                    clase = i;
+                } else {
                     Data currentFunctionI = Data.getMin(pref.getSigmaXY(), pref.getSigmaYX());
                     if (currentFunctionI.compareTo(lastFunctionI) >= 0) {
                         clase = i;
                     } else {
                         clase = i - 1;
                     }
-                } else if (i == 0) {
-                    clase = i;
-                } else {
-                    return numberOfReferenceActions;
                 }
-                return clase;
             }
             lastFunctionI = Data.getMin(pref.getSigmaXY(), pref.getSigmaYX());
         }
@@ -210,7 +207,8 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
         S b = (S) x.copy();
         for (int i = numberOfReferenceActions - 1; i >= 0; i--) {
             loadObjectivesToFunction(b, referenceAction[dm][i]);
-            if (pref.compare(x, b) <= 0) {
+            int val = pref.compare(x, b);
+            if (val <= 0) {
                 if (i > 0 && i + 1 < numberOfReferenceActions) {
                     Data currentFunctionI = Data.getMin(pref.getSigmaXY(), pref.getSigmaYX());
                     loadObjectivesToFunction(b, referenceAction[dm][i + 1]);
@@ -224,7 +222,7 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
                 } else if (i == 0) {
                     return i;
                 } else {
-                    return numberOfReferenceActions;
+                    return numberOfReferenceActions - 1;
                 }
             }
         }
@@ -235,93 +233,6 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
         for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
             b.setObjective(j, action[j]);
         }
-    }
-
-    /**
-     * Pendiente verificar.
-     * 
-     * @param x
-     * @param dm
-     * @return
-     * @throws CloneNotSupportedException
-     */
-    protected int asc_rule(S x, int dm) {
-        ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
-        Interval[][] r2 = problem.getR2()[dm];
-        int clase = -1;
-        w.setPenalties(Interval.ZERO);
-        w.setNumberOfPenalties(0);
-        for (int i = 0; i < r2.length; i++) {
-            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
-                w.setObjective(j, r2[i][j]);
-            }
-            int v = pref.compare(w, x);
-            if (v <= -1 || v == 2) {
-                clase = i;
-                break;
-            }
-        }
-        if (clase != -1)
-            return clase;
-        Interval[][] r1 = problem.getR1()[dm];
-        for (int i = 0; i < r1.length; i++) {
-            for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
-                w.setObjective(j, r1[i][j]);
-            }
-            if (pref.compare(w, x) <= -1) {
-                clase = i;
-                break;
-            }
-        }
-        return (clase == -1) ? clase : clase + r2.length;
-
-    }
-
-    /**
-     * Verificar
-     * 
-     * @param x
-     * @param dm
-     * @return
-     * @throws CloneNotSupportedException
-     */
-    protected int ascRule(S x, int dm) {
-        ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
-        int clase = -1;
-        w.setPenalties(Interval.ZERO);
-        w.setNumberOfPenalties(0);
-        for (int i = 0; i < numberOfReferenceActions; i++) {
-            loadObjectivesToFunction(w, referenceAction[dm][i]);
-            if (pref.compare(x, w) <= 0) {
-                clase = i;
-            }
-        }
-        return clase;
-
-    }
-
-    /**
-     * Verificar
-     * 
-     * @param x
-     * @param dm
-     * @return
-     * @throws CloneNotSupportedException
-     */
-    protected int descRule(S x, int dm) {
-        ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
-        int clase = -1;
-        w.setPenalties(Interval.ZERO);
-        w.setNumberOfPenalties(0);
-
-        for (int i = numberOfReferenceActions - 1; i >= 0; i--) {
-            loadObjectivesToFunction(w, referenceAction[dm][i]);
-            if (pref.compare(x, w) <= 0) {
-                return i;
-            }
-        }
-        return clase;
-
     }
 
     /**
@@ -339,7 +250,7 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
         w.setPenalties(Interval.ZERO);
         w.setNumberOfPenalties(0);
         for (int i = 0; i < r2.length; i++) {
-            loadObjectivesToFunction(w, r2[dm]);
+            loadObjectivesToFunction(w, r2[i]);
 
             if (pref.compare(x, w) > -1) {
                 return false;

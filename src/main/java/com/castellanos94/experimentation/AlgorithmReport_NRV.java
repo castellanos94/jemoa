@@ -18,7 +18,6 @@ import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.preferences.Classifier;
-import com.castellanos94.preferences.impl.INTERCLASSnB;
 import com.castellanos94.preferences.impl.INTERCLASSnC;
 import com.castellanos94.problems.DTLZP;
 import com.castellanos94.solutions.DoubleSolution;
