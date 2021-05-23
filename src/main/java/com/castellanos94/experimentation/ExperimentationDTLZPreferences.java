@@ -11,7 +11,7 @@ import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.instances.DTLZ_Instance;
-import com.castellanos94.mcda.INTERCLASSnC;
+import com.castellanos94.mcda.SatClassifier;
 import com.castellanos94.problems.DTLZP;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.problems.benchmarks.dtlz.DTLZ;
@@ -85,7 +85,8 @@ public class ExperimentationDTLZPreferences {
             ArrayList<ArrayList<DoubleSolution>> result_dtlz1 = new ArrayList<>();
             ArrayList<DoubleSolution> result_dtlz1_front = new ArrayList<>();
             for (String name : new File(DIRECTORY_DTLZ + "" + i).list()) {
-                if (!name.contains("old") && name.contains(".out") && !name.contains("bag") && !name.contains("Class")) {
+                if (!name.contains("old") && name.contains(".out") && !name.contains("bag")
+                        && !name.contains("Class")) {
                     result_dtlz1.add(readSolution(dtlz, DIRECTORY_DTLZ + "" + i + File.separator + name));
                 } else if (name.contains("bag")) {
                     result_dtlz1_front = readSolution(dtlz, DIRECTORY_DTLZ + "" + i + File.separator + name);
@@ -240,7 +241,7 @@ public class ExperimentationDTLZPreferences {
                 }
             }
             // Classification
-            INTERCLASSnC<DoubleSolution> classifier = new INTERCLASSnC<>(problem_preferences);
+            SatClassifier<DoubleSolution> classifier = new SatClassifier<>(problem_preferences);
             ArrayList<DoubleSolution> hs = new ArrayList<>();
             ArrayList<DoubleSolution> s = new ArrayList<>();
             ArrayList<DoubleSolution> d = new ArrayList<>();
@@ -388,9 +389,8 @@ public class ExperimentationDTLZPreferences {
         table.write().csv(DIRECTORY_EXPERIMENTS + File.separator + "FRONT_PREFERENCES_" + label + ".csv");
     }
 
-    private static ArrayList<DoubleSolution> makeFrontHSatSat(DTLZP problem,
-            ArrayList<DoubleSolution> solutions) {
-        INTERCLASSnC<DoubleSolution> classifier = new INTERCLASSnC<>(problem);
+    private static ArrayList<DoubleSolution> makeFrontHSatSat(DTLZP problem, ArrayList<DoubleSolution> solutions) {
+        SatClassifier<DoubleSolution> classifier = new SatClassifier<>(problem);
         ArrayList<DoubleSolution> front = new ArrayList<>();
         ArrayList<DoubleSolution> hs = new ArrayList<>();
         ArrayList<DoubleSolution> s = new ArrayList<>();

@@ -17,7 +17,7 @@ import com.castellanos94.algorithms.multi.MOGWO_V;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.instances.DTLZ_Instance;
-import com.castellanos94.mcda.INTERCLASSnC;
+import com.castellanos94.mcda.SatClassifier;
 import com.castellanos94.operators.impl.RepairBoundary;
 import com.castellanos94.problems.DTLZP;
 import com.castellanos94.solutions.DoubleSolution;
@@ -147,22 +147,22 @@ public class MOGWO_P_Experimentation {
 
             f = new File(DIRECTORY + File.separator + subDir + File.separator + "Class_F0" + problem.getName()
                     + +problem.getNumberOfObjectives() + ".out");
-            INTERCLASSnC<DoubleSolution> classifier = new INTERCLASSnC<>(problem);
+            SatClassifier<DoubleSolution> classifier = new SatClassifier<>(problem);
             HashMap<String, ArrayList<DoubleSolution>> map = classifier.classify(compartor.getSubFront(0));
 
             logger.info(String.format("%s -> HSat : %3d, Sat : %3d, Dis : %3d, HDis : %3d", problem.getName(),
-                    map.get(INTERCLASSnC.HSAT_CLASS_TAG).size(), map.get(INTERCLASSnC.SAT_CLASS_TAG).size(),
-                    map.get(INTERCLASSnC.DIS_CLASS_TAG).size(), map.get(INTERCLASSnC.HDIS_CLASS_TAG).size()));
+                    map.get(SatClassifier.HSAT_CLASS_TAG).size(), map.get(SatClassifier.SAT_CLASS_TAG).size(),
+                    map.get(SatClassifier.DIS_CLASS_TAG).size(), map.get(SatClassifier.HDIS_CLASS_TAG).size()));
             ArrayList<DoubleSolution> front = new ArrayList<>();
-            if (!map.get(INTERCLASSnC.HSAT_CLASS_TAG).isEmpty()) {
-                front.addAll(map.get(INTERCLASSnC.HSAT_CLASS_TAG));
+            if (!map.get(SatClassifier.HSAT_CLASS_TAG).isEmpty()) {
+                front.addAll(map.get(SatClassifier.HSAT_CLASS_TAG));
             }
-            if (!map.get(INTERCLASSnC.SAT_CLASS_TAG).isEmpty()) {
-                front.addAll(map.get(INTERCLASSnC.SAT_CLASS_TAG));
+            if (!map.get(SatClassifier.SAT_CLASS_TAG).isEmpty()) {
+                front.addAll(map.get(SatClassifier.SAT_CLASS_TAG));
             }
             if (front.isEmpty()) {
-                front.addAll(map.get(INTERCLASSnC.DIS_CLASS_TAG));
-                front.addAll(map.get(INTERCLASSnC.HDIS_CLASS_TAG));
+                front.addAll(map.get(SatClassifier.DIS_CLASS_TAG));
+                front.addAll(map.get(SatClassifier.HDIS_CLASS_TAG));
             }
             logger.info(problem.getName() + " -> Front 0: " + front.size());
 

@@ -3,7 +3,7 @@ package com.castellanos94.algorithms.multi;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-import com.castellanos94.mcda.INTERCLASSnC;
+import com.castellanos94.mcda.SatClassifier;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
@@ -66,7 +66,7 @@ public class NSGA_III_P<S extends Solution<?>> extends NSGA_III<S> {
             Rt.add(r);
         }
         ranking.computeRanking(Rt);
-        Classifier<S> classifier = new INTERCLASSnC<>((GDProblem<S>)problem);
+        Classifier<S> classifier = new SatClassifier<>((GDProblem<S>)problem);
         ArrayList<ArrayList<S>> _fronts = new ArrayList<>();
         // report();
         if (ranking.getNumberOfSubFronts() > 0 && classifyEveryIteration != 0 && this.currenIteration > 0

@@ -10,14 +10,12 @@ import java.util.Scanner;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.instances.DTLZ_Instance;
-import com.castellanos94.mcda.INTERCLASSnC;
+import com.castellanos94.mcda.SatClassifier;
 import com.castellanos94.problems.DTLZP;
 import com.castellanos94.solutions.DoubleSolution;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 /**
  * Java Bag 4591, F0 - Original : 266. HSat : 154, Sat : 0, Dis : 0, HDis : 112
@@ -36,7 +34,7 @@ public class ReadSolution {
         DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(path).loadInstance();
         logger.info(instance);
         int numberOfProblem = 1;
-        DTLZP problem = new DTLZP(numberOfProblem,instance);
+        DTLZP problem = new DTLZP(numberOfProblem, instance);
         DoubleSolution _best = problem.generate();
         for (int i = 0; i < _best.getNumberOfVariables(); i++) {
             _best.setVariable(i, instance.getBestCompromises()[0][i].doubleValue());
@@ -44,7 +42,7 @@ public class ReadSolution {
         problem.evaluate(_best);
         problem.evaluateConstraint(_best);
         System.out.println(_best);
-        INTERCLASSnC<DoubleSolution> classifier = new INTERCLASSnC<>(problem);
+        SatClassifier<DoubleSolution> classifier = new SatClassifier<>(problem);
 
         classifier.classify(_best);
         int[] _iclass = (int[]) _best.getAttribute(classifier.getAttributeKey());
@@ -59,13 +57,13 @@ public class ReadSolution {
         for (DoubleSolution doubleSolution : bag_python) {
             doubleSolution.setAttribute(FROM_ALGORITHM, "python");
         }
-        logger.info("Bag java : "+ bag_java.size());
-        logger.info("Bag python : "+ bag_python.size());
+        logger.info("Bag java : " + bag_java.size());
+        logger.info("Bag python : " + bag_python.size());
         ArrayList<DoubleSolution> solutions = new ArrayList<>();
         // Join bags
         solutions.addAll(bag_java);
         solutions.addAll(bag_python);
-        logger.info("Bag : "+solutions.size());
+        logger.info("Bag : " + solutions.size());
 
         // Ranking
         Ranking<DoubleSolution> compartor = new DominanceComparator<>();

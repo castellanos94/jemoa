@@ -15,7 +15,7 @@ import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.DTLZ_Instance;
-import com.castellanos94.mcda.INTERCLASSnC;
+import com.castellanos94.mcda.SatClassifier;
 import com.castellanos94.problems.DTLZP;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
@@ -956,7 +956,7 @@ public class NSGA3WPExperimentationMetrics {
 
     private static ArrayList<DoubleSolution> classifySolutions(DTLZP dtlzPreferences,
             ArrayList<DoubleSolution> solutions, boolean show, boolean isOnlyCSat) {
-        INTERCLASSnC<DoubleSolution> classifier = new INTERCLASSnC<>(dtlzPreferences);
+        SatClassifier<DoubleSolution> classifier = new SatClassifier<>(dtlzPreferences);
         ArrayList<DoubleSolution> front = new ArrayList<>();
         ArrayList<DoubleSolution> hs = new ArrayList<>();
         ArrayList<DoubleSolution> s = new ArrayList<>();

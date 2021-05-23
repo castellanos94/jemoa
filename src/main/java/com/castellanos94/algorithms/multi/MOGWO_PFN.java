@@ -18,7 +18,8 @@ public class MOGWO_PFN<S extends DoubleSolution> extends MOGWO_V<S> implements E
     public MOGWO_PFN(Problem<S> problem, int populationSize, int MAX_ITERATIONS, int nGrid,
             RepairOperator<S> repairOperator) {
         super(problem, populationSize, MAX_ITERATIONS, nGrid, repairOperator);
-        this.preferences = new IntervalOutrankingRelations<>(problem, ((GDProblem<S>) problem).getPreferenceModel(0));
+        this.preferences = new IntervalOutrankingRelations<>(problem.getNumberOfObjectives(),
+                problem.getObjectives_type(), ((GDProblem<S>) problem).getPreferenceModel(0));
         Comparator<S> cmp = (a, b) -> {
             double netscore_a = (double) a.getAttribute(getAttributeKey());
             double netscore_b = (double) b.getAttribute(getAttributeKey());

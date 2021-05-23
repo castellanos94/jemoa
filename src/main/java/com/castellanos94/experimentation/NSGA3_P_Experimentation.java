@@ -11,8 +11,7 @@ import java.util.List;
 
 import com.castellanos94.algorithms.multi.NSGA_III_P;
 import com.castellanos94.instances.DTLZ_Instance;
-import com.castellanos94.mcda.INTERCLASSnB;
-import com.castellanos94.mcda.INTERCLASSnC;
+import com.castellanos94.mcda.SatClassifier;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
@@ -86,7 +85,7 @@ public class NSGA3_P_Experimentation {
         CLASSIFY_EVERY_ITERATION = cLASSIFY_EVERY_ITERATION;
         ELEMENTS_TO_REPLACE = eLEMENTS_TO_REPLACE;
         DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NSGA3" + File.separator
-                + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE+"-nb";
+                + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE+"-sat";
         initialProblem = 1;
         endProblem = 9;
     }
@@ -169,7 +168,7 @@ public class NSGA3_P_Experimentation {
                 f.mkdirs();
             f = new File(DIRECTORY + File.separator + subDir + File.separator + "Class_F0" + problem.getName()
                     + +problem.getNumberOfObjectives() + ".out");
-            Classifier<DoubleSolution> classifier = new INTERCLASSnB<>(problem);
+            Classifier<DoubleSolution> classifier = new SatClassifier<>(problem);
             ArrayList<DoubleSolution> front = new ArrayList<>();
             ArrayList<DoubleSolution> hs = new ArrayList<>();
             ArrayList<DoubleSolution> s = new ArrayList<>();
