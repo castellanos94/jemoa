@@ -25,7 +25,7 @@ Java Evolutionary Multi-Objective Algorithms, this version was developed with Ja
    * MOGWO-P : Multi-Objective Grey Wolf Optimizer with preferences incorporation, using a multi-criteria ordinal classifier
    * MOGWO-PFN : Multi-Objective Grey Wolf Optimizer with preferences incorporation, using a net outranking score
    * iMOACO_R : Indicator-Based Multi-Objective Ant Colony Optimization Algorithm for Continuous Search Spaces
-# Multicriteria Decision Aid (MCDA)
+# Multi-criteria Decision Aid (MCDA)
    * Electre Tri
    * INTERCLASS-nC
    * INTERCLASS-nB
