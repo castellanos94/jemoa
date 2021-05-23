@@ -12,7 +12,7 @@ import com.castellanos94.solutions.Solution;
  * assignment into categories. Pesquisa Operacional, 33(2), 283–303.
  * https://doi.org/10.1590/s0101-74382013000200009
  */
-public class ELECTRE_Preference<S extends Solution<?>> extends Preference<S> {
+public class CrispOutrankingRelations<S extends Solution<?>> extends Preference<S> {
     protected ElectrePreferenceModel model;
     protected final int numberOfObjectives;
 
@@ -20,7 +20,7 @@ public class ELECTRE_Preference<S extends Solution<?>> extends Preference<S> {
         PESSIMISTIC, OPTIMISTIC
     };
 
-    public ELECTRE_Preference(ElectrePreferenceModel model, int numberOfObjectives) {
+    public CrispOutrankingRelations(ElectrePreferenceModel model, int numberOfObjectives) {
         this.model = model;
         this.numberOfObjectives = numberOfObjectives;
     }

@@ -18,7 +18,7 @@ public class ElectreTri<S extends Solution<?>> extends Classifier<S> {
     protected ElectrePreferenceModel model;
     protected final int numberOfObjectives;
     protected final ArrayList<ArrayList<Data>> referenceProfile;
-    protected ELECTRE_Preference<S> preference;
+    protected CrispOutrankingRelations<S> preference;
     protected RULE ruleForAssignment;
 
     public static enum RULE {
@@ -30,7 +30,7 @@ public class ElectreTri<S extends Solution<?>> extends Classifier<S> {
         this.model = model;
         this.numberOfObjectives = numberOfObjectives;
         this.referenceProfile = referenceProfile;
-        this.preference = new ELECTRE_Preference<>(model, numberOfObjectives);
+        this.preference = new CrispOutrankingRelations<>(model, numberOfObjectives);
         this.ruleForAssignment = ruleForAssignment;
     }
 

@@ -31,7 +31,8 @@ public class IntervalOutrankingRelations<S extends Solution<?>> extends Preferen
         coalition = new int[p.getNumberOfObjectives()];
     }
 
-    public IntervalOutrankingRelations(Problem<?> p, OutrankingModel model, DominanceComparator<S> dominanceComparator) {
+    public IntervalOutrankingRelations(Problem<?> p, OutrankingModel model,
+            DominanceComparator<S> dominanceComparator) {
         this.model = model;
         this.p = p;
         this.dominance = dominanceComparator;
@@ -40,7 +41,7 @@ public class IntervalOutrankingRelations<S extends Solution<?>> extends Preferen
 
     /**
      * * Definition 3. Relatiopships: xS(δ,λ)y in [-2], xP(δ,λ)y in [-1], xI(δ,λ)y
-     * in [0], xR(δ,λ)y in [1]
+     * in [0], xR(δ,λ)y in [1], yS(δ,λ)x in [2]
      * 
      * @param x a solution
      * @param y another solution
@@ -51,10 +52,6 @@ public class IntervalOutrankingRelations<S extends Solution<?>> extends Preferen
 
         sigmaXY = credibility_index(x, y);
         sigmaYX = credibility_index(y, x);
-        /*
-         * System.out.println(x.getObjectives()); System.out.println(y.getObjectives());
-         * System.out.println(sigmaXY+" "+sigmaYX);
-         */
         int v = dominance.compare(x, y);
         if (v == -1)// x outranks y
             return -1;
@@ -70,13 +67,6 @@ public class IntervalOutrankingRelations<S extends Solution<?>> extends Preferen
             }
             return -2;
         }
-        /*
-         * int sxyVb = sigmaXY.compareTo(model.getBeta()); int bVsYX =
-         * model.getBeta().compareTo(sigmaYX); if (sxyVb >= 0 && bVsYX> 0) return -1;
-         * int sYXvB = sigmaYX.compareTo(model.getBeta()); if (sxyVb >= 0 && sYXvB>= 0)
-         * return 0; int yxV0 =sigmaYX.compareTo(0); if (sxyVb < 0 && yxV0 < 0) return
-         * 1;
-         */
 
         return 1;
     }
