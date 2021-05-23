@@ -14,6 +14,7 @@ import com.castellanos94.utils.Classifier;
  * multi-criteria ordinal classification. Omega, 95, 102065.
  * https://doi.org/10.1016/j.omega.2019.05.001
  * 
+ * @see OutrankingModel
  * @see IntervalOutrankingRelations
  * 
  */

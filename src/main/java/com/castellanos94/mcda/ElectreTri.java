@@ -15,6 +15,9 @@ import com.castellanos94.utils.Classifier;
  * Cavalcante, C. A. V. (2013). Electre tri method used to storage location
  * assignment into categories. Pesquisa Operacional, 33(2), 283–303.
  * https://doi.org/10.1590/s0101-74382013000200009
+ * 
+ * @see CrispOutrankingRelations
+ * @see ElectrePreferenceModel
  */
 public class ElectreTri<S extends Solution<?>> extends Classifier<S> {
     protected ElectrePreferenceModel model;
@@ -27,8 +30,8 @@ public class ElectreTri<S extends Solution<?>> extends Classifier<S> {
         PESSIMISTIC, OPTIMISTIC
     };
 
-    public ElectreTri(ElectrePreferenceModel model, int numberOfObjectives,
-            ArrayList<ArrayList<Data>> referenceProfile, RULE ruleForAssignment) {
+    public ElectreTri(ElectrePreferenceModel model, int numberOfObjectives, ArrayList<ArrayList<Data>> referenceProfile,
+            RULE ruleForAssignment) {
         this.model = model;
         this.numberOfObjectives = numberOfObjectives;
         this.referenceProfile = referenceProfile;

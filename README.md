@@ -1,6 +1,6 @@
 # JEMOA
 Java Evolutionary Multi-Objective Algorithms, this version was developed with Java 14.
-   # Data type
+# Data type
    * Integer
    * Real (double)
    * Interval 
@@ -28,3 +28,5 @@ Java Evolutionary Multi-Objective Algorithms, this version was developed with Ja
 # Multicriteria Decision Aid (MCDA)
    * Electre Tri
    * INTERCLASS-nC
+   * INTERCLASS-nB
+   * SatClassifier
