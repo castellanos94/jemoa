@@ -17,8 +17,8 @@ import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.operators.impl.PolynomialMutation;
 import com.castellanos94.operators.impl.TournamentSelection;
 import com.castellanos94.preferences.Classifier;
-import com.castellanos94.preferences.impl.InterClass_nB;
-import com.castellanos94.preferences.impl.InterClassnC;
+import com.castellanos94.preferences.impl.INTERCLASSnB;
+import com.castellanos94.preferences.impl.INTERCLASSnC;
 import com.castellanos94.problems.DTLZP;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
@@ -169,7 +169,7 @@ public class NSGA3_P_Experimentation {
                 f.mkdirs();
             f = new File(DIRECTORY + File.separator + subDir + File.separator + "Class_F0" + problem.getName()
                     + +problem.getNumberOfObjectives() + ".out");
-            Classifier<DoubleSolution> classifier = new InterClass_nB<>(problem);
+            Classifier<DoubleSolution> classifier = new INTERCLASSnB<>(problem);
             ArrayList<DoubleSolution> front = new ArrayList<>();
             ArrayList<DoubleSolution> hs = new ArrayList<>();
             ArrayList<DoubleSolution> s = new ArrayList<>();

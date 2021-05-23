@@ -5,27 +5,27 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import com.castellanos94.operators.RepairOperator;
-import com.castellanos94.preferences.impl.InterClassnC;
+import com.castellanos94.preferences.impl.INTERCLASSnC;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
 
 public class MOGWO_P<S extends DoubleSolution> extends MOGWO_V<S> {
-    protected InterClassnC<S> classifier;
+    protected INTERCLASSnC<S> classifier;
 
     public MOGWO_P(Problem<S> problem, int populationSize, int MAX_ITERATIONS, int nGrid,
             RepairOperator<S> repairOperator) {
         super(problem, populationSize, MAX_ITERATIONS, nGrid, repairOperator);
-        classifier = new InterClassnC<>(problem);
+        classifier = new INTERCLASSnC<>(problem);
     }
 
     @Override
     protected void selectLeader(ArrayList<S> solutions) {
         // Filter
         HashMap<String, ArrayList<S>> map = classifier.classify(solutions);
-        ArrayList<S> cHSat = map.get(InterClassnC.HSAT_CLASS_TAG);
-        ArrayList<S> cSat = map.get(InterClassnC.SAT_CLASS_TAG);
-        ArrayList<S> cDis = map.get(InterClassnC.DIS_CLASS_TAG);
-        ArrayList<S> cHDis = map.get(InterClassnC.HDIS_CLASS_TAG);
+        ArrayList<S> cHSat = map.get(INTERCLASSnC.HSAT_CLASS_TAG);
+        ArrayList<S> cSat = map.get(INTERCLASSnC.SAT_CLASS_TAG);
+        ArrayList<S> cDis = map.get(INTERCLASSnC.DIS_CLASS_TAG);
+        ArrayList<S> cHDis = map.get(INTERCLASSnC.HDIS_CLASS_TAG);
 
         ArrayList<S> _solutions = null;
         if (!cHSat.isEmpty()) {
@@ -48,12 +48,12 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO_V<S> {
 
         // Select beta and remove to exclude
         _solutions = new ArrayList<>();
-        String[] classAttribute = { InterClassnC.HSAT_CLASS_TAG, InterClassnC.SAT_CLASS_TAG, InterClassnC.DIS_CLASS_TAG,
-                InterClassnC.HDIS_CLASS_TAG };
+        String[] classAttribute = { INTERCLASSnC.HSAT_CLASS_TAG, INTERCLASSnC.SAT_CLASS_TAG, INTERCLASSnC.DIS_CLASS_TAG,
+                INTERCLASSnC.HDIS_CLASS_TAG };
         int indexClass = 0;
         while (_solutions.size() < 2 && indexClass < classAttribute.length) {
             for (S sol : (!parents.isEmpty()) ? parents : solutions) {
-                if (((String) sol.getAttribute(InterClassnC.CLASS_KEY)).equalsIgnoreCase(classAttribute[indexClass])) {
+                if (((String) sol.getAttribute(INTERCLASSnC.CLASS_KEY)).equalsIgnoreCase(classAttribute[indexClass])) {
                     if (!sol.equals(alphaWolf))
                         _solutions.add(sol);
                 }
@@ -82,7 +82,7 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO_V<S> {
         indexClass = 0;
         while (_solutions.size() < 3 && indexClass < classAttribute.length) {
             for (S sol : (!parents.isEmpty()) ? parents : solutions) {
-                if (((String) sol.getAttribute(InterClassnC.CLASS_KEY)).equalsIgnoreCase(classAttribute[indexClass])) {
+                if (((String) sol.getAttribute(INTERCLASSnC.CLASS_KEY)).equalsIgnoreCase(classAttribute[indexClass])) {
                     if (!sol.equals(alphaWolf) && !sol.equals(betaWolf))
                         _solutions.add(sol);
                 }

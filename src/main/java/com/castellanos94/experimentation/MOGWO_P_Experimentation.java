@@ -18,7 +18,7 @@ import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.operators.impl.RepairBoundary;
-import com.castellanos94.preferences.impl.InterClassnC;
+import com.castellanos94.preferences.impl.INTERCLASSnC;
 import com.castellanos94.problems.DTLZP;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
@@ -147,22 +147,22 @@ public class MOGWO_P_Experimentation {
 
             f = new File(DIRECTORY + File.separator + subDir + File.separator + "Class_F0" + problem.getName()
                     + +problem.getNumberOfObjectives() + ".out");
-            InterClassnC<DoubleSolution> classifier = new InterClassnC<>(problem);
+            INTERCLASSnC<DoubleSolution> classifier = new INTERCLASSnC<>(problem);
             HashMap<String, ArrayList<DoubleSolution>> map = classifier.classify(compartor.getSubFront(0));
 
             logger.info(String.format("%s -> HSat : %3d, Sat : %3d, Dis : %3d, HDis : %3d", problem.getName(),
-                    map.get(InterClassnC.HSAT_CLASS_TAG).size(), map.get(InterClassnC.SAT_CLASS_TAG).size(),
-                    map.get(InterClassnC.DIS_CLASS_TAG).size(), map.get(InterClassnC.HDIS_CLASS_TAG).size()));
+                    map.get(INTERCLASSnC.HSAT_CLASS_TAG).size(), map.get(INTERCLASSnC.SAT_CLASS_TAG).size(),
+                    map.get(INTERCLASSnC.DIS_CLASS_TAG).size(), map.get(INTERCLASSnC.HDIS_CLASS_TAG).size()));
             ArrayList<DoubleSolution> front = new ArrayList<>();
-            if (!map.get(InterClassnC.HSAT_CLASS_TAG).isEmpty()) {
-                front.addAll(map.get(InterClassnC.HSAT_CLASS_TAG));
+            if (!map.get(INTERCLASSnC.HSAT_CLASS_TAG).isEmpty()) {
+                front.addAll(map.get(INTERCLASSnC.HSAT_CLASS_TAG));
             }
-            if (!map.get(InterClassnC.SAT_CLASS_TAG).isEmpty()) {
-                front.addAll(map.get(InterClassnC.SAT_CLASS_TAG));
+            if (!map.get(INTERCLASSnC.SAT_CLASS_TAG).isEmpty()) {
+                front.addAll(map.get(INTERCLASSnC.SAT_CLASS_TAG));
             }
             if (front.isEmpty()) {
-                front.addAll(map.get(InterClassnC.DIS_CLASS_TAG));
-                front.addAll(map.get(InterClassnC.HDIS_CLASS_TAG));
+                front.addAll(map.get(INTERCLASSnC.DIS_CLASS_TAG));
+                front.addAll(map.get(INTERCLASSnC.HDIS_CLASS_TAG));
             }
             logger.info(problem.getName() + " -> Front 0: " + front.size());
 

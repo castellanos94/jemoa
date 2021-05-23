@@ -7,8 +7,8 @@ import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.preferences.Classifier;
-import com.castellanos94.preferences.impl.InterClass_nB;
-import com.castellanos94.preferences.impl.InterClassnC;
+import com.castellanos94.preferences.impl.INTERCLASSnB;
+import com.castellanos94.preferences.impl.INTERCLASSnC;
 import com.castellanos94.problems.GDProblem;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
@@ -67,7 +67,7 @@ public class NSGA_III_P<S extends Solution<?>> extends NSGA_III<S> {
             Rt.add(r);
         }
         ranking.computeRanking(Rt);
-        Classifier<S> classifier = new InterClass_nB<>((GDProblem<S>)problem);
+        Classifier<S> classifier = new INTERCLASSnB<>((GDProblem<S>)problem);
         ArrayList<ArrayList<S>> _fronts = new ArrayList<>();
         // report();
         if (ranking.getNumberOfSubFronts() > 0 && classifyEveryIteration != 0 && this.currenIteration > 0

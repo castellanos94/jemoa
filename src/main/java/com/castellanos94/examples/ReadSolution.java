@@ -10,7 +10,7 @@ import java.util.Scanner;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.instances.DTLZ_Instance;
-import com.castellanos94.preferences.impl.InterClassnC;
+import com.castellanos94.preferences.impl.INTERCLASSnC;
 import com.castellanos94.problems.DTLZP;
 import com.castellanos94.solutions.DoubleSolution;
 
@@ -44,7 +44,7 @@ public class ReadSolution {
         problem.evaluate(_best);
         problem.evaluateConstraint(_best);
         System.out.println(_best);
-        InterClassnC<DoubleSolution> classifier = new InterClassnC<>(problem);
+        INTERCLASSnC<DoubleSolution> classifier = new INTERCLASSnC<>(problem);
 
         classifier.classify(_best);
         int[] _iclass = (int[]) _best.getAttribute(classifier.getAttributeKey());

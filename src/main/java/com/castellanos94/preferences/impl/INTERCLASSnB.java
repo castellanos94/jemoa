@@ -5,12 +5,15 @@ import com.castellanos94.preferences.Classifier;
 import com.castellanos94.problems.GDProblem;
 import com.castellanos94.solutions.Solution;
 
-public class InterClass_nB<S extends Solution<?>> extends Classifier<S> {
+/**
+ * INTERCLLASS-nB for GroupDecision Problem and two classes.
+ */
+public class INTERCLASSnB<S extends Solution<?>> extends Classifier<S> {
     protected final int numberOfReferenceActions;
     protected final Interval[][][] referenceAction;
     protected GDProblem<S> problem;
 
-    public InterClass_nB(GDProblem<S> problem) {
+    public INTERCLASSnB(GDProblem<S> problem) {
         this.problem = problem;
         numberOfReferenceActions = this.problem.getR1()[0].length + this.problem.getR1()[0].length;
         this.referenceAction = new Interval[this.problem.getNumDMs()][numberOfReferenceActions][this.problem
@@ -102,6 +105,7 @@ public class InterClass_nB<S extends Solution<?>> extends Classifier<S> {
      * @param dm
      * @return
      */
+    @SuppressWarnings("unchecked")
     protected int ascRule(S x, int dm) {
         ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         int clase = -1;
@@ -123,6 +127,7 @@ public class InterClass_nB<S extends Solution<?>> extends Classifier<S> {
      * @param dm
      * @return
      */
+    @SuppressWarnings("unchecked")
     protected int descRule(S x, int dm) {
         ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         int clase = -1;
@@ -145,6 +150,7 @@ public class InterClass_nB<S extends Solution<?>> extends Classifier<S> {
      * @param dm prefence model
      * @return True if isHighSat otherwise false
      */
+    @SuppressWarnings("unchecked")
     protected boolean isHighSat(S x, int dm) {
         ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r2 = problem.getR2()[dm];
@@ -167,6 +173,7 @@ public class InterClass_nB<S extends Solution<?>> extends Classifier<S> {
      * @param dm model preference
      * @return true if is high dis otherwise false
      */
+    @SuppressWarnings("unchecked")
     protected boolean isHighDis(S x, int dm) {
         ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r1 = problem.getR1()[dm];
@@ -190,6 +197,7 @@ public class InterClass_nB<S extends Solution<?>> extends Classifier<S> {
      * @param dm
      * @return
      */
+    @SuppressWarnings("unchecked")
     public boolean isSatWithXUF(S x, int dm) {
         UF_ITHDM_Preference<S> pref = new UF_ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r1 = problem.getR1()[dm];
@@ -220,6 +228,7 @@ public class InterClass_nB<S extends Solution<?>> extends Classifier<S> {
      * @param dm
      * @return
      */
+    @SuppressWarnings("unchecked")
     public boolean isDisWithXUF(S x, int dm) {
         UF_ITHDM_Preference<S> pref = new UF_ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r2 = problem.getR2()[dm];
@@ -253,6 +262,7 @@ public class InterClass_nB<S extends Solution<?>> extends Classifier<S> {
      * @param dm
      * @return
      */
+    @SuppressWarnings("unchecked")
     public boolean isHighSatWithXUF(S x, int dm) {
         UF_ITHDM_Preference<S> pref = new UF_ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r2 = problem.getR2()[dm];
@@ -274,6 +284,7 @@ public class InterClass_nB<S extends Solution<?>> extends Classifier<S> {
      * @param dm
      * @return
      */
+    @SuppressWarnings("unchecked")
     public boolean isHighDisWithXUF(S x, int dm) {
         UF_ITHDM_Preference<S> pref = new UF_ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r1 = problem.getR1()[dm];

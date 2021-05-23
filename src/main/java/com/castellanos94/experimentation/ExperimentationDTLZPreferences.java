@@ -11,7 +11,7 @@ import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.instances.DTLZ_Instance;
-import com.castellanos94.preferences.impl.InterClassnC;
+import com.castellanos94.preferences.impl.INTERCLASSnC;
 import com.castellanos94.problems.DTLZP;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.problems.benchmarks.dtlz.DTLZ;
@@ -240,7 +240,7 @@ public class ExperimentationDTLZPreferences {
                 }
             }
             // Classification
-            InterClassnC<DoubleSolution> classifier = new InterClassnC<>(problem_preferences);
+            INTERCLASSnC<DoubleSolution> classifier = new INTERCLASSnC<>(problem_preferences);
             ArrayList<DoubleSolution> hs = new ArrayList<>();
             ArrayList<DoubleSolution> s = new ArrayList<>();
             ArrayList<DoubleSolution> d = new ArrayList<>();
@@ -390,7 +390,7 @@ public class ExperimentationDTLZPreferences {
 
     private static ArrayList<DoubleSolution> makeFrontHSatSat(DTLZP problem,
             ArrayList<DoubleSolution> solutions) {
-        InterClassnC<DoubleSolution> classifier = new InterClassnC<>(problem);
+        INTERCLASSnC<DoubleSolution> classifier = new INTERCLASSnC<>(problem);
         ArrayList<DoubleSolution> front = new ArrayList<>();
         ArrayList<DoubleSolution> hs = new ArrayList<>();
         ArrayList<DoubleSolution> s = new ArrayList<>();

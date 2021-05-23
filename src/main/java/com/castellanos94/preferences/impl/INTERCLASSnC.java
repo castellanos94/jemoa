@@ -27,7 +27,7 @@ import com.castellanos94.utils.Tools;
  */
 @SuppressWarnings("unchecked")
 
-public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
+public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
     protected GDProblem<S> problem;
     protected S w;
     public static String HSAT_CLASS_TAG = "_CLASS_HSAT";
@@ -37,7 +37,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
     protected Interval[][][] referenceAction;
     protected final int numberOfReferenceActions;
 
-    public InterClassnC(Problem<S> problem) {
+    public INTERCLASSnC(Problem<S> problem) {
         this.problem = (GDProblem<S>) problem;
         this.w = problem.randomSolution();
         numberOfReferenceActions = this.problem.getR1()[0].length + this.problem.getR1()[0].length;
@@ -544,7 +544,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
             System.out.println();
         }
         System.out.println("Clasifcando soluciones con InterClass-nC");
-        InterClassnC<BinarySolution> classificator = new InterClassnC<>(problem);
+        INTERCLASSnC<BinarySolution> classificator = new INTERCLASSnC<>(problem);
         for (int i = 0; i < solutions.length; i++) {
             // System.out.println("Clasificando solucion: " + i);
             classificator.classify(solutions[i]);
