@@ -16,6 +16,8 @@ import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.operators.impl.PolynomialMutation;
 import com.castellanos94.operators.impl.TournamentSelection;
+import com.castellanos94.preferences.Classifier;
+import com.castellanos94.preferences.impl.InterClass_nB;
 import com.castellanos94.preferences.impl.InterClassnC;
 import com.castellanos94.problems.DTLZP;
 import com.castellanos94.components.Ranking;
@@ -84,7 +86,7 @@ public class NSGA3_P_Experimentation {
         CLASSIFY_EVERY_ITERATION = cLASSIFY_EVERY_ITERATION;
         ELEMENTS_TO_REPLACE = eLEMENTS_TO_REPLACE;
         DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NSGA3" + File.separator
-                + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE+"-nc";
+                + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE+"-nb";
         initialProblem = 1;
         endProblem = 9;
     }
@@ -97,7 +99,7 @@ public class NSGA3_P_Experimentation {
             Tools.setSeed(1L);
             logger.info("Experimentation: DTLZ with preferences");
             String resourseFile = "DTLZ_INSTANCES" + File.separator + numberOfObjectives + File.separator + "DTLZ" + p       + "_Instance.txt";
-            resourseFile = "roi_generator" +  File.separator + "DTLZ" + p                    + "_Instance.txt";
+            //resourseFile = "roi_generator" +  File.separator + "DTLZ" + p                    + "_Instance.txt";
             DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(resourseFile).loadInstance();
 
             // logger.info(instance);
@@ -167,7 +169,7 @@ public class NSGA3_P_Experimentation {
                 f.mkdirs();
             f = new File(DIRECTORY + File.separator + subDir + File.separator + "Class_F0" + problem.getName()
                     + +problem.getNumberOfObjectives() + ".out");
-            InterClassnC<DoubleSolution> classifier = new InterClassnC<>(problem);
+            Classifier<DoubleSolution> classifier = new InterClass_nB<>(problem);
             ArrayList<DoubleSolution> front = new ArrayList<>();
             ArrayList<DoubleSolution> hs = new ArrayList<>();
             ArrayList<DoubleSolution> s = new ArrayList<>();

@@ -159,15 +159,6 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
     }
 
     private void setPenalties(S x, int hsat, int sat, int dis, int hdis) {
-
-        /*
-         * if (hsat < sat) { penaltie = penaltie.plus((hsat - sat) / 3.0); violated++; }
-         * else if (hsat == sat) { penaltie = penaltie.plus(-sat / 3.0); violated++; }
-         * if (sat < dis) { penaltie = penaltie.plus((double) sat - dis); violated++; }
-         * else if (sat == dis) { penaltie = penaltie.plus(-dis / 2.0); violated++; } if
-         * (dis < hdis) { penaltie = penaltie.plus((dis - hdis) * 2.0); violated++; }
-         * x.setPenalties(penaltie); x.setNumberOfPenalties(violated);
-         */
         int[] iclass = new int[4];
         iclass[0] = hsat;
         iclass[1] = sat;
@@ -185,8 +176,8 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
     protected int ascending_rule(S x, int dm) {
         ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         S b = (S) x.copy();
-        //b.setPenalties(Interval.ZERO);
-        //b.setNumberOfPenalties(0);
+        // b.setPenalties(Interval.ZERO);
+        // b.setNumberOfPenalties(0);
         Data lastFunctionI = null;
         int clase = -1;
         for (int i = 0; i < numberOfReferenceActions; i++) {
@@ -220,8 +211,8 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
     protected int descending_rule(S x, int dm) {
         ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         S b = (S) x.copy();
-       // b.setPenalties(Interval.ZERO);
-        //b.setNumberOfPenalties(0);
+        // b.setPenalties(Interval.ZERO);
+        // b.setNumberOfPenalties(0);
         for (int i = numberOfReferenceActions - 1; i >= 0; i--) {
             loadObjectivesToFunction(b, referenceAction[dm][i]);
             if (pref.compare(x, b) <= 0) {
@@ -303,10 +294,10 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
         ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         int clase = -1;
         w.setPenalties(Interval.ZERO);
-        w.setNumberOfPenalties(0);        
+        w.setNumberOfPenalties(0);
         for (int i = 0; i < numberOfReferenceActions; i++) {
             loadObjectivesToFunction(w, referenceAction[dm][i]);
-            if (pref.compare(x,w) <= 0) {
+            if (pref.compare(x, w) <= 0) {
                 clase = i;
             }
         }
@@ -355,7 +346,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
         for (int i = 0; i < r2.length; i++) {
             loadObjectivesToFunction(w, r2[dm]);
 
-            if (pref.compare(x, w) <= -1) {
+            if (pref.compare(x, w) > -1) {
                 return false;
             }
         }
@@ -378,7 +369,7 @@ public class InterClassnC<S extends Solution<?>> extends Classifier<S> {
         w.setNumberOfPenalties(0);
         for (int i = 0; i < r1.length; i++) {
             loadObjectivesToFunction(w, r1[i]);
-            if (pref.compare(w, x) <= -1) {
+            if (pref.compare(w, x) > -1) {
                 return false;
             }
         }

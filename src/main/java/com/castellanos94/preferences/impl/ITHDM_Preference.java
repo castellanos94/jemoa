@@ -22,7 +22,6 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
     protected Problem<?> p;
     private int[] coalition;
     private RealData sigmaXY, sigmaYX;
-    protected double delta = 0.51;
 
     public ITHDM_Preference(Problem<?> p, OutrankingModel model) {
         this.model = model;
@@ -60,8 +59,8 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
             return -1;
         if (v == 1)
             return 2;
-        boolean booleanXSDelta =  sigmaXY.compareTo(delta) >= 0;
-        int ySDelta = sigmaYX.compareTo(delta);
+        boolean booleanXSDelta =  sigmaXY.compareTo(model.getDelta())>= 0;
+        int ySDelta = sigmaYX.compareTo(model.getDelta());
         if(booleanXSDelta){
             if(ySDelta< 0){
                 return -1;

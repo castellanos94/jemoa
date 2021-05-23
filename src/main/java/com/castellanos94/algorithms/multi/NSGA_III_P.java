@@ -6,7 +6,10 @@ import java.util.stream.Collectors;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
+import com.castellanos94.preferences.Classifier;
+import com.castellanos94.preferences.impl.InterClass_nB;
 import com.castellanos94.preferences.impl.InterClassnC;
+import com.castellanos94.problems.GDProblem;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.NSGA3Replacement;
@@ -64,7 +67,7 @@ public class NSGA_III_P<S extends Solution<?>> extends NSGA_III<S> {
             Rt.add(r);
         }
         ranking.computeRanking(Rt);
-        InterClassnC<S> classifier = new InterClassnC<>(problem);
+        Classifier<S> classifier = new InterClass_nB<>((GDProblem<S>)problem);
         ArrayList<ArrayList<S>> _fronts = new ArrayList<>();
         // report();
         if (ranking.getNumberOfSubFronts() > 0 && classifyEveryIteration != 0 && this.currenIteration > 0
@@ -98,8 +101,8 @@ public class NSGA_III_P<S extends Solution<?>> extends NSGA_III<S> {
             if (!hd.isEmpty()) {
                 _fronts.add(hd);
             }
-            if(hs.size() > 0 || s.size() > 0)
-            System.out.println(this.currenIteration + " "+ hs.size()+ " "+s.size());
+            //if(hs.size() > 0 || s.size() > 0)
+            //System.out.println(this.currenIteration + " "+ hs.size()+ " "+s.size());
             for (int i = 1; i < ranking.getNumberOfSubFronts(); i++) {
                 _fronts.add(ranking.getSubFront(i));
             }

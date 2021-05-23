@@ -39,6 +39,22 @@ public class OutrankingModel extends PreferenceModel {
      * Contraint threshold
      */
     protected Data chi;
+    /**
+     * Delta value (0.5, 1]
+     */
+    protected double delta = 0.51;
+
+    public double getDelta() {
+        return delta;
+    }
+
+    /**
+     * Delta value (0.5, 1]
+     * @param delta (0.5, 1]
+     */
+    public void setDelta(double delta) {
+        this.delta = delta;
+    }
 
     public Data getChi() {
         return chi;
