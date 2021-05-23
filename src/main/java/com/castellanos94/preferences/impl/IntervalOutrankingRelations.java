@@ -27,7 +27,7 @@ public class IntervalOutrankingRelations<S extends Solution<?>> extends Preferen
     public IntervalOutrankingRelations(Problem<?> p, OutrankingModel model) {
         this.model = model;
         this.p = p;
-        this.dominance = new ITHDM_Dominance<>((RealData) model.getAlpha());
+        this.dominance = new EtaDominance<>((RealData) model.getAlpha());
         coalition = new int[p.getNumberOfObjectives()];
     }
 

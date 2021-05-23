@@ -16,10 +16,6 @@ public class CrispOutrankingRelations<S extends Solution<?>> extends Preference<
     protected ElectrePreferenceModel model;
     protected final int numberOfObjectives;
 
-    public static enum RULE {
-        PESSIMISTIC, OPTIMISTIC
-    };
-
     public CrispOutrankingRelations(ElectrePreferenceModel model, int numberOfObjectives) {
         this.model = model;
         this.numberOfObjectives = numberOfObjectives;

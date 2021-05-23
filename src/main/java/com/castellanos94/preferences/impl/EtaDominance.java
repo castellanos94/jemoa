@@ -8,15 +8,20 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.BinarySolution;
 import com.castellanos94.solutions.Solution;
 
-public class ITHDM_Dominance<S extends Solution<?>> extends IntervalDominance<S> {
+/**
+ * Eta dominance xD(α)y, used at IntervalOutRankingRelations
+ * 
+ * @see IntervalOutrankingRelations
+ */
+public class EtaDominance<S extends Solution<?>> extends IntervalDominance<S> {
     protected RealData alpha;
 
-    public ITHDM_Dominance(RealData alpha) {
+    public EtaDominance(RealData alpha) {
         this.alpha = alpha;
     }
 
     /**
-     * ETA-Dominance
+     * xD(α)y
      * 
      * @param x object represent first solution
      * @param y object represent second solution
@@ -82,7 +87,7 @@ public class ITHDM_Dominance<S extends Solution<?>> extends IntervalDominance<S>
             return -1;
         if (s2_dominates_s1)
             return 1;
-       if (!s2_dominates_s1 && better_a != x.getObjectives().size() && !s1_dominates_s2
+        if (!s2_dominates_s1 && better_a != x.getObjectives().size() && !s1_dominates_s2
                 && better_b != x.getObjectives().size()) {
             if (isMax) {
                 if (better_a < better_b)
@@ -108,7 +113,7 @@ public class ITHDM_Dominance<S extends Solution<?>> extends IntervalDominance<S>
     }
 
     public static void main(String[] args) {
-        ITHDM_Dominance<BinarySolution> cmp = new ITHDM_Dominance<>(new RealData(1.0));
+        EtaDominance<BinarySolution> cmp = new EtaDominance<>(new RealData(1.0));
         BinarySolution a = new BinarySolution(3, 0, 0);
         a.setObjective(0, new RealData(0.968));
         a.setObjective(1, new RealData(0.24869));
