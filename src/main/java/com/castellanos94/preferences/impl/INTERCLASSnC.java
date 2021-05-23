@@ -7,7 +7,6 @@ import java.util.HashMap;
 
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.Interval;
-import com.castellanos94.datatype.RealData;
 import com.castellanos94.instances.PSPI_Instance;
 import com.castellanos94.preferences.Classifier;
 import com.castellanos94.problems.GDProblem;
@@ -110,11 +109,8 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
         for (int dm = 0; dm < problem.getNumDMs(); dm++) {
             if (!problem.getPreferenceModel(dm).isSupportsUtilityFunction()) {// Dm con modelo de outranking
                 int asc = ascending_rule(x, dm);
-                int dsc = descending_rule(x, dm);// desc_rule(x, dm);
-                // System.out.println(String.format("\tOld : asc = %2d, desc = %2d", asc, dsc));
-                // System.out.println(String.format("\tPaper : asc = %2d, desc = %2d",
-                // ascending_rule(x, dm), descengind_rule(x, dm)));
-                if (dsc != -1) {
+                int dsc = descending_rule(x, dm);
+                if (asc == dsc && dsc != -1) {
                     if (dsc >= problem.getR1()[dm].length) {
                         if (isHighSat(x, dm)) {
                             hsat++;
@@ -151,8 +147,6 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
                 }
 
             }
-            // System.out.println(problem.getPreferenceModel(dm).isSupportsUtilityFunction()+
-            // " "+hsat+" "+sat+" "+dis+" "+hdis);
         }
         setPenalties(x, hsat, sat, dis, hdis);
 
@@ -176,8 +170,6 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
     protected int ascending_rule(S x, int dm) {
         ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         S b = (S) x.copy();
-        // b.setPenalties(Interval.ZERO);
-        // b.setNumberOfPenalties(0);
         Data lastFunctionI = null;
         int clase = -1;
         for (int i = 0; i < numberOfReferenceActions; i++) {
@@ -216,8 +208,6 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
     protected int descending_rule(S x, int dm) {
         ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
         S b = (S) x.copy();
-        // b.setPenalties(Interval.ZERO);
-        // b.setNumberOfPenalties(0);
         for (int i = numberOfReferenceActions - 1; i >= 0; i--) {
             loadObjectivesToFunction(b, referenceAction[dm][i]);
             if (pref.compare(x, b) <= 0) {
