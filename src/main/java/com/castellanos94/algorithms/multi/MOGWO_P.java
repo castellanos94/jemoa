@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import com.castellanos94.mcda.INTERCLASSnC;
 import com.castellanos94.operators.RepairOperator;
-import com.castellanos94.preferences.impl.INTERCLASSnC;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
 

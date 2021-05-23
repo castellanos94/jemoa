@@ -1,12 +1,14 @@
-package com.castellanos94.preferences.impl;
+package com.castellanos94.mcda;
 
 import java.util.ArrayList;
 
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.RealData;
-import com.castellanos94.preferences.Classifier;
+import com.castellanos94.preferences.impl.CrispOutrankingRelations;
+import com.castellanos94.preferences.impl.ElectrePreferenceModel;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
+import com.castellanos94.utils.Classifier;
 
 /**
  * Electre Tri implementation (Degree of credibility) based on Fontana, M. E., &

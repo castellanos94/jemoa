@@ -1,4 +1,4 @@
-package com.castellanos94.preferences.impl;
+package com.castellanos94.mcda;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -8,12 +8,14 @@ import java.util.HashMap;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.datatype.Interval;
 import com.castellanos94.instances.PSPI_Instance;
-import com.castellanos94.preferences.Classifier;
+import com.castellanos94.preferences.impl.IntervalOutrankingRelations;
+import com.castellanos94.preferences.impl.UF_ITHDM_Preference;
 import com.castellanos94.problems.GDProblem;
 import com.castellanos94.problems.PSPI_GD;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.BinarySolution;
 import com.castellanos94.solutions.Solution;
+import com.castellanos94.utils.Classifier;
 import com.castellanos94.utils.Tools;
 
 /**

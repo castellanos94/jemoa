@@ -1,7 +1,6 @@
-package com.castellanos94.preferences;
+package com.castellanos94.utils;
 
 import com.castellanos94.solutions.Solution;
-import com.castellanos94.utils.ExtraInformation;
 
 public abstract class Classifier<S extends Solution<?>> implements ExtraInformation {
     public abstract void classify(S x);

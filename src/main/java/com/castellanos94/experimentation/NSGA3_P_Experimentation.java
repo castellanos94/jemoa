@@ -11,20 +11,20 @@ import java.util.List;
 
 import com.castellanos94.algorithms.multi.NSGA_III_P;
 import com.castellanos94.instances.DTLZ_Instance;
+import com.castellanos94.mcda.INTERCLASSnB;
+import com.castellanos94.mcda.INTERCLASSnC;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
 import com.castellanos94.operators.impl.PolynomialMutation;
 import com.castellanos94.operators.impl.TournamentSelection;
-import com.castellanos94.preferences.Classifier;
-import com.castellanos94.preferences.impl.INTERCLASSnB;
-import com.castellanos94.preferences.impl.INTERCLASSnC;
 import com.castellanos94.problems.DTLZP;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.impl.SBXCrossover;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
+import com.castellanos94.utils.Classifier;
 import com.castellanos94.utils.Tools;
 
 import tech.tablesaw.api.DoubleColumn;

@@ -11,7 +11,7 @@ import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.datatype.Data;
 import com.castellanos94.instances.DTLZ_Instance;
-import com.castellanos94.preferences.impl.INTERCLASSnC;
+import com.castellanos94.mcda.INTERCLASSnC;
 import com.castellanos94.problems.DTLZP;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.problems.benchmarks.dtlz.DTLZ;

@@ -3,14 +3,14 @@ package com.castellanos94.algorithms.multi;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import com.castellanos94.mcda.INTERCLASSnC;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.SelectionOperator;
-import com.castellanos94.preferences.Classifier;
-import com.castellanos94.preferences.impl.INTERCLASSnC;
 import com.castellanos94.problems.GDProblem;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
+import com.castellanos94.utils.Classifier;
 import com.castellanos94.utils.NSGA3Replacement;
 
 /**
