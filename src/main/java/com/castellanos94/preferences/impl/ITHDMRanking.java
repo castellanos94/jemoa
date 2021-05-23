@@ -11,10 +11,10 @@ import com.castellanos94.solutions.Solution;
  * 
  */
 public class ITHDMRanking<S extends Solution<?>> implements Ranking<S> {
-    protected ITHDM_Preference<S> preference;
+    protected IntervalOutrankingRelations<S> preference;
     protected int numberOfComparisons;
     protected ArrayList<S> front;
-    public ITHDMRanking(ITHDM_Preference<S> preference) {
+    public ITHDMRanking(IntervalOutrankingRelations<S> preference) {
         this.preference = preference;
     }
 

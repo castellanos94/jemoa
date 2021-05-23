@@ -11,26 +11,27 @@ import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 
 /**
- * This class determines what kind of outranking relationship exists between two
- * solutions: x, y. Fernández,J.R.FigueiraandJ.Navarro,Interval-based extensions
- * of two outranking methods for multi-criteria ordinal classification, Omega,
+ * Interval Outranking Relations: This class determines what kind of outranking
+ * relationship exists between two solutions: x, y.
+ * Fernández,J.R.FigueiraandJ.Navarro,Interval-based extensions of two
+ * outranking methods for multi-criteria ordinal classification, Omega,
  * https://doi.org/10.1016/j.omega.2019.05.001
  */
-public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
+public class IntervalOutrankingRelations<S extends Solution<?>> extends Preference<S> {
     protected DominanceComparator<S> dominance;
     protected OutrankingModel model;
     protected Problem<?> p;
     private int[] coalition;
     private RealData sigmaXY, sigmaYX;
 
-    public ITHDM_Preference(Problem<?> p, OutrankingModel model) {
+    public IntervalOutrankingRelations(Problem<?> p, OutrankingModel model) {
         this.model = model;
         this.p = p;
         this.dominance = new ITHDM_Dominance<>((RealData) model.getAlpha());
         coalition = new int[p.getNumberOfObjectives()];
     }
 
-    public ITHDM_Preference(Problem<?> p, OutrankingModel model, DominanceComparator<S> dominanceComparator) {
+    public IntervalOutrankingRelations(Problem<?> p, OutrankingModel model, DominanceComparator<S> dominanceComparator) {
         this.model = model;
         this.p = p;
         this.dominance = dominanceComparator;
@@ -59,27 +60,23 @@ public class ITHDM_Preference<S extends Solution<?>> extends Preference<S> {
             return -1;
         if (v == 1)
             return 2;
-        boolean booleanXSDelta =  sigmaXY.compareTo(model.getDelta())>= 0;
+        boolean booleanXSDelta = sigmaXY.compareTo(model.getDelta()) >= 0;
         int ySDelta = sigmaYX.compareTo(model.getDelta());
-        if(booleanXSDelta){
-            if(ySDelta< 0){
+        if (booleanXSDelta) {
+            if (ySDelta < 0) {
                 return -1;
-            }else if(ySDelta>=0){
+            } else if (ySDelta >= 0) {
                 return 0;
             }
             return -2;
         }
-            /*
-        int sxyVb = sigmaXY.compareTo(model.getBeta());
-        int bVsYX = model.getBeta().compareTo(sigmaYX);
-        if (sxyVb >= 0 &&  bVsYX> 0)
-            return -1;
-        int sYXvB = sigmaYX.compareTo(model.getBeta());
-        if (sxyVb >= 0 &&  sYXvB>= 0)
-            return 0;
-        int yxV0 =sigmaYX.compareTo(0);
-        if (sxyVb < 0 && yxV0 < 0)
-            return 1;*/
+        /*
+         * int sxyVb = sigmaXY.compareTo(model.getBeta()); int bVsYX =
+         * model.getBeta().compareTo(sigmaYX); if (sxyVb >= 0 && bVsYX> 0) return -1;
+         * int sYXvB = sigmaYX.compareTo(model.getBeta()); if (sxyVb >= 0 && sYXvB>= 0)
+         * return 0; int yxV0 =sigmaYX.compareTo(0); if (sxyVb < 0 && yxV0 < 0) return
+         * 1;
+         */
 
         return 1;
     }

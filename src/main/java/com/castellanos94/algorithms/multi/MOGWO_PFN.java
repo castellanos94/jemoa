@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import com.castellanos94.operators.RepairOperator;
-import com.castellanos94.preferences.impl.ITHDM_Preference;
+import com.castellanos94.preferences.impl.IntervalOutrankingRelations;
 import com.castellanos94.problems.GDProblem;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
@@ -12,13 +12,13 @@ import com.castellanos94.utils.ExtraInformation;
 import com.castellanos94.utils.HeapSort;
 
 public class MOGWO_PFN<S extends DoubleSolution> extends MOGWO_V<S> implements ExtraInformation {
-    protected ITHDM_Preference<S> preferences;
+    protected IntervalOutrankingRelations<S> preferences;
     protected HeapSort<S> heapSortSolutions;
 
     public MOGWO_PFN(Problem<S> problem, int populationSize, int MAX_ITERATIONS, int nGrid,
             RepairOperator<S> repairOperator) {
         super(problem, populationSize, MAX_ITERATIONS, nGrid, repairOperator);
-        this.preferences = new ITHDM_Preference<>(problem, ((GDProblem<S>) problem).getPreferenceModel(0));
+        this.preferences = new IntervalOutrankingRelations<>(problem, ((GDProblem<S>) problem).getPreferenceModel(0));
         Comparator<S> cmp = (a, b) -> {
             double netscore_a = (double) a.getAttribute(getAttributeKey());
             double netscore_b = (double) b.getAttribute(getAttributeKey());

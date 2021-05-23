@@ -110,7 +110,7 @@ public class INTERCLASSnB<S extends Solution<?>> extends Classifier<S> {
      */
     @SuppressWarnings("unchecked")
     protected int ascRule(S x, int dm) {
-        ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
+        IntervalOutrankingRelations<S> pref = new IntervalOutrankingRelations<>(problem, problem.getPreferenceModel(dm));
         int clase = -1;
         S w = (S) x.copy();
         for (int i = 0; i < numberOfReferenceActions; i++) {
@@ -133,7 +133,7 @@ public class INTERCLASSnB<S extends Solution<?>> extends Classifier<S> {
      */
     @SuppressWarnings("unchecked")
     protected int descRule(S x, int dm) {
-        ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
+        IntervalOutrankingRelations<S> pref = new IntervalOutrankingRelations<>(problem, problem.getPreferenceModel(dm));
         int clase = -1;
         S w = (S) x.copy();
         for (int i = numberOfReferenceActions - 1; i >= 0; i--) {
@@ -156,7 +156,7 @@ public class INTERCLASSnB<S extends Solution<?>> extends Classifier<S> {
      */
     @SuppressWarnings("unchecked")
     protected boolean isHighSat(S x, int dm) {
-        ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
+        IntervalOutrankingRelations<S> pref = new IntervalOutrankingRelations<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r2 = problem.getR2()[dm];
         S w = (S) x.copy();
         for (int i = 0; i < r2.length; i++) {
@@ -179,7 +179,7 @@ public class INTERCLASSnB<S extends Solution<?>> extends Classifier<S> {
      */
     @SuppressWarnings("unchecked")
     protected boolean isHighDis(S x, int dm) {
-        ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
+        IntervalOutrankingRelations<S> pref = new IntervalOutrankingRelations<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r1 = problem.getR1()[dm];
         S w = (S) x.copy();
         for (int i = 0; i < r1.length; i++) {

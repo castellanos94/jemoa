@@ -168,7 +168,7 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
      * @return class c_k
      */
     protected int ascending_rule(S x, int dm) {
-        ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
+        IntervalOutrankingRelations<S> pref = new IntervalOutrankingRelations<>(problem, problem.getPreferenceModel(dm));
         S b = (S) x.copy();
         Data lastFunctionI = null;
         int clase = -1;
@@ -203,7 +203,7 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
      * @return class c_k
      */
     protected int descending_rule(S x, int dm) {
-        ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
+        IntervalOutrankingRelations<S> pref = new IntervalOutrankingRelations<>(problem, problem.getPreferenceModel(dm));
         S b = (S) x.copy();
         for (int i = numberOfReferenceActions - 1; i >= 0; i--) {
             loadObjectivesToFunction(b, referenceAction[dm][i]);
@@ -244,7 +244,7 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
      * @return True if isHighSat otherwise false
      */
     protected boolean isHighSat(S x, int dm) {
-        ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
+        IntervalOutrankingRelations<S> pref = new IntervalOutrankingRelations<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r2 = problem.getR2()[dm];
         S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
@@ -268,7 +268,7 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
      * @return true if is high dis otherwise false
      */
     protected boolean isHighDis(S x, int dm) {
-        ITHDM_Preference<S> pref = new ITHDM_Preference<>(problem, problem.getPreferenceModel(dm));
+        IntervalOutrankingRelations<S> pref = new IntervalOutrankingRelations<>(problem, problem.getPreferenceModel(dm));
         Interval[][] r1 = problem.getR1()[dm];
         S w = (S) x.copy();
         w.setPenalties(Interval.ZERO);
@@ -429,7 +429,7 @@ public class INTERCLASSnC<S extends Solution<?>> extends Classifier<S> {
             problem.evaluateConstraint(solutions[i]);
             // System.out.println(solutions[i].getPenalties()+" "+solutions[i]);
         }
-        ITHDM_Preference<BinarySolution> preference = new ITHDM_Preference<>(problem, problem.getPreferenceModel(1));
+        IntervalOutrankingRelations<BinarySolution> preference = new IntervalOutrankingRelations<>(problem, problem.getPreferenceModel(1));
         System.out.println("Evaluando el sistema de preferencia del DM 1");
         int[][] matrix = new int[solutions.length][solutions.length];
 
