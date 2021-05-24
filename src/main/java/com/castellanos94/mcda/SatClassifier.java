@@ -110,6 +110,7 @@ public class SatClassifier<S extends Solution<?>> extends Classifier<S> {
     }
 
     /**
+     * IMPORTAT: this method is only for 1 dm
      * 
      * @param front front to classify
      * @return solutions
