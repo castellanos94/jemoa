@@ -135,7 +135,6 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
             R2Ranking(solutions, idealPoint, LAMBDA);
         }
         this.computeTime = System.currentTimeMillis() - this.init_time;
-
     }
 
     /**
@@ -147,7 +146,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
      * @param solutions
      * @return
      */
-    private ArrayList<S> searchEngine(ArrayList<S> solutions) {
+    protected ArrayList<S> searchEngine(ArrayList<S> solutions) {
         ArrayList<S> rs = new ArrayList<>(this.N);
         // filled with empty solutions
         for (int i = 0; i < this.N; i++) {
@@ -260,7 +259,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
         return 0;
     }
 
-    private void normalize(ArrayList<S> solutions, ArrayList<Data> zmin, ArrayList<Data> zmax) {
+    protected void normalize(ArrayList<S> solutions, ArrayList<Data> zmin, ArrayList<Data> zmax) {
         for (S solution : solutions) {
             ArrayList<Data> fnorm = new ArrayList<>();
             for (int index = 0; index < problem.getNumberOfObjectives(); index++) {
@@ -395,7 +394,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
     }
 
     @SuppressWarnings("unchecked")
-    private void saveRegisterInRecord(ArrayList<Data> zmax) {
+    protected void saveRegisterInRecord(ArrayList<Data> zmax) {
         if (this.record.size() < MAX_RECORD_SIZE) {
             this.record.add((ArrayList<Data>) zmax.clone());
         } else {
@@ -405,7 +404,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
 
     }
 
-    private Data getMaxValueFromVector(ArrayList<Data> zmax) {
+    protected Data getMaxValueFromVector(ArrayList<Data> zmax) {
         Data rs = zmax.get(0);
         for (int i = 0; i < zmax.size(); i++) {
             if (rs.compareTo(zmax.get(i)) < 0) {
@@ -415,7 +414,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
         return rs;
     }
 
-    private ArrayList<Data> calculateMean(ArrayList<ArrayList<Data>> rec) {
+    protected ArrayList<Data> calculateMean(ArrayList<ArrayList<Data>> rec) {
         ArrayList<Data> mean = new ArrayList<>();
 
         for (int index = 0; index < problem.getNumberOfObjectives(); index++) {
