@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.castellanos94</groupId>
     <artifactId>jemoa</artifactId>
-    <version>1.0-3</version>
+    <version>1.0.0</version>
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -72,6 +72,11 @@
             <artifactId>progressbar</artifactId>
             <version>0.9.1</version>
         </dependency>
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+            <version>4.6.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -86,7 +91,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.castellanos94.experimentation.IMOACORP_Experimentation</mainClass>
+                            <mainClass>com.castellanos94.experimentation.Testing</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -103,7 +108,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.castellanos94.experimentation.IMOACORP_Experimentation</mainClass>
+                                    <mainClass>com.castellanos94.experimentation.Testing</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
