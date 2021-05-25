@@ -105,12 +105,17 @@ public class Main implements Runnable {
             DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWO" + File.separator
                     + algorithmName;
         } else {
-            DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "IMOACOR"
-                    + File.separator + algorithmName;
+            if (algorithmName == AlgorithmNames.IMOACORP) {
+                String algorithmName__ = (isFirstRank) ? algorithmName + "R1" : algorithmName + "R2";
+                DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "IMOACOR"
+                        + File.separator + algorithmName__;
+            } else {
+                DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "IMOACOR"
+                        + File.separator + algorithmName;
+            }
         }
         new File(DIRECTORY).mkdirs();
         for (int numberOfProblem = initialProblem; numberOfProblem <= endProblem; numberOfProblem++) {
-            // indexProblem.stream().parallel().forEach( numberOfProblem -> {
             if (seed != -1)
                 Tools.setSeed(seed);
 
