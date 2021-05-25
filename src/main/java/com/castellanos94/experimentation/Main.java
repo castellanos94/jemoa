@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,6 +38,8 @@ import com.castellanos94.utils.Tools;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Help.Visibility;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,38 +50,48 @@ import tech.tablesaw.api.LongColumn;
 import tech.tablesaw.api.Table;
 
 @Command(name = "Experimentation DTLZ Preferences", mixinStandardHelpOptions = true, version = "Experimentation V1.0", description = "Experimenting the DTLZ Benchmark Suite for Algorithms with Incorporation of Preferences")
-public class Testing implements Runnable {
-    private static final Logger logger = LogManager.getLogger(Testing.class);
+public class Main implements Runnable {
+    private static final Logger logger = LogManager.getLogger(Main.class);
 
     private enum AlgorithmNames {
         NSGAIII, NSGAIIIP, MOGWO, MOGWOV, MOGWOP, MOGWOPFN, IMOACOR, IMOACORP
     }
 
-    @Option(names = { "-a", "--algorithm" }, required = true, description = "Algorithm to used")
+    @Option(names = { "-a",
+            "--algorithm" }, required = true, description = "Algorithm to run experiment : NSGAIII, NSGAIIIP, MOGWO, MOGWOV, MOGWOP, MOGWOPFN, IMOACOR, IMOACORP")
     private AlgorithmNames algorithmName;
-    @Option(names = { "-e", "--numberOfExperiments" }, required = true, description = "Number of Executions")
-    private int numberOfExperiments = 31;
-    @Option(names = { "-m", "--numberOfObjectives" }, required = true, description = "Number of Objectives")
+    @Option(names = { "-m",
+            "--numberOfObjectives" }, required = true, description = "Number of Objectives", showDefaultValue = Visibility.ALWAYS)
     private int numberOfObjectives = 3;
-    @Option(names = { "-c",
-            "--classifyEveryIteration" }, description = "Classify every number of iterations [0 - 100] for NSGAIIIP")
-    private int CLASSIFY_EVERY_ITERATION = 1; // Classification F0 each
-    @Option(names = { "-c",
-            "--classifyEveryIteration" }, description = "Elementos to replace when classification is done [0 - 100] for NSGAIIIP")
-    private int ELEMENTS_TO_REPLACE = 2; // 5 % of population
-    @Option(names = { "-ip", "--initialProblem" }, description = "Initial problem to solve")
+    @Option(names = { "-e",
+            "--numberOfExperiments" }, description = "Number of Executions", showDefaultValue = Visibility.ALWAYS)
+    private int numberOfExperiments = 31;
+    @Option(names = { "--seed" }, description = "Random number generator seed")
+    private long seed = -1;
+    @Option(names = {
+            "--initialProblem" }, description = "Initial problem to solve", showDefaultValue = Visibility.ALWAYS)
     private int initialProblem = 1;
-    @Option(names = { "-ep", "--endProblem" }, description = "Final problem to solve")
+    @Option(names = { "--endProblem" }, description = "Final problem to solve", showDefaultValue = Visibility.ALWAYS)
     private int endProblem = 9;
-    @Option(names = { "-r", "--ranking" }, description = "Classification key sorting at 1(true) or 2 (false)")
+
+    @Option(names = { "-c",
+            "--classificationRate" }, description = "Classify every number of iterations [0 - 100] for NSGAIIIP", showDefaultValue = Visibility.ALWAYS)
+    private int CLASSIFY_EVERY_ITERATION = 1; // Classification F0 each
+    @Option(names = { "-r",
+            "--replaceRate" }, description = "Elementos to replace when classification is done [0 - 100] for NSGAIIIP", showDefaultValue = Visibility.ALWAYS)
+    private int ELEMENTS_TO_REPLACE = 2; // 5 % of population
+
+    @Option(names = {
+            "--sortingKey" }, description = "Classification key sorting at 1(true) or 2 (false)", showDefaultValue = Visibility.ALWAYS)
     private boolean isFirstRank = false;
 
     public static void main(String[] args) {
-        System.out.println(new CommandLine(new Testing()).execute(args));
+        System.exit(new CommandLine(new Main()).setCaseInsensitiveEnumValuesAllowed(true).execute(args));
     }
 
     @Override
     public void run() {
+
         final String DIRECTORY;
         if (algorithmName == AlgorithmNames.NSGAIII || algorithmName == AlgorithmNames.NSGAIIIP) {
             if (algorithmName == AlgorithmNames.NSGAIII) {
@@ -98,8 +111,8 @@ public class Testing implements Runnable {
         new File(DIRECTORY).mkdirs();
         for (int numberOfProblem = initialProblem; numberOfProblem <= endProblem; numberOfProblem++) {
             // indexProblem.stream().parallel().forEach( numberOfProblem -> {
-
-            Tools.setSeed(1L);
+            if (seed != -1)
+                Tools.setSeed(seed);
 
             logger.info("Experimentation MOGWO : DTLZ with preferences");
             String resourseFile = "DTLZ_INSTANCES" + File.separator + numberOfObjectives + File.separator + "DTLZ"

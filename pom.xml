@@ -91,7 +91,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.castellanos94.experimentation.Testing</mainClass>
+                            <mainClass>com.castellanos94.experimentation.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -108,7 +108,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.castellanos94.experimentation.Testing</mainClass>
+                                    <mainClass>com.castellanos94.experimentation.Main</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
