@@ -276,8 +276,7 @@ public class Theta_NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryA
         return "Theta-NSGAIII [pop_size=" + populationSize + ", maxIterations=" + maxIterations + ", referencePoints="
                 + numberOfReferencePoints + ", theta=" + theta + "]";
     }
-
-    public class ThetaNonDominatedSort<S extends Solution<?>> implements Ranking<S> {
+    public static class ThetaNonDominatedSort<S extends Solution<?>> implements Ranking<S> {
         ArrayList<ArrayList<S>> fronts;
         private double theta;
 

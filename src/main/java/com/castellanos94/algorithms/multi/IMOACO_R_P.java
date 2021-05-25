@@ -22,16 +22,67 @@ import com.castellanos94.utils.Tools;
  */
 public class IMOACO_R_P<S extends DoubleSolution> extends IMOACO_R<S> implements ExtraInformation {
     protected SatClassifier<S> classifier;
+    protected Comparator<S> comparisonOfFourTypes;
+    protected final boolean isFirstRank;
 
-    public IMOACO_R_P(Problem<S> problem, int maxIterations, double q, double xi, int h) {
+    /**
+     * 
+     * @param problem       continuos problem
+     * @param maxIterations G_max
+     * @param q             diversification process control parameter
+     * @param xi            convergence rate control parameter
+     * @param h             proportional parameter, using for the construction of
+     *                      the simplex-lattice on the SLD in order to create set of
+     *                      N convex weight vectors. N is equally used as the number
+     *                      of ants
+     * @param isFirstRank   If true, the ranking follows this order in case of a tie
+     *                      Class >> Rank >> U * >> L2 Norm otherwise Rank >> Class
+     *                      >> U * >> L2 Norm
+     * @see DoubleSolution
+     */
+    public IMOACO_R_P(Problem<S> problem, int maxIterations, double q, double xi, int h, boolean isFirstRank) {
         super(problem, maxIterations, q, xi, h);
-        this.classifier = new SatClassifier<>((GDProblem) problem);
+        this.classifier = new SatClassifier<>((GDProblem<S>) problem);
+        this.isFirstRank = isFirstRank;
+        if (isFirstRank) {
+            // (1)
+            this.comparisonOfFourTypes = (a, b) -> {
+                int integerClassA = getSatClass(a);
+                int integerClassB = getSatClass(a);
+                return Integer.compare(integerClassA, integerClassB);
+            };
+            // (2)
+            this.comparisonOfFourTypes = comparisonOfFourTypes
+                    .thenComparing((a, b) -> Integer.compare(a.getRank(), b.getRank()));
+        } else {
+            // (1)
+            this.comparisonOfFourTypes = (a, b) -> Integer.compare(a.getRank(), b.getRank());
+            // (2)
+            this.comparisonOfFourTypes = this.comparisonOfFourTypes.thenComparing((a, b) -> {
+                int integerClassA = getSatClass(a);
+                int integerClassB = getSatClass(a);
+                return Integer.compare(integerClassA, integerClassB);
+            });
+        }
+        // (3)
+        this.comparisonOfFourTypes = comparisonOfFourTypes.thenComparing((a, b) -> {
+            Data ua = (Data) a.getAttribute(BEST_UTILITY_KEY);
+            Data ub = (Data) b.getAttribute(BEST_UTILITY_KEY);
+            return ua.compareTo(ub);
+        });
+        // (4)
+        this.comparisonOfFourTypes = comparisonOfFourTypes.thenComparing((a, b) -> {
+            Data d1 = Tools.NORML2(a.getObjectives());
+            Data d2 = Tools.NORML2(b.getObjectives());
+            return d1.compareTo(d2);
+        });
+
     }
 
     @Override
     public String toString() {
-        return "IMOACO_R-P [N=" + N + ", h=" + h + ", maxIterations=" + maxIterations + ", q=" + q + ", xi=" + xi
-                + ", MAX RECORD SIZE=" + MAX_RECORD_SIZE + "]";
+        return "IMOACO_R-P [isFirsRank=" + isFirstRank + ", " + h + ", N=" + N + ", h=" + h + ", maxIterations="
+                + maxIterations + ", q=" + q + ", xi=" + xi + ", MAX RECORD SIZE=" + MAX_RECORD_SIZE + "]";
     }
 
     @SuppressWarnings("unchecked")
@@ -39,24 +90,7 @@ public class IMOACO_R_P<S extends DoubleSolution> extends IMOACO_R<S> implements
     public void execute() {
         this.init_time = System.currentTimeMillis();
         ArrayList<ArrayList<Data>> LAMBDA = generateWeight();
-
-        Comparator<S> cmp = (a, b) -> {
-            int integerClassA = getSatClass(a);
-            int integerClassB = getSatClass(a);
-            return Integer.compare(integerClassA, integerClassB);
-        };
-        cmp = cmp.thenComparing((a, b) -> Integer.compare(a.getRank(), b.getRank()));
-        cmp = cmp.thenComparing((a, b) -> {
-            Data ua = (Data) a.getAttribute(BEST_UTILITY_KEY);
-            Data ub = (Data) b.getAttribute(BEST_UTILITY_KEY);
-            return ua.compareTo(ub);
-        });
-        cmp.thenComparing((a, b) -> {
-            Data d1 = Tools.NORML2(a.getObjectives());
-            Data d2 = Tools.NORML2(b.getObjectives());
-            return d1.compareTo(d2);
-        });
-        HeapSort<S> sorted4Criterial = new HeapSort<>(cmp);
+        HeapSort<S> sorted4Criterial = new HeapSort<>(comparisonOfFourTypes);
         this.solutions = new ArrayList<>(this.N);
         // pheromenes T = solutions
         for (int index = 0; index < this.N; index++) {

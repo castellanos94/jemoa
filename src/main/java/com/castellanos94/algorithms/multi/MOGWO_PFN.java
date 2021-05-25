@@ -30,6 +30,7 @@ public class MOGWO_PFN<S extends DoubleSolution> extends MOGWO_V<S> implements E
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void selectLeader(ArrayList<S> solutions) {
         // Filter
 

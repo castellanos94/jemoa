@@ -32,7 +32,7 @@ public class IMOACORP_Experimentation {
     public static void main(String[] args) {
         if (args.length < 3) {
             System.out.println(String.format(
-                    "The following elements are required:\n\t Number of Experiments \n\t number of objectives \n\t algorithm [IMOACOR, IMOACOR-P] "));
+                    "The following elements are required:\n\t Number of Experiments \n\t number of objectives \n\t algorithm [IMOACOR, IMOACOR-P] \n\t is first rank [False, True] in case of IMOACOR-P"));
             System.exit(-1);
         }
         System.out.println(Arrays.toString(args));
@@ -40,20 +40,33 @@ public class IMOACORP_Experimentation {
         final int EXPERIMENT = Integer.parseInt(args[0]);
         final int numberOfObjectives = Integer.parseInt(args[1]);
         final String algorithmName = args[2];
+        
+
         if (!"IMOACOR|IMOACOR-P".contains(algorithmName)) {
-            System.err.println("Nombre invalido [IMOACOR, IMOACOR-P]");
+            System.err.println("Invalid algorithm name [IMOACOR, IMOACOR-P]");
             System.exit(-1);
+        }
+        boolean isFirstRank = false;
+        if (algorithmName.equalsIgnoreCase("IMOACOR-P")) {
+            if (args.length == 4) {
+                isFirstRank = Boolean.parseBoolean(args[3]);
+            } else {
+                System.err.println("is first rank [False, True] in case of IMOACOR-P");
+                System.exit(-1);
+            }
         }
         final String DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "IMOACOR"
                 + File.separator + algorithmName;
 
         new File(DIRECTORY).mkdirs();
+
         int tmpInit = 1, tmpEdn = 9;
-        if (args.length == 4) {
+
+        if (args.length == 5) {
             tmpInit = Integer.parseInt(args[3]);
             tmpEdn = Integer.parseInt(args[3]);
         }
-        if (args.length == 5) {
+        if (args.length == 6) {
             tmpInit = Integer.parseInt(args[3]);
             tmpEdn = Integer.parseInt(args[4]);
         }
@@ -76,7 +89,8 @@ public class IMOACORP_Experimentation {
                 logger.error(e3);
             }
 
-            AbstractAlgorithm<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, instance, algorithmName);
+            AbstractAlgorithm<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, instance, algorithmName,
+                    isFirstRank);
             DTLZP problem = (DTLZP) algorithm.getProblem();
             String subDir = problem.getName().trim();
 
@@ -88,7 +102,7 @@ public class IMOACORP_Experimentation {
             Table infoTime = Table.create("time");
             new File(DIRECTORY + File.separator + subDir).mkdirs();
             for (int i = 0; i < EXPERIMENT; i++) {
-                algorithm = loadConfiguration(numberOfProblem, instance, algorithmName);
+                algorithm = loadConfiguration(numberOfProblem, instance, algorithmName, isFirstRank);
                 algorithm.execute();
                 try {
                     Solution.writSolutionsToFile(
@@ -179,7 +193,7 @@ public class IMOACORP_Experimentation {
     }
 
     private static AbstractAlgorithm<DoubleSolution> loadConfiguration(int numberOfProblem, DTLZ_Instance instance,
-            String algorithm) {
+            String algorithm, boolean isFirstRank) {
         DTLZP problem = new DTLZP(numberOfProblem, instance);
         int maxIterations = 1000;
         int numberOfObjectives = instance.getNumObjectives();
@@ -270,7 +284,7 @@ public class IMOACORP_Experimentation {
         if (algorithm.equalsIgnoreCase("IMOACOR")) {
             return new IMOACO_R<>(problem, maxIterations, 0.1, 0.5, partitions);
         }
-        return new IMOACO_R_P<>(problem, maxIterations, 0.1, 0.5, partitions);
+        return new IMOACO_R_P<>(problem, maxIterations, 0.1, 0.5, partitions, isFirstRank);
 
     }
 }

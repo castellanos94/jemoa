@@ -30,9 +30,6 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
     public static String BEST_UTILITY_KEY = "u*";
     protected ArrayList<Data> idealPoint;
     protected ArrayList<Data> nadirPoint;
-    /*
-     * protected ArrayList<Data> zMin; protected ArrayList<Data> zMax;
-     */
     protected ArrayList<ArrayList<Data>> record;
     protected final double q;
     protected final double xi;
@@ -46,7 +43,8 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
 
     /**
      * 
-     * @param problem       continuos problem
+     * @param problem       continuos problem, default repair for continuos problem
+     *                      [0,1] var decision
      * @param maxIterations G_max
      * @param q             diversification process control parameter
      * @param xi            convergence rate control parameter
@@ -54,6 +52,8 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
      *                      the simplex-lattice on the SLD in order to create set of
      *                      N convex weight vectors. N is equally used as the number
      *                      of ants
+     * @see DoubleSolution
+     * @see RepairBoundary
      */
     public IMOACO_R(Problem<S> problem, int maxIterations, double q, double xi, int h) {
         super(problem);

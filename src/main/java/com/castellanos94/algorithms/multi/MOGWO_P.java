@@ -16,10 +16,11 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO_V<S> {
     public MOGWO_P(Problem<S> problem, int populationSize, int MAX_ITERATIONS, int nGrid,
             RepairOperator<S> repairOperator) {
         super(problem, populationSize, MAX_ITERATIONS, nGrid, repairOperator);
-        classifier = new SatClassifier<>((GDProblem)problem);
+        classifier = new SatClassifier<>((GDProblem<S>) problem);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void selectLeader(ArrayList<S> solutions) {
         // Filter
         HashMap<String, ArrayList<S>> map = classifier.classify(solutions);
@@ -49,8 +50,8 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO_V<S> {
 
         // Select beta and remove to exclude
         _solutions = new ArrayList<>();
-        String[] classAttribute = { SatClassifier.HSAT_CLASS_TAG, SatClassifier.SAT_CLASS_TAG, SatClassifier.DIS_CLASS_TAG,
-                SatClassifier.HDIS_CLASS_TAG };
+        String[] classAttribute = { SatClassifier.HSAT_CLASS_TAG, SatClassifier.SAT_CLASS_TAG,
+                SatClassifier.DIS_CLASS_TAG, SatClassifier.HDIS_CLASS_TAG };
         int indexClass = 0;
         while (_solutions.size() < 2 && indexClass < classAttribute.length) {
             for (S sol : (!parents.isEmpty()) ? parents : solutions) {
