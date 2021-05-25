@@ -15,87 +15,87 @@ if /i "%~1" equ "/O" (
 :: or the output of another command. For this demo I will list the
 :: commands within this script - Each command is prefixed with :::
 
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 3 --initialProblem 1 --endProblem 1 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 3 --initialProblem 2 --endProblem 2 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 3 --initialProblem 3 --endProblem 3 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 3 --initialProblem 4 --endProblem 4 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 3 --initialProblem 5 --endProblem 5 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 3 --initialProblem 6 --endProblem 6 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 3 --initialProblem 7 --endProblem 7 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 3 --initialProblem 8 --endProblem 8 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 3 --initialProblem 9 --endProblem 9 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 5 --initialProblem 1 --endProblem 1 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 5 --initialProblem 2 --endProblem 2 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 5 --initialProblem 3 --endProblem 3 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 5 --initialProblem 4 --endProblem 4 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 5 --initialProblem 5 --endProblem 5 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 5 --initialProblem 6 --endProblem 6 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 5 --initialProblem 7 --endProblem 7 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 5 --initialProblem 8 --endProblem 8 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 5 --initialProblem 9 --endProblem 9 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 10 --initialProblem 1 --endProblem 1 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 10 --initialProblem 2 --endProblem 2 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 10 --initialProblem 3 --endProblem 3 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 10 --initialProblem 4 --endProblem 4 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 10 --initialProblem 5 --endProblem 5 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 10 --initialProblem 6 --endProblem 6 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 10 --initialProblem 7 --endProblem 7 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 10 --initialProblem 8 --endProblem 8 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACOR -m 10 --initialProblem 9 --endProblem 9 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 1 --endProblem 1 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 2 --endProblem 2 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 3 --endProblem 3 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 4 --endProblem 4 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 5 --endProblem 5 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 6 --endProblem 6 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 7 --endProblem 7 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 8 --endProblem 8 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 9 --endProblem 9 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 1 --endProblem 1 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 2 --endProblem 2 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 3 --endProblem 3 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 4 --endProblem 4 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 5 --endProblem 5 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 6 --endProblem 6 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 7 --endProblem 7 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 8 --endProblem 8 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 9 --endProblem 9 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 1 --endProblem 1 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 2 --endProblem 2 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 3 --endProblem 3 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 4 --endProblem 4 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 5 --endProblem 5 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 6 --endProblem 6 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 7 --endProblem 7 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 8 --endProblem 8 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 9 --endProblem 9 --seed 1
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 1 --endProblem 1 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 2 --endProblem 2 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 3 --endProblem 3 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 4 --endProblem 4 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 5 --endProblem 5 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 6 --endProblem 6 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 7 --endProblem 7 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 8 --endProblem 8 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 3 --initialProblem 9 --endProblem 9 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 1 --endProblem 1 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 2 --endProblem 2 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 3 --endProblem 3 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 4 --endProblem 4 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 5 --endProblem 5 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 6 --endProblem 6 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 7 --endProblem 7 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 8 --endProblem 8 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 5 --initialProblem 9 --endProblem 9 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 1 --endProblem 1 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 2 --endProblem 2 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 3 --endProblem 3 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 4 --endProblem 4 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 5 --endProblem 5 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 6 --endProblem 6 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 7 --endProblem 7 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 8 --endProblem 8 --seed 1 --sortingKey true
-::: jdk11\bin\java.exe -jar jemoa-1.0.0-jar.jar -a IMOACORP -m 10 --initialProblem 9 --endProblem 9 --seed 1 --sortingKey true
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 1 --endProblem 1 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 2 --endProblem 2 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 3 --endProblem 3 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 4 --endProblem 4 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 5 --endProblem 5 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 6 --endProblem 6 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 7 --endProblem 7 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 8 --endProblem 8 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 9 --endProblem 9 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 1 --endProblem 1 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 2 --endProblem 2 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 3 --endProblem 3 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 4 --endProblem 4 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 5 --endProblem 5 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 6 --endProblem 6 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 7 --endProblem 7 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 8 --endProblem 8 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 9 --endProblem 9 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 1 --endProblem 1 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 2 --endProblem 2 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 3 --endProblem 3 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 4 --endProblem 4 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 5 --endProblem 5 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 6 --endProblem 6 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 7 --endProblem 7 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 8 --endProblem 8 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 9 --endProblem 9 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 1 --endProblem 1 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 2 --endProblem 2 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 3 --endProblem 3 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 4 --endProblem 4 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 5 --endProblem 5 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 6 --endProblem 6 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 7 --endProblem 7 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 8 --endProblem 8 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 9 --endProblem 9 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 1 --endProblem 1 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 2 --endProblem 2 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 3 --endProblem 3 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 4 --endProblem 4 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 5 --endProblem 5 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 6 --endProblem 6 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 7 --endProblem 7 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 8 --endProblem 8 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 9 --endProblem 9 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 1 --endProblem 1 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 2 --endProblem 2 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 3 --endProblem 3 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 4 --endProblem 4 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 5 --endProblem 5 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 6 --endProblem 6 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 7 --endProblem 7 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 8 --endProblem 8 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 9 --endProblem 9 --seed 1
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 1 --endProblem 1 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 2 --endProblem 2 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 3 --endProblem 3 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 4 --endProblem 4 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 5 --endProblem 5 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 6 --endProblem 6 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 7 --endProblem 7 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 8 --endProblem 8 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 9 --endProblem 9 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 1 --endProblem 1 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 2 --endProblem 2 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 3 --endProblem 3 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 4 --endProblem 4 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 5 --endProblem 5 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 6 --endProblem 6 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 7 --endProblem 7 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 8 --endProblem 8 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 9 --endProblem 9 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 1 --endProblem 1 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 2 --endProblem 2 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 3 --endProblem 3 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 4 --endProblem 4 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 5 --endProblem 5 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 6 --endProblem 6 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 7 --endProblem 7 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 8 --endProblem 8 --seed 1 --sortingKey
+::: jdk11\bin\java.exe -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 9 --endProblem 9 --seed 1 --sortingKey
 
 
 
