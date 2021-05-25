@@ -49,7 +49,7 @@ import me.tongfei.progressbar.ProgressBarStyle;
 import tech.tablesaw.api.LongColumn;
 import tech.tablesaw.api.Table;
 
-@Command(name = "Experimentation DTLZ Preferences", mixinStandardHelpOptions = true, version = "Experimentation V1.0", description = "Experimenting the DTLZ Benchmark Suite for Algorithms with Incorporation of Preferences")
+@Command(name = "Experimentation DTLZ Preferences", mixinStandardHelpOptions = true, version = "Experimentation V1.0", description = "Experimenting the DTLZ Benchmark Suite for Algorithms with Incorporation of Preferences", sortOptions = false)
 public class Main implements Runnable {
     private static final Logger logger = LogManager.getLogger(Main.class);
 
@@ -114,14 +114,14 @@ public class Main implements Runnable {
             if (seed != -1)
                 Tools.setSeed(seed);
 
-            logger.info("Experimentation MOGWO : DTLZ with preferences");
+            logger.info("Experimentation " + algorithmName + " : DTLZ with preferences");
             String resourseFile = "DTLZ_INSTANCES" + File.separator + numberOfObjectives + File.separator + "DTLZ"
                     + numberOfProblem + "_Instance.txt";
             DTLZ_Instance instance = null;
             try {
                 instance = (DTLZ_Instance) new DTLZ_Instance(resourseFile).loadInstance();
             } catch (FileNotFoundException e3) {
-                System.err.println("Error loading dtlz instance for problem" + numberOfProblem + ", path="
+                logger.error("Error loading dtlz instance for problem" + numberOfProblem + ", path="
                         + new File(resourseFile).getAbsolutePath());
                 logger.error(e3);
                 System.exit(-1);
@@ -130,7 +130,7 @@ public class Main implements Runnable {
             AbstractAlgorithm<DoubleSolution> algorithm = loadConfiguration(numberOfProblem, instance, algorithmName,
                     isFirstRank);
             if (algorithm == null) {
-                System.err.println("Error loading configuration for " + algorithmName);
+                logger.error("Error loading configuration for " + algorithmName);
                 System.exit(-1);
             }
             DTLZP problem = (DTLZP) algorithm.getProblem();
