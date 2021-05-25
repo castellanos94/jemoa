@@ -36,6 +36,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarBuilder;
+import me.tongfei.progressbar.ProgressBarStyle;
 
 /**
  * Current Algorithm Experimentation used.
@@ -124,8 +126,10 @@ public class NSGA3_P_Experimentation {
             LongColumn experimentTimeColumn = LongColumn.create("Experiment Time");
             Table infoTime = Table.create("time");
             List<Integer> collect = IntStream.range(0, EXPERIMENT).boxed().collect(Collectors.toList());
+            ProgressBarBuilder progressBarBuilder = new ProgressBarBuilder().setStyle(ProgressBarStyle.ASCII);
+            progressBarBuilder.setTaskName("Running experiments");
             // for (int i = 0; i < EXPERIMENT; i++) {
-            for (Integer i : ProgressBar.wrap(collect, "Experiment")) {
+            for (Integer i : ProgressBar.wrap(collect, progressBarBuilder)) {
                 algorithm = dtlzTestSuite(p, instance);
                 algorithm.setClassifyEveryIteration(CLASSIFY_EVERY_ITERATION);
                 algorithm.setNumberOfElementToReplace(ELEMENTS_TO_REPLACE);
