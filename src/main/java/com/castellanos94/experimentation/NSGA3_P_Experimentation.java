@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.castellanos94.algorithms.multi.NSGA_III_P;
 import com.castellanos94.instances.DTLZ_Instance;
@@ -32,6 +34,8 @@ import tech.tablesaw.api.Table;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import me.tongfei.progressbar.ProgressBar;
 
 /**
  * Current Algorithm Experimentation used.
@@ -85,7 +89,7 @@ public class NSGA3_P_Experimentation {
         CLASSIFY_EVERY_ITERATION = cLASSIFY_EVERY_ITERATION;
         ELEMENTS_TO_REPLACE = eLEMENTS_TO_REPLACE;
         DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NSGA3" + File.separator
-                + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE+"-sat";
+                + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE + "-sat";
         initialProblem = 1;
         endProblem = 9;
     }
@@ -97,8 +101,10 @@ public class NSGA3_P_Experimentation {
 
             Tools.setSeed(1L);
             logger.info("Experimentation: DTLZ with preferences");
-            String resourseFile = "DTLZ_INSTANCES" + File.separator + numberOfObjectives + File.separator + "DTLZ" + p       + "_Instance.txt";
-            //resourseFile = "roi_generator" +  File.separator + "DTLZ" + p                    + "_Instance.txt";
+            String resourseFile = "DTLZ_INSTANCES" + File.separator + numberOfObjectives + File.separator + "DTLZ" + p
+                    + "_Instance.txt";
+            // resourseFile = "roi_generator" + File.separator + "DTLZ" + p +
+            // "_Instance.txt";
             DTLZ_Instance instance = (DTLZ_Instance) new DTLZ_Instance(resourseFile).loadInstance();
 
             // logger.info(instance);
@@ -117,7 +123,9 @@ public class NSGA3_P_Experimentation {
             ArrayList<DoubleSolution> bag = new ArrayList<>();
             LongColumn experimentTimeColumn = LongColumn.create("Experiment Time");
             Table infoTime = Table.create("time");
-            for (int i = 0; i < EXPERIMENT; i++) {
+            List<Integer> collect = IntStream.range(0, EXPERIMENT).boxed().collect(Collectors.toList());
+            // for (int i = 0; i < EXPERIMENT; i++) {
+            for (Integer i : ProgressBar.wrap(collect, "Experiment")) {
                 algorithm = dtlzTestSuite(p, instance);
                 algorithm.setClassifyEveryIteration(CLASSIFY_EVERY_ITERATION);
                 algorithm.setNumberOfElementToReplace(ELEMENTS_TO_REPLACE);
@@ -135,7 +143,7 @@ public class NSGA3_P_Experimentation {
                     logger.error(e);
                 }
 
-                logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
+                // logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");
                 // Solution.writSolutionsToFile(directory + File.separator + problem.getName() +
                 // "_" + i, algorithm.getSolutions());
                 bag.addAll(algorithm.getSolutions());
@@ -212,24 +220,23 @@ public class NSGA3_P_Experimentation {
             } catch (IOException e) {
                 logger.error(e);
             }
-          /*  if (problem.getNumberOfObjectives() == 3) {
-
-                Plotter plotter = new Scatter3D<DoubleSolution>(front, DIRECTORY + File.separator + subDir
-                        + File.separator + "Class_F0" + problem.getName() + "_nsga3_WP");
-                plotter.plot(); // new
-                //Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator + problem.getName()).plot();
-            } else {
-                Table table = Table.create(problem.getName() + "_F0_WP_" + problem.getNumberOfObjectives());
-                for (int j = 0; j < problem.getNumberOfObjectives(); j++) {
-                    DoubleColumn column = DoubleColumn.create("objective_" + j);
-                    for (int k = 0; k < front.size(); k++) {
-                        column.append(front.get(k).getObjective(j).doubleValue());
-                    }
-                    table.addColumns(column);
-                }
-                logger.info(table.summary());
-
-            }*/
+            /*
+             * if (problem.getNumberOfObjectives() == 3) {
+             * 
+             * Plotter plotter = new Scatter3D<DoubleSolution>(front, DIRECTORY +
+             * File.separator + subDir + File.separator + "Class_F0" + problem.getName() +
+             * "_nsga3_WP"); plotter.plot(); // new
+             * //Scatter3D(problem.getParetoOptimal3Obj(), directory + File.separator +
+             * problem.getName()).plot(); } else { Table table =
+             * Table.create(problem.getName() + "_F0_WP_" +
+             * problem.getNumberOfObjectives()); for (int j = 0; j <
+             * problem.getNumberOfObjectives(); j++) { DoubleColumn column =
+             * DoubleColumn.create("objective_" + j); for (int k = 0; k < front.size(); k++)
+             * { column.append(front.get(k).getObjective(j).doubleValue()); }
+             * table.addColumns(column); } logger.info(table.summary());
+             * 
+             * }
+             */
             logger.info("End Experimentation.");
         }
     }
@@ -242,67 +249,67 @@ public class NSGA3_P_Experimentation {
         int maxIterations = 1000;
         int numberOfObjectives = instance.getNumObjectives();
         switch (p) {
-        case 1:
-            if (numberOfObjectives == 3) {
-                maxIterations = 400;
-            } else if (numberOfObjectives == 5) {
-                maxIterations = 600;
-            } else if (numberOfObjectives == 8) {
-                maxIterations = 750;
-            } else if (numberOfObjectives == 10) {
-                maxIterations = 1000;
-            } else if (numberOfObjectives == 15) {
-                maxIterations = 1500;
-            }
-            break;
-        case 2:
-            if (numberOfObjectives == 3) {
-                maxIterations = 250;
-            } else if (numberOfObjectives == 5) {
-                maxIterations = 350;
-            } else if (numberOfObjectives == 8) {
-                maxIterations = 500;
-            } else if (numberOfObjectives == 10) {
-                maxIterations = 750;
-            } else if (numberOfObjectives == 15) {
-                maxIterations = 1000;
-            }
-            break;
-        case 3:
-            if (numberOfObjectives == 3) {
-                maxIterations = 1000;
-            } else if (numberOfObjectives == 5 || numberOfObjectives == 8) {
-                maxIterations = 1000;
-            } else if (numberOfObjectives == 10) {
-                maxIterations = 1500;
-            } else if (numberOfObjectives == 15) {
-                maxIterations = 2000;
-            }
-            break;
-        case 4:
-            if (numberOfObjectives == 3) {
-                maxIterations = 600;
-            } else if (numberOfObjectives == 5) {
-                maxIterations = 1000;
-            } else if (numberOfObjectives == 8) {
-                maxIterations = 1250;
-            } else if (numberOfObjectives == 10) {
-                maxIterations = 2000;
-            } else if (numberOfObjectives == 15) {
-                maxIterations = 3000;
-            }
-            break;
-        default:
-            if (numberOfObjectives == 3) {
-                maxIterations = 750;
-            } else if (numberOfObjectives == 5)
-                maxIterations = 1000;
-            else if (numberOfObjectives == 8)
-                maxIterations = 1250;
-            else {
-                maxIterations = 1500;
-            }
-            break;
+            case 1:
+                if (numberOfObjectives == 3) {
+                    maxIterations = 400;
+                } else if (numberOfObjectives == 5) {
+                    maxIterations = 600;
+                } else if (numberOfObjectives == 8) {
+                    maxIterations = 750;
+                } else if (numberOfObjectives == 10) {
+                    maxIterations = 1000;
+                } else if (numberOfObjectives == 15) {
+                    maxIterations = 1500;
+                }
+                break;
+            case 2:
+                if (numberOfObjectives == 3) {
+                    maxIterations = 250;
+                } else if (numberOfObjectives == 5) {
+                    maxIterations = 350;
+                } else if (numberOfObjectives == 8) {
+                    maxIterations = 500;
+                } else if (numberOfObjectives == 10) {
+                    maxIterations = 750;
+                } else if (numberOfObjectives == 15) {
+                    maxIterations = 1000;
+                }
+                break;
+            case 3:
+                if (numberOfObjectives == 3) {
+                    maxIterations = 1000;
+                } else if (numberOfObjectives == 5 || numberOfObjectives == 8) {
+                    maxIterations = 1000;
+                } else if (numberOfObjectives == 10) {
+                    maxIterations = 1500;
+                } else if (numberOfObjectives == 15) {
+                    maxIterations = 2000;
+                }
+                break;
+            case 4:
+                if (numberOfObjectives == 3) {
+                    maxIterations = 600;
+                } else if (numberOfObjectives == 5) {
+                    maxIterations = 1000;
+                } else if (numberOfObjectives == 8) {
+                    maxIterations = 1250;
+                } else if (numberOfObjectives == 10) {
+                    maxIterations = 2000;
+                } else if (numberOfObjectives == 15) {
+                    maxIterations = 3000;
+                }
+                break;
+            default:
+                if (numberOfObjectives == 3) {
+                    maxIterations = 750;
+                } else if (numberOfObjectives == 5)
+                    maxIterations = 1000;
+                else if (numberOfObjectives == 8)
+                    maxIterations = 1250;
+                else {
+                    maxIterations = 1500;
+                }
+                break;
         }
 
         SelectionOperator<DoubleSolution> selectionOperator = new TournamentSelection<>((int) options.get("pop_size"),
@@ -319,29 +326,29 @@ public class NSGA3_P_Experimentation {
     private static HashMap<String, Object> setup(int numberOfObjectives) {
         HashMap<String, Object> map = new HashMap<>();
         switch (numberOfObjectives) {
-        case 3:
-            map.put("pop_size", 92);
-            map.put("partitions", 12);
-            break;
-        case 5:
-            map.put("pop_size", 212);
-            map.put("partitions", 6);
-            break;
-        case 8:
-            map.put("pop_size", 156);
-            map.put("partitions", 5);
-            break;
-        case 10:
-            map.put("pop_size", 271);
-            map.put("partitions", 5);
-            break;
-        case 15:
-            map.put("pop_size", 136);
-            map.put("partitions", 3);
-            break;
-        default:
-            error("Invalid number of objectives");
-            break;
+            case 3:
+                map.put("pop_size", 92);
+                map.put("partitions", 12);
+                break;
+            case 5:
+                map.put("pop_size", 212);
+                map.put("partitions", 6);
+                break;
+            case 8:
+                map.put("pop_size", 156);
+                map.put("partitions", 5);
+                break;
+            case 10:
+                map.put("pop_size", 271);
+                map.put("partitions", 5);
+                break;
+            case 15:
+                map.put("pop_size", 136);
+                map.put("partitions", 3);
+                break;
+            default:
+                error("Invalid number of objectives");
+                break;
         }
         map.put("crossover", new SBXCrossover(30, 1.0));
         map.put("mutation", new PolynomialMutation());
