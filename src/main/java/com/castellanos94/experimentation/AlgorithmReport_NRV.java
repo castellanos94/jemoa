@@ -83,7 +83,7 @@ public class AlgorithmReport_NRV {
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
         HashMap<DTLZP, HashMap<String, Table>> algorithmTimeByProblem = new HashMap<>();
         // Espeficia que soluciones
-        // loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem,
+        // loadSolutionExperiment(DIRECTORY, problems,  roi, globalSolutionByProblem,
         // algorithmTimeByProblem);
         loadSolutionExperiment(IMOACOR_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
 
@@ -194,9 +194,11 @@ public class AlgorithmReport_NRV {
             sColumns.add(_sat);
             disColumns.add(_dis);
         }
-        Iterator<String> iterator = problems.keySet().iterator();
-        while (iterator.hasNext()) {
-            DTLZP dtlz = problems.get(iterator.next());
+        String[] keyArray = problems.keySet().toArray(new String[problems.size()]);
+        Arrays.sort(keyArray);
+        int indexKeyArray = 0;
+        while (indexKeyArray < keyArray.length) {
+            DTLZP dtlz = problems.get(keyArray[indexKeyArray++]);
             int startProblem = (_name.size() - 1 > 0) ? _name.size() - 1 : 0;
             int endProblem = startProblem;
             for (int j = 0; j < globalSolution.get(dtlz).size(); j++) {

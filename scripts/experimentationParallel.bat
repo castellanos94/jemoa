@@ -14,61 +14,6 @@ set "javaPath=jdk11\bin\java.exe"
 :: The list of commands could come from anywhere such as another file
 :: or the output of another command. For this demo I will list the
 :: commands within this script - Each command is prefixed with :::
-
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 1 --endProblem 1 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 2 --endProblem 2 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 3 --endProblem 3 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 4 --endProblem 4 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 5 --endProblem 5 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 6 --endProblem 6 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 7 --endProblem 7 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 8 --endProblem 8 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 3 --initialProblem 9 --endProblem 9 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 1 --endProblem 1 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 2 --endProblem 2 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 3 --endProblem 3 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 4 --endProblem 4 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 5 --endProblem 5 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 6 --endProblem 6 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 7 --endProblem 7 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 8 --endProblem 8 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 5 --initialProblem 9 --endProblem 9 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 1 --endProblem 1 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 2 --endProblem 2 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 3 --endProblem 3 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 4 --endProblem 4 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 5 --endProblem 5 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 6 --endProblem 6 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 7 --endProblem 7 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 8 --endProblem 8 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 9 --endProblem 9 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 1 --endProblem 1 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 2 --endProblem 2 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 3 --endProblem 3 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 4 --endProblem 4 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 5 --endProblem 5 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 6 --endProblem 6 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 7 --endProblem 7 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 8 --endProblem 8 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 9 --endProblem 9 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 1 --endProblem 1 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 2 --endProblem 2 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 3 --endProblem 3 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 4 --endProblem 4 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 5 --endProblem 5 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 6 --endProblem 6 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 7 --endProblem 7 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 8 --endProblem 8 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 9 --endProblem 9 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 1 --endProblem 1 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 2 --endProblem 2 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 3 --endProblem 3 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 4 --endProblem 4 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 5 --endProblem 5 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 6 --endProblem 6 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 7 --endProblem 7 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 8 --endProblem 8 --seed 1
-::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 9 --endProblem 9 --seed 1
 ::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 1 --endProblem 1 --seed 1 --sortingKey
 ::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 2 --endProblem 2 --seed 1 --sortingKey
 ::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 3 --initialProblem 3 --endProblem 3 --seed 1 --sortingKey
@@ -87,6 +32,7 @@ set "javaPath=jdk11\bin\java.exe"
 ::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 7 --endProblem 7 --seed 1 --sortingKey
 ::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 8 --endProblem 8 --seed 1 --sortingKey
 ::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 5 --initialProblem 9 --endProblem 9 --seed 1 --sortingKey
+
 ::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 1 --endProblem 1 --seed 1 --sortingKey
 ::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 2 --endProblem 2 --seed 1 --sortingKey
 ::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 3 --endProblem 3 --seed 1 --sortingKey
@@ -98,6 +44,25 @@ set "javaPath=jdk11\bin\java.exe"
 ::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 9 --endProblem 9 --seed 1 --sortingKey
 
 
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 1 --endProblem 1 --seed 1
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 2 --endProblem 2 --seed 1
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 3 --endProblem 3 --seed 1
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 4 --endProblem 4 --seed 1
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 5 --endProblem 5 --seed 1
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 6 --endProblem 6 --seed 1
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 7 --endProblem 7 --seed 1
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 8 --endProblem 8 --seed 1
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACOR -m 10 --initialProblem 9 --endProblem 9 --seed 1
+
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 1 --endProblem 1 --seed 1
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 2 --endProblem 2 --seed 1
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 3 --endProblem 3 --seed 1
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 4 --endProblem 4 --seed 1
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 5 --endProblem 5 --seed 1
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 6 --endProblem 6 --seed 1
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 7 --endProblem 7 --seed 1
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 8 --endProblem 8 --seed 1
+::: %javaPath% -jar jemoa-1.0.0.jar -a IMOACORP -m 10 --initialProblem 9 --endProblem 9 --seed 1
 
 :: Define the maximum number of parallel processes to run.
 :: Each process number can optionally be assigned to a particular server

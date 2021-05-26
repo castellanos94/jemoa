@@ -71,6 +71,34 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
 
     }
 
+    /**
+     * 
+     * @param problem       continuos problem, default repair for continuos problem
+     *                      [0,1] var decision
+     * @param maxIterations G_max
+     * @param N             population size
+     * @param q             diversification process control parameter
+     * @param xi            convergence rate control parameter
+     * @param h             proportional parameter, using for the construction of
+     *                      the simplex-lattice on the SLD in order to create set of
+     *                      N convex weight vectors. N is equally used as the number
+     *                      of ants
+     * @see DoubleSolution
+     * @see RepairBoundary
+     */
+    public IMOACO_R(Problem<S> problem, int maxIterations, int N, double q, double xi, int h) {
+        super(problem);
+        this.maxIterations = maxIterations;
+        this.q = q;
+        this.xi = xi;
+        this.h = h;
+        this.N = N;
+        this.kernelIntegerList = IntStream.range(0, N).boxed().collect(Collectors.toList());
+        this.mark = new int[problem.getNumberOfObjectives()];
+        this.MAX_RECORD_SIZE = 5;
+        this.repairBoundary = new RepairBoundary();
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void execute() {
@@ -271,9 +299,20 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
     }
 
     protected ArrayList<ArrayList<Data>> generateWeight() {
+        if( problem.getNumberOfObjectives() <= 5){
         ReferenceHyperplane<S> referenceHyperplane = new ReferenceHyperplane<>(problem.getNumberOfObjectives(), h);
         referenceHyperplane.execute();
-        return referenceHyperplane.transformToData();
+        ArrayList<ArrayList<Data>> data = referenceHyperplane.transformToData();
+        return data;
+        }
+
+        ReferenceHyperplane<S> referenceHyperplane = new ReferenceHyperplane<>(problem.getNumberOfObjectives(), 3);
+        referenceHyperplane.execute();
+        ArrayList<ArrayList<Data>> data = referenceHyperplane.transformToData();
+        ReferenceHyperplane<S> referenceHyperplane2 = new ReferenceHyperplane<>(problem.getNumberOfObjectives(), 2);
+        referenceHyperplane2.execute();
+        data.addAll(referenceHyperplane2.transformToData());
+        return data;
     }
 
     /**

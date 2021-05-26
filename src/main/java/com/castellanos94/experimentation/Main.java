@@ -309,10 +309,20 @@ public class Main implements Runnable {
                 }
                 break;
         }
-        if (_algorithmName == AlgorithmNames.IMOACOR)
+        if (_algorithmName == AlgorithmNames.IMOACOR) {
+            if (problem.getNumberOfObjectives() > 5) {
+                return new IMOACO_R<>(problem, 300, (int) options.get("pop_size"), 0.1, 0.5,
+                        (int) options.get("partitions"));
+            }
             return new IMOACO_R<>(problem, maxIterations, 0.1, 0.5, (int) options.get("partitions"));
-        if (_algorithmName == AlgorithmNames.IMOACORP)
+        }
+        if (_algorithmName == AlgorithmNames.IMOACORP) {
+            if (problem.getNumberOfObjectives() > 5) {
+                return new IMOACO_R_P<>(problem, 300, (int) options.get("pop_size"), 0.1, 0.5,
+                        (int) options.get("partitions"), isFirstRank);
+            }
             return new IMOACO_R_P<>(problem, maxIterations, 0.1, 0.5, (int) options.get("partitions"), isFirstRank);
+        }
         if (_algorithmName == AlgorithmNames.NSGAIIIP || _algorithmName == AlgorithmNames.NSGAIII) {
 
             SelectionOperator<DoubleSolution> selectionOperator = new TournamentSelection<>(
