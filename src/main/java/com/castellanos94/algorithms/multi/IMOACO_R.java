@@ -299,11 +299,11 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
     }
 
     protected ArrayList<ArrayList<Data>> generateWeight() {
-        if( problem.getNumberOfObjectives() <= 5){
-        ReferenceHyperplane<S> referenceHyperplane = new ReferenceHyperplane<>(problem.getNumberOfObjectives(), h);
-        referenceHyperplane.execute();
-        ArrayList<ArrayList<Data>> data = referenceHyperplane.transformToData();
-        return data;
+        if (problem.getNumberOfObjectives() <= 5) {
+            ReferenceHyperplane<S> referenceHyperplane = new ReferenceHyperplane<>(problem.getNumberOfObjectives(), h);
+            referenceHyperplane.execute();
+            ArrayList<ArrayList<Data>> data = referenceHyperplane.transformToData();
+            return data;
         }
 
         ReferenceHyperplane<S> referenceHyperplane = new ReferenceHyperplane<>(problem.getNumberOfObjectives(), 3);
@@ -327,22 +327,24 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
         for (S p : P) {
             p.setRank(Integer.MAX_VALUE);
         }
+        Comparator<S> comparator = (a, b) -> {
+            Data alpha_a = (Data) a.getAttribute(R2_Alpha_KEY);
+            Data alpha_b = (Data) b.getAttribute(R2_Alpha_KEY);
+            return alpha_a.compareTo(alpha_b);
+        };
+        comparator = comparator.thenComparing((a, b) -> {
+            Data d1 = Tools.NORML2(a.getObjectives());
+            Data d2 = Tools.NORML2(b.getObjectives());
+            return d1.compareTo(d2);
+        });
+        HeapSort<S> sorter = new HeapSort<>(comparator);
+
         for (int i = 0; i < LAMBDA.size(); i++) {
             List<Data> lambda = LAMBDA.get(i);
             for (S p : P) {
                 p.setAttribute(R2_Alpha_KEY, ASF(getFNorm(p), idealPoint, lambda));
             }
-            Comparator<S> comparator = (a, b) -> {
-                Data alpha_a = (Data) a.getAttribute(R2_Alpha_KEY);
-                Data alpha_b = (Data) b.getAttribute(R2_Alpha_KEY);
-                return alpha_a.compareTo(alpha_b);
-            };
-            comparator = comparator.thenComparing((a, b) -> {
-                Data d1 = Tools.NORML2(a.getObjectives());
-                Data d2 = Tools.NORML2(b.getObjectives());
-                return d1.compareTo(d2);
-            });
-            HeapSort<S> sorter = new HeapSort<>(comparator);
+
             sorter.sort(P);
             int rank = 0;
             for (int index = 0; index < P.size(); index++) {

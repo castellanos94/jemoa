@@ -72,7 +72,8 @@ public class Main implements Runnable {
     private int initialProblem = 1;
     @Option(names = { "--endProblem" }, description = "Final problem to solve", showDefaultValue = Visibility.ALWAYS)
     private int endProblem = 9;
-
+    @Option(names = { "--problem" }, description = "Problem index to solve", showDefaultValue = Visibility.ALWAYS)
+    private int indexProblem = -1;
     @Option(names = { "-c",
             "--classificationRate" }, description = "Classify every number of iterations [0 - 100] for NSGAIIIP", showDefaultValue = Visibility.ALWAYS)
     private int CLASSIFY_EVERY_ITERATION = 1; // Classification F0 each
@@ -114,6 +115,10 @@ public class Main implements Runnable {
             }
         }
         new File(DIRECTORY).mkdirs();
+        if (indexProblem != -1) {
+            initialProblem = indexProblem;
+            endProblem = indexProblem;
+        }
         for (int numberOfProblem = initialProblem; numberOfProblem <= endProblem; numberOfProblem++) {
             if (seed != -1)
                 Tools.setSeed(seed);

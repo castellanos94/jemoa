@@ -75,7 +75,7 @@ public class AlgorithmReport_NRV {
     private static StringColumn timeColumn = StringColumn.create("time");
     private static HashMap<String, ArrayList<HashMap<String, Double>>> rankListMetric = new HashMap<>();
     private static String ALGORITHM_IGNORE[] = { "MOGWO-V", "C0R0", "C2R1", "C10R0", "VAR-97", "VAR-98", "VAR-100",
-            "VAR-104", "VAR-127" };// { "MOGWO","MOGWO-V", "C0R0", "C2R1","C10R0" };
+            "VAR-104", "VAR-127" ,"IMOACORPR2","IMOACORPR1"};// { "MOGWO","MOGWO-V", "C0R0", "C2R1","C10R0" };
 
     public static void main(String[] args) throws IOException {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();
@@ -83,7 +83,7 @@ public class AlgorithmReport_NRV {
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
         HashMap<DTLZP, HashMap<String, Table>> algorithmTimeByProblem = new HashMap<>();
         // Espeficia que soluciones
-        // loadSolutionExperiment(DIRECTORY, problems,  roi, globalSolutionByProblem,
+        // loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem,
         // algorithmTimeByProblem);
         loadSolutionExperiment(IMOACOR_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
 
@@ -371,6 +371,18 @@ public class AlgorithmReport_NRV {
             for (String key : orderNameConfiguration) {
                 dMaxColumn.append(mapTest.get(key));
             }
+            // empty row
+            problemColumn.append("");
+            confColumn.append("");
+            domColumn.append("");
+            noDominateColumn.append("");
+            timeColumn.append("");
+            chsatColumn.append("");
+            csatColumn.append("");
+            cdisColumn.append("");
+            dMinColumn.append("");
+            dAvgColumn.append("");
+            dMaxColumn.append("");
             mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, chebyshevMin, "Chebyshev Min");
             mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, chebyshevAVG, "Chebyshev AVG");
             mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, chebyshevMax, "Chebyshev Max");
