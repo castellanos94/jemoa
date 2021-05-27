@@ -39,7 +39,7 @@ import tech.tablesaw.columns.Column;
  */
 public class AlgorithmReport_NRV {
 
-    private final static int numberOfObjectives = 3;
+    private final static int numberOfObjectives = 10;
     private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
     // private static String algorithmName = File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
@@ -75,7 +75,7 @@ public class AlgorithmReport_NRV {
     private static StringColumn timeColumn = StringColumn.create("time");
     private static HashMap<String, ArrayList<HashMap<String, Double>>> rankListMetric = new HashMap<>();
     private static String ALGORITHM_IGNORE[] = { "MOGWO-V", "C0R0", "C2R1", "C10R0", "VAR-97", "VAR-98", "VAR-100",
-            "VAR-104", "VAR-127" ,"IMOACORPR2","IMOACORPR1"};// { "MOGWO","MOGWO-V", "C0R0", "C2R1","C10R0" };
+            "VAR-104", "VAR-127" };// { "MOGWO","MOGWO-V", "C0R0", "C2R1","C10R0" ,"IMOACORPR2"};
 
     public static void main(String[] args) throws IOException {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();

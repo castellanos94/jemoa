@@ -44,21 +44,7 @@ public class IMOACO_R_P<S extends DoubleSolution> extends IMOACO_R<S> implements
         super(problem, maxIterations, q, xi, h);
         this.classifier = new SatClassifier<>((GDProblem<S>) problem);
         this.isFirstRank = isFirstRank;
-
-        // (1)
-        this.comparisonOfFourTypes = (a, b) -> Integer.compare(a.getRank(), b.getRank());
-        // (2)
-        this.comparisonOfFourTypes = comparisonOfFourTypes.thenComparing((a, b) -> {
-            Data ua = (Data) a.getAttribute(BEST_UTILITY_KEY);
-            Data ub = (Data) b.getAttribute(BEST_UTILITY_KEY);
-            return ua.compareTo(ub);
-        });
-        // (3)
-        this.comparisonOfFourTypes = comparisonOfFourTypes.thenComparing((a, b) -> {
-            Data d1 = Tools.NORML2(a.getObjectives());
-            Data d2 = Tools.NORML2(b.getObjectives());
-            return d1.compareTo(d2);
-        });
+        loadComparatorRank(isFirstRank);
     }
 
     /**
@@ -81,7 +67,7 @@ public class IMOACO_R_P<S extends DoubleSolution> extends IMOACO_R<S> implements
         super(problem, maxIterations, N, q, xi, h);
         this.classifier = new SatClassifier<>((GDProblem<S>) problem);
         this.isFirstRank = isFirstRank;
-
+/*
         // (1)
         this.comparisonOfFourTypes = (a, b) -> Integer.compare(a.getRank(), b.getRank());
         // (2)
@@ -95,8 +81,12 @@ public class IMOACO_R_P<S extends DoubleSolution> extends IMOACO_R<S> implements
             Data d1 = Tools.NORML2(a.getObjectives());
             Data d2 = Tools.NORML2(b.getObjectives());
             return d1.compareTo(d2);
-        });
-       /* if (isFirstRank) {
+        });*/
+        loadComparatorRank(isFirstRank);
+    }
+
+    private void loadComparatorRank(boolean isFirstRank) {
+        if (isFirstRank) {
             // (1)
             this.comparisonOfFourTypes = (a, b) -> {
                 int integerClassA = getSatClass(a);
@@ -127,12 +117,12 @@ public class IMOACO_R_P<S extends DoubleSolution> extends IMOACO_R<S> implements
             Data d1 = Tools.NORML2(a.getObjectives());
             Data d2 = Tools.NORML2(b.getObjectives());
             return d1.compareTo(d2);
-        });*/
+        });
     }
 
     @Override
     public String toString() {
-        return "IMOACO_R-P [isFirsRank=" + isFirstRank + ", " + h + ", N=" + N + ", h=" + h + ", maxIterations="
+        return "IMOACO_R-P [isFirstRank=" + isFirstRank + ", " + h + ", N=" + N + ", h=" + h + ", maxIterations="
                 + maxIterations + ", q=" + q + ", xi=" + xi + ", MAX RECORD SIZE=" + MAX_RECORD_SIZE + "]";
     }
 
@@ -165,6 +155,7 @@ public class IMOACO_R_P<S extends DoubleSolution> extends IMOACO_R<S> implements
         normalize(this.solutions, idealPoint, nadirPoint);
         this.record = new ArrayList<>();
         saveRegisterInRecord(nadirPoint);
+        classifySolutions(solutions);
         R2Ranking(solutions, idealPoint, LAMBDA);
         //this.solutions.sort((a, b) -> Integer.compare(a.getRank(), b.getRank()));
         sorted4Criterial.sort(solutions);
@@ -182,12 +173,12 @@ public class IMOACO_R_P<S extends DoubleSolution> extends IMOACO_R<S> implements
             // Classificamos y agregamos directo al las soluciones
             ArrayList<S> classifySolutions = classifySolutions(psi);
             int indexSolution = 0;
-            for (; indexSolution < this.N && indexSolution < classifySolutions.size(); indexSolution++) {
+           /* for (; indexSolution < this.N && indexSolution < classifySolutions.size(); indexSolution++) {
                 S tmp = (S) classifySolutions.get(indexSolution).copy();
                 tmp.setRank(1);
                 this.solutions.set(indexSolution, tmp);
             }
-            psi.removeAll(classifySolutions);
+            psi.removeAll(classifySolutions);*/
             // Ordenar PSI en forma creciente con respecto a los criterios (1) rank, (2) u*
             // y (3) norma L_2
             sorted4Criterial.sort(psi);

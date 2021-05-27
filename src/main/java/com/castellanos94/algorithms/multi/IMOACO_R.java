@@ -210,7 +210,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
         return rs;
     }
 
-    private void antSampling(ArrayList<S> ants, ArrayList<S> pheromones, int[] kernelIndex, int index) {
+    protected void antSampling(ArrayList<S> ants, ArrayList<S> pheromones, int[] kernelIndex, int index) {
         for (int i = 0; i < this.N; i++) {
             int selectedKernel = kernelIndex[i];
             S ant = ants.get(i);
@@ -255,7 +255,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
         return X;
     }
 
-    private void calculateStdDev(ArrayList<S> solutions, int index) {
+    protected void calculateStdDev(ArrayList<S> solutions, int index) {
         for (int i = 0; i < this.N; i++) {
             double std = 0;
             for (int j = 0; j < this.N; j++) {
@@ -266,7 +266,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
         }
     }
 
-    private int[] chooseGaussianKernel(double[] probabilities) {
+    protected int[] chooseGaussianKernel(double[] probabilities) {
         int[] kernelIndex = new int[this.N];
         for (int i = 0; i < kernelIndex.length; i++) {
             kernelIndex[i] = rouletteWheelSelection(probabilities);

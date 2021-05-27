@@ -53,7 +53,7 @@ public class Main implements Runnable {
     private static final Logger logger = LogManager.getLogger(Main.class);
 
     private enum AlgorithmNames {
-        NSGAIII, NSGAIIIP, MOGWO, MOGWOV, MOGWOP, MOGWOPFN, IMOACOR, IMOACORP
+        NSGAIII, NSGAIIIP, MOGWO, MOGWOV, MOGWOP, MOGWOPFN, IMOACOR, IMOACORP,
     }
 
     @Option(names = { "-a",
@@ -83,7 +83,12 @@ public class Main implements Runnable {
 
     @Option(names = {
             "--sortingKey" }, description = "Classification key sorting at 1(true) or 2 (false)", showDefaultValue = Visibility.ALWAYS)
-    private boolean isFirstRank = false;
+    private boolean isFirstRank = true;
+    @Option(names = {
+            "-q" }, description = "diversification process control parameter for IMOACOR", showDefaultValue = Visibility.ALWAYS)
+    private double q = 0.1; // 5 % of population
+    @Option(names = { "-xi" }, description = " convergence rate control parameter for IMOACOR", showDefaultValue = Visibility.ALWAYS)
+    private double xi = 0.5;
 
     public static void main(String[] args) {
         System.exit(new CommandLine(new Main()).setCaseInsensitiveEnumValuesAllowed(true).execute(args));
@@ -93,6 +98,7 @@ public class Main implements Runnable {
     public void run() {
 
         final String DIRECTORY;
+
         if (algorithmName == AlgorithmNames.NSGAIII || algorithmName == AlgorithmNames.NSGAIIIP) {
             if (algorithmName == AlgorithmNames.NSGAIII) {
                 CLASSIFY_EVERY_ITERATION = 0;
@@ -105,13 +111,14 @@ public class Main implements Runnable {
             DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWO" + File.separator
                     + algorithmName;
         } else {
+            String suffix = (this.q != 0.1 || this.xi != 0.5) ? String.format("Q%.3fXI%.2f", this.q, this.xi) : "";
             if (algorithmName == AlgorithmNames.IMOACORP) {
                 String algorithmName__ = (isFirstRank) ? algorithmName + "R1" : algorithmName + "R2";
                 DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "IMOACOR"
-                        + File.separator + algorithmName__;
+                        + File.separator + algorithmName__ + suffix;
             } else {
                 DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "IMOACOR"
-                        + File.separator + algorithmName;
+                        + File.separator + algorithmName + suffix;
             }
         }
         new File(DIRECTORY).mkdirs();
@@ -123,7 +130,7 @@ public class Main implements Runnable {
             if (seed != -1)
                 Tools.setSeed(seed);
 
-            logger.info("Experimentation " + algorithmName + " : DTLZ with preferences");
+            logger.info("Experimentation " + algorithmName + " : DTLZ with preferences, seed = "+ seed);
             String resourseFile = "DTLZ_INSTANCES" + File.separator + numberOfObjectives + File.separator + "DTLZ"
                     + numberOfProblem + "_Instance.txt";
             DTLZ_Instance instance = null;
@@ -316,17 +323,18 @@ public class Main implements Runnable {
         }
         if (_algorithmName == AlgorithmNames.IMOACOR) {
             if (problem.getNumberOfObjectives() > 5) {
-                return new IMOACO_R<>(problem, 300, (int) options.get("pop_size"), 0.1, 0.5,
+                return new IMOACO_R<>(problem, 300, (int) options.get("pop_size"), this.q, this.xi,
                         (int) options.get("partitions"));
             }
-            return new IMOACO_R<>(problem, maxIterations, 0.1, 0.5, (int) options.get("partitions"));
+            return new IMOACO_R<>(problem, maxIterations, this.q, this.xi, (int) options.get("partitions"));
         }
         if (_algorithmName == AlgorithmNames.IMOACORP) {
             if (problem.getNumberOfObjectives() > 5) {
-                return new IMOACO_R_P<>(problem, 300, (int) options.get("pop_size"), 0.1, 0.5,
+                return new IMOACO_R_P<>(problem, 300, (int) options.get("pop_size"), this.q, this.xi,
                         (int) options.get("partitions"), isFirstRank);
             }
-            return new IMOACO_R_P<>(problem, maxIterations, 0.1, 0.5, (int) options.get("partitions"), isFirstRank);
+            return new IMOACO_R_P<>(problem, maxIterations, this.q, this.xi, (int) options.get("partitions"),
+                    isFirstRank);
         }
         if (_algorithmName == AlgorithmNames.NSGAIIIP || _algorithmName == AlgorithmNames.NSGAIII) {
 

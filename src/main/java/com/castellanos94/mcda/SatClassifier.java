@@ -156,8 +156,8 @@ public class SatClassifier<S extends Solution<?>> extends Classifier<S> {
         S w = (S) x.copy();
         for (int i = 0; i < r2.length; i++) {
             loadObjectivesToFunction(w, r2[i]);
-
-            if (pref.compare(x, w) > -1) {
+            int val = pref.compare(x, w);
+            if (val > -1) {
                 return false;
             }
         }
@@ -180,7 +180,8 @@ public class SatClassifier<S extends Solution<?>> extends Classifier<S> {
         S w = (S) x.copy();
         for (int i = 0; i < r1.length; i++) {
             loadObjectivesToFunction(w, r1[i]);
-            if (pref.compare(w, x) > -1) {
+            int val = pref.compare(w, x);
+            if (val > -1) {
                 return false;
             }
         }
