@@ -1,7 +1,6 @@
 package com.castellanos94.algorithms.multi;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -275,7 +274,7 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
     }
 
     private int rouletteWheelSelection(double[] probabilities) {
-        Collections.shuffle(kernelIntegerList);
+        Tools.shuffle(kernelIntegerList);
         double rand = Tools.getRandom().nextDouble();
         double sum = 0;
         for (int i = 0; i < probabilities.length; i++) {

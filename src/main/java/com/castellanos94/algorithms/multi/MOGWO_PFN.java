@@ -11,7 +11,7 @@ import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.ExtraInformation;
 import com.castellanos94.utils.HeapSort;
 
-public class MOGWO_PFN<S extends DoubleSolution> extends MOGWO_V<S> implements ExtraInformation {
+public class MOGWO_PFN<S extends DoubleSolution> extends MOGWO<S> implements ExtraInformation {
     protected IntervalOutrankingRelations<S> preferences;
     protected HeapSort<S> heapSortSolutions;
 

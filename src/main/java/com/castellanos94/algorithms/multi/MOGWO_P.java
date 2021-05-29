@@ -10,7 +10,7 @@ import com.castellanos94.problems.GDProblem;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
 
-public class MOGWO_P<S extends DoubleSolution> extends MOGWO_V<S> {
+public class MOGWO_P<S extends DoubleSolution> extends MOGWO<S> {
     protected SatClassifier<S> classifier;
 
     public MOGWO_P(Problem<S> problem, int populationSize, int MAX_ITERATIONS, int nGrid,

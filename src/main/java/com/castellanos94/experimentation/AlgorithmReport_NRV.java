@@ -53,7 +53,7 @@ public class AlgorithmReport_NRV {
     private static String IMOACOR_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
             + "IMOACOR" + File.separator;
     private static String CMP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
-            + "NSGA3vsMOEAD_nc" + File.separator;
+            + "CMP" + File.separator;
     private static Table stats = Table.create("statistic");
     private static StringColumn nameColumn = StringColumn.create("Problem");
     private static StringColumn metricNameColumn = StringColumn.create("Metric Name");
@@ -74,8 +74,7 @@ public class AlgorithmReport_NRV {
     private static StringColumn dMaxColumn = StringColumn.create("Max");
     private static StringColumn timeColumn = StringColumn.create("time");
     private static HashMap<String, ArrayList<HashMap<String, Double>>> rankListMetric = new HashMap<>();
-    private static String ALGORITHM_IGNORE[] = { "MOGWO-V", "C0R0", "C2R1", "C10R0", "VAR-97", "VAR-98", "VAR-100",
-            "VAR-104", "VAR-127" };// { "MOGWO","MOGWO-V", "C0R0", "C2R1","C10R0" ,"IMOACORPR2"};
+    private static String ALGORITHM_IGNORE[] = { "MOGWO","MOGWO-V", "C0R0", "C2R1", "C10R0", "VAR-97", "VAR-98", "VAR-100","VAR-104", "VAR-127" ,"VAR-0","IMOACOR","IMOACORPR2-Elite2"};//{"C0R0","VAR-0","IMOACOR","MOGWO"};
 
     public static void main(String[] args) throws IOException {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();
@@ -85,12 +84,16 @@ public class AlgorithmReport_NRV {
         // Espeficia que soluciones
         // loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem,
         // algorithmTimeByProblem);
+        loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+        loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+        loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
         loadSolutionExperiment(IMOACOR_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+
 
         // loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem,
         // algorithmTimeByProblem);
         // Ruta de salida
-        final String LAST_DIRECTORY = IMOACOR_DIRECTORY;
+        final String LAST_DIRECTORY = CMP_DIRECTORY;
         // Se valida que la ruta existe
         if (!new File(LAST_DIRECTORY).exists())
             new File(LAST_DIRECTORY).mkdirs();
@@ -428,7 +431,7 @@ public class AlgorithmReport_NRV {
         // System.out.println(table.summary());
         table.write().csv(LAST_DIRECTORY + "metrics.csv");
         // Reset
-
+        if(numberOfObjectives == 3)
         globalMetric(LAST_DIRECTORY, globalSolutionNDByProblem, roi, _names_algorithm, algorithmTimeByProblem);
         stats.addColumns(nameColumn, metricNameColumn, resultColumn, rankingColumn, meanColumn, techicalColumn);
         stats.write().csv(LAST_DIRECTORY + "stac.csv");
@@ -472,6 +475,7 @@ public class AlgorithmReport_NRV {
             HashMap<DTLZP, HashMap<String, Table>> timeMapByProblemAlgorithm) throws IOException {
         System.out.println("Working directory... " + _DIRECTORY);
         for (File f : new File(_DIRECTORY).listFiles()) {
+            //if (f.isDirectory() && isAlgorithmToProcess(f.getName())) {
             if (f.isDirectory() && !isAlgorithmToIgnore(f.getName())) {
                 HashMap<DTLZP, ArrayList<ArrayList<DoubleSolution>>> algorithmProblems = new HashMap<>();
                 HashMap<DTLZP, Table> algorithmTimeMap = new HashMap<>();
@@ -526,6 +530,16 @@ public class AlgorithmReport_NRV {
     }
 
     private static boolean isAlgorithmToIgnore(String name) {
+        for (String name_ : ALGORITHM_IGNORE) {
+            if (name_.equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    private static boolean isAlgorithmToProcess(String name) {        
         for (String name_ : ALGORITHM_IGNORE) {
             if (name_.equalsIgnoreCase(name)) {
                 return true;
