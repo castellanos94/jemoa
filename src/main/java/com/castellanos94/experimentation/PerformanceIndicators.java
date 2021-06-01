@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import com.castellanos94.utils.StacClient;
-
+import client.StacConsumer;
+import model.ParametricTestTwoGroups;
 import tech.tablesaw.aggregate.AggregateFunctions;
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.StringColumn;
@@ -142,11 +142,10 @@ public class PerformanceIndicators {
                 file.deleteOnExit();
                 tmpTable.write().csv(file);
                 
-                Map<String, Object> wilcoxon = StacClient.WILCOXON(file.getAbsolutePath(), 0.05);
-                Object st = wilcoxon.get("result");
+                ParametricTestTwoGroups wilcoxon = StacConsumer.WILCOXON(file.getAbsolutePath(), "NSGA-III","NSGA-III-P",0.05);
                 Double rs;
-                if (st != null)
-                        rs = Double.parseDouble(st.toString());
+                if (wilcoxon.getResult() != null)
+                        rs = wilcoxon.getResult().doubleValue();
                 else
                         rs = Double.NaN;
                 StringColumn wilcoxon_ = StringColumn.create("Wilcoxon test");

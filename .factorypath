@@ -33,4 +33,5 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/me/tongfei/progressbar/0.9.1/progressbar-0.9.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/jline/jline/3.19.0/jline-3.19.0.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/info/picocli/picocli/4.6.1/picocli-4.6.1.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/castellanos94/stac-client/1.1.0/stac-client-1.1.0.jar" enabled="true" runInBatchMode="false"/>
 </factorypath>

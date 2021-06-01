@@ -323,14 +323,14 @@ public class Main implements Runnable {
         }
         if (_algorithmName == AlgorithmNames.IMOACOR) {
             if (problem.getNumberOfObjectives() > 5) {
-                return new IMOACO_R<>(problem, 300, (int) options.get("pop_size"), this.q, this.xi,
+                return new IMOACO_R<>(problem, 1000, (int) options.get("pop_size"), this.q, this.xi,
                         (int) options.get("partitions"));
             }
             return new IMOACO_R<>(problem, maxIterations, this.q, this.xi, (int) options.get("partitions"));
         }
         if (_algorithmName == AlgorithmNames.IMOACORP) {
             if (problem.getNumberOfObjectives() > 5) {
-                return new IMOACO_R_P<>(problem, 300, (int) options.get("pop_size"), this.q, this.xi,
+                return new IMOACO_R_P<>(problem, 1000, (int) options.get("pop_size"), this.q, this.xi,
                         (int) options.get("partitions"), isFirstRank);
             }
             return new IMOACO_R_P<>(problem, maxIterations, this.q, this.xi, (int) options.get("partitions"),

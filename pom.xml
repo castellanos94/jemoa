@@ -77,6 +77,12 @@
             <artifactId>picocli</artifactId>
             <version>4.6.1</version>
         </dependency>
+        <!-- Stact Consumer -->
+        <dependency>
+            <groupId>com.castellanos94</groupId>
+            <artifactId>stac-client</artifactId>
+            <version>1.1.0</version>
+        </dependency>
     </dependencies>
 
     <build>
