@@ -41,7 +41,7 @@ import tech.tablesaw.columns.Column;
 /**
  * Reportar la VAR0 y VAR5 (112) para comparacion con nsga3-p C1R0 y C1R2
  */
-public class AlgorithmReport_NRV {
+public class AlgorithmComparisonReport {
 
     private final static int numberOfObjectives = 10;
     private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
@@ -89,15 +89,15 @@ public class AlgorithmReport_NRV {
         // Espeficia que soluciones
         // loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem,
         // algorithmTimeByProblem);
-        loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
-        loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
-        loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+       // loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+       // loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+       // loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
         loadSolutionExperiment(IMOACOR_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
 
         // loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem,
         // algorithmTimeByProblem);
         // Ruta de salida
-        final String LAST_DIRECTORY = CMP_DIRECTORY;
+        final String LAST_DIRECTORY = IMOACOR_DIRECTORY;
         // Se valida que la ruta existe
         if (!new File(LAST_DIRECTORY).exists())
             new File(LAST_DIRECTORY).mkdirs();
@@ -651,7 +651,7 @@ public class AlgorithmReport_NRV {
             String[] names_ = ranking.getNames();
             BigDecimal[] values_ = ranking.getRankings();
 
-            System.out.println(nameProblem + "/" + nameProblem + " > " + names_ + " <-> " + Arrays.toString(values_));
+            System.out.println(nameProblem + "/" + nameProblem + " > " + Arrays.toString(names_)+ " <-> " + Arrays.toString(values_));
             BigDecimal min_rank = Collections.min(Arrays.asList(values_));
             for (int i = 0; i < names_.length; i++) {
                 String name__ = names_[i].replaceAll(regex, "");
