@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,7 +22,6 @@ import com.castellanos94.mcda.SatClassifier;
 import com.castellanos94.problems.DTLZP;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
-import com.castellanos94.utils.BordaRanking;
 import com.castellanos94.utils.Classifier;
 import com.castellanos94.utils.Distance;
 import com.castellanos94.utils.Distance.Metric;
@@ -32,6 +30,7 @@ import client.POST_HOC;
 import client.StacConsumer;
 import model.NonParametricTestAll;
 import model.RankingResult;
+import statical.BordaRanking;
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.NumericColumn;
 import tech.tablesaw.api.StringColumn;
@@ -78,8 +77,7 @@ public class AlgorithmComparisonReport {
     private static StringColumn dMaxColumn = StringColumn.create("Max");
     private static StringColumn timeColumn = StringColumn.create("time");
     private static HashMap<String, ArrayList<HashMap<String, Double>>> rankListMetric = new HashMap<>();
-    private static String ALGORITHM_IGNORE[] = { "MOGWO", "MOGWO-V", "C0R0", "C2R1", "C10R0", "VAR-97", "VAR-98",
-            "VAR-100", "VAR-104", "VAR-127", "VAR-0", "IMOACOR", "IMOACORPR2-Elite2" };// {"C0R0","VAR-0","IMOACOR","MOGWO"};
+    private static String ALGORITHM_IGNORE[] ={"IMOACORPR2-Elite2"}; //{ "MOGWO", "MOGWO-V", "C0R0", "C2R1", "C10R0", "VAR-97", "VAR-98","VAR-100", "VAR-104", "VAR-127", "VAR-0", "IMOACOR", "IMOACORPR2-Elite2" };// {"C0R0","VAR-0","IMOACOR","MOGWO"};
 
     public static void main(String[] args) throws IOException {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();
@@ -87,11 +85,11 @@ public class AlgorithmComparisonReport {
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
         HashMap<DTLZP, HashMap<String, Table>> algorithmTimeByProblem = new HashMap<>();
         // Espeficia que soluciones
-        // loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem,
-        // algorithmTimeByProblem);
-       // loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
-       // loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
-       // loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+        //loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+
+        //loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+        //loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+
         loadSolutionExperiment(IMOACOR_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
 
         // loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem,
@@ -435,8 +433,8 @@ public class AlgorithmComparisonReport {
         // System.out.println(table.summary());
         table.write().csv(LAST_DIRECTORY + "metrics.csv");
         // Reset
-        if (numberOfObjectives == 3)
-            globalMetric(LAST_DIRECTORY, globalSolutionNDByProblem, roi, _names_algorithm, algorithmTimeByProblem);
+        // if (numberOfObjectives == 3)
+        globalMetric(LAST_DIRECTORY, globalSolutionNDByProblem, roi, _names_algorithm, algorithmTimeByProblem);
         stats.addColumns(nameColumn, metricNameColumn, resultColumn, rankingColumn, meanColumn, techicalColumn);
         stats.write().csv(LAST_DIRECTORY + "stac.csv");
         Table reportLatex = Table.create("latex");
@@ -445,32 +443,53 @@ public class AlgorithmComparisonReport {
                 cdisColumn, dMinColumn, dAvgColumn, dMaxColumn, timeColumn);
         reportLatex.write().csv(LAST_DIRECTORY + "latex_report.csv");
 
-        /*
-         * System.out.println("Generating sum all metrics All..."); HashMap<String,
-         * Double> makeSumRank = BordaRanking.makeSumRank(rankListMetric);
-         * System.out.println("\tName\tRank"); makeSumRank.forEach((k, v) -> {
-         * System.out.println("\t" + k + "\t" + v); }); HashMap<String,
-         * ArrayList<HashMap<String, Double>>> euclideanList = new HashMap<>();
-         * rankListMetric.forEach((k, v) -> { if (k.contains("Euclidean")) {
-         * euclideanList.put(k, v); } });
-         * System.out.println("Generating sum all metrics Euclidean..."); makeSumRank =
-         * BordaRanking.makeSumRank(euclideanList); System.out.println("\tName\tRank");
-         * makeSumRank.forEach((k, v) -> { System.out.println("\t" + k + "\t" + v); });
-         * 
-         * HashMap<String, ArrayList<HashMap<String, Double>>> chebyshevList = new
-         * HashMap<>(); rankListMetric.forEach((k, v) -> { if (k.contains("Chebyshev"))
-         * { chebyshevList.put(k, v); } });
-         * System.out.println("Generating sum all metrics Chebyshev..."); makeSumRank =
-         * BordaRanking.makeSumRank(chebyshevList); System.out.println("\tName\tRank");
-         * makeSumRank.forEach((k, v) -> { System.out.println("\t" + k + "\t" + v); });
-         * 
-         * HashMap<String, ArrayList<HashMap<String, Double>>> satList = new
-         * HashMap<>(); rankListMetric.forEach((k, v) -> { if (k.contains("Sat")) {
-         * satList.put(k, v); } });
-         * System.out.println("Generating sum all metrics SAT..."); makeSumRank =
-         * BordaRanking.makeSumRank(satList); System.out.println("\tName\tRank");
-         * makeSumRank.forEach((k, v) -> { System.out.println("\t" + k + "\t" + v); });
-         */
+        System.out.println("Generating sum all metrics All...");
+        HashMap<String, Double> makeSumRank = BordaRanking.makeSumRank(rankListMetric);
+        System.out.println("\tName\tRank");
+        makeSumRank.forEach((k, v) -> {
+            System.out.println("\t" + k + "\t" + v);
+        });
+        HashMap<String, ArrayList<HashMap<String, Double>>> euclideanList = new HashMap<>();
+        rankListMetric.forEach((k, v) -> {
+            if (k.contains("Euclidean")) {
+                euclideanList.put(k, v);
+            }
+        });
+        System.out.println("Generating sum all metrics Euclidean...");
+        makeSumRank = BordaRanking.makeSumRank(euclideanList);
+        System.out.println("\tName\tRank");
+        makeSumRank.forEach((k, v) -> {
+            System.out.println("\t" + k + "\t" + v);
+        });
+
+        HashMap<String, ArrayList<HashMap<String, Double>>> chebyshevList = new HashMap<>();
+        rankListMetric.forEach((k, v) -> {
+            if (k.contains("Chebyshev")) {
+                chebyshevList.put(k, v);
+            }
+        });
+        System.out.println("Generating sum all metrics Chebyshev...");
+        makeSumRank = BordaRanking.makeSumRank(chebyshevList);
+        System.out.println("\tName\tRank");
+        makeSumRank.forEach((k, v) -> {
+            System.out.println("\t" + k + "\t" + v);
+        });
+
+        HashMap<String, ArrayList<HashMap<String, Double>>> satList = new HashMap<>();
+        rankListMetric.forEach((k, v) -> {
+            if (k.contains("HSat")) {
+                satList.put(k, v);
+            }
+        });
+        System.out.println("Generating sum all metrics HSAT...");
+        
+        makeSumRank = BordaRanking.makeSumRank(satList);
+        System.out.println("\tName\tRank");
+        makeSumRank.forEach((k, v) -> {
+            System.out.println("\t" + k + "\t" + v);
+        });
+        
+
     }
 
     private static void loadSolutionExperiment(String _DIRECTORY, HashMap<String, DTLZP> problems,
@@ -636,14 +655,19 @@ public class AlgorithmComparisonReport {
         String data = "";
         String ranking_ = "";
         HashMap<String, Double> rankingBorderMap;
-        /*
-         * if (nameProblem.toLowerCase().contains("family")) { rankingBorderMap =
-         * BordaRanking.doGlobalRanking(rankListMetric.get(metricName)); } else {
-         * rankingBorderMap = BordaRanking.doRankingBorda(friedman);
-         * 
-         * if (!rankListMetric.containsKey(metricName)) { rankListMetric.put(metricName,
-         * new ArrayList<>()); } rankListMetric.get(metricName).add(rankingBorderMap); }
-         */
+
+        if (nameProblem.toLowerCase().contains("family")) {
+            //System.out.println("Global ranking "+ metricName);
+            rankingBorderMap = BordaRanking.doGlobalRanking(rankListMetric.get(metricName));
+        } else {
+            rankingBorderMap = BordaRanking.doRankingBorda(friedman);
+
+            if (!rankListMetric.containsKey(metricName)) {
+                rankListMetric.put(metricName, new ArrayList<>());
+            }
+            rankListMetric.get(metricName).add(rankingBorderMap);
+        }
+
         iterator = summaryMean.keySet().iterator();
         String summary = "";
         HashMap<String, String> sumMap = new HashMap<>();
@@ -651,7 +675,8 @@ public class AlgorithmComparisonReport {
             String[] names_ = ranking.getNames();
             BigDecimal[] values_ = ranking.getRankings();
 
-            System.out.println(nameProblem + "/" + nameProblem + " > " + Arrays.toString(names_)+ " <-> " + Arrays.toString(values_));
+            System.out.println(nameProblem + "/" + nameProblem + " > " + Arrays.toString(names_) + " <-> "
+                    + Arrays.toString(values_));
             BigDecimal min_rank = Collections.min(Arrays.asList(values_));
             for (int i = 0; i < names_.length; i++) {
                 String name__ = names_[i].replaceAll(regex, "");
@@ -836,12 +861,13 @@ public class AlgorithmComparisonReport {
             });
 
             csatSolutions.addAll(roi.get(_p.getName()));
-
-            try {
-                System.out.println("\tExport all solutions with class");
-                EXPORT_OBJECTIVES_TO_CSV(LAST_DIRECTORY, csatSolutions, _p.getName() + "_ALL");
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (numberOfObjectives == 3) {
+                try {
+                    System.out.println("\tExport all solutions with class");
+                    EXPORT_OBJECTIVES_TO_CSV(LAST_DIRECTORY, csatSolutions, _p.getName() + "_ALL");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             System.out.println("\tCsat distribution: " + csatSolutions.size());
             HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm2 = groupByAlgorithm(csatSolutions,
