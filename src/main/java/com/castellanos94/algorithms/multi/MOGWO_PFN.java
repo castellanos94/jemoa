@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import com.castellanos94.operators.RepairOperator;
+import com.castellanos94.operators.impl.CrowdingDistanceArchive;
 import com.castellanos94.preferences.impl.IntervalOutrankingRelations;
 import com.castellanos94.problems.GDProblem;
 import com.castellanos94.problems.Problem;
@@ -26,6 +27,7 @@ public class MOGWO_PFN<S extends DoubleSolution> extends MOGWO<S> implements Ext
             return Double.compare(netscore_a, netscore_b);
         };
         this.heapSortSolutions = new HeapSort<>(cmp.reversed());
+        this.archiveSelection = new CrowdingDistanceArchive<>(nGrid);
 
     }
 

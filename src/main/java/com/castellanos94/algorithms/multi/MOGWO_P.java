@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import com.castellanos94.mcda.SatClassifier;
 import com.castellanos94.operators.RepairOperator;
+import com.castellanos94.operators.impl.CrowdingDistanceArchive;
 import com.castellanos94.problems.GDProblem;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.DoubleSolution;
@@ -16,6 +17,7 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO<S> {
     public MOGWO_P(Problem<S> problem, int populationSize, int MAX_ITERATIONS, int nGrid,
             RepairOperator<S> repairOperator) {
         super(problem, populationSize, MAX_ITERATIONS, nGrid, repairOperator);
+        this.archiveSelection = new CrowdingDistanceArchive<>(nGrid);
         classifier = new SatClassifier<>((GDProblem<S>) problem);
     }
 
