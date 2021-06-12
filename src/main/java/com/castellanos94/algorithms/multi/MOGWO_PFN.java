@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import com.castellanos94.operators.RepairOperator;
-import com.castellanos94.operators.impl.CrowdingDistanceArchive;
 import com.castellanos94.preferences.impl.IntervalOutrankingRelations;
 import com.castellanos94.problems.GDProblem;
 import com.castellanos94.problems.Problem;
@@ -15,7 +14,18 @@ import com.castellanos94.utils.HeapSort;
 public class MOGWO_PFN<S extends DoubleSolution> extends MOGWO<S> implements ExtraInformation {
     protected IntervalOutrankingRelations<S> preferences;
     protected HeapSort<S> heapSortSolutions;
-
+/**
+     * Default ArchiveSelection : AdaptiveGrid
+     * 
+     * @see com.castellanos94.operators.impl.AdaptiveGrid
+     * 
+     * @param problem        mop
+     * @param populationSize wolf population size
+     * @param MAX_ITERATIONS max iteration
+     * @param nGrid          external population size
+     * @param repairOperator repair operator
+     * @see MOGWO
+     */
     public MOGWO_PFN(Problem<S> problem, int populationSize, int MAX_ITERATIONS, int nGrid,
             RepairOperator<S> repairOperator) {
         super(problem, populationSize, MAX_ITERATIONS, nGrid, repairOperator);
@@ -27,8 +37,6 @@ public class MOGWO_PFN<S extends DoubleSolution> extends MOGWO<S> implements Ext
             return Double.compare(netscore_a, netscore_b);
         };
         this.heapSortSolutions = new HeapSort<>(cmp.reversed());
-        this.archiveSelection = new CrowdingDistanceArchive<>(nGrid);
-
     }
 
     @Override

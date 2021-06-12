@@ -49,6 +49,7 @@ public class PI_MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgo
             return Double.compare(netscore_a, netscore_b);
         };
         this.heapSortSolutions = new HeapSort<>(cmp.reversed());
+        this.repairOperator = repairOperator;
     }
 
     @Override

@@ -55,8 +55,7 @@ public class MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorit
         this.repairOperator = repairOperator;
         this.nGrid = nGrid;
         this.selectionOperator = new RouletteWheelSelection<>(nGrid);
-        this.archiveSelection = new AdaptiveGrid<>(problem, nGrid);// new CrowdingDistanceArchive<>(nGrid);// new
-                                                                   // AdaptiveGrid<>(problem, nGrid);
+        this.archiveSelection = new AdaptiveGrid<>(problem, nGrid);// new CrowdingDistanceArchive<>(nGrid);
         this.comparator = new DominanceComparator<>();
     }
 

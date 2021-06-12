@@ -19,6 +19,7 @@ import com.castellanos94.algorithms.multi.MOGWO_P;
 import com.castellanos94.algorithms.multi.MOGWO_PFN;
 import com.castellanos94.algorithms.multi.MOGWO_V;
 import com.castellanos94.algorithms.multi.NSGA_III_P;
+import com.castellanos94.algorithms.multi.PI_MOGWO;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.instances.DTLZ_Instance;
@@ -53,7 +54,7 @@ public class Main implements Runnable {
     private static final Logger logger = LogManager.getLogger(Main.class);
 
     private enum AlgorithmNames {
-        NSGAIII, NSGAIIIP, MOGWO, MOGWOV, MOGWOP, MOGWOPFN, IMOACOR, IMOACORP,
+        NSGAIII, NSGAIIIP, MOGWO, MOGWOV, PIMOGWO, MOGWOP, MOGWOPFN, IMOACOR, IMOACORP,
     }
 
     @Option(names = { "-a",
@@ -87,7 +88,8 @@ public class Main implements Runnable {
     @Option(names = {
             "-q" }, description = "diversification process control parameter for IMOACOR", showDefaultValue = Visibility.ALWAYS)
     private double q = 0.1; // 5 % of population
-    @Option(names = { "-xi" }, description = " convergence rate control parameter for IMOACOR", showDefaultValue = Visibility.ALWAYS)
+    @Option(names = {
+            "-xi" }, description = " convergence rate control parameter for IMOACOR", showDefaultValue = Visibility.ALWAYS)
     private double xi = 0.5;
 
     public static void main(String[] args) {
@@ -107,9 +109,10 @@ public class Main implements Runnable {
             DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NSGAIII"
                     + File.separator + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
         } else if (algorithmName == AlgorithmNames.MOGWO || algorithmName == AlgorithmNames.MOGWOP
-                || algorithmName == AlgorithmNames.MOGWOPFN || algorithmName == AlgorithmNames.MOGWOV) {
+                || algorithmName == AlgorithmNames.MOGWOPFN || algorithmName == AlgorithmNames.MOGWOV
+                || algorithmName == AlgorithmNames.PIMOGWO) {
             DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWO" + File.separator
-                    + algorithmName;
+                    + ((algorithmName == AlgorithmNames.PIMOGWO) ? "" : "CD-") + algorithmName;
         } else {
             String suffix = (this.q != 0.1 || this.xi != 0.5) ? String.format("Q%.3fXI%.2f", this.q, this.xi) : "";
             if (algorithmName == AlgorithmNames.IMOACORP) {
@@ -130,7 +133,7 @@ public class Main implements Runnable {
             if (seed != -1)
                 Tools.setSeed(seed);
 
-            logger.info("Experimentation " + algorithmName + " : DTLZ with preferences, seed = "+ seed);
+            logger.info("Experimentation " + algorithmName + " : DTLZ with preferences, seed = " + seed);
             String resourseFile = "DTLZ_INSTANCES" + File.separator + numberOfObjectives + File.separator + "DTLZ"
                     + numberOfProblem + "_Instance.txt";
             DTLZ_Instance instance = null;
@@ -364,6 +367,10 @@ public class Main implements Runnable {
             return new MOGWO_PFN<>(problem, (int) options.get("pop_size"), maxIterations,
                     (int) options.get("pop_size") / 2, new RepairBoundary());
         }
+        if (_algorithmName == AlgorithmNames.PIMOGWO) {
+            return new PI_MOGWO<>(problem, (int) options.get("pop_size"), maxIterations, new RepairBoundary());
+        }
+
         return null;
 
     }
