@@ -16,7 +16,7 @@ import com.castellanos94.algorithms.multi.IMOACO_R;
 import com.castellanos94.algorithms.multi.IMOACO_R_P;
 import com.castellanos94.algorithms.multi.MOGWO;
 import com.castellanos94.algorithms.multi.MOGWO_P;
-import com.castellanos94.algorithms.multi.MOGWO_PFN;
+import com.castellanos94.algorithms.multi.MOGWO_O;
 import com.castellanos94.algorithms.multi.MOGWO_V;
 import com.castellanos94.algorithms.multi.NSGA_III_P;
 import com.castellanos94.algorithms.multi.PI_MOGWO;
@@ -112,7 +112,7 @@ public class Main implements Runnable {
                 || algorithmName == AlgorithmNames.MOGWOPFN || algorithmName == AlgorithmNames.MOGWOV
                 || algorithmName == AlgorithmNames.PIMOGWO) {
             DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWO" + File.separator
-                    + ((algorithmName == AlgorithmNames.PIMOGWO) ? "" : "CD-") + algorithmName;
+                    + algorithmName;
         } else {
             String suffix = (this.q != 0.1 || this.xi != 0.5) ? String.format("Q%.3fXI%.2f", this.q, this.xi) : "";
             if (algorithmName == AlgorithmNames.IMOACORP) {
@@ -364,7 +364,7 @@ public class Main implements Runnable {
                     (int) options.get("pop_size") / 2, new RepairBoundary());
         }
         if (_algorithmName == AlgorithmNames.MOGWOPFN) {
-            return new MOGWO_PFN<>(problem, (int) options.get("pop_size"), maxIterations,
+            return new MOGWO_O<>(problem, (int) options.get("pop_size"), maxIterations,
                     (int) options.get("pop_size") / 2, new RepairBoundary());
         }
         if (_algorithmName == AlgorithmNames.PIMOGWO) {

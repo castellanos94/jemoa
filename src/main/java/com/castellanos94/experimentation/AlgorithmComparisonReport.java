@@ -42,7 +42,7 @@ import tech.tablesaw.columns.Column;
  */
 public class AlgorithmComparisonReport {
 
-    private final static int numberOfObjectives = 5;
+    private final static int numberOfObjectives = 10;
     private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
     // private static String algorithmName = File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
@@ -51,10 +51,12 @@ public class AlgorithmComparisonReport {
             + File.separator;
     private static String MOGWOP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
             + "MOGWO" + File.separator;
-    private static String NEO_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NEO"
+    private static String NSGA3VSMOEAD = "experiments" + File.separator + numberOfObjectives + File.separator + "NSGA3VSMOEAD"
             + File.separator;
     private static String IMOACOR_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
             + "IMOACOR" + File.separator;
+    private static String MOGWOVSIMOACOR = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWOVSIMOACOR"
+            + File.separator;
     private static String CMP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "CMP"
             + File.separator;
     private static Table stats = Table.create("statistic");
@@ -77,7 +79,7 @@ public class AlgorithmComparisonReport {
     private static StringColumn dMaxColumn = StringColumn.create("Max");
     private static StringColumn timeColumn = StringColumn.create("time");
     private static HashMap<String, ArrayList<HashMap<String, Double>>> rankListMetric = new HashMap<>();
-    private static String ALGORITHM_IGNORE[] ={"IMOACORPR2-Elite2"}; //{ "MOGWO", "MOGWO-V", "C0R0", "C2R1", "C10R0", "VAR-97", "VAR-98","VAR-100", "VAR-104", "VAR-127", "VAR-0", "IMOACOR", "IMOACORPR2-Elite2" };// {"C0R0","VAR-0","IMOACOR","MOGWO"};
+    private static String ALGORITHM_IGNORE[] ={ "MOGWO", "MOGWO-V", "C0R0", "C2R1", "C10R0", "VAR-97", "VAR-98","VAR-100", "VAR-104", "VAR-127", "VAR-0", "IMOACOR", "IMOACORPR2-Elite2" };// {"C0R0","VAR-0","IMOACOR","MOGWO"};
 
     public static void main(String[] args) throws IOException {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();
@@ -88,14 +90,10 @@ public class AlgorithmComparisonReport {
         //loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
 
         //loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
-        //loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
-
         loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
-
-        // loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem,
-        // algorithmTimeByProblem);
+        loadSolutionExperiment(IMOACOR_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
         // Ruta de salida
-        final String LAST_DIRECTORY = MOGWOP_DIRECTORY;
+        final String LAST_DIRECTORY = MOGWOVSIMOACOR;
         // Se valida que la ruta existe
         if (!new File(LAST_DIRECTORY).exists())
             new File(LAST_DIRECTORY).mkdirs();

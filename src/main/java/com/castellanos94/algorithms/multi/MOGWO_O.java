@@ -11,7 +11,7 @@ import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.utils.ExtraInformation;
 import com.castellanos94.utils.HeapSort;
 
-public class MOGWO_PFN<S extends DoubleSolution> extends MOGWO<S> implements ExtraInformation {
+public class MOGWO_O<S extends DoubleSolution> extends MOGWO<S> implements ExtraInformation {
     protected IntervalOutrankingRelations<S> preferences;
     protected HeapSort<S> heapSortSolutions;
 /**
@@ -26,7 +26,7 @@ public class MOGWO_PFN<S extends DoubleSolution> extends MOGWO<S> implements Ext
      * @param repairOperator repair operator
      * @see MOGWO
      */
-    public MOGWO_PFN(Problem<S> problem, int populationSize, int MAX_ITERATIONS, int nGrid,
+    public MOGWO_O(Problem<S> problem, int populationSize, int MAX_ITERATIONS, int nGrid,
             RepairOperator<S> repairOperator) {
         super(problem, populationSize, MAX_ITERATIONS, nGrid, repairOperator);
         this.preferences = new IntervalOutrankingRelations<>(problem.getNumberOfObjectives(),
@@ -98,7 +98,7 @@ public class MOGWO_PFN<S extends DoubleSolution> extends MOGWO<S> implements Ext
 
     @Override
     public String toString() {
-        return "MOGWO-PFN [MAX_ITERATIONS=" + MAX_ITERATIONS + ", nGrid=" + nGrid + ", Problem="
+        return "MOGWO-O [MAX_ITERATIONS=" + MAX_ITERATIONS + ", nGrid=" + nGrid + ", Problem="
                 + this.problem.toString() + "]";
     }
 

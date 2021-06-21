@@ -12,7 +12,7 @@ import java.util.HashMap;
 import com.castellanos94.algorithms.AbstractAlgorithm;
 import com.castellanos94.algorithms.multi.MOGWO;
 import com.castellanos94.algorithms.multi.MOGWO_P;
-import com.castellanos94.algorithms.multi.MOGWO_PFN;
+import com.castellanos94.algorithms.multi.MOGWO_O;
 import com.castellanos94.algorithms.multi.MOGWO_V;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
@@ -280,7 +280,7 @@ public class MOGWO_P_Experimentation {
             return new MOGWO_P<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
         }
         if (algorithm.equalsIgnoreCase("mogwo-pfn")) {
-            return new MOGWO_PFN<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
+            return new MOGWO_O<>(problem, pop_size, maxIterations, pop_size / 2, new RepairBoundary());
         }
 
         if (algorithm.equalsIgnoreCase("mogwo-v"))
