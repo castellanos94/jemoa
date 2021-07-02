@@ -46,6 +46,7 @@ public class MOEAD_Example {
             if (i == 0) {
                 logger.info(algorithm.getProblem().toString());
                 logger.info(algorithm.toString());
+                problem = (DTLZ) algorithm.getProblem();
             }
             algorithm.execute();
             logger.info(i + " time: " + algorithm.getComputeTime() + " ms.");

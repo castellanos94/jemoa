@@ -2,6 +2,8 @@ package com.castellanos94.algorithms.multi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.components.impl.DominanceComparator;
@@ -50,7 +52,7 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
     /**
      * Z
      */
-    protected List<Data> idealPoint;
+    protected ArrayList<Data> idealPoint;
     protected int currentIteration;
     protected RepairOperator<S> repairOperator;
     protected DominanceComparator<S> dominanceComparator;
@@ -147,14 +149,12 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
 
     @SuppressWarnings("unchecked")
     protected void updateNeighboring(int i, ArrayList<S> FV, ArrayList<S> child) {
-
-        for (int index = 0; index < child.size(); index++) {
-            for (int j = 0; j < T; j++) {
+        for (int j = 0; j < T; j++) {
+            for (int index = 0; index < child.size(); index++) {
                 S y = child.get(index);
                 S x = FV.get(b[i][j]);
                 if (g(y, lambda.get(b[i][j])).compareTo(g(x, lambda.get(b[i][j]))) <= 0) {
                     FV.set(b[i][j], (S) y.copy());
-                    break;
                 }
             }
         }
@@ -170,6 +170,13 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
         }
     }
 
+    /**
+     * Boundary Intersection approach
+     * 
+     * @param x
+     * @param lambda_j
+     * @return
+     */
     private Data g_bi(S x, ArrayList<Data> lambda_j) {
         double theta = 0.5;
         Data d1 = (x.getObjective(0).minus(idealPoint.get(0))).times(lambda_j.get(0));
@@ -189,6 +196,13 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
         return d1.plus(theta).plus(d2);
     }
 
+    /**
+     * Weighted Sum Approach
+     * 
+     * @param x
+     * @param lambda_j
+     * @return
+     */
     private Data g_ws(S x, ArrayList<Data> lambda_j) {
         Data rs = x.getObjective(0).times(lambda_j.get(0));
         for (int i = 1; i < problem.getNumberOfObjectives(); i++) {
@@ -197,6 +211,13 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
         return rs;
     }
 
+    /**
+     * Tchebycheff approach
+     * 
+     * @param x
+     * @param lambda_j
+     * @return
+     */
     private Data g_te(S x, ArrayList<Data> lambda_j) {
         Data rs = lambda_j.get(0).times(x.getObjective(0).minus(idealPoint.get(0).abs()));
         for (int i = 1; i < problem.getNumberOfObjectives(); i++) {
@@ -245,10 +266,25 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
     protected ArrayList<S> replacement(ArrayList<S> population, ArrayList<S> offspring) {
         ArrayList<S> rs = new ArrayList<>();
         population.addAll(offspring);
-        dominanceComparator.computeRanking(population);
+        ArrayList<S> tmp = new ArrayList<>(population.stream().distinct().collect(Collectors.toList()));
+        dominanceComparator.computeRanking(tmp);
         for (S s : dominanceComparator.getSubFront(0)) {
             rs.add((S) s.copy());
         }
+        /*
+        if (rs.size() > N) {
+            ArrayList<ImmutablePair<Data, S>> data = new ArrayList<>();
+            for (S tmpS : rs) {
+                data.add(new ImmutablePair<Data, S>(Distance.chebyshevDistance(tmpS.getObjectives(), idealPoint), tmpS));
+            }
+            data.sort((a, b) -> a.getLeft().compareTo(b.getLeft()));
+            
+            tmp = new ArrayList<>();
+            for (ImmutablePair<Data, S> immutablePair : data.subList(0, N)) {
+                tmp.add(immutablePair.getRight());
+            }
+            return tmp;
+        }*/
         return rs;
     }
 
