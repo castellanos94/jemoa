@@ -94,7 +94,7 @@ public class MOEAD_Example {
         int nr = 2;
         int h;
         if (numberOfObjectives == 3) {
-            pop_size = 210;
+            pop_size = 91;
             h = 12;            
         } else if (numberOfObjectives == 5) {
             pop_size = 212;

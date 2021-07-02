@@ -17,9 +17,9 @@ import com.castellanos94.utils.Tools;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 /**
- * Qingfu Zhang, & Hui Li. (2007). MOEA/D: A Multiobjective Evolutionary
- * Algorithm Based on Decomposition. IEEE Transactions on Evolutionary
- * Computation, 11(6), 712–731. doi:10.1109/tevc.2007.892759
+ * PENDIENTE Qingfu Zhang, & Hui Li. (2007). MOEA/D: A Multiobjective
+ * Evolutionary Algorithm Based on Decomposition. IEEE Transactions on
+ * Evolutionary Computation, 11(6), 712–731. doi:10.1109/tevc.2007.892759
  */
 public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<S> {
     public static enum APPROACH {
@@ -74,6 +74,7 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
             RepairOperator<S> repairOperator, DominanceComparator<S> dominanceComparator, APPROACH apporachUsed) {
         super(problem);
         this.N = N;
+        this.populationSize = N;
         this.MAX_ITERATIONS = MAX_ITERATIONS;
         this.lambda = weightVectors;
         this.T = T;
@@ -91,7 +92,7 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
         this.init_time = System.currentTimeMillis();
         // Step 1: initialization
         this.solutions = new ArrayList<>();
-        ArrayList<S> FV = new ArrayList<>(N);
+
         b = new int[N][T];
         // Step 1.2: compute eculidean distance between any two weight vectors and then
         // work out the T closest weight vectors to each wegith vector
@@ -112,15 +113,10 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
             }
         }
         // Step 1.3: generate an initial population x_1 to x_N
-        for (int i = 0; i < N; i++) {
-            S s = problem.randomSolution();
-            problem.evaluate(s);
-            problem.evaluateConstraint(s);
-            FV.add(s);
-        }
+        ArrayList<S> FV = initPopulation();
         dominanceComparator.computeRanking(FV);
         for (int i = 0; i < dominanceComparator.getSubFront(0).size(); i++) {
-            solutions.add((S) dominanceComparator.getSubFront(i).get(i).copy());
+            solutions.add((S) dominanceComparator.getSubFront(0).get(i).copy());
         }
         // Step 1.4: initialize z
         this.idealPoint = new ArrayList<>(problem.getNumberOfObjectives());
@@ -143,23 +139,22 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
                 updateNeighboring(i, FV, child);
                 // Step 2.5: update of EP
                 this.solutions = replacement(solutions, child);
-
             }
             updateProgress();
         }
-
         computeTime = System.currentTimeMillis() - init_time;
-
     }
 
     @SuppressWarnings("unchecked")
     protected void updateNeighboring(int i, ArrayList<S> FV, ArrayList<S> child) {
-        for (int j = 0; j < T; j++) {
-            for (int index = 0; index < child.size(); index++) {
+
+        for (int index = 0; index < child.size(); index++) {
+            for (int j = 0; j < T; j++) {
                 S y = child.get(index);
                 S x = FV.get(b[i][j]);
                 if (g(y, lambda.get(b[i][j])).compareTo(g(x, lambda.get(b[i][j]))) <= 0) {
                     FV.set(b[i][j], (S) y.copy());
+                    break;
                 }
             }
         }
