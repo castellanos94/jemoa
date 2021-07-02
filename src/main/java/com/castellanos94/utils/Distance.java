@@ -32,36 +32,36 @@ public class Distance<S extends Solution<?>> implements ExtraInformation {
     public List<Data> evaluate(List<S> observed, List<S> predicted) {
         ArrayList<Data> rs = new ArrayList<>();
         switch (metric) {
-        case EUCLIDEAN_DISTANCE:
-            for (S observed_ : observed) {
-                for (S predicted_ : predicted) {
-                    rs.add(euclideanDistance(observed_.getObjectives(), predicted_.getObjectives()));
+            case EUCLIDEAN_DISTANCE:
+                for (S observed_ : observed) {
+                    for (S predicted_ : predicted) {
+                        rs.add(euclideanDistance(observed_.getObjectives(), predicted_.getObjectives()));
+                    }
                 }
-            }
-            return rs;
-        case MANHATTAN_DISTANCE:
-            for (S observed_ : observed) {
-                for (S predicted_ : predicted) {
-                    rs.add(manhattanDistance(observed_.getObjectives(), predicted_.getObjectives()));
+                return rs;
+            case MANHATTAN_DISTANCE:
+                for (S observed_ : observed) {
+                    for (S predicted_ : predicted) {
+                        rs.add(manhattanDistance(observed_.getObjectives(), predicted_.getObjectives()));
+                    }
                 }
-            }
-            return rs;
-        case CANBERRA_DISTANCE:
-            for (S observed_ : observed) {
-                for (S predicted_ : predicted) {
-                    rs.add(canberraDistance(observed_.getObjectives(), predicted_.getObjectives()));
+                return rs;
+            case CANBERRA_DISTANCE:
+                for (S observed_ : observed) {
+                    for (S predicted_ : predicted) {
+                        rs.add(canberraDistance(observed_.getObjectives(), predicted_.getObjectives()));
+                    }
                 }
-            }
-            return rs;
-        case CHEBYSHEV_DISTANCE:
-            for (S observed_ : observed) {
-                for (S predicted_ : predicted) {
-                    rs.add(chebyshevDistance(observed_.getObjectives(), predicted_.getObjectives()));
+                return rs;
+            case CHEBYSHEV_DISTANCE:
+                for (S observed_ : observed) {
+                    for (S predicted_ : predicted) {
+                        rs.add(chebyshevDistance(observed_.getObjectives(), predicted_.getObjectives()));
+                    }
                 }
-            }
-            return rs;
-        default:
-            throw new IllegalArgumentException("Metric not implemented yet.");
+                return rs;
+            default:
+                throw new IllegalArgumentException("Metric not implemented yet.");
         }
     }
 
@@ -188,33 +188,33 @@ public class Distance<S extends Solution<?>> implements ExtraInformation {
     public List<Data> evaluateSolutionsToPoint(final List<S> observed, List<Data> point) {
         ArrayList<Data> rs = new ArrayList<>();
         switch (metric) {
-        case EUCLIDEAN_DISTANCE:
-            for (S observed_ : observed) {
-                List<Data> _p =observed_.getObjectives();
-                rs.add(euclideanDistance(_p, point));
-            }
+            case EUCLIDEAN_DISTANCE:
+                for (S observed_ : observed) {
+                    List<Data> _p = observed_.getObjectives();
+                    rs.add(euclideanDistance(_p, point));
+                }
 
-            return rs;
-        case MANHATTAN_DISTANCE:
-            for (S observed_ : observed) {
-                rs.add(manhattanDistance(observed_.getObjectives(), point));
-            }
+                return rs;
+            case MANHATTAN_DISTANCE:
+                for (S observed_ : observed) {
+                    rs.add(manhattanDistance(observed_.getObjectives(), point));
+                }
 
-            return rs;
-        case CANBERRA_DISTANCE:
-            for (S observed_ : observed) {
-                rs.add(canberraDistance(observed_.getObjectives(), point));
-            }
+                return rs;
+            case CANBERRA_DISTANCE:
+                for (S observed_ : observed) {
+                    rs.add(canberraDistance(observed_.getObjectives(), point));
+                }
 
-            return rs;
-        case CHEBYSHEV_DISTANCE:
-            for (S observed_ : observed) {
-                rs.add(chebyshevDistance(observed_.getObjectives(), point));
-            }
+                return rs;
+            case CHEBYSHEV_DISTANCE:
+                for (S observed_ : observed) {
+                    rs.add(chebyshevDistance(observed_.getObjectives(), point));
+                }
 
-            return rs;
-        default:
-            throw new IllegalArgumentException("Metric not implemented yet.");
+                return rs;
+            default:
+                throw new IllegalArgumentException("Metric not implemented yet.");
         }
     }
 }
