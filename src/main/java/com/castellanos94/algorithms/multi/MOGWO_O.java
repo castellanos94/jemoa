@@ -14,7 +14,8 @@ import com.castellanos94.utils.HeapSort;
 public class MOGWO_O<S extends DoubleSolution> extends MOGWO<S> implements ExtraInformation {
     protected IntervalOutrankingRelations<S> preferences;
     protected HeapSort<S> heapSortSolutions;
-/**
+
+    /**
      * Default ArchiveSelection : AdaptiveGrid
      * 
      * @see com.castellanos94.operators.impl.AdaptiveGrid
@@ -46,11 +47,11 @@ public class MOGWO_O<S extends DoubleSolution> extends MOGWO<S> implements Extra
 
         calculateNetScore(solutions);
         int index = 0;
-        alphaWolf = solutions.get(index++);
+        alphaWolf = (S) solutions.get(index++).copy();
         boolean isBetaWolf = false, isDeltaWolf = false, wasCalculteNetScoreForWolves = false;
         int wolfIndex = 0;
         if (index < solutions.size()) {
-            betaWolf = solutions.get(index++);
+            betaWolf = (S) solutions.get(index++).copy();
         } else {
             calculateNetScore(this.wolves);
             wasCalculteNetScoreForWolves = true;
@@ -60,7 +61,7 @@ public class MOGWO_O<S extends DoubleSolution> extends MOGWO<S> implements Extra
         // Select delta and remove to exclude
 
         if (index < solutions.size()) {
-            deltaWolf = solutions.get(index++);
+            deltaWolf = (S) solutions.get(index++).copy();
         } else {
             if (!wasCalculteNetScoreForWolves)
                 calculateNetScore(this.wolves);
@@ -98,8 +99,8 @@ public class MOGWO_O<S extends DoubleSolution> extends MOGWO<S> implements Extra
 
     @Override
     public String toString() {
-        return "MOGWO-O [MAX_ITERATIONS=" + MAX_ITERATIONS + ", nGrid=" + nGrid + ", Problem="
-                + this.problem.toString() + "]";
+        return "MOGWO-O [MAX_ITERATIONS=" + MAX_ITERATIONS + ", nGrid=" + nGrid + ", Problem=" + this.problem.toString()
+                + "]";
     }
 
     @Override
