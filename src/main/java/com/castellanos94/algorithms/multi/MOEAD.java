@@ -2,8 +2,6 @@ package com.castellanos94.algorithms.multi;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.components.impl.DominanceComparator;
@@ -11,6 +9,7 @@ import com.castellanos94.datatype.Data;
 import com.castellanos94.operators.CrossoverOperator;
 import com.castellanos94.operators.MutationOperator;
 import com.castellanos94.operators.RepairOperator;
+import com.castellanos94.operators.impl.AdaptiveGrid;
 import com.castellanos94.problems.Problem;
 import com.castellanos94.solutions.Solution;
 import com.castellanos94.utils.Distance;
@@ -19,9 +18,9 @@ import com.castellanos94.utils.Tools;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 /**
- * PENDIENTE Qingfu Zhang, & Hui Li. (2007). MOEA/D: A Multiobjective
- * Evolutionary Algorithm Based on Decomposition. IEEE Transactions on
- * Evolutionary Computation, 11(6), 712–731. doi:10.1109/tevc.2007.892759
+ * Qingfu Zhang, & Hui Li. (2007). MOEA/D: A Multiobjective Evolutionary
+ * Algorithm Based on Decomposition. IEEE Transactions on Evolutionary
+ * Computation, 11(6), 712–731. doi:10.1109/tevc.2007.892759
  */
 public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<S> {
     public static enum APPROACH {
@@ -70,6 +69,7 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
      * @param repairOperator      repair or improvement operator
      * @param dominanceComparator @see {@link DominanceComparator}
      * @param apporachUsed        Approach to evaluete: @see {@link APPROACH}
+     * @see AdaptiveGrid
      */
     public MOEAD(Problem<S> problem, int MAX_ITERATIONS, int N, ArrayList<ArrayList<Data>> weightVectors, int T,
             CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
@@ -262,30 +262,22 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected ArrayList<S> replacement(ArrayList<S> population, ArrayList<S> offspring) {
-        ArrayList<S> rs = new ArrayList<>();
-        population.addAll(offspring);
-        ArrayList<S> tmp = new ArrayList<>(population.stream().distinct().collect(Collectors.toList()));
-        dominanceComparator.computeRanking(tmp);
-        for (S s : dominanceComparator.getSubFront(0)) {
-            rs.add((S) s.copy());
-        }
+        ArrayList<S> tmp2 = new ArrayList<>(population);
+        tmp2.addAll(offspring);
+
+        AdaptiveGrid<S> adaptiveGrid = new AdaptiveGrid<>(problem, populationSize, this.dominanceComparator);
+        adaptiveGrid.execute(tmp2);
         /*
-        if (rs.size() > N) {
-            ArrayList<ImmutablePair<Data, S>> data = new ArrayList<>();
-            for (S tmpS : rs) {
-                data.add(new ImmutablePair<Data, S>(Distance.chebyshevDistance(tmpS.getObjectives(), idealPoint), tmpS));
-            }
-            data.sort((a, b) -> a.getLeft().compareTo(b.getLeft()));
-            
-            tmp = new ArrayList<>();
-            for (ImmutablePair<Data, S> immutablePair : data.subList(0, N)) {
-                tmp.add(immutablePair.getRight());
-            }
-            return tmp;
-        }*/
-        return rs;
+         * if (rs.size() > N) { ArrayList<ImmutablePair<Data, S>> data = new
+         * ArrayList<>(); for (S tmpS : rs) { data.add(new ImmutablePair<Data,
+         * S>(Distance.chebyshevDistance(tmpS.getObjectives(), idealPoint), tmpS)); }
+         * data.sort((a, b) -> a.getLeft().compareTo(b.getLeft()));
+         * 
+         * tmp = new ArrayList<>(); for (ImmutablePair<Data, S> immutablePair :
+         * data.subList(0, N)) { tmp.add(immutablePair.getRight()); } return tmp; }
+         */
+        return adaptiveGrid.getParents();
     }
 
     @Override

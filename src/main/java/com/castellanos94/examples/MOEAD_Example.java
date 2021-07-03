@@ -35,7 +35,7 @@ public class MOEAD_Example {
         if (!f.exists())
             f.mkdirs();
         DTLZ problem = null;
-        int np = 1;
+        int np = 7;
         int nobj = 3;
         ArrayList<Long> time = new ArrayList<>();
         ArrayList<DoubleSolution> bag = new ArrayList<>();
