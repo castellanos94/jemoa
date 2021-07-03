@@ -55,6 +55,7 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
     protected int currentIteration;
     protected RepairOperator<S> repairOperator;
     protected DominanceComparator<S> dominanceComparator;
+    protected AdaptiveGrid<S> adaptiveGrid;
 
     /**
      * 
@@ -93,7 +94,7 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
     public void execute() {
         this.init_time = System.currentTimeMillis();
         // Step 1: initialization
-        this.solutions = new ArrayList<>();
+        this.adaptiveGrid = new AdaptiveGrid<>(problem, populationSize, this.dominanceComparator);
 
         b = new int[N][T];
         // Step 1.2: compute eculidean distance between any two weight vectors and then
@@ -116,14 +117,15 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
         }
         // Step 1.3: generate an initial population x_1 to x_N
         ArrayList<S> FV = initPopulation();
-        dominanceComparator.computeRanking(FV);
-        for (int i = 0; i < dominanceComparator.getSubFront(0).size(); i++) {
-            solutions.add((S) dominanceComparator.getSubFront(0).get(i).copy());
+        for (int i = 0; i < FV.size(); i++) {
+            this.adaptiveGrid.addSolution((S) FV.get(i).copy());
         }
         // Step 1.4: initialize z
         this.idealPoint = new ArrayList<>(problem.getNumberOfObjectives());
+        Data ref = FV.get(0).getObjective(0);
         for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
-            idealPoint.add(FV.get(0).getObjective(i).copy());
+            idealPoint.add(Data.initByRefType(ref,
+                    (problem.getObjectives_type()[i] == Problem.MAXIMIZATION) ? -Double.MAX_VALUE : Double.MAX_VALUE));
         }
         updateUtopianPoint(FV);
         // Stopping criteria
@@ -140,10 +142,11 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
                 // Step 2.4: update of neighboring solutions
                 updateNeighboring(i, FV, child);
                 // Step 2.5: update of EP
-                this.solutions = replacement(solutions, child);
+                replacement(null, child);
             }
             updateProgress();
         }
+        this.solutions = this.adaptiveGrid.getParents();
         computeTime = System.currentTimeMillis() - init_time;
     }
 
@@ -263,11 +266,7 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
 
     @Override
     protected ArrayList<S> replacement(ArrayList<S> population, ArrayList<S> offspring) {
-        ArrayList<S> tmp2 = new ArrayList<>(population);
-        tmp2.addAll(offspring);
-
-        AdaptiveGrid<S> adaptiveGrid = new AdaptiveGrid<>(problem, populationSize, this.dominanceComparator);
-        adaptiveGrid.execute(tmp2);
+        offspring.forEach(s -> adaptiveGrid.addSolution(s));
         /*
          * if (rs.size() > N) { ArrayList<ImmutablePair<Data, S>> data = new
          * ArrayList<>(); for (S tmpS : rs) { data.add(new ImmutablePair<Data,
