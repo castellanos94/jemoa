@@ -15,6 +15,7 @@ import com.castellanos94.algorithms.AbstractAlgorithm;
 import com.castellanos94.algorithms.multi.IMOACO_R;
 import com.castellanos94.algorithms.multi.IMOACO_R_P;
 import com.castellanos94.algorithms.multi.MOEAD;
+import com.castellanos94.algorithms.multi.MOEADO;
 import com.castellanos94.algorithms.multi.MOGWO;
 import com.castellanos94.algorithms.multi.MOGWO_P;
 import com.castellanos94.algorithms.multi.MOGWO_O;
@@ -95,12 +96,17 @@ public class Main implements Runnable {
             "-xi" }, description = " convergence rate control parameter for IMOACOR", showDefaultValue = Visibility.ALWAYS)
     private double xi = 0.5;
     @Option(names = {
-            "-approach-moead" }, description = "Approach used for scalarization function", showDefaultValue = Visibility.ALWAYS)
+            "--approach-moead" }, description = "Approach used for scalarization function", showDefaultValue = Visibility.ALWAYS)
     private MOEAD.APPROACH apporachUsed = MOEAD.APPROACH.TCHEBYCHEFF;
 
     @Option(names = {
-            "-neighborhood-size-moead" }, description = "Neighborhood size for moead", showDefaultValue = Visibility.ALWAYS)
+            "--neighborhood-size-moead" }, description = "Neighborhood size for moead", showDefaultValue = Visibility.ALWAYS)
     private int neighborhoodSize = 20;
+    @Option(names = { "--variant" }, description = "MOEADO variant", showDefaultValue = Visibility.ALWAYS)
+    private int variant = 5;
+    @Option(names = {
+            "-dm" }, description = "DM target, for MODEAO default is the first dm", showDefaultValue = Visibility.ALWAYS)
+    private int dm_target = -1;
 
     public static void main(String[] args) {
         System.exit(new CommandLine(new Main()).setCaseInsensitiveEnumValuesAllowed(true).execute(args));
@@ -108,7 +114,7 @@ public class Main implements Runnable {
 
     @Override
     public void run() {
-
+        final String base = "experiments" + File.separator + numberOfObjectives + File.separator;
         final String DIRECTORY;
 
         if (algorithmName == AlgorithmNames.NSGAIII || algorithmName == AlgorithmNames.NSGAIIIP) {
@@ -116,22 +122,31 @@ public class Main implements Runnable {
                 CLASSIFY_EVERY_ITERATION = 0;
                 ELEMENTS_TO_REPLACE = 0;
             }
-            DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "NSGAIII"
-                    + File.separator + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
+            DIRECTORY = base + "NSGAIII" + File.separator + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
         } else if (algorithmName == AlgorithmNames.MOGWO || algorithmName == AlgorithmNames.MOGWOP
                 || algorithmName == AlgorithmNames.MOGWOPFN || algorithmName == AlgorithmNames.MOGWOV
                 || algorithmName == AlgorithmNames.PIMOGWO) {
-            DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWO" + File.separator
-                    + algorithmName;
+            DIRECTORY = base + "MOGWO" + File.separator + algorithmName;
+        } else if (algorithmName == AlgorithmNames.MOEAD || algorithmName == AlgorithmNames.MOEADO) {
+            String suffix = "";
+
+            if (algorithmName == AlgorithmNames.MOEADO) {
+                suffix = ((dm_target != -1) ? "DM" + dm_target : "DM1") + "-VAR" + variant;
+            }
+            if (apporachUsed != MOEAD.APPROACH.TCHEBYCHEFF) {
+                suffix += "-" + apporachUsed;
+            }
+            if (neighborhoodSize != 20) {
+                suffix += "-" + neighborhoodSize;
+            }
+            DIRECTORY = base + "MOEAD" + File.separator + algorithmName + suffix;
         } else {
             String suffix = (this.q != 0.1 || this.xi != 0.5) ? String.format("Q%.3fXI%.2f", this.q, this.xi) : "";
             if (algorithmName == AlgorithmNames.IMOACORP) {
                 String algorithmName__ = (isFirstRank) ? algorithmName + "R1" : algorithmName + "R2";
-                DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "IMOACOR"
-                        + File.separator + algorithmName__ + suffix;
+                DIRECTORY = base + "IMOACOR" + File.separator + algorithmName__ + suffix;
             } else {
-                DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "IMOACOR"
-                        + File.separator + algorithmName + suffix;
+                DIRECTORY = base + "IMOACOR" + File.separator + algorithmName + suffix;
             }
         }
         new File(DIRECTORY).mkdirs();
@@ -384,6 +399,16 @@ public class Main implements Runnable {
             ArrayList<ArrayList<Data>> weights = generateWeight(problem, (int) options.get("partitions"));
 
             return new MOEAD<>(problem, maxIterations, weights.size(), weights, neighborhoodSize,
+                    (CrossoverOperator<DoubleSolution>) options.get("crossover"),
+                    (MutationOperator<DoubleSolution>) options.get("mutation"), new RepairBoundary(),
+                    new DominanceComparator<>(), apporachUsed);
+        }
+
+        if (_algorithmName == AlgorithmNames.MOEADO) {
+            ArrayList<ArrayList<Data>> weights = generateWeight(problem, (int) options.get("partitions"));
+
+            return new MOEADO<>(problem, maxIterations, weights.size(), weights, neighborhoodSize,
+                    problem.getInstance().getPreferenceModel((dm_target == -1) ? 0 : dm_target - 1), variant,
                     (CrossoverOperator<DoubleSolution>) options.get("crossover"),
                     (MutationOperator<DoubleSolution>) options.get("mutation"), new RepairBoundary(),
                     new DominanceComparator<>(), apporachUsed);
