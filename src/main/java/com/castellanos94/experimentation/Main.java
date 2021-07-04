@@ -14,6 +14,7 @@ import java.util.stream.IntStream;
 import com.castellanos94.algorithms.AbstractAlgorithm;
 import com.castellanos94.algorithms.multi.IMOACO_R;
 import com.castellanos94.algorithms.multi.IMOACO_R_P;
+import com.castellanos94.algorithms.multi.MOEAD;
 import com.castellanos94.algorithms.multi.MOGWO;
 import com.castellanos94.algorithms.multi.MOGWO_P;
 import com.castellanos94.algorithms.multi.MOGWO_O;
@@ -22,6 +23,7 @@ import com.castellanos94.algorithms.multi.NSGA_III_P;
 import com.castellanos94.algorithms.multi.PI_MOGWO;
 import com.castellanos94.components.Ranking;
 import com.castellanos94.components.impl.DominanceComparator;
+import com.castellanos94.datatype.Data;
 import com.castellanos94.instances.DTLZ_Instance;
 import com.castellanos94.mcda.SatClassifier;
 import com.castellanos94.operators.CrossoverOperator;
@@ -34,6 +36,7 @@ import com.castellanos94.operators.impl.TournamentSelection;
 import com.castellanos94.problems.DTLZP;
 import com.castellanos94.solutions.DoubleSolution;
 import com.castellanos94.solutions.Solution;
+import com.castellanos94.utils.ReferenceHyperplane;
 import com.castellanos94.utils.Tools;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -91,6 +94,13 @@ public class Main implements Runnable {
     @Option(names = {
             "-xi" }, description = " convergence rate control parameter for IMOACOR", showDefaultValue = Visibility.ALWAYS)
     private double xi = 0.5;
+    @Option(names = {
+            "-approach-moead" }, description = "Approach used for scalarization function", showDefaultValue = Visibility.ALWAYS)
+    private MOEAD.APPROACH apporachUsed = MOEAD.APPROACH.TCHEBYCHEFF;
+
+    @Option(names = {
+            "-neighborhood-size-moead" }, description = "Neighborhood size for moead", showDefaultValue = Visibility.ALWAYS)
+    private int neighborhoodSize = 20;
 
     public static void main(String[] args) {
         System.exit(new CommandLine(new Main()).setCaseInsensitiveEnumValuesAllowed(true).execute(args));
@@ -370,9 +380,36 @@ public class Main implements Runnable {
         if (_algorithmName == AlgorithmNames.PIMOGWO) {
             return new PI_MOGWO<>(problem, (int) options.get("pop_size"), maxIterations, new RepairBoundary());
         }
+        if (_algorithmName == AlgorithmNames.MOEAD) {
+            ArrayList<ArrayList<Data>> weights = generateWeight(problem, (int) options.get("partitions"));
 
+            return new MOEAD<>(problem, maxIterations, weights.size(), weights, neighborhoodSize,
+                    (CrossoverOperator<DoubleSolution>) options.get("crossover"),
+                    (MutationOperator<DoubleSolution>) options.get("mutation"), new RepairBoundary(),
+                    new DominanceComparator<>(), apporachUsed);
+        }
         return null;
 
+    }
+
+    private static ArrayList<ArrayList<Data>> generateWeight(DTLZP problem, int h) {
+        if (problem.getNumberOfObjectives() <= 5) {
+            ReferenceHyperplane<DoubleSolution> referenceHyperplane = new ReferenceHyperplane<>(
+                    problem.getNumberOfObjectives(), h);
+            referenceHyperplane.execute();
+            ArrayList<ArrayList<Data>> data = referenceHyperplane.transformToData();
+            return data;
+        }
+
+        ReferenceHyperplane<DoubleSolution> referenceHyperplane = new ReferenceHyperplane<>(
+                problem.getNumberOfObjectives(), 3);
+        referenceHyperplane.execute();
+        ArrayList<ArrayList<Data>> data = referenceHyperplane.transformToData();
+        ReferenceHyperplane<DoubleSolution> referenceHyperplane2 = new ReferenceHyperplane<>(
+                problem.getNumberOfObjectives(), 2);
+        referenceHyperplane2.execute();
+        data.addAll(referenceHyperplane2.transformToData());
+        return data;
     }
 
     public static HashMap<String, Object> setup(int numberOfObjectives) {
@@ -405,6 +442,7 @@ public class Main implements Runnable {
         map.put("mutation", new PolynomialMutation());
         return map;
     }
+
     public int getNumberOfObjectives() {
         return numberOfObjectives;
     }
