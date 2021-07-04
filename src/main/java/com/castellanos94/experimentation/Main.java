@@ -131,7 +131,7 @@ public class Main implements Runnable {
             String suffix = "";
 
             if (algorithmName == AlgorithmNames.MOEADO) {
-                suffix = ((dm_target != -1) ? "DM" + dm_target : "DM1") + "-VAR" + variant;
+                suffix = "-" + ((dm_target != -1) ? "DM" + dm_target : "DM1") + "-VAR" + variant;
             }
             if (apporachUsed != MOEAD.APPROACH.TCHEBYCHEFF) {
                 suffix += "-" + apporachUsed;

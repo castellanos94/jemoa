@@ -125,4 +125,9 @@ public class MOEADO<S extends Solution<?>> extends MOEAD<S> {
         return new MOEADO<>(problem, MAX_ITERATIONS, N, lambda, T, model, variant, crossoverOperator, mutationOperator,
                 repairOperator, dominanceComparator, apporachUsed);
     }
+    @Override
+    public String toString() {
+        return "MOEADO [MAX_ITERATIONS=" + MAX_ITERATIONS + ", N=" + N + ", T=" + T + ", apporachUsed=" + apporachUsed
+                +", variant=" + variant+ "]";
+    }
 }
