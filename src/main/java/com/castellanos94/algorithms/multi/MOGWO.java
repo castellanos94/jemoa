@@ -3,7 +3,6 @@ package com.castellanos94.algorithms.multi;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import com.castellanos94.algorithms.AbstractAlgorithm;
 import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.ArchiveSelection;
