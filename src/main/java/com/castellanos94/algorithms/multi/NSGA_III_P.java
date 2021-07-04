@@ -66,7 +66,7 @@ public class NSGA_III_P<S extends Solution<?>> extends NSGA_III<S> {
             Rt.add(r);
         }
         ranking.computeRanking(Rt);
-        Classifier<S> classifier = new SatClassifier<>((GDProblem<S>)problem);
+        Classifier<S> classifier = new SatClassifier<>((GDProblem<S>) problem);
         ArrayList<ArrayList<S>> _fronts = new ArrayList<>();
         // report();
         if (ranking.getNumberOfSubFronts() > 0 && classifyEveryIteration != 0 && this.currenIteration > 0
@@ -100,8 +100,8 @@ public class NSGA_III_P<S extends Solution<?>> extends NSGA_III<S> {
             if (!hd.isEmpty()) {
                 _fronts.add(hd);
             }
-            //if(hs.size() > 0 || s.size() > 0)
-            //System.out.println(this.currenIteration + " "+ hs.size()+ " "+s.size());
+            // if(hs.size() > 0 || s.size() > 0)
+            // System.out.println(this.currenIteration + " "+ hs.size()+ " "+s.size());
             for (int i = 1; i < ranking.getNumberOfSubFronts(); i++) {
                 _fronts.add(ranking.getSubFront(i));
             }
@@ -153,6 +153,12 @@ public class NSGA_III_P<S extends Solution<?>> extends NSGA_III<S> {
     public String toString() {
         return String.format("NSGA-III-WP Classify every %3d iteration, %3d elements to replace",
                 classifyEveryIteration, numberOfElementToReplace);
+    }
+
+    @Override
+    public NSGA_III_P<S> copy() {
+        return new NSGA_III_P<>(problem, populationSize, maxIterations, numberOfDivisions, selectionOperator,
+                crossoverOperator, mutationOperator);
     }
 
 }

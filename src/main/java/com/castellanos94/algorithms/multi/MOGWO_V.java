@@ -266,4 +266,8 @@ public class MOGWO_V<S extends DoubleSolution> extends MOGWO<S> {
         return this.archiveSelection.getParents();
     }
 
+    @Override
+    public MOGWO_V<S> copy() {
+        return new MOGWO_V<>(problem, populationSize, MAX_ITERATIONS, nGrid, repairOperator);
+    }
 }

@@ -47,6 +47,7 @@ public class MOGWO_D<S extends DoubleSolution> extends MOGWO<S> {
      */
     protected S idealPoint;
     protected Distance<S> distance;
+
     @SuppressWarnings("unchecked")
     public MOGWO_D(Problem<S> problem, int neighborSize, double neighborhoodSelectionProbability, int MAX_ITERATIONS,
             int tSubPackSize, int maximumNumberOfReplacedSolutions, RepairOperator<S> repairOperator) {
@@ -184,6 +185,7 @@ public class MOGWO_D<S extends DoubleSolution> extends MOGWO<S> {
         d2 = Math.sqrt(d2);
         return (d1 + theta * d2);
     }
+
     @SuppressWarnings("unchecked")
     private ArrayList<S> computeNewPosition(ArrayList<S> phi_i) {
 
@@ -261,6 +263,12 @@ public class MOGWO_D<S extends DoubleSolution> extends MOGWO<S> {
         return "MOGWO_D [maximumNumberOfReplacedSolutions=" + maximumNumberOfReplacedSolutions + ", neighborSize="
                 + neighborSize + ", neighborhoodSelectionProbability=" + neighborhoodSelectionProbability
                 + ", subPackSize=" + subPackSize + "]";
+    }
+
+    @Override
+    public MOGWO_D<S> copy() {
+        return new MOGWO_D<>(problem, neighborSize, neighborhoodSelectionProbability, MAX_ITERATIONS, subPackSize,
+                maximumNumberOfReplacedSolutions, repairOperator);
     }
 
 }

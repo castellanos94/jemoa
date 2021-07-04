@@ -510,4 +510,9 @@ public class IMOACO_R<S extends DoubleSolution> extends AbstractAlgorithm<S> {
                 + ", MAX RECORD SIZE=" + MAX_RECORD_SIZE + "]";
     }
 
+    @Override
+    public IMOACO_R<S> copy() {
+        return new IMOACO_R<>(problem, maxIterations, N, q, xi, h);
+    }
+
 }

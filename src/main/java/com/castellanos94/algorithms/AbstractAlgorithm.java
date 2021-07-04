@@ -37,4 +37,6 @@ public abstract class AbstractAlgorithm<S extends Solution<?>> {
     public Problem<S> getProblem() {
         return problem;
     }
+
+    public abstract AbstractAlgorithm<S> copy();
 }

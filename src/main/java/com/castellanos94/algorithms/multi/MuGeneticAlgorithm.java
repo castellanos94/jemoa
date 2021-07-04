@@ -77,4 +77,10 @@ public class MuGeneticAlgorithm<S extends Solution<?>> extends AbstractEvolution
         return "GeneticAlgorithm [maxIteration=" + maxIteration + "]";
     }
 
+    @Override
+    public MuGeneticAlgorithm<S> copy() {
+        return new MuGeneticAlgorithm<>(problem, maxIteration, populationSize, selectionOperator, crossoverOperator,
+                mutationOperator);
+    }
+
 }

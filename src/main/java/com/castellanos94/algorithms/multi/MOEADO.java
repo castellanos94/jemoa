@@ -119,4 +119,10 @@ public class MOEADO<S extends Solution<?>> extends MOEAD<S> {
                 throw new IllegalArgumentException("Invalid relation: " + relation);
         }
     }
+
+    @Override
+    public MOEADO<S> copy() {
+        return new MOEADO<>(problem, MAX_ITERATIONS, N, lambda, T, model, variant, crossoverOperator, mutationOperator,
+                repairOperator, dominanceComparator, apporachUsed);
+    }
 }

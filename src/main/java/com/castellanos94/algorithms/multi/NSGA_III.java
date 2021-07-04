@@ -141,4 +141,9 @@ public class NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryAlgorit
                 + referenceHyperplane.getNumberOfPoints() + "]";
     }
 
+    @Override
+    public NSGA_III<S> copy() {
+        return new NSGA_III<>(problem, populationSize, maxIterations, selectionOperator, crossoverOperator,
+                mutationOperator, ranking, referenceHyperplane);
+    }
 }

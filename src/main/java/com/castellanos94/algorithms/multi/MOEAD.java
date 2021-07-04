@@ -290,4 +290,10 @@ public class MOEAD<S extends Solution<?>> extends AbstractEvolutionaryAlgorithm<
                 + "]";
     }
 
+    @Override
+    public MOEAD<S> copy() {
+        return new MOEAD<>(problem, MAX_ITERATIONS, N, lambda, T, crossoverOperator, mutationOperator, repairOperator,
+                dominanceComparator, apporachUsed);
+    }
+
 }

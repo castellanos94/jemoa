@@ -125,4 +125,10 @@ public class NSGA_II<S extends Solution<?>> extends AbstractEvolutionaryAlgorith
         return currentEvaluation < maxEvaluation;
     }
 
+    @Override
+    public NSGA_II<S> copy() {
+        return new NSGA_II<>(problem, maxEvaluation, populationSize, selectionOperator, crossoverOperator,
+                mutationOperator, densityEstimator, repairOperator);
+    }
+
 }

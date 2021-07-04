@@ -192,4 +192,9 @@ public class PI_MOGWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgo
     public String getAttributeKey() {
         return "NET_SCORE_PFN";
     }
+
+    @Override
+    public PI_MOGWO<S> copy() {
+        return new PI_MOGWO<>(problem, populationSize, MAX_ITERATIONS, repairOperator);
+    }
 }

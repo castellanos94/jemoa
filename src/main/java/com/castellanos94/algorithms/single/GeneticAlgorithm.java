@@ -25,6 +25,12 @@ public class GeneticAlgorithm<S extends Solution<?>> extends AbstractEvolutionar
     }
 
     @Override
+    public GeneticAlgorithm<S> copy() {
+        return new GeneticAlgorithm<>(problem, maxIteration, populationSize, selectionOperator, crossoverOperator,
+                mutationOperator);
+    }
+
+    @Override
     protected ArrayList<S> reproduction(ArrayList<S> parents) {
         ArrayList<S> offspring = new ArrayList<>();
         for (int i = 0; i < parents.size(); i++) {

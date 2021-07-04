@@ -107,4 +107,8 @@ public class MOGWO_O<S extends DoubleSolution> extends MOGWO<S> implements Extra
     public String getAttributeKey() {
         return "NET_SCORE_MOGWO_PFN";
     }
+    @Override
+    public MOGWO_O<S> copy() {
+        return new MOGWO_O<>(problem, populationSize, MAX_ITERATIONS, nGrid, repairOperator);
+    }
 }

@@ -136,4 +136,9 @@ public class MOGWO_P<S extends DoubleSolution> extends MOGWO<S> {
         return "MOGWO-P [MAX_ITERATIONS=" + MAX_ITERATIONS + ", nGrid=" + nGrid + ", Problem=" + this.problem.toString()
                 + "]";
     }
+
+    @Override
+    public MOGWO_P<S> copy() {
+        return new MOGWO_P<>(problem, populationSize, MAX_ITERATIONS, nGrid, repairOperator);
+    }
 }

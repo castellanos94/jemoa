@@ -2,7 +2,6 @@ package com.castellanos94.algorithms.single;
 
 import java.util.ArrayList;
 
-import com.castellanos94.algorithms.AbstractAlgorithm;
 import com.castellanos94.algorithms.AbstractEvolutionaryAlgorithm;
 import com.castellanos94.components.impl.DominanceComparator;
 import com.castellanos94.operators.RepairOperator;
@@ -164,7 +163,7 @@ public class GWO<S extends DoubleSolution> extends AbstractEvolutionaryAlgorithm
     }
 
     @Override
-    public GWO<S> copy() {        
+    public GWO<S> copy() {
         return new GWO<>(problem, populationSize, MAX_ITERATIONS, repairOperator);
     }
 

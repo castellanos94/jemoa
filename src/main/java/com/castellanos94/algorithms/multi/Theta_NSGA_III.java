@@ -172,6 +172,7 @@ public class Theta_NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryA
         }
         return clusters;
     }
+
     @SuppressWarnings("unchecked")
     private Data calcualteDJ2(S solution, List<Data> lambda_j) {
         List<Data> x = (List<Data>) solution.getAttribute(NORMALIZE_OBJETIVES_KEY);
@@ -205,9 +206,10 @@ public class Theta_NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryA
         solution.setAttribute(DJ2_KEY, dj2);
         return dj2;
     }
+
     @SuppressWarnings("unchecked")
     private void normalize(ArrayList<S> rt) {
-        
+
         nadirPoint = (S) idealPoint.copy();
 
         for (int i = 0; i < this.problem.getNumberOfObjectives(); i++) {
@@ -227,6 +229,7 @@ public class Theta_NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryA
             child.setAttribute(NORMALIZE_OBJETIVES_KEY, normalizedObjectives);
         }
     }
+
     @SuppressWarnings("unchecked")
     protected void updateIdealPoint(ArrayList<S> offspring) {
         if (idealPoint == null) {
@@ -276,6 +279,7 @@ public class Theta_NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryA
         return "Theta-NSGAIII [pop_size=" + populationSize + ", maxIterations=" + maxIterations + ", referencePoints="
                 + numberOfReferencePoints + ", theta=" + theta + "]";
     }
+
     public static class ThetaNonDominatedSort<S extends Solution<?>> implements Ranking<S> {
         ArrayList<ArrayList<S>> fronts;
         private double theta;
@@ -419,5 +423,11 @@ public class Theta_NSGA_III<S extends Solution<?>> extends AbstractEvolutionaryA
             return fronts.size();
         }
 
+    }
+
+    @Override
+    public Theta_NSGA_III<S> copy() {
+        return new Theta_NSGA_III<>(problem, populationSize, maxIterations, selectionOperator, crossoverOperator,
+                mutationOperator, numberOfReferencePoints);
     }
 }
