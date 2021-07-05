@@ -132,8 +132,8 @@ public class Main implements Runnable {
                 || algorithmName == AlgorithmNames.MOGWOPFN || algorithmName == AlgorithmNames.MOGWOV
                 || algorithmName == AlgorithmNames.PIMOGWO) {
             String suffix = (mogwoExternalPopulation != -1) ? "-EP" + mogwoExternalPopulation : "";
-
-            suffix = (mogwoExternalPopulationBoolean) ? "-EPN" + setup(numberOfObjectives).get("pop_size") : "";
+            if (mogwoExternalPopulationBoolean)
+                suffix = "-EPN" + setup(numberOfObjectives).get("pop_size");
             DIRECTORY = base + "MOGWO" + File.separator + algorithmName + suffix;
         } else if (algorithmName == AlgorithmNames.MOEAD || algorithmName == AlgorithmNames.MOEADO) {
             String suffix = "";
@@ -385,8 +385,8 @@ public class Main implements Runnable {
             return algorithm;
         }
         int ep_mogwo = (mogwoExternalPopulation != -1) ? mogwoExternalPopulation : (int) options.get("pop_size") / 2;
-        if(mogwoExternalPopulationBoolean){
-            ep_mogwo =(int) setup(numberOfObjectives).get("pop_size");
+        if (mogwoExternalPopulationBoolean) {
+            ep_mogwo = (int) setup(numberOfObjectives).get("pop_size");
         }
         if (_algorithmName == AlgorithmNames.MOGWO) {
             return new MOGWO<>(problem, (int) options.get("pop_size"), maxIterations, ep_mogwo, new RepairBoundary());
