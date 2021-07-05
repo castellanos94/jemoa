@@ -85,7 +85,9 @@ public class Main implements Runnable {
     @Option(names = { "-r",
             "--replaceRate" }, description = "Elementos to replace when classification is done [0 - 100] for NSGAIIIP", showDefaultValue = Visibility.ALWAYS)
     private int ELEMENTS_TO_REPLACE = 2; // 5 % of population
-
+    @Option(names = {
+            "--mogwo-ep" }, description = "Mogwo external population default  N/2", showDefaultValue = Visibility.ALWAYS)
+    private int mogwoExternalPopulation = -1;
     @Option(names = {
             "--sortingKey" }, description = "Classification key sorting at 1(true) or 2 (false)", showDefaultValue = Visibility.ALWAYS)
     private boolean isFirstRank = true;
@@ -126,7 +128,8 @@ public class Main implements Runnable {
         } else if (algorithmName == AlgorithmNames.MOGWO || algorithmName == AlgorithmNames.MOGWOP
                 || algorithmName == AlgorithmNames.MOGWOPFN || algorithmName == AlgorithmNames.MOGWOV
                 || algorithmName == AlgorithmNames.PIMOGWO) {
-            DIRECTORY = base + "MOGWO" + File.separator + algorithmName;
+            String suffix = (mogwoExternalPopulation != -1) ? "-EP" + mogwoExternalPopulation : "";
+            DIRECTORY = base + "MOGWO" + File.separator + algorithmName + suffix;
         } else if (algorithmName == AlgorithmNames.MOEAD || algorithmName == AlgorithmNames.MOEADO) {
             String suffix = "";
 
@@ -376,21 +379,18 @@ public class Main implements Runnable {
             algorithm.setNumberOfElementToReplace(ELEMENTS_TO_REPLACE);
             return algorithm;
         }
+        int ep_mogwo = (mogwoExternalPopulation != -1) ? mogwoExternalPopulation : (int) options.get("pop_size") / 2;
         if (_algorithmName == AlgorithmNames.MOGWO) {
-            return new MOGWO<>(problem, (int) options.get("pop_size"), maxIterations, (int) options.get("pop_size") / 2,
-                    new RepairBoundary());
+            return new MOGWO<>(problem, (int) options.get("pop_size"), maxIterations, ep_mogwo, new RepairBoundary());
         }
         if (_algorithmName == AlgorithmNames.MOGWOV) {
-            return new MOGWO_V<>(problem, (int) options.get("pop_size"), maxIterations,
-                    (int) options.get("pop_size") / 2, new RepairBoundary());
+            return new MOGWO_V<>(problem, (int) options.get("pop_size"), maxIterations, ep_mogwo, new RepairBoundary());
         }
         if (_algorithmName == AlgorithmNames.MOGWOP) {
-            return new MOGWO_P<>(problem, (int) options.get("pop_size"), maxIterations,
-                    (int) options.get("pop_size") / 2, new RepairBoundary());
+            return new MOGWO_P<>(problem, (int) options.get("pop_size"), maxIterations, ep_mogwo, new RepairBoundary());
         }
         if (_algorithmName == AlgorithmNames.MOGWOPFN) {
-            return new MOGWO_O<>(problem, (int) options.get("pop_size"), maxIterations,
-                    (int) options.get("pop_size") / 2, new RepairBoundary());
+            return new MOGWO_O<>(problem, (int) options.get("pop_size"), maxIterations, ep_mogwo, new RepairBoundary());
         }
         if (_algorithmName == AlgorithmNames.PIMOGWO) {
             return new PI_MOGWO<>(problem, (int) options.get("pop_size"), maxIterations, new RepairBoundary());
