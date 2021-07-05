@@ -29,8 +29,8 @@ public class RepairBoundary implements RepairOperator<DoubleSolution> {
             if (Double.isNaN(var)) {
                 solution.setVariable(i, Tools.getRandomNumberInRange(l, u).doubleValue());
             } else {
-                if (l == 0 || Precision.compareTo(l, var, epsilon) <= 0) {
-                    // if (l == 0 && var < 6 * Math.pow(10, -16)) {
+                //if (l == 0 || Precision.compareTo(l, var, epsilon) >= 0) {
+                if (l == 0 && var < epsilon) {
                     solution.setVariable(i, l);
                 } else if (var < l) {
                     solution.setVariable(i, l);

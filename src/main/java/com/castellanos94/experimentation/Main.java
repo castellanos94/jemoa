@@ -89,6 +89,9 @@ public class Main implements Runnable {
             "--mogwo-ep" }, description = "Mogwo external population default  N/2", showDefaultValue = Visibility.ALWAYS)
     private int mogwoExternalPopulation = -1;
     @Option(names = {
+            "--mogwo-ep-n" }, description = "Mogwo external population equals to N", showDefaultValue = Visibility.ALWAYS)
+    private boolean mogwoExternalPopulationBoolean = false;
+    @Option(names = {
             "--sortingKey" }, description = "Classification key sorting at 1(true) or 2 (false)", showDefaultValue = Visibility.ALWAYS)
     private boolean isFirstRank = true;
     @Option(names = {
@@ -129,6 +132,8 @@ public class Main implements Runnable {
                 || algorithmName == AlgorithmNames.MOGWOPFN || algorithmName == AlgorithmNames.MOGWOV
                 || algorithmName == AlgorithmNames.PIMOGWO) {
             String suffix = (mogwoExternalPopulation != -1) ? "-EP" + mogwoExternalPopulation : "";
+
+            suffix = (mogwoExternalPopulationBoolean) ? "-EPN" + setup(numberOfObjectives).get("pop_size") : "";
             DIRECTORY = base + "MOGWO" + File.separator + algorithmName + suffix;
         } else if (algorithmName == AlgorithmNames.MOEAD || algorithmName == AlgorithmNames.MOEADO) {
             String suffix = "";
@@ -380,6 +385,9 @@ public class Main implements Runnable {
             return algorithm;
         }
         int ep_mogwo = (mogwoExternalPopulation != -1) ? mogwoExternalPopulation : (int) options.get("pop_size") / 2;
+        if(mogwoExternalPopulationBoolean){
+            ep_mogwo =(int) setup(numberOfObjectives).get("pop_size");
+        }
         if (_algorithmName == AlgorithmNames.MOGWO) {
             return new MOGWO<>(problem, (int) options.get("pop_size"), maxIterations, ep_mogwo, new RepairBoundary());
         }
