@@ -51,14 +51,16 @@ public class AlgorithmComparisonReport {
             + File.separator;
     private static String MOGWOP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
             + "MOGWO" + File.separator;
-    private static String NSGA3VSMOEAD = "experiments" + File.separator + numberOfObjectives + File.separator + "NSGA3VSMOEAD"
-            + File.separator;
+    private static String NSGA3VSMOEAD = "experiments" + File.separator + numberOfObjectives + File.separator
+            + "NSGA3VSMOEAD" + File.separator;
     private static String IMOACOR_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
             + "IMOACOR" + File.separator;
-    private static String MOGWOVSIMOACOR = "experiments" + File.separator + numberOfObjectives + File.separator + "MOGWOVSIMOACOR"
-            + File.separator;
+    private static String MOGWOVSIMOACOR = "experiments" + File.separator + numberOfObjectives + File.separator
+            + "MOGWOVSIMOACOR" + File.separator;
     private static String CMP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "CMP"
             + File.separator;
+    private static String MOGWO_EP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
+            + "MOGWO-EP" + File.separator;
     private static Table stats = Table.create("statistic");
     private static StringColumn nameColumn = StringColumn.create("Problem");
     private static StringColumn metricNameColumn = StringColumn.create("Metric Name");
@@ -79,7 +81,8 @@ public class AlgorithmComparisonReport {
     private static StringColumn dMaxColumn = StringColumn.create("Max");
     private static StringColumn timeColumn = StringColumn.create("time");
     private static HashMap<String, ArrayList<HashMap<String, Double>>> rankListMetric = new HashMap<>();
-    private static String ALGORITHM_IGNORE[] ={ "MOGWO", "MOGWO-V", "C0R0", "C2R1", "C10R0", "VAR-97", "VAR-98","VAR-100", "VAR-104", "VAR-127", "VAR-0", "IMOACOR", "IMOACORPR2-Elite2" };// {"C0R0","VAR-0","IMOACOR","MOGWO"};
+    private static String ALGORITHM_IGNORE[] = { "MOGWO-V", "C0R0", "C2R1", "C10R0", "VAR-97", "VAR-98", "VAR-100",
+            "VAR-104", "VAR-127", "VAR-0", "IMOACOR", "IMOACORPR2-Elite2" };// {"C0R0","VAR-0","IMOACOR","MOGWO"};
 
     public static void main(String[] args) throws IOException {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();
@@ -87,13 +90,14 @@ public class AlgorithmComparisonReport {
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
         HashMap<DTLZP, HashMap<String, Table>> algorithmTimeByProblem = new HashMap<>();
         // Espeficia que soluciones
-        //loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+        // loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem,
+        // algorithmTimeByProblem);
 
-        //loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+        // loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem,
+        // algorithmTimeByProblem);
         loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
-        loadSolutionExperiment(IMOACOR_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
         // Ruta de salida
-        final String LAST_DIRECTORY = MOGWOVSIMOACOR;
+        final String LAST_DIRECTORY = MOGWO_EP_DIRECTORY;
         // Se valida que la ruta existe
         if (!new File(LAST_DIRECTORY).exists())
             new File(LAST_DIRECTORY).mkdirs();
@@ -480,13 +484,12 @@ public class AlgorithmComparisonReport {
             }
         });
         System.out.println("Generating sum all metrics HSAT...");
-        
+
         makeSumRank = BordaRanking.makeSumRank(satList);
         System.out.println("\tName\tRank");
         makeSumRank.forEach((k, v) -> {
             System.out.println("\t" + k + "\t" + v);
         });
-        
 
     }
 
@@ -655,7 +658,7 @@ public class AlgorithmComparisonReport {
         HashMap<String, Double> rankingBorderMap;
 
         if (nameProblem.toLowerCase().contains("family")) {
-            //System.out.println("Global ranking "+ metricName);
+            // System.out.println("Global ranking "+ metricName);
             rankingBorderMap = BordaRanking.doGlobalRanking(rankListMetric.get(metricName));
         } else {
             rankingBorderMap = BordaRanking.doRankingBorda(friedman);

@@ -58,7 +58,7 @@ public class Main implements Runnable {
     private static final Logger logger = LogManager.getLogger(Main.class);
 
     private enum AlgorithmNames {
-        NSGAIII, NSGAIIIP, MOGWO, MOGWOV, PIMOGWO, MOGWOP, MOGWOPFN, IMOACOR, IMOACORP, MOEAD, MOEADO
+        NSGAIII, NSGAIIIP, MOGWO, MOGWOV, PIMOGWO, MOGWOP, MOGWOO, IMOACOR, IMOACORP, MOEAD, MOEADO
     }
 
     @Option(names = { "-a",
@@ -129,12 +129,12 @@ public class Main implements Runnable {
             }
             DIRECTORY = base + "NSGAIII" + File.separator + "C" + CLASSIFY_EVERY_ITERATION + "R" + ELEMENTS_TO_REPLACE;
         } else if (algorithmName == AlgorithmNames.MOGWO || algorithmName == AlgorithmNames.MOGWOP
-                || algorithmName == AlgorithmNames.MOGWOPFN || algorithmName == AlgorithmNames.MOGWOV
+                || algorithmName == AlgorithmNames.MOGWOO || algorithmName == AlgorithmNames.MOGWOV
                 || algorithmName == AlgorithmNames.PIMOGWO) {
             String suffix = (mogwoExternalPopulation != -1) ? "-EP" + mogwoExternalPopulation : "";
             if (mogwoExternalPopulationBoolean)
                 suffix = "-EPN" + setup(numberOfObjectives).get("pop_size");
-            DIRECTORY = base + "MOGWO" + File.separator + algorithmName + suffix;
+            DIRECTORY = base + "MOGWO" + File.separator + enumToString(algorithmName) + suffix;
         } else if (algorithmName == AlgorithmNames.MOEAD || algorithmName == AlgorithmNames.MOEADO) {
             String suffix = "";
 
@@ -147,11 +147,11 @@ public class Main implements Runnable {
             if (neighborhoodSize != 20) {
                 suffix += "-" + neighborhoodSize;
             }
-            DIRECTORY = base + "MOEAD" + File.separator + algorithmName + suffix;
+            DIRECTORY = base + "MOEAD" + File.separator + enumToString(algorithmName) + suffix;
         } else {
             String suffix = (this.q != 0.1 || this.xi != 0.5) ? String.format("Q%.3fXI%.2f", this.q, this.xi) : "";
             if (algorithmName == AlgorithmNames.IMOACORP) {
-                String algorithmName__ = (isFirstRank) ? algorithmName + "R1" : algorithmName + "R2";
+                String algorithmName__ = (isFirstRank) ? enumToString(algorithmName) + "R1" : enumToString(algorithmName) + "R2";
                 DIRECTORY = base + "IMOACOR" + File.separator + algorithmName__ + suffix;
             } else {
                 DIRECTORY = base + "IMOACOR" + File.separator + algorithmName + suffix;
@@ -286,6 +286,22 @@ public class Main implements Runnable {
         logger.info("End Experimentation.");
     }
 
+    private String enumToString(AlgorithmNames algorithm) {
+        switch (algorithm) {
+            case IMOACORP:
+            return "IMOACOR-RP";
+            case MOGWOO:
+            return "MOGWO-O";
+            case MOGWOP: return "MOGWO-P";
+            case MOGWOV: return "MOGWO-V";
+            case MOEADO: return "MOEAD-O";
+
+            
+            default:
+                return algorithm.toString();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private AbstractAlgorithm<DoubleSolution> loadConfiguration(int numberOfProblem, DTLZ_Instance instance,
             AlgorithmNames _algorithmName, boolean isFirstRank) {
@@ -397,7 +413,7 @@ public class Main implements Runnable {
         if (_algorithmName == AlgorithmNames.MOGWOP) {
             return new MOGWO_P<>(problem, (int) options.get("pop_size"), maxIterations, ep_mogwo, new RepairBoundary());
         }
-        if (_algorithmName == AlgorithmNames.MOGWOPFN) {
+        if (_algorithmName == AlgorithmNames.MOGWOO) {
             return new MOGWO_O<>(problem, (int) options.get("pop_size"), maxIterations, ep_mogwo, new RepairBoundary());
         }
         if (_algorithmName == AlgorithmNames.PIMOGWO) {
