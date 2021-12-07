@@ -29,20 +29,21 @@ import com.castellanos94.utils.Distance.Metric;
 import client.POST_HOC;
 import client.StacConsumer;
 import model.NonParametricTestAll;
+import model.ParametricTestTwoGroups;
 import model.RankingResult;
 import statical.BordaRanking;
 import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.NumericColumn;
 import tech.tablesaw.api.StringColumn;
-import tech.tablesaw.api.Table;
+import tech.tablesaw.api.Table; 
 import tech.tablesaw.columns.Column;
 
 /**
  * Reportar la VAR0 y VAR5 (112) para comparacion con nsga3-p C1R0 y C1R2
  */
-public class AlgorithmComparisonReport {
+public class AlgorithmComparisonReportWilcoxon {
 
-    private final static int numberOfObjectives = 10;
+    private final static int numberOfObjectives = 3  ;
     private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
     // private static String algorithmName = File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
@@ -57,7 +58,7 @@ public class AlgorithmComparisonReport {
             + "IMOACOR" + File.separator;
     private static String MOGWOVSIMOACOR = "experiments" + File.separator + numberOfObjectives + File.separator
             + "MOGWOVSIMOACOR" + File.separator;
-    private static String CMP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "CMP"
+    private static String CMP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "CMP-MAT-iMOACOR"
             + File.separator;
     private static String MOGWO_EP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
             + "MOGWO-EP" + File.separator;
@@ -81,9 +82,10 @@ public class AlgorithmComparisonReport {
     private static StringColumn dMaxColumn = StringColumn.create("Max");
     private static StringColumn timeColumn = StringColumn.create("time");
     private static HashMap<String, ArrayList<HashMap<String, Double>>> rankListMetric = new HashMap<>();
-    private static String ALGORITHM_IGNORE[] = {"A1","A2","A3","B1","B2","C1","C2", "MOEAD-O-DM1-VAR5-10", "MOGWO-O", "MOGWO-O-EP10M", "MOGWO-P",
+    private static String ALGORITHM_IGNORE[] = { "A1","A2","B1","B2","C1","C2","C3","IMOACORPR2", "IMOACORPR2-Elite2" };// {"C0R0","VAR-0","IMOACOR","MOGWO"};
+    /*private static String ALGORITHM_IGNORE[] = {"A1","A2","A3","B1","B2","C1","C2", "MOEAD-O-DM1-VAR5-10", "MOGWO-O", "MOGWO-O-EP10M", "MOGWO-P",
             "MOGWO-P-EP10M", "MOGWO", "MOGWO-EP10M", "MOGWO-EPN", "MOGWO-P", "MOGWO-V", "C0R0", "C2R1", "C10R0",
-            "VAR-97", "VAR-98", "VAR-100", "VAR-104", "VAR-127", "VAR-0", "IMOACOR", "IMOACORPR2-Elite2" };// {"C0R0","VAR-0","IMOACOR","MOGWO"};
+            "VAR-97", "VAR-98", "VAR-100", "VAR-104", "VAR-127", "VAR-0", "IMOACOR", "IMOACORPR2-Elite2" };// {"C0R0","VAR-0","IMOACOR","MOGWO"};*/
     // primer folder imoacor vs ordinal p1 
     // segundo folder mogwo vs mogwo - p [b3] 
     public static void main(String[] args) throws IOException {
@@ -92,11 +94,8 @@ public class AlgorithmComparisonReport {
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
         HashMap<DTLZP, HashMap<String, Table>> algorithmTimeByProblem = new HashMap<>();
         // Espeficia que soluciones
-        loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
-
-        loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
-        loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
         loadSolutionExperiment(IMOACOR_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+
         // Ruta de salida
         final String LAST_DIRECTORY = CMP_DIRECTORY;
         // Se valida que la ruta existe
@@ -637,22 +636,19 @@ public class AlgorithmComparisonReport {
         // }
         tmpTable.write().csv(file);
         System.out.println(nameProblem + "/" + metricName + "-> " + file.getAbsolutePath());
+        String firstGroup=tmpTable.column(0).name();
+        String secondGroup=tmpTable.column(1).name();
         // Non-parametric two groups > Mann-Whitney-U: unpaired data.
-        //StacConsumer.WILCOXON(file.getAbsolutePath(), firstGroup, secondGroup, 0.05)
-        NonParametricTestAll friedman = (tmpTable.columnCount() < 5)
-                ? StacConsumer.FRIEDMAN_ALIGNED_RANK(file.getAbsolutePath(), 0.05, POST_HOC.FINNER)
-                : StacConsumer.FRIEDMAN(file.getAbsolutePath(), 0.05, POST_HOC.FINNER);
+        ParametricTestTwoGroups mann_WHITNEY_U = StacConsumer.MANN_WHITNEY_U(file.getAbsolutePath(), firstGroup, secondGroup, 0.05);
+        
         boolean rs;
         nameColumn.append(nameProblem);
         metricNameColumn.append(metricName);
-        RankingResult ranking = friedman.getRanking();
-        if (ranking != null)
-            rs = ranking.getResult();
-        else
-            rs = false;
-        if (ranking != null)
+        Integer resultBigDecimal = mann_WHITNEY_U.getResult();
+        rs = resultBigDecimal != null && resultBigDecimal == 1;
+        if (resultBigDecimal != null)
             resultColumn
-                    .append(((rs) ? "H0 is rejected" : "H0 is accepted") + ", statistic : " + ranking.getStatistic());
+                    .append(((rs) ? "H0 is rejected" : "H0 is accepted") + ", statistic : " + mann_WHITNEY_U.toString());
         else
             resultColumn.append("NaN");
         String data = "";
@@ -661,53 +657,48 @@ public class AlgorithmComparisonReport {
 
         if (nameProblem.toLowerCase().contains("family")) {
             // System.out.println("Global ranking "+ metricName);
-            rankingBorderMap = BordaRanking.doGlobalRanking(rankListMetric.get(metricName));
+          //  rankingBorderMap = BordaRanking.doGlobalRanking(rankListMetric.get(metricName));
         } else {
-            rankingBorderMap = BordaRanking.doRankingBorda(friedman);
+          //  rankingBorderMap = BordaRanking.doRankingBorda(friedman);
 
-            if (!rankListMetric.containsKey(metricName)) {
-                rankListMetric.put(metricName, new ArrayList<>());
-            }
-            rankListMetric.get(metricName).add(rankingBorderMap);
         }
 
         iterator = summaryMean.keySet().iterator();
         String summary = "";
         HashMap<String, String> sumMap = new HashMap<>();
-        if (ranking != null) {
-            String[] names_ = ranking.getNames();
-            BigDecimal[] values_ = ranking.getRankings();
+        if (true) {
+            String[] names_ = {firstGroup,secondGroup};
+            String v= rs? "*":"";
 
             System.out.println(nameProblem + "/" + nameProblem + " > " + Arrays.toString(names_) + " <-> "
-                    + Arrays.toString(values_));
-            BigDecimal min_rank = Collections.min(Arrays.asList(values_));
+                    + ((rs)? "h0 reject": "h0 accepted"));
             for (int i = 0; i < names_.length; i++) {
                 String name__ = names_[i].replaceAll(regex, "");
                 if (i < names_.length - 1)
                     ranking_ += String.format("%s, ", name__);
                 else
                     ranking_ += String.format("%s", name__);
-                data += String.format("%s , %s; ", values_[i].toString(), name__);
+                data += String.format("%s , %s; ", v, name__);
 
-                summary += String.format(" $%f_{%f}^{%.1f}$ %s,", summaryMean.get(name__), summarySTD.get(name__),
-                        values_[i], name__);
+                summary += String.format(" $%f_{%f}$ %s,", summaryMean.get(name__), summarySTD.get(name__),
+                         name__);
                 if (metricName.equalsIgnoreCase("Dominance") || metricName.equalsIgnoreCase("hsat")
                         || metricName.equalsIgnoreCase("sat")) {
                     sumMap.put(name__,
-                            String.format("%s$%5.3f_{%.3f}^{%.1f}$",
-                                    (rs && min_rank.compareTo(values_[i]) == 0) ? "\\cellcolor[HTML]{FFFF00}" : "",
-                                    summaryMean.get(name__), summarySTD.get(name__), values_[i]));
+                            String.format("%s$%5.3f_{%.3f}$",
+                                    (rs && v.equals("*")) ? "\\cellcolor[HTML]{FFFF00}" : "",
+                                    summaryMean.get(name__), summarySTD.get(name__) ));
                 } else {
                     sumMap.put(name__,
-                            String.format("%s$%f_{%.3f}^{%.1f}$",
-                                    (rs && min_rank == values_[i]) ? "\\cellcolor[HTML]{FFFF00}" : "",
-                                    summaryMean.get(name__), summarySTD.get(name__), values_[i]));
+                            String.format("%s$%f_{%.3f}$",
+                                    (rs && v.equals("*")) ? "\\cellcolor[HTML]{FFFF00}" : "",
+                                    summaryMean.get(name__), summarySTD.get(name__)));
                 }
             }
         }
         meanColumn.append(summary.trim() + " " + acum);
 
-        if (ranking != null) {
+        if (mann_WHITNEY_U != null) {
             techicalColumn.append(data.trim());
             rankingColumn.append(ranking_.trim());
         } else {
