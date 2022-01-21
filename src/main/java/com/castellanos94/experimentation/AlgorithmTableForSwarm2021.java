@@ -29,6 +29,7 @@ import com.castellanos94.utils.Distance.Metric;
 import client.POST_HOC;
 import client.StacConsumer;
 import model.NonParametricTestAll;
+import model.ParametricTestTwoGroups;
 import model.RankingResult;
 import statical.BordaRanking;
 import tech.tablesaw.api.DoubleColumn;
@@ -40,7 +41,7 @@ import tech.tablesaw.columns.Column;
 /**
  * Reportar la VAR0 y VAR5 (112) para comparacion con nsga3-p C1R0 y C1R2
  */
-public class AlgorithmComparisonReport {
+public class AlgorithmTableForSwarm2021 {
 
     private final static int numberOfObjectives = 3;
     private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
@@ -58,11 +59,16 @@ public class AlgorithmComparisonReport {
     private static String MOGWOVSIMOACOR = "experiments" + File.separator + numberOfObjectives + File.separator
             + "MOGWOVSIMOACOR" + File.separator;
     private static String CMP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
-            + "CMP-PLOT"
+            + "CMP-MAT-RV-IMOACOR"
             + File.separator;
     private static String MOGWO_EP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
             + "MOGWO-EP" + File.separator;
     private static Table stats = Table.create("statistic");
+    private static Table AlgorithmReportSwarm = Table.create("swarm");
+    private static StringColumn nObjColumn = StringColumn.create("m");
+    private static StringColumn algorithmColumn = StringColumn.create("Algorithm");
+    private static ArrayList<StringColumn> dtlzColumn = new ArrayList<>();
+
     private static StringColumn nameColumn = StringColumn.create("Problem");
     private static StringColumn metricNameColumn = StringColumn.create("Metric Name");
     private static StringColumn resultColumn = StringColumn.create("Friedman Aligned Ranks 0.05");
@@ -82,13 +88,21 @@ public class AlgorithmComparisonReport {
     private static StringColumn dMaxColumn = StringColumn.create("Max");
     private static StringColumn timeColumn = StringColumn.create("time");
     private static HashMap<String, ArrayList<HashMap<String, Double>>> rankListMetric = new HashMap<>();
-    private static String ALGORITHM_IGNORE[] = { "A1", "A2", "B1", "B2", "C1", "C2", "C3", "MOEAD-O-DM1-VAR5-10",
-            "MOGWO-O", "MOGWO-O-EP10M", "MOGWO-P",
-            "MOGWO-P-EP10M", "MOGWO", "MOGWO-EP10M", "MOGWO-EPN", "MOGWO-P", "MOGWO-V", "C2R1", "C10R0", "C1R2",
-            "IMOACORPR2", "C1R0",
-            "VAR-97", "VAR-98", "VAR-100", "VAR-104", "VAR-127", "VAR-0", "IMOACORPR2-Elite2" };// {"C0R0","VAR-0","IMOACOR","MOGWO"};
+    private static String ALGORITHM_IGNORE[] = { "A1", "A2", "B1", "B2", "C1", "C2", "C3", 
+            "IMOACORPR2", "IMOACORPR2-Elite2", "C1R0", "C1R2", "C10R0" };// {"C0R0","VAR-0","IMOACOR","MOGWO"};
+    /*
+     * private static String ALGORITHM_IGNORE[] =
+     * {"A1","A2","A3","B1","B2","C1","C2", "MOEAD-O-DM1-VAR5-10", "MOGWO-O",
+     * "MOGWO-O-EP10M", "MOGWO-P",
+     * "MOGWO-P-EP10M", "MOGWO", "MOGWO-EP10M", "MOGWO-EPN", "MOGWO-P", "MOGWO-V",
+     * "C0R0", "C2R1", "C10R0",
+     * "VAR-97", "VAR-98", "VAR-100", "VAR-104", "VAR-127", "VAR-0", "IMOACOR",
+     * "IMOACORPR2-Elite2" };// {"C0R0","VAR-0","IMOACOR","MOGWO"};
+     */
     // primer folder imoacor vs ordinal p1
     // segundo folder mogwo vs mogwo - p [b3]
+    // Comparar imoacor con preferencias contra nsga 3
+    // Comparar mogwo con preferencias contra nsga 3
 
     public static void main(String[] args) throws IOException {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();
@@ -96,11 +110,10 @@ public class AlgorithmComparisonReport {
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
         HashMap<DTLZP, HashMap<String, Table>> algorithmTimeByProblem = new HashMap<>();
         // Espeficia que soluciones
-        loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+        //loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
 
-        // loadSolutionExperiment(NRV_DIRECTORY, problems, roi, globalSolutionByProblem,
-        // algorithmTimeByProblem);
-        loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+        // loadSolutionExperiment(IMOACOR_DIRECTORY, problems, roi,
+        // globalSolutionByProblem, algorithmTimeByProblem);
         loadSolutionExperiment(IMOACOR_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
         // Ruta de salida
         final String LAST_DIRECTORY = CMP_DIRECTORY;
@@ -165,8 +178,6 @@ public class AlgorithmComparisonReport {
             globalSolution.put(_problem, currentBag);
             globalCSat.put(_problem, _csat);
         });
-        globalMetric(LAST_DIRECTORY, globalSolution, roi, _names_algorithm, algorithmTimeByProblem);
-
         Table table = Table.create("Metrics DTLZ");
         StringColumn _name = StringColumn.create("problem");
         DoubleColumn all = DoubleColumn.create("solutions");
@@ -212,6 +223,10 @@ public class AlgorithmComparisonReport {
         String[] keyArray = problems.keySet().toArray(new String[problems.size()]);
         Arrays.sort(keyArray);
         int indexKeyArray = 0;
+        for (int i = 0; i < 9; i++) {
+            nObjColumn.append(i == 0 ? "" + numberOfObjectives : "");
+            dtlzColumn.add(StringColumn.create("DTLZ" + (i + 1)));
+        }
         while (indexKeyArray < keyArray.length) {
             DTLZP dtlz = problems.get(keyArray[indexKeyArray++]);
             int startProblem = (_name.size() - 1 > 0) ? _name.size() - 1 : 0;
@@ -366,6 +381,7 @@ public class AlgorithmComparisonReport {
             for (String key : orderNameConfiguration) {
                 chsatColumn.append(mapTest.get(key));
             }
+
             mapTest = doStatisticTest(dtlz.getName(), startProblem, endProblem, _name, sColumns, "Sat");
             for (String key : orderNameConfiguration) {
                 csatColumn.append(mapTest.get(key));
@@ -644,22 +660,21 @@ public class AlgorithmComparisonReport {
         // }
         tmpTable.write().csv(file);
         System.out.println(nameProblem + "/" + metricName + "-> " + file.getAbsolutePath());
+        String firstGroup = tmpTable.column(0).name();
+        String secondGroup = tmpTable.column(1).name();
         // Non-parametric two groups > Mann-Whitney-U: unpaired data.
-        // StacConsumer.WILCOXON(file.getAbsolutePath(), firstGroup, secondGroup, 0.05)
-        NonParametricTestAll friedman = (tmpTable.columnCount() < 5)
-                ? StacConsumer.FRIEDMAN_ALIGNED_RANK(file.getAbsolutePath(), 0.05, POST_HOC.FINNER)
-                : StacConsumer.FRIEDMAN(file.getAbsolutePath(), 0.05, POST_HOC.FINNER);
+        ParametricTestTwoGroups mann_WHITNEY_U = StacConsumer.MANN_WHITNEY_U(file.getAbsolutePath(), firstGroup,
+                secondGroup, 0.05);
+
         boolean rs;
         nameColumn.append(nameProblem);
         metricNameColumn.append(metricName);
-        RankingResult ranking = friedman.getRanking();
-        if (ranking != null)
-            rs = ranking.getResult();
-        else
-            rs = false;
-        if (ranking != null)
+        Integer resultBigDecimal = mann_WHITNEY_U.getResult();
+        rs = resultBigDecimal != null && resultBigDecimal == 1;
+        if (resultBigDecimal != null)
             resultColumn
-                    .append(((rs) ? "H0 is rejected" : "H0 is accepted") + ", statistic : " + ranking.getStatistic());
+                    .append(((rs) ? "H0 is rejected" : "H0 is accepted") + ", statistic : "
+                            + mann_WHITNEY_U.toString());
         else
             resultColumn.append("NaN");
         String data = "";
@@ -668,53 +683,49 @@ public class AlgorithmComparisonReport {
 
         if (nameProblem.toLowerCase().contains("family")) {
             // System.out.println("Global ranking "+ metricName);
-            rankingBorderMap = BordaRanking.doGlobalRanking(rankListMetric.get(metricName));
+            // rankingBorderMap =
+            // BordaRanking.doGlobalRanking(rankListMetric.get(metricName));
         } else {
-            rankingBorderMap = BordaRanking.doRankingBorda(friedman);
+            // rankingBorderMap = BordaRanking.doRankingBorda(friedman);
 
-            if (!rankListMetric.containsKey(metricName)) {
-                rankListMetric.put(metricName, new ArrayList<>());
-            }
-            rankListMetric.get(metricName).add(rankingBorderMap);
         }
 
         iterator = summaryMean.keySet().iterator();
         String summary = "";
         HashMap<String, String> sumMap = new HashMap<>();
-        if (ranking != null) {
-            String[] names_ = ranking.getNames();
-            BigDecimal[] values_ = ranking.getRankings();
+        if (true) {
+            String[] names_ = { firstGroup, secondGroup };
+            String v = rs ? "*" : "";
 
             System.out.println(nameProblem + "/" + nameProblem + " > " + Arrays.toString(names_) + " <-> "
-                    + Arrays.toString(values_));
-            BigDecimal min_rank = Collections.min(Arrays.asList(values_));
+                    + ((rs) ? "h0 reject" : "h0 accepted"));
             for (int i = 0; i < names_.length; i++) {
                 String name__ = names_[i].replaceAll(regex, "");
                 if (i < names_.length - 1)
                     ranking_ += String.format("%s, ", name__);
                 else
                     ranking_ += String.format("%s", name__);
-                data += String.format("%s , %s; ", values_[i].toString(), name__);
+                data += String.format("%s , %s; ", v, name__);
 
-                summary += String.format(" $%f_{%f}^{%.1f}$ %s,", summaryMean.get(name__), summarySTD.get(name__),
-                        values_[i], name__);
+                summary += String.format(" $%f_{%f}$ %s,", summaryMean.get(name__), summarySTD.get(name__),
+                        name__);
                 if (metricName.equalsIgnoreCase("Dominance") || metricName.equalsIgnoreCase("hsat")
                         || metricName.equalsIgnoreCase("sat")) {
                     sumMap.put(name__,
-                            String.format("%s$%5.3f_{%.3f}^{%.1f}$",
-                                    (rs && min_rank.compareTo(values_[i]) == 0) ? "\\cellcolor[HTML]{FFFF00}" : "",
-                                    summaryMean.get(name__), summarySTD.get(name__), values_[i]));
+                            String.format("%s$%.02f$",
+                                    (rs && v.equals("*")) ? "\\cellcolor{dg}" : "",
+                                    summaryMean.get(name__)));
                 } else {
                     sumMap.put(name__,
-                            String.format("%s$%f_{%.3f}^{%.1f}$",
-                                    (rs && min_rank == values_[i]) ? "\\cellcolor[HTML]{FFFF00}" : "",
-                                    summaryMean.get(name__), summarySTD.get(name__), values_[i]));
+                            String.format("%s$%.02f$",
+                                    (rs && v.equals("*")) ? "\\cellcolor{dg}" : "",
+                                    summaryMean.get(name__)));
                 }
             }
         }
         meanColumn.append(summary.trim() + " " + acum);
 
-        if (ranking != null) {
+        if (mann_WHITNEY_U != null) {
             techicalColumn.append(data.trim());
             rankingColumn.append(ranking_.trim());
         } else {
@@ -772,7 +783,7 @@ public class AlgorithmComparisonReport {
         globalSolutionNDByProblem.forEach((_p, bags) -> {
             ArrayList<DoubleSolution> bag = new ArrayList<>();
             bags.forEach(b -> bag.addAll(b));
-           /* DominanceComparator<DoubleSolution> comparator = new DominanceComparator<>();
+            DominanceComparator<DoubleSolution> comparator = new DominanceComparator<>();
             comparator.computeRanking(bag);
             ArrayList<DoubleSolution> frontZero = comparator.getSubFront(0);
             System.out.println(
@@ -870,36 +881,22 @@ public class AlgorithmComparisonReport {
 
             });
 
-            csatSolutions.addAll(roi.get(_p.getName()));*/
+            csatSolutions.addAll(roi.get(_p.getName()));
             if (numberOfObjectives == 3) {
-                ArrayList<DoubleSolution> arrayList = new ArrayList<>(roi.get(_p.getName()));
-                System.out.println(_p.getName());
-                HashMap<String, ArrayList<DoubleSolution>> gba = groupByAlgorithm(bag,
-                        _names_algorithm, true);
-                gba.forEach((algorithm, cb) -> {
-                    System.out.printf("\tAlgorithm : %10s, bag : %5d\n", algorithm, cb.size());
-                    DominanceComparator<DoubleSolution> dominanceComparator = new DominanceComparator<>();
-                    dominanceComparator.computeRanking(cb);
-                    System.out.printf("\t\tFront zero %5d\n",dominanceComparator.getSubFront(0).size());
-                    ArrayList<DoubleSolution> classifySolutions = classifySolutions(_p, dominanceComparator.getSubFront(0), false, false);
-                    System.out.printf("\t\tFront zero classificated %5d\n",classifySolutions.size());
-
-                    arrayList.addAll(classifySolutions);
-                });
                 try {
                     System.out.println("\tExport all solutions with class");
-                    EXPORT_OBJECTIVES_TO_CSV(LAST_DIRECTORY, arrayList, _p.getName() + "_ALL");
+                    EXPORT_OBJECTIVES_TO_CSV(LAST_DIRECTORY, csatSolutions, _p.getName() + "_ALL");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-         /*   System.out.println("\tCsat distribution: " + csatSolutions.size());
+            System.out.println("\tCsat distribution: " + csatSolutions.size());
             HashMap<String, ArrayList<DoubleSolution>> groupByAlgorithm2 = groupByAlgorithm(csatSolutions,
                     _names_algorithm, true);
             groupByAlgorithm2.forEach((k, v) -> {
                 System.out.println("\t\t" + k + " -> "
                         + v.stream().filter(s -> ((String) s.getAttribute("class")).contains("SAT")).count());
-            });*/
+            });
         });
         Table global = Table.create("global");
         global.addColumns(_nameG, allG, frontZeroG);
@@ -1049,7 +1046,7 @@ public class AlgorithmComparisonReport {
         for (int i = 0; i < front_preferences.get(0).getProblem().getNumberOfObjectives(); i++) {
             StringColumn column = StringColumn.create("F-" + (i + 1));
             for (DoubleSolution solution_ : front_preferences)
-                column.append(String.format("%.05f", solution_.getObjective(i).doubleValue()));
+                column.append(String.format("%.03f", solution_.getObjective(i).doubleValue()));
             table.addColumns(column);
         }
         StringColumn column = StringColumn.create("Algorithm");

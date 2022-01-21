@@ -43,7 +43,7 @@ import tech.tablesaw.columns.Column;
  */
 public class AlgorithmComparisonReportWilcoxon {
 
-    private final static int numberOfObjectives = 3  ;
+    private final static int numberOfObjectives = 10 ;
     private static String algorithmName = numberOfObjectives + File.separator + "NSGA3";
     // private static String algorithmName = File.separator + "NSGA3_last";
     private static final String OWNER = "FROM_PROBLEM";
@@ -58,7 +58,7 @@ public class AlgorithmComparisonReportWilcoxon {
             + "IMOACOR" + File.separator;
     private static String MOGWOVSIMOACOR = "experiments" + File.separator + numberOfObjectives + File.separator
             + "MOGWOVSIMOACOR" + File.separator;
-    private static String CMP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "CMP-MAT-iMOACOR"
+    private static String CMP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator + "CMP-MAT-RV-NSGA3-MOGWO"
             + File.separator;
     private static String MOGWO_EP_DIRECTORY = "experiments" + File.separator + numberOfObjectives + File.separator
             + "MOGWO-EP" + File.separator;
@@ -82,20 +82,25 @@ public class AlgorithmComparisonReportWilcoxon {
     private static StringColumn dMaxColumn = StringColumn.create("Max");
     private static StringColumn timeColumn = StringColumn.create("time");
     private static HashMap<String, ArrayList<HashMap<String, Double>>> rankListMetric = new HashMap<>();
-    private static String ALGORITHM_IGNORE[] = { "A1","A2","B1","B2","C1","C2","C3","IMOACORPR2", "IMOACORPR2-Elite2" };// {"C0R0","VAR-0","IMOACOR","MOGWO"};
+    private static String ALGORITHM_IGNORE[] = { "A1","A3","A2","B1","B2","C1","C2","C3", "IMOACOR","IMOACORPR2", "IMOACORPR2-Elite2" , "C1R0","C1R2", "C10R0"};// {"C0R0","VAR-0","IMOACOR","MOGWO"};
     /*private static String ALGORITHM_IGNORE[] = {"A1","A2","A3","B1","B2","C1","C2", "MOEAD-O-DM1-VAR5-10", "MOGWO-O", "MOGWO-O-EP10M", "MOGWO-P",
             "MOGWO-P-EP10M", "MOGWO", "MOGWO-EP10M", "MOGWO-EPN", "MOGWO-P", "MOGWO-V", "C0R0", "C2R1", "C10R0",
             "VAR-97", "VAR-98", "VAR-100", "VAR-104", "VAR-127", "VAR-0", "IMOACOR", "IMOACORPR2-Elite2" };// {"C0R0","VAR-0","IMOACOR","MOGWO"};*/
     // primer folder imoacor vs ordinal p1 
     // segundo folder mogwo vs mogwo - p [b3] 
+    // Comparar imoacor con preferencias contra nsga 3
+    // Comparar mogwo con preferencias contra nsga 3
+
     public static void main(String[] args) throws IOException {
         HashMap<String, ArrayList<DoubleSolution>> roi = new HashMap<>();
         HashMap<String, DTLZP> problems = new HashMap<>();
         HashMap<DTLZP, HashMap<String, ArrayList<ArrayList<DoubleSolution>>>> globalSolutionByProblem = new HashMap<>();
         HashMap<DTLZP, HashMap<String, Table>> algorithmTimeByProblem = new HashMap<>();
         // Espeficia que soluciones
-        loadSolutionExperiment(IMOACOR_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+        loadSolutionExperiment(DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
 
+        //loadSolutionExperiment(IMOACOR_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
+        loadSolutionExperiment(MOGWOP_DIRECTORY, problems, roi, globalSolutionByProblem, algorithmTimeByProblem);
         // Ruta de salida
         final String LAST_DIRECTORY = CMP_DIRECTORY;
         // Se valida que la ruta existe
