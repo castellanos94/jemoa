@@ -51,7 +51,7 @@ For more details use the --help
 There are examples of how to execute each algorithm in the EXAMPLE package, it is only necessary to execute the class of interest, this from an IDE.  
 E.G. 
 <a href="src/main/java/com/castellanos94/examples/DTLZNsga3.java">
-Grey Wolf Optimizer example</a>.
+NSGA-III solving DTLZ problem</a>.
 # Publications
 * Castellanos A, Cruz-Reyes L, Fernández E, Rivera G, Gomez-Santillan C, Rangel-Valdez N. Hybridisation of Swarm Intelligence Algorithms with Multi-Criteria Ordinal Classification: A Strategy to Address Many-Objective Optimisation. Mathematics. 2022; 10(3):322. <a href="https://doi.org/10.3390/math10030322" target="_blank">doi.org/10.3390/math10030322 </a>
 * Castellanos-Alvarez A, Cruz-Reyes L, Fernandez E, Rangel-Valdez N, Gómez-Santillán C, Fraire H, Brambila-Hernández JA. A Method for Integration of Preferences to a Multi-Objective Evolutionary Algorithm Using Ordinal Multi-Criteria Classification Mathematical and Computational Applications. 2021; 26(2):27. <a href="https://doi.org/10.3390/mca26020027" target="_blank">doi.org/10.3390/mca26020027</a>
