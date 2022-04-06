@@ -1,0 +1,24 @@
+Command: Problem  5, sample 5000, seed 1
+Reading instance
+NumberOfVariables  12, NumberOfObjectives   3, DMs   1
+Weigth
+	0.233000 0.427000, 0.238000 0.436000, 0.235000 0.431000
+Veto
+	1.947000 2.055000, 1.548000 1.647000, 1.909000 2.088000
+Beta
+	0.510000 0.670000
+Lamda
+	0.510000 0.670000
+Alpha
+	1.000000
+Sample size  5000
+Generating sample ...
+	Check dominance   0... ... size of F0 5000
+Saving ROI-P File... ROI_P_DTLZ5_V12_O3_dom.txt
+ROI lenght 5000
+Making instance
+from 50 to 99
+
+real	0m1.125s
+user	0m1.037s
+sys	0m0.003s

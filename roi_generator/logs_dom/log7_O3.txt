@@ -1,0 +1,56 @@
+Command: Problem  7, sample 5000, seed 1
+Reading instance
+NumberOfVariables  22, NumberOfObjectives   3, DMs   1
+Weigth
+	0.233000 0.425000, 0.237000 0.433000, 0.237000 0.435000
+Veto
+	0.363000 0.389000, 0.368000 0.383000, 11.160000 11.340000
+Beta
+	0.510000 0.670000
+Lamda
+	0.510000 0.670000
+Alpha
+	1.000000
+Sample size  5000
+Generating sample ...
+	Check dominance   0... ... size of F0 1337
+	Check dominance   1... ... size of F0 2227
+	Check dominance   2... ... size of F0 2933
+	Check dominance   3... ... size of F0 3424
+	Check dominance   4... ... size of F0 3791
+	Check dominance   5... ... size of F0 4097
+	Check dominance   6... ... size of F0 4309
+	Check dominance   7... ... size of F0 4477
+	Check dominance   8... ... size of F0 4612
+	Check dominance   9... ... size of F0 4703
+	Check dominance  10... ... size of F0 4770
+	Check dominance  11... ... size of F0 4822
+	Check dominance  12... ... size of F0 4865
+	Check dominance  13... ... size of F0 4898
+	Check dominance  14... ... size of F0 4924
+	Check dominance  15... ... size of F0 4942
+	Check dominance  16... ... size of F0 4952
+	Check dominance  17... ... size of F0 4959
+	Check dominance  18... ... size of F0 4964
+	Check dominance  19... ... size of F0 4973
+	Check dominance  20... ... size of F0 4982
+	Check dominance  21... ... size of F0 4989
+	Check dominance  22... ... size of F0 4994
+	Check dominance  23... ... size of F0 4996
+	Check dominance  24... ... size of F0 4997
+	Check dominance  25... ... size of F0 4997
+	Check dominance  26... ... size of F0 4997
+	Check dominance  27... ... size of F0 4998
+	Check dominance  28... ... size of F0 4999
+	Check dominance  29... ... size of F0 4999
+	Check dominance  30... ... size of F0 4999
+	Check dominance  31... ... size of F0 4999
+	Check dominance  32... ... size of F0 5000
+Saving ROI-P File... ROI_P_DTLZ7_V22_O3_dom.txt
+ROI lenght 5000
+Making instance
+from 50 to 99
+
+real	0m27.675s
+user	0m27.463s
+sys	0m0.013s

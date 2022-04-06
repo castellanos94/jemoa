@@ -1,0 +1,19 @@
+#!/bin/bash
+#run.sh
+echo "Making executable for only dominance roi..."
+gcc -o main_only_dom main_only_dom.c src/*.c -lm
+KSample=$1
+numberOfObjectives=$2
+Seed=$3
+echo "Size sample $KSample, Seed $Seed"
+if mkdir logs_dom; then
+	echo "Log dir created"
+fi
+for N in `seq 1 9`
+do
+	echo "Executing DTLZ$N..."
+	varInstance="/home/thinkpad/Documents/jemoa/DTLZ_INSTANCES/$numberOfObjectives/DTLZ$N""_Instance.txt"
+	(time ./main_only_dom $N $KSample $varInstance $Seed) &> logs_dom/"log$N""_O"$numberOfObjectives.txt &
+done
+wait
+echo "All tasks are done."
